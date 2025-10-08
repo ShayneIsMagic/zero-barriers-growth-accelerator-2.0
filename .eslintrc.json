@@ -1,0 +1,32 @@
+{
+  "extends": ["next/core-web-vitals"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "prefer-const": "off",
+    "no-var": "off",
+    "object-shorthand": "off",
+    "prefer-template": "off",
+    "no-console": "off",
+    "no-debugger": "off",
+    "quotes": "off",
+    "semi": "off",
+    "indent": "off",
+    "no-trailing-spaces": "off",
+    "eol-last": "off"
+  },
+  "ignorePatterns": [
+    "node_modules/",
+    ".next/",
+    "out/",
+    "build/",
+    "dist/",
+    "*.config.js",
+    "*.config.ts",
+    "coverage/",
+    "test-results/",
+    "playwright-report/"
+  ]
+}
