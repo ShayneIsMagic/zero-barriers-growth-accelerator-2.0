@@ -1,14 +1,11 @@
 /**
  * Report Storage and Retrieval System
  * 
- * Stores analysis reports in multiple formats:
- * 1. JSON files in reports/ directory
- * 2. Database records (optional)
- * 3. PDF exports (optional)
+ * Stores analysis reports in Supabase database (not file system)
+ * File system is ephemeral in Vercel serverless environment
  */
 
-import fs from 'fs/promises';
-import path from 'path';
+import { prisma } from './prisma';
 
 export interface StoredReport {
   id: string;
@@ -22,32 +19,18 @@ export interface StoredReport {
     keyFindings: string[];
     priorityRecommendations: string[];
   };
-  filePath: string;
 }
 
 export class ReportStorage {
-  private reportsDir: string;
-
-  constructor() {
-    this.reportsDir = path.join(process.cwd(), 'reports');
-    this.ensureReportsDirectory();
-  }
-
   /**
-   * Store a comprehensive analysis report
+   * Store a comprehensive analysis report in database
    */
   async storeReport(reportData: any, url: string, reportType: 'comprehensive' | 'phase1' | 'phase2' | 'phase3' | 'controlled-analysis' | 'enhanced-analysis' = 'comprehensive'): Promise<StoredReport> {
-    await this.ensureReportsDirectory();
-    
     const timestamp = new Date().toISOString();
     const reportId = this.generateReportId(url, timestamp);
     
     // Create summary
     const summary = this.extractSummary(reportData);
-    
-    // Store JSON report
-    const fileName = `${reportId}.json`;
-    const filePath = path.join(this.reportsDir, fileName);
     
     const storedReport: StoredReport = {
       id: reportId,
@@ -55,27 +38,44 @@ export class ReportStorage {
       timestamp,
       reportType,
       data: reportData,
-      summary,
-      filePath
+      summary
     };
     
-    await fs.writeFile(filePath, JSON.stringify(storedReport, null, 2));
-    
-    // Store summary in index file
-    await this.updateReportIndex(storedReport);
-    
-    console.log(`📄 Report stored: ${filePath}`);
-    return storedReport;
+    // Store in database
+    try {
+      await prisma.analysis.create({
+        data: {
+          id: reportId,
+          url: url,
+          content: JSON.stringify(storedReport),
+          contentType: reportType,
+          score: summary.overallScore,
+          status: 'COMPLETED'
+        }
+      });
+      
+      console.log(`📄 Report stored in database: ${reportId}`);
+      return storedReport;
+    } catch (error) {
+      console.error('Failed to store report in database:', error);
+      throw error;
+    }
   }
 
   /**
-   * Retrieve a report by ID
+   * Retrieve a report by ID from database
    */
   async getReport(reportId: string): Promise<StoredReport | null> {
     try {
-      const filePath = path.join(this.reportsDir, `${reportId}.json`);
-      const data = await fs.readFile(filePath, 'utf-8');
-      return JSON.parse(data);
+      const analysis = await prisma.analysis.findUnique({
+        where: { id: reportId }
+      });
+      
+      if (!analysis || !analysis.content) {
+        return null;
+      }
+      
+      return JSON.parse(analysis.content);
     } catch (error) {
       console.error(`Failed to retrieve report ${reportId}:`, error);
       return null;
@@ -83,15 +83,18 @@ export class ReportStorage {
   }
 
   /**
-   * Get all reports for a specific URL
+   * Get all reports for a specific URL from database
    */
   async getReportsByUrl(url: string): Promise<StoredReport[]> {
     try {
-      const indexPath = path.join(this.reportsDir, 'index.json');
-      const indexData = await fs.readFile(indexPath, 'utf-8');
-      const index = JSON.parse(indexData);
+      const analyses = await prisma.analysis.findMany({
+        where: { url: url },
+        orderBy: { createdAt: 'desc' }
+      });
       
-      return index.reports.filter((report: StoredReport) => report.url === url);
+      return analyses
+        .filter(analysis => analysis.content)
+        .map(analysis => JSON.parse(analysis.content!));
     } catch (error) {
       console.error('Failed to retrieve reports by URL:', error);
       return [];
@@ -99,20 +102,23 @@ export class ReportStorage {
   }
 
   /**
-   * Get all reports (paginated)
+   * Get all reports (paginated) from database
    */
   async getAllReports(page: number = 1, limit: number = 10): Promise<{ reports: StoredReport[], total: number, page: number, totalPages: number }> {
     try {
-      const indexPath = path.join(this.reportsDir, 'index.json');
-      const indexData = await fs.readFile(indexPath, 'utf-8');
-      const index = JSON.parse(indexData);
-      
-      const total = index.reports.length;
+      const total = await prisma.analysis.count();
       const totalPages = Math.ceil(total / limit);
-      const startIndex = (page - 1) * limit;
-      const endIndex = startIndex + limit;
+      const skip = (page - 1) * limit;
       
-      const reports = index.reports.slice(startIndex, endIndex);
+      const analyses = await prisma.analysis.findMany({
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit
+      });
+      
+      const reports = analyses
+        .filter(analysis => analysis.content)
+        .map(analysis => JSON.parse(analysis.content!));
       
       return {
         reports,
@@ -127,21 +133,13 @@ export class ReportStorage {
   }
 
   /**
-   * Delete a report
+   * Delete a report from database
    */
   async deleteReport(reportId: string): Promise<boolean> {
     try {
-      // Delete the report file
-      const filePath = path.join(this.reportsDir, `${reportId}.json`);
-      await fs.unlink(filePath);
-      
-      // Update index
-      const indexPath = path.join(this.reportsDir, 'index.json');
-      const indexData = await fs.readFile(indexPath, 'utf-8');
-      const index = JSON.parse(indexData);
-      
-      index.reports = index.reports.filter((report: StoredReport) => report.id !== reportId);
-      await fs.writeFile(indexPath, JSON.stringify(index, null, 2));
+      await prisma.analysis.delete({
+        where: { id: reportId }
+      });
       
       console.log(`🗑️ Report deleted: ${reportId}`);
       return true;
@@ -152,16 +150,15 @@ export class ReportStorage {
   }
 
   /**
-   * Export report as PDF (placeholder - would need PDF generation library)
+   * Export report as PDF (to be implemented with jsPDF on client side)
    */
   async exportReportAsPDF(reportId: string): Promise<string | null> {
     try {
       const report = await this.getReport(reportId);
       if (!report) return null;
       
-      // This would integrate with a PDF generation library like puppeteer or jsPDF
-      // For now, return the JSON file path
-      return report.filePath;
+      // Return report data - client will generate PDF using jsPDF
+      return reportId;
     } catch (error) {
       console.error(`Failed to export report ${reportId} as PDF:`, error);
       return null;
@@ -169,7 +166,7 @@ export class ReportStorage {
   }
 
   /**
-   * Get report statistics
+   * Get report statistics from database
    */
   async getReportStats(): Promise<{
     totalReports: number;
@@ -179,13 +176,9 @@ export class ReportStorage {
     scoreDistribution: Record<string, number>;
   }> {
     try {
-      const indexPath = path.join(this.reportsDir, 'index.json');
-      const indexData = await fs.readFile(indexPath, 'utf-8');
-      const index = JSON.parse(indexData);
+      const analyses = await prisma.analysis.findMany();
       
-      const reports = index.reports;
-      const totalReports = reports.length;
-      
+      const totalReports = analyses.length;
       const reportsByType: Record<string, number> = {};
       const reportsByUrl: Record<string, number> = {};
       const scores: number[] = [];
@@ -198,23 +191,26 @@ export class ReportStorage {
         '0-49': 0
       };
       
-      reports.forEach((report: StoredReport) => {
+      analyses.forEach((analysis) => {
         // Count by type
-        reportsByType[report.reportType] = (reportsByType[report.reportType] || 0) + 1;
+        const type = analysis.contentType || 'comprehensive';
+        reportsByType[type] = (reportsByType[type] || 0) + 1;
         
         // Count by URL
-        reportsByUrl[report.url] = (reportsByUrl[report.url] || 0) + 1;
+        if (analysis.url) {
+          reportsByUrl[analysis.url] = (reportsByUrl[analysis.url] || 0) + 1;
+        }
         
         // Score distribution
-        const score = report.summary.overallScore;
+        const score = analysis.score || 0;
         scores.push(score);
         
-        if (score >= 90) scoreDistribution['90-100'] = (scoreDistribution['90-100'] || 0) + 1;
-        else if (score >= 80) scoreDistribution['80-89'] = (scoreDistribution['80-89'] || 0) + 1;
-        else if (score >= 70) scoreDistribution['70-79'] = (scoreDistribution['70-79'] || 0) + 1;
-        else if (score >= 60) scoreDistribution['60-69'] = (scoreDistribution['60-69'] || 0) + 1;
-        else if (score >= 50) scoreDistribution['50-59'] = (scoreDistribution['50-59'] || 0) + 1;
-        else scoreDistribution['0-49'] = (scoreDistribution['0-49'] || 0) + 1;
+        if (score >= 90) scoreDistribution['90-100'] += 1;
+        else if (score >= 80) scoreDistribution['80-89'] += 1;
+        else if (score >= 70) scoreDistribution['70-79'] += 1;
+        else if (score >= 60) scoreDistribution['60-69'] += 1;
+        else if (score >= 50) scoreDistribution['50-59'] += 1;
+        else scoreDistribution['0-49'] += 1;
       });
       
       const averageScore = scores.length > 0 ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 0;
@@ -235,18 +231,6 @@ export class ReportStorage {
         averageScore: 0,
         scoreDistribution: {}
       };
-    }
-  }
-
-  /**
-   * Ensure reports directory exists
-   */
-  private async ensureReportsDirectory(): Promise<void> {
-    try {
-      await fs.access(this.reportsDir);
-    } catch {
-      await fs.mkdir(this.reportsDir, { recursive: true });
-      console.log(`📁 Created reports directory: ${this.reportsDir}`);
     }
   }
 
@@ -306,31 +290,6 @@ export class ReportStorage {
     };
   }
 
-  /**
-   * Update report index
-   */
-  private async updateReportIndex(report: StoredReport): Promise<void> {
-    const indexPath = path.join(this.reportsDir, 'index.json');
-    
-    let index: { reports: StoredReport[] };
-    
-    try {
-      const indexData = await fs.readFile(indexPath, 'utf-8');
-      index = JSON.parse(indexData);
-    } catch {
-      index = { reports: [] };
-    }
-    
-    // Add new report to beginning of list
-    index.reports.unshift(report);
-    
-    // Keep only last 100 reports in index (to prevent it from getting too large)
-    if (index.reports.length > 100) {
-      index.reports = index.reports.slice(0, 100);
-    }
-    
-    await fs.writeFile(indexPath, JSON.stringify(index, null, 2));
-  }
 }
 
 // Export singleton instance

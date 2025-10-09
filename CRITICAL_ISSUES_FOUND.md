@@ -17,18 +17,18 @@
 const executeAnalysis = async () => {
   // Frontend shows all 9 steps as "waiting"
   setSteps(defaultSteps); // All set to 'pending' status
-  
+
   // Makes ONE API call that runs ALL phases
   const response = await fetch('/api/analyze/step-by-step-execution', {
     method: 'POST',
     body: JSON.stringify({ url })
   });
-  
+
   // Waits 3+ minutes with no updates...
   const data = await response.json();
-  
+
   // After 3 minutes, marks ALL steps "completed" at once
-  setSteps(prevSteps => 
+  setSteps(prevSteps =>
     prevSteps.map(step => ({ ...step, status: 'completed' }))
   );
 }
@@ -55,7 +55,7 @@ const executeAnalysis = async () => {
 async storeReport(reportData: any, url: string): Promise<StoredReport> {
   const filePath = path.join(process.cwd(), 'reports', `${reportId}.json`);
   await fs.writeFile(filePath, JSON.stringify(storedReport, null, 2));
-  
+
   console.log(`📄 Report stored: ${filePath}`);
   return storedReport;
 }
@@ -96,7 +96,7 @@ Request 2 (GET /api/reports/example-123):
 async exportReportAsPDF(reportId: string): Promise<string | null> {
   const report = await this.getReport(reportId);
   if (!report) return null;
-  
+
   // This would integrate with a PDF generation library like puppeteer or jsPDF
   // For now, return the JSON file path
   return report.filePath;  // ❌ Just returns JSON path!
@@ -144,7 +144,7 @@ export async function GET(request: NextRequest) {
       controller.close();
     }
   });
-  
+
   return new Response(stream, {
     headers: { 'Content-Type': 'text/event-stream' }
   });
@@ -257,12 +257,12 @@ async function generatePDF(reportHtml: string) {
 
 ### **What I Said Before** vs. **Reality**:
 
-❌ "Assessments execute sequentially" 
+❌ "Assessments execute sequentially"
   - TRUE on backend
   - FALSE from user perspective (all show "waiting" at once)
 
 ❌ "Reports are saved"
-  - TRUE momentarily  
+  - TRUE momentarily
   - FALSE after 60 seconds (ephemeral file system)
 
 ❌ "PDF export works"
