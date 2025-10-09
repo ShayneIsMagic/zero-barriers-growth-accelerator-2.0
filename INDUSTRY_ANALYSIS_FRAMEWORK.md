@@ -16,7 +16,7 @@
 async function detectIndustry(websiteContent: string) {
   const prompt = `
   Analyze this website and determine the industry/sector:
-  
+
   Options:
   - E-commerce / Retail
   - B2B SaaS / Software
@@ -30,15 +30,15 @@ async function detectIndustry(websiteContent: string) {
   - Marketing / Advertising
   - Non-profit / Social Impact
   - Other: [specify]
-  
+
   Also identify:
   - Primary business model: B2C, B2B, or Both
   - Target market size: Enterprise, SMB, Consumer
   - Service vs Product focus
-  
+
   Content: ${websiteContent}
   `;
-  
+
   return {
     industry: "B2B SaaS",
     businessModel: "B2B",
@@ -257,7 +257,7 @@ interface WebsiteAnalysisResult {
       typicalConversionRate: 0.03
     }
   };
-  
+
   // Existing with industry weighting applied
   languageAnalysis: {
     valueCentricRatio: 0.45,
@@ -265,7 +265,7 @@ interface WebsiteAnalysisResult {
     gap: -0.25,  // Below industry standard!
     recommendation: "Increase value-centric language by 25% to match SaaS standards"
   };
-  
+
   brandAlignment: {
     purpose: { ... },
     pillars: { ... },
@@ -276,17 +276,17 @@ interface WebsiteAnalysisResult {
       recommendation: "Add ROI calculator and integration documentation - standard for B2B SaaS"
     }
   };
-  
-  b2cElements: { 
+
+  b2cElements: {
     // Weighted per industry
     // E.g., for SaaS, "saves time" weighted higher
   };
-  
+
   b2bElements: {
-    // Weighted per industry  
+    // Weighted per industry
     // E.g., for SaaS, "improves productivity" weighted higher
   };
-  
+
   recommendations: {
     immediate: [
       "Add ROI calculator (industry standard for SaaS)",

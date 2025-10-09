@@ -62,12 +62,12 @@ Step 1.1: Content Scraping (App Server)
    Tool: Puppeteer + Cheerio
    Input: Website URL
    Output: {
-     title, metaDescription, bodyText, headings[], 
+     title, metaDescription, bodyText, headings[],
      images[], links[], navigation[], forms[],
      aboutContent, missionStatement
    }
    Stored: In memory for next steps
-   
+
 Step 1.2: Industry Detection (AI - Gemini)
    Tool: Gemini API Call #1
    Input: Scraped content (focus on about/mission)
@@ -79,7 +79,7 @@ Step 1.2: Industry Detection (AI - Gemini)
      confidence: 0.95
    }
    Stored: Sets context for ALL subsequent analysis
-   
+
 ┌─────────────────────────────────────────────────────────────┐
 │ PHASE 2: TECHNICAL BASELINE (Objective Metrics)              │
 │ Where: External Tools | No AI needed                        │
@@ -99,7 +99,7 @@ Step 2.1: Lighthouse Analysis (External Tool)
    Stored: In memory, added to final result
 
 Step 2.2: PageAudit Technical SEO (External Tool)
-   Tool: PageAudit library  
+   Tool: PageAudit library
    Input: Scraped HTML
    Output: {
      metaTags: {...},
@@ -146,8 +146,8 @@ Step 3.1: Language Type Analysis (AI - Gemini)
    Stored: Used in brand alignment and recommendations
 
 Step 3.2: Brand Alignment Analysis (AI - Gemini)
-   Tool: Gemini API Call #3  
-   Input: 
+   Tool: Gemini API Call #3
+   Input:
      - About page content (stated purpose)
      - All website content (shown emphasis)
      - Language analysis from Step 3.1
@@ -365,7 +365,7 @@ Step 7: Return to Client
 
 ### Gemini AI (9 API Calls Total)
 **Call #1**: Industry Detection
-**Call #2**: Language Type Analysis  
+**Call #2**: Language Type Analysis
 **Call #3**: Brand Alignment
 **Call #4**: Golden Circle + WHO
 **Call #5**: B2C Elements (conditional on WHO)
@@ -405,7 +405,7 @@ await Promise.all([
 
 **Google Lighthouse**:
 - Input: Website URL
-- When: Phase 2 (Step 2.1)  
+- When: Phase 2 (Step 2.1)
 - Output: Performance metrics
 
 ---
@@ -472,8 +472,8 @@ Synthesis (Step 5)
 ### User → Analyses
 ```sql
 -- Get all analyses for a user
-SELECT * FROM "Analysis" 
-WHERE "userId" = 'admin-shayne-001' 
+SELECT * FROM "Analysis"
+WHERE "userId" = 'admin-shayne-001'
 ORDER BY "createdAt" DESC;
 ```
 
@@ -561,7 +561,7 @@ WHERE content::json->>'url' = 'https://example.com';
 
 ---
 
-**Is the site loading now without Vercel authentication?** 
+**Is the site loading now without Vercel authentication?**
 
 **Can you see your actual homepage and sign-in form?** 🔓
 
