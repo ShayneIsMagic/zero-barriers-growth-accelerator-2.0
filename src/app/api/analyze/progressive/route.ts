@@ -1,13 +1,13 @@
 /**
  * Progressive Analysis API
- * 
+ *
  * Stores progress in database so UI can show real-time updates
  * Each step completion saves to database immediately
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { ThreePhaseAnalyzer } from '@/lib/three-phase-analyzer';
 import { prisma } from '@/lib/prisma';
+import { ThreePhaseAnalyzer } from '@/lib/three-phase-analyzer';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     // Create analysis record with PENDING status
     const analysisId = `analysis-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
+
     await prisma.analysis.create({
       data: {
         id: analysisId,
@@ -138,26 +138,26 @@ export async function GET(request: NextRequest) {
  */
 async function runProgressiveAnalysis(analysisId: string, url: string) {
   let currentStepIndex = 0;
-  
+
   const updateStep = async (stepId: string, status: 'running' | 'completed' | 'failed', data?: any) => {
     const analysis = await prisma.analysis.findUnique({ where: { id: analysisId } });
     if (!analysis || !analysis.content) return;
-    
+
     const content = JSON.parse(analysis.content);
     const stepIndex = content.steps.findIndex((s: any) => s.id === stepId);
-    
+
     if (stepIndex >= 0) {
       content.steps[stepIndex].status = status;
       if (data) {
         content.steps[stepIndex].data = data;
       }
-      
+
       if (status === 'completed') {
         currentStepIndex = stepIndex + 1;
         content.currentStep = currentStepIndex;
       }
     }
-    
+
     await prisma.analysis.update({
       where: { id: analysisId },
       data: {
@@ -165,7 +165,7 @@ async function runProgressiveAnalysis(analysisId: string, url: string) {
         status: status === 'failed' ? 'FAILED' : (currentStepIndex >= 9 ? 'COMPLETED' : 'IN_PROGRESS')
       }
     });
-    
+
     console.log(`📊 ${analysisId}: ${stepId} → ${status}`);
   };
 
@@ -173,7 +173,7 @@ async function runProgressiveAnalysis(analysisId: string, url: string) {
     // Execute analysis with progress tracking
     const analyzer = new ThreePhaseAnalyzer(url, async (phase, step, progress) => {
       console.log(`📊 ${phase}: ${step} - ${progress.toFixed(1)}%`);
-      
+
       // Map phases to step IDs
       if (step.includes('Scraping') || step.includes('data collection')) {
         await updateStep('scrape_content', 'running');

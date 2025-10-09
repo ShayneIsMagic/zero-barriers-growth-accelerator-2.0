@@ -1,6 +1,6 @@
 /**
  * Progressive Analysis Page
- * 
+ *
  * Real-time step-by-step analysis with live progress updates
  */
 

@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Clock, XCircle, Play, Download, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { CheckCircle, Clock, Download, FileText, Loader2, Play, XCircle } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { generateMarkdownReport } from '@/lib/markdown-report-generator';
 
 interface StepStatus {
   id: string;
@@ -106,7 +107,24 @@ export function ProgressiveAnalysisPage() {
     }
   };
 
-  const downloadReport = () => {
+  const downloadMarkdown = () => {
+    if (!status?.result) return;
+
+    const markdown = generateMarkdownReport(status.result, status.url);
+    const blob = new Blob([markdown], {
+      type: 'text/markdown'
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `analysis-${status.url.replace(/[^a-zA-Z0-9]/g, '-')}-${new Date().toISOString().split('T')[0]}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const downloadJSON = () => {
     if (!status?.result) return;
 
     const blob = new Blob([JSON.stringify(status.result, null, 2)], {
@@ -115,7 +133,7 @@ export function ProgressiveAnalysisPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `analysis-${status.analysisId}.json`;
+    a.download = `analysis-${status.url.replace(/[^a-zA-Z0-9]/g, '-')}-${new Date().toISOString().split('T')[0]}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -148,7 +166,7 @@ export function ProgressiveAnalysisPage() {
     }
   };
 
-  const progressPercentage = status 
+  const progressPercentage = status
     ? Math.round((status.currentStep / status.totalSteps) * 100)
     : 0;
 
@@ -268,7 +286,7 @@ export function ProgressiveAnalysisPage() {
               {/* Completion Actions */}
               {status.completed && (
                 <div className="mt-6 p-4 bg-green-50 dark:bg-green-950 border border-green-200 rounded-lg">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col gap-3">
                     <div>
                       <div className="font-medium text-green-900 dark:text-green-100">
                         Analysis Complete!
@@ -277,10 +295,16 @@ export function ProgressiveAnalysisPage() {
                         Overall Score: {status.score}/100
                       </div>
                     </div>
-                    <Button onClick={downloadReport} variant="outline">
-                      <Download className="mr-2 h-4 w-4" />
-                      Download Report
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button onClick={downloadMarkdown} variant="default">
+                        <FileText className="mr-2 h-4 w-4" />
+                        Download Markdown
+                      </Button>
+                      <Button onClick={downloadJSON} variant="outline">
+                        <Download className="mr-2 h-4 w-4" />
+                        Download JSON
+                      </Button>
+                    </div>
                   </div>
                 </div>
               )}
