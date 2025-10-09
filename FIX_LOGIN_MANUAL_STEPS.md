@@ -45,19 +45,19 @@ https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/sql/new
 ```sql
 -- Create 3 users with bcrypt-hashed passwords
 INSERT INTO "User" (id, email, password, name, role, "createdAt", "updatedAt")
-VALUES 
-  (gen_random_uuid()::text, 'shayne+1@devpipeline.com', 
+VALUES
+  (gen_random_uuid()::text, 'shayne+1@devpipeline.com',
    '$2a$12$oc1QpcAe/.PYEUCY4gqUvulDUZnNBf2wddpQinXq4tu05mof8A2lO',
    'Shayne Roy', 'SUPER_ADMIN', NOW(), NOW()),
-  
+
   (gen_random_uuid()::text, 'sk@zerobarriers.io',
    '$2a$12$JqrIG9nuqwiZuN6mC4CYdeZUS/.Y8sepDkJec0nYFqK.teH2zZ5Za',
    'SK Roy', 'USER', NOW(), NOW()),
-  
+
   (gen_random_uuid()::text, 'shayne+2@devpipeline.com',
    '$2a$12$dVC8x8x/BTCBVZfESuYi/.744OcRHdE6Ill2mZ8EI4cNGM.Y5mA9C',
    'S Roy', 'USER', NOW(), NOW())
-   
+
 ON CONFLICT (email) DO UPDATE SET
   password = EXCLUDED.password,
   name = EXCLUDED.name,
