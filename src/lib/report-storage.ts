@@ -1,6 +1,6 @@
 /**
  * Report Storage and Retrieval System
- * 
+ *
  * Stores analysis reports in Supabase database (not file system)
  * File system is ephemeral in Vercel serverless environment
  */
@@ -28,10 +28,10 @@ export class ReportStorage {
   async storeReport(reportData: any, url: string, reportType: 'comprehensive' | 'phase1' | 'phase2' | 'phase3' | 'controlled-analysis' | 'enhanced-analysis' = 'comprehensive'): Promise<StoredReport> {
     const timestamp = new Date().toISOString();
     const reportId = this.generateReportId(url, timestamp);
-    
+
     // Create summary
     const summary = this.extractSummary(reportData);
-    
+
     const storedReport: StoredReport = {
       id: reportId,
       url,
@@ -40,7 +40,7 @@ export class ReportStorage {
       data: reportData,
       summary
     };
-    
+
     // Store in database
     try {
       await prisma.analysis.create({
@@ -53,7 +53,7 @@ export class ReportStorage {
           status: 'COMPLETED'
         }
       });
-      
+
       console.log(`📄 Report stored in database: ${reportId}`);
       return storedReport;
     } catch (error) {
@@ -70,11 +70,11 @@ export class ReportStorage {
       const analysis = await prisma.analysis.findUnique({
         where: { id: reportId }
       });
-      
+
       if (!analysis || !analysis.content) {
         return null;
       }
-      
+
       return JSON.parse(analysis.content);
     } catch (error) {
       console.error(`Failed to retrieve report ${reportId}:`, error);
@@ -91,7 +91,7 @@ export class ReportStorage {
         where: { url: url },
         orderBy: { createdAt: 'desc' }
       });
-      
+
       return analyses
         .filter(analysis => analysis.content)
         .map(analysis => JSON.parse(analysis.content!));
@@ -109,17 +109,17 @@ export class ReportStorage {
       const total = await prisma.analysis.count();
       const totalPages = Math.ceil(total / limit);
       const skip = (page - 1) * limit;
-      
+
       const analyses = await prisma.analysis.findMany({
         orderBy: { createdAt: 'desc' },
         skip,
         take: limit
       });
-      
+
       const reports = analyses
         .filter(analysis => analysis.content)
         .map(analysis => JSON.parse(analysis.content!));
-      
+
       return {
         reports,
         total,
@@ -140,7 +140,7 @@ export class ReportStorage {
       await prisma.analysis.delete({
         where: { id: reportId }
       });
-      
+
       console.log(`🗑️ Report deleted: ${reportId}`);
       return true;
     } catch (error) {
@@ -156,7 +156,7 @@ export class ReportStorage {
     try {
       const report = await this.getReport(reportId);
       if (!report) return null;
-      
+
       // Return report data - client will generate PDF using jsPDF
       return reportId;
     } catch (error) {
@@ -177,7 +177,7 @@ export class ReportStorage {
   }> {
     try {
       const analyses = await prisma.analysis.findMany();
-      
+
       const totalReports = analyses.length;
       const reportsByType: Record<string, number> = {};
       const reportsByUrl: Record<string, number> = {};
@@ -190,21 +190,21 @@ export class ReportStorage {
         '50-59': 0,
         '0-49': 0
       };
-      
+
       analyses.forEach((analysis) => {
         // Count by type
         const type = analysis.contentType || 'comprehensive';
         reportsByType[type] = (reportsByType[type] || 0) + 1;
-        
+
         // Count by URL
         if (analysis.url) {
           reportsByUrl[analysis.url] = (reportsByUrl[analysis.url] || 0) + 1;
         }
-        
+
         // Score distribution
         const score = analysis.score || 0;
         scores.push(score);
-        
+
         if (score >= 90) scoreDistribution['90-100'] += 1;
         else if (score >= 80) scoreDistribution['80-89'] += 1;
         else if (score >= 70) scoreDistribution['70-79'] += 1;
@@ -212,9 +212,9 @@ export class ReportStorage {
         else if (score >= 50) scoreDistribution['50-59'] += 1;
         else scoreDistribution['0-49'] += 1;
       });
-      
+
       const averageScore = scores.length > 0 ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 0;
-      
+
       return {
         totalReports,
         reportsByType,
@@ -255,10 +255,10 @@ export class ReportStorage {
   } {
     const overallScore = reportData.overallScore || reportData.evaluationFramework?.overallScore || 0;
     const rating = reportData.rating || reportData.evaluationFramework?.rating || 'Not Rated';
-    
+
     const keyFindings: string[] = [];
     const priorityRecommendations: string[] = [];
-    
+
     // Extract from evaluation framework
     if (reportData.evaluationFramework) {
       const evalFramework = reportData.evaluationFramework;
@@ -271,17 +271,17 @@ export class ReportStorage {
           }
         });
       }
-      
+
       if (evalFramework.priorityRecommendations) {
         priorityRecommendations.push(...evalFramework.priorityRecommendations);
       }
     }
-    
+
     // Extract from comprehensive analysis
     if (reportData.comprehensiveAnalysis?.combinedRecommendations) {
       priorityRecommendations.push(...reportData.comprehensiveAnalysis.combinedRecommendations);
     }
-    
+
     return {
       overallScore,
       rating,
