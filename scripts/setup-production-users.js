@@ -13,14 +13,20 @@ const prisma = new PrismaClient();
 const USERS = [
   {
     name: 'Shayne Roy',
-    email: 'admin@zerobarriers.io',
+    email: 'shayne+1@devpipeline.com',
     password: 'ZBadmin123!',
     role: 'SUPER_ADMIN'
   },
   {
     name: 'SK Roy',
-    email: 'SK@zerobarriers.io',
+    email: 'sk@zerobarriers.io',
     password: 'ZBuser123!',
+    role: 'USER'
+  },
+  {
+    name: 'S Roy',
+    email: 'shayne+2@devpipeline.com',
+    password: 'ZBuser2123!',
     role: 'USER'
   }
 ];
