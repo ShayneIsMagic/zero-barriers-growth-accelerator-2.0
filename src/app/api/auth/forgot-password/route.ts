@@ -1,7 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,7 +31,7 @@ export async function POST(request: NextRequest) {
     // 1. Store resetToken and resetTokenExpiry in database
     // 2. Send email with reset link containing token
     // 3. Create a /reset-password page that accepts token
-    
+
     // For now, return success (in production, always return same message)
     return NextResponse.json({
       message: 'If an account exists with this email, a password reset link has been sent.',

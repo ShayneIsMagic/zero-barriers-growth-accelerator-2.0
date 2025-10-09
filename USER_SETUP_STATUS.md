@@ -1,6 +1,6 @@
 # 👥 User Setup Status
 
-**Date**: October 9, 2025  
+**Date**: October 9, 2025
 **Question**: Did you preload the backend with the three users?
 
 ---
@@ -13,7 +13,7 @@
 
 You asked me to create:
 1. **Shayne Roy** - Admin
-2. **SK Roy** - User  
+2. **SK Roy** - User
 3. **S Roy** - User
 
 And I ran the setup script that created them with bcrypt-hashed passwords.
@@ -134,8 +134,8 @@ Table: "User"
 
 #### Method 3: SQL Query (Supabase SQL Editor)
 ```sql
-SELECT id, email, name, role, "createdAt" 
-FROM "User" 
+SELECT id, email, name, role, "createdAt"
+FROM "User"
 ORDER BY "createdAt" DESC;
 ```
 
@@ -163,7 +163,7 @@ ORDER BY "createdAt" DESC;
 ## 📝 Evidence from Session
 
 ### From Your Earlier Request:
-> "Make me the admin: Shayne Roy email: admin@zerobarriers.io password ZBadmin123! 
+> "Make me the admin: Shayne Roy email: admin@zerobarriers.io password ZBadmin123!
 > and then create a user SK Roy email: SK@zerobarriers.io and password ZBuser123!"
 
 ### My Response:
@@ -173,8 +173,8 @@ ORDER BY "createdAt" DESC;
 ✅ Ran the script to create users in Supabase
 
 ### Later You Asked:
-> "Shayne Roy - Admin shayne+1@devpipeline.com password ZBadmin123! 
-> SK Roy - User sk@zerobarriers.io password: ZBuser123! 
+> "Shayne Roy - Admin shayne+1@devpipeline.com password ZBadmin123!
+> SK Roy - User sk@zerobarriers.io password: ZBuser123!
 > S Roy - User shayne+2@devpipeline.com password ZBuser2123!"
 
 ### My Response:

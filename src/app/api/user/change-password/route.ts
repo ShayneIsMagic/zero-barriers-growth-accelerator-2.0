@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { NextRequest, NextResponse } from 'next/server';
 
 const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'fallback-secret-key-change-in-production';
 
@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
   try {
     // Get token from Authorization header
     const authHeader = request.headers.get('Authorization');
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
@@ -23,14 +23,14 @@ export async function POST(request: NextRequest) {
     const { currentPassword, newPassword } = body;
 
     if (!currentPassword || !newPassword) {
-      return NextResponse.json({ 
-        error: 'Current password and new password are required' 
+      return NextResponse.json({
+        error: 'Current password and new password are required'
       }, { status: 400 });
     }
 
     if (newPassword.length < 8) {
-      return NextResponse.json({ 
-        error: 'New password must be at least 8 characters long' 
+      return NextResponse.json({
+        error: 'New password must be at least 8 characters long'
       }, { status: 400 });
     }
 
