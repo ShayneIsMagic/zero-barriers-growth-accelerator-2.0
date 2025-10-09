@@ -9,9 +9,10 @@ export function renderWithProviders(
   ui: ReactElement,
   options?: Omit<RenderOptions, 'wrapper'>
 ) {
-  function Wrapper({ children }: { children: React.ReactNode }) {
+  // eslint-disable-next-line react/display-name
+  const Wrapper = ({ children }: { children: React.ReactNode }) => {
     return <AuthProvider>{children}</AuthProvider>;
-  }
+  };
 
   return render(ui, { wrapper: Wrapper, ...options });
 }
