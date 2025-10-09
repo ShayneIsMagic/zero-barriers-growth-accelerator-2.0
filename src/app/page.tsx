@@ -7,27 +7,6 @@ import { ArrowRight, Zap, Target, Users, BarChart3, Shield } from 'lucide-react'
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-      {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm dark:bg-slate-900/80">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
-                <Zap className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-xl font-bold">Zero Barriers</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Link href="/auth/signin">
-                <Button variant="ghost">Sign In</Button>
-              </Link>
-              <Link href="/dashboard">
-                <Button>Get Started</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
 
       {/* Hero Section */}
       <section className="py-20 px-4">
