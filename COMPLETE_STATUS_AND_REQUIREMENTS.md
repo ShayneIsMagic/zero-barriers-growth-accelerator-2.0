@@ -143,7 +143,7 @@ Features:
 **Enhanced Behavior** (what you want):
 ```
 1. Run base-analysis → ✅ SHOW IMMEDIATELY
-2. Run pageaudit → ✅ SHOW IMMEDIATELY  
+2. Run pageaudit → ✅ SHOW IMMEDIATELY
 3. Run lighthouse → ✅ SHOW IMMEDIATELY
 4. Run gemini-insights → ✅ SHOW IMMEDIATELY
 ```
@@ -164,8 +164,8 @@ setSteps(prev => ({
 
 // Add rendering section:
 {steps['base-analysis']?.status === 'completed' && (
-  <AssessmentCard 
-    title="Golden Circle" 
+  <AssessmentCard
+    title="Golden Circle"
     data={steps['base-analysis'].result}
     downloadable={true}
   />
