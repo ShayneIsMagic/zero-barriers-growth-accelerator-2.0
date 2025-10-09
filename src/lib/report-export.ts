@@ -3,18 +3,17 @@
  * Export analysis reports as PDF or Markdown for easy sharing via email
  */
 
-import type { WebsiteAnalysisResult } from '@/types/analysis';
 
 /**
  * Export analysis report as Markdown
  */
 export function exportAsMarkdown(analysis: any): string {
   const date = new Date(analysis.timestamp || Date.now()).toLocaleDateString();
-  
+
   let markdown = `# Website Analysis Report
 
-**URL**: ${analysis.url}  
-**Date**: ${date}  
+**URL**: ${analysis.url}
+**Date**: ${date}
 **Overall Score**: ${analysis.overallScore}/10
 
 ---
@@ -92,15 +91,15 @@ ${analysis.recommendations?.longTerm?.map((r: string) => `- ${r}`).join('\n') ||
 ## Performance Metrics
 
 ${analysis.lighthouseAnalysis ? `
-**Performance**: ${analysis.lighthouseAnalysis.scores?.performance || 0}/100  
-**Accessibility**: ${analysis.lighthouseAnalysis.scores?.accessibility || 0}/100  
-**Best Practices**: ${analysis.lighthouseAnalysis.scores?.bestPractices || 0}/100  
+**Performance**: ${analysis.lighthouseAnalysis.scores?.performance || 0}/100
+**Accessibility**: ${analysis.lighthouseAnalysis.scores?.accessibility || 0}/100
+**Best Practices**: ${analysis.lighthouseAnalysis.scores?.bestPractices || 0}/100
 **SEO**: ${analysis.lighthouseAnalysis.scores?.seo || 0}/100
 ` : 'Performance metrics not available'}
 
 ---
 
-**Report Generated**: ${new Date().toLocaleString()}  
+**Report Generated**: ${new Date().toLocaleString()}
 **Powered by**: Zero Barriers Growth Accelerator
 `;
 
@@ -112,7 +111,7 @@ ${analysis.lighthouseAnalysis ? `
  */
 export function exportAsHTML(analysis: any): string {
   const date = new Date(analysis.timestamp || Date.now()).toLocaleDateString();
-  
+
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -149,7 +148,7 @@ export function exportAsHTML(analysis: any): string {
 </head>
 <body>
   <h1>Website Analysis Report</h1>
-  
+
   <div class="metadata">
     <p><strong>URL:</strong> ${analysis.url}</p>
     <p><strong>Analysis Date:</strong> ${date}</p>
@@ -160,7 +159,7 @@ export function exportAsHTML(analysis: any): string {
   <p>${analysis.executiveSummary || 'No summary available'}</p>
 
   <h2>Golden Circle Analysis</h2>
-  
+
   <h3>WHY (Purpose & Belief) - ${analysis.goldenCircle?.why?.score || 0}/10</h3>
   <p><strong>Current State:</strong> ${analysis.goldenCircle?.why?.currentState || 'Not available'}</p>
   <div class="recommendations">
@@ -277,13 +276,13 @@ export function downloadHTML(analysis: any) {
  */
 export function exportAsPDF(analysis: any) {
   const html = exportAsHTML(analysis);
-  
+
   // Open in new window and trigger print
   const printWindow = window.open('', '_blank');
   if (printWindow) {
     printWindow.document.write(html);
     printWindow.document.close();
-    
+
     // Wait for content to load, then print
     printWindow.onload = () => {
       setTimeout(() => {
@@ -301,11 +300,11 @@ export function emailReport(analysis: any, recipientEmail: string = '') {
   const markdown = exportAsMarkdown(analysis);
   const subject = encodeURIComponent(`Website Analysis Report - ${analysis.url}`);
   const body = encodeURIComponent(markdown);
-  
+
   // Note: Email clients have body length limits (~2000 chars)
   // For long reports, attach the file instead
   const mailtoLink = `mailto:${recipientEmail}?subject=${subject}&body=${body.substring(0, 2000)}...`;
-  
+
   window.location.href = mailtoLink;
 }
 
@@ -314,7 +313,7 @@ export function emailReport(analysis: any, recipientEmail: string = '') {
  */
 export async function copyToClipboard(analysis: any, format: 'markdown' | 'html' = 'markdown') {
   const content = format === 'markdown' ? exportAsMarkdown(analysis) : exportAsHTML(analysis);
-  
+
   try {
     await navigator.clipboard.writeText(content);
     return true;

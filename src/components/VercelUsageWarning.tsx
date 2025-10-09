@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { getUsageDashboardData, initializeUsageTracking } from '@/lib/vercel-usage-monitor';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
+import { getUsageDashboardData, initializeUsageTracking } from '@/lib/vercel-usage-monitor';
 import { AlertTriangle, TrendingUp } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 /**
  * Component that shows Vercel usage warnings
@@ -15,7 +15,7 @@ export function VercelUsageWarning() {
   useEffect(() => {
     // Initialize tracking on mount
     initializeUsageTracking();
-    
+
     // Get current usage
     const data = getUsageDashboardData();
     setUsageData(data);
@@ -37,7 +37,7 @@ export function VercelUsageWarning() {
                 {warning}
               </div>
             ))}
-            
+
             <div className="mt-4 space-y-2">
               {usageData.bandwidth.percentage > 50 && (
                 <div>
@@ -45,20 +45,20 @@ export function VercelUsageWarning() {
                     <span>Bandwidth</span>
                     <span>{usageData.bandwidth.percentage.toFixed(0)}%</span>
                   </div>
-                  <Progress 
-                    value={usageData.bandwidth.percentage} 
+                  <Progress
+                    value={usageData.bandwidth.percentage}
                     className={usageData.bandwidth.status === 'critical' ? 'bg-red-200' : 'bg-orange-200'}
                   />
                 </div>
               )}
-              
+
               {usageData.functions.percentage > 50 && (
                 <div>
                   <div className="flex justify-between text-xs mb-1">
                     <span>Function Hours</span>
                     <span>{usageData.functions.percentage.toFixed(0)}%</span>
                   </div>
-                  <Progress 
+                  <Progress
                     value={usageData.functions.percentage}
                     className={usageData.functions.status === 'critical' ? 'bg-red-200' : 'bg-orange-200'}
                   />
@@ -68,7 +68,7 @@ export function VercelUsageWarning() {
 
             <p className="mt-3 text-xs">
               View detailed usage in your{' '}
-              <a 
+              <a
                 href="https://vercel.com/shayne-roys-projects/zero-barriers-growth-accelerator-2.0/analytics"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -167,7 +167,7 @@ export function VercelUsageDashboard() {
       <div className="pt-4 border-t">
         <p className="text-xs text-muted-foreground">
           This is an estimate based on local tracking.{' '}
-          <a 
+          <a
             href="https://vercel.com/shayne-roys-projects/zero-barriers-growth-accelerator-2.0/analytics"
             target="_blank"
             rel="noopener noreferrer"

@@ -53,7 +53,9 @@ export function Header() {
                 </Button>
               </div>
             )}
-            <MobileNav />
+            <div className="md:hidden">
+              <MobileNav />
+            </div>
           </nav>
         </div>
       </div>

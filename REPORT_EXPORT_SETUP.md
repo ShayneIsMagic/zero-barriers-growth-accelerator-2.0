@@ -129,7 +129,7 @@ export function WebsiteAnalysisResults({ analysis }) {
   return (
     <div>
       {/* Your existing results display */}
-      
+
       {/* Add export buttons */}
       <div className="mt-6 border-t pt-6">
         <h3 className="text-lg font-semibold mb-4">Export Report</h3>
@@ -151,7 +151,7 @@ export default function Dashboard() {
   return (
     <div>
       {/* Your dashboard content */}
-      
+
       {/* Usage warning (appears when approaching limits) */}
       <VercelUsageWarning />
     </div>
@@ -169,7 +169,7 @@ export default function AdminPanel() {
   return (
     <div>
       <h1>Admin Dashboard</h1>
-      
+
       {/* Shows usage stats */}
       <VercelUsageDashboard />
     </div>
@@ -213,22 +213,22 @@ export function saveTemporaryReport(analysis: any) {
     analysis,
     expiresAt: Date.now() + STORAGE_DURATION
   };
-  
+
   localStorage.setItem(`temp_report_${analysis.id}`, JSON.stringify(data));
 }
 
 export function getTemporaryReport(id: string) {
   const stored = localStorage.getItem(`temp_report_${id}`);
   if (!stored) return null;
-  
+
   const data = JSON.parse(stored);
-  
+
   // Check if expired
   if (Date.now() > data.expiresAt) {
     localStorage.removeItem(`temp_report_${id}`);
     return null;
   }
-  
+
   return data.analysis;
 }
 

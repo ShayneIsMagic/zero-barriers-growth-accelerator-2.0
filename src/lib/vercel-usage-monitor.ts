@@ -71,7 +71,7 @@ export function trackAnalysis(estimatedDuration: number = 180) {
   if (typeof window === 'undefined') return;
 
   const usage = getUsageTracking();
-  
+
   // Estimate function hours (duration in seconds / 3600)
   const hours = estimatedDuration / 3600;
   usage.functions.hours += hours;
@@ -124,7 +124,7 @@ export function trackBuild(durationMinutes: number = 1) {
  */
 export function resetUsageTracking() {
   if (typeof window === 'undefined') return;
-  
+
   localStorage.setItem('vercel_usage_tracking', JSON.stringify(getEmptyUsage()));
 }
 
@@ -225,7 +225,7 @@ function formatBytes(bytes: number): string {
  */
 export function getUsageDashboardData() {
   const usage = getUsageTracking();
-  
+
   return {
     bandwidth: {
       used: formatBytes(usage.bandwidth.used),
@@ -272,7 +272,7 @@ export function initializeUsageTracking() {
   const lastReset = localStorage.getItem('usage_last_reset');
   const now = new Date();
   const currentMonth = `${now.getFullYear()}-${now.getMonth()}`;
-  
+
   if (lastReset !== currentMonth) {
     resetUsageTracking();
     localStorage.setItem('usage_last_reset', currentMonth);
