@@ -52,7 +52,7 @@ Provides:
   - Technical SEO
   - Core Web Vitals
   - Index status
-  
+
 You Have: ❌ NO (needs OAuth)
 Priority: HIGH
 Effort: 2-3 hours setup
@@ -66,7 +66,7 @@ Provides:
   - Accessibility audit
   - SEO technical audit
   - Best practices
-  
+
 You Have: ✅ YES (working)
 Priority: KEEP
 Effort: 0 (already integrated)
@@ -80,7 +80,7 @@ Provides:
   - Related queries
   - Regional interest
   - Seasonality
-  
+
 You Have: ✅ YES (in Comprehensive/SEO only)
 Priority: KEEP
 Effort: 0 (already integrated)
