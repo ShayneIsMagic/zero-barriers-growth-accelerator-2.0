@@ -222,7 +222,7 @@ logger.error('Analysis failed', { error, url });
 → Cleaner production code
 ```
 
-**Total Time**: 1 hour  
+**Total Time**: 1 hour
 **Impact**: Know exactly what's happening
 
 ---
@@ -231,9 +231,9 @@ logger.error('Analysis failed', { error, url });
 
 ### **Current Implementation**: ✅ **Correct**
 
-**Token Type**: JWT (JSON Web Tokens)  
-**Storage**: localStorage (browser)  
-**Expiration**: 7 days  
+**Token Type**: JWT (JSON Web Tokens)
+**Storage**: localStorage (browser)
+**Expiration**: 7 days
 **Security**: Signed with NEXTAUTH_SECRET
 
 **Flow**:

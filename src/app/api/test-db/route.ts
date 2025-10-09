@@ -1,31 +1,31 @@
-import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
     // Test 1: Check if DATABASE_URL is configured
     const hasDbUrl = !!process.env.DATABASE_URL;
-    
+
     // Test 2: Try to connect
     await prisma.$connect();
-    
+
     // Test 3: Count users
     const userCount = await prisma.user.count();
-    
+
     // Test 4: Get sample user (without password)
     const users = await prisma.user.findMany({
       select: { id: true, email: true, name: true, role: true },
       take: 3
     });
-    
+
     // Test 5: Check if specific user exists
     const adminUser = await prisma.user.findUnique({
       where: { email: 'shayne+1@devpipeline.com' },
       select: { email: true, role: true, createdAt: true }
     });
-    
+
     await prisma.$disconnect();
-    
+
     return NextResponse.json({
       status: 'SUCCESS',
       tests: {
