@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { DemoAuthService } from '@/lib/demo-auth';
+import { prisma } from '@/lib/prisma';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'fallback-secret-key-change-in-production';
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,15 +14,38 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email, password, and name are required' }, { status: 400 });
     }
 
-    // For demo purposes, create a new demo user
-    const user = await DemoAuthService.signUp(email, password, name);
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() }
+    });
     
-    if (!user) {
+    if (existingUser) {
       return NextResponse.json({ error: 'User already exists' }, { status: 409 });
     }
 
-    // In a real app, you'd generate a JWT token here
-    const token = 'demo-token-' + Date.now();
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user in database
+    const user = await prisma.user.create({
+      data: {
+        email: email.toLowerCase(),
+        password: hashedPassword,
+        name,
+        role: 'USER', // Default role for new signups
+      }
+    });
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { 
+        userId: user.id, 
+        email: user.email,
+        role: user.role 
+      },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
 
     return NextResponse.json({
       user: {

@@ -10,7 +10,7 @@
 export function exportAsMarkdown(analysis: any): string {
   const date = new Date(analysis.timestamp || Date.now()).toLocaleDateString();
 
-  let markdown = `# Website Analysis Report
+  const markdown = `# Website Analysis Report
 
 **URL**: ${analysis.url}
 **Date**: ${date}

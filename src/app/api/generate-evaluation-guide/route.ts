@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
 
 function convertMarkdownToHTML(markdown: string): string {
   // Basic markdown to HTML conversion for better formatting
-  let html = markdown
+  const html = markdown
     // Headers
     .replace(/^# (.*$)/gim, '<h1>$1</h1>')
     .replace(/^## (.*$)/gim, '<h2>$1</h2>')

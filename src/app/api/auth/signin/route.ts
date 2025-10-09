@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { DemoAuthService } from '@/lib/demo-auth';
+import { prisma } from '@/lib/prisma';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'fallback-secret-key-change-in-production';
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,15 +14,32 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
     }
 
-    // For demo purposes, authenticate with demo user
-    const user = await DemoAuthService.signIn(email, password);
+    // Find user in database
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() }
+    });
     
-    if (!user) {
+    if (!user || !user.password) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    // In a real app, you'd generate a JWT token here
-    const token = 'demo-token-' + Date.now();
+    // Verify password
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    
+    if (!isValidPassword) {
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { 
+        userId: user.id, 
+        email: user.email,
+        role: user.role 
+      },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
 
     return NextResponse.json({
       user: {

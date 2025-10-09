@@ -199,7 +199,7 @@ export class ProductionContentExtractor {
     const metaDescription = metaMatch?.[1]?.trim() || '';
 
     // Remove script and style tags
-    let cleanHtml = html
+    const cleanHtml = html
       .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
       .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
       .replace(/<noscript[^>]*>[\s\S]*?<\/noscript>/gi, '');
