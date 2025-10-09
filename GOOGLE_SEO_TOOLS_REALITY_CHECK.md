@@ -129,7 +129,7 @@ File: None
 
 #### **8. Google Alerts** ❌
 ```
-Status: NOT INTEGRATED  
+Status: NOT INTEGRATED
 Reason: Out of scope for website analysis
 File: None
 ```
@@ -180,7 +180,7 @@ File: None
 SEO Tools:
   ✅ Lighthouse SEO score
   ❌ NO Google Trends
-  ❌ NO Keywords  
+  ❌ NO Keywords
   ❌ NO Competitor analysis
   ❌ NO Search Console
 ```
@@ -346,10 +346,10 @@ Get: SEO-focused with Trends
 
 ## 📊 FINAL SCORECARD
 
-**Google SEO Tools**: 2/8 (25%)  
-**Keywords & Trends**: ⚠️ Partial (Trends yes, volume no)  
-**Competitor Analysis**: ❌ Not implemented  
-**WHY Statements**: ✅ Working (100%)  
+**Google SEO Tools**: 2/8 (25%)
+**Keywords & Trends**: ⚠️ Partial (Trends yes, volume no)
+**Competitor Analysis**: ❌ Not implemented
+**WHY Statements**: ✅ Working (100%)
 **Industry Analysis**: ✅ Working (100%)
 
 **Overall SEO Capability**: 40%
