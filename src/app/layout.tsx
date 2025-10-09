@@ -5,6 +5,7 @@ import { Providers } from '@/components/providers';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/toaster';
+import { DevToolsInitializer } from '@/components/DevToolsInitializer';
 // import ErrorBoundary from '@/components/ErrorBoundary'; // Temporarily disabled
 
 const inter = Inter({ subsets: ['latin'] });
@@ -85,6 +86,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
+        <DevToolsInitializer />
         <Providers>
           <div className="min-h-screen bg-background">
             <Header />

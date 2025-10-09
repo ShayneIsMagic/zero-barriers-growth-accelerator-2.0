@@ -67,7 +67,7 @@
 $ git clone https://github.com/ShayneIsMagic/zero-barriers-growth-accelerator-2.0.git
 $ cd zero-barriers-growth-accelerator-2.0
 $ npm install
-$ echo 'GEMINI_API_KEY="AIzaSyDxBz2deQ52qX4pnF9XWVbF2MuTLVb0vDw"' > .env.local
+$ echo 'GEMINI_API_KEY="your-gemini-api-key-here"' > .env.local
 $ npm run dev
 → Open http://localhost:3000/dashboard
 

@@ -94,7 +94,7 @@ npm install
 # Create .env.local
 cat > .env.local << 'EOF'
 # AI Service Configuration
-GEMINI_API_KEY="AIzaSyDxBz2deQ52qX4pnF9XWVbF2MuTLVb0vDw"
+GEMINI_API_KEY="your-gemini-api-key-here"
 
 # Auth (change for production)
 NEXTAUTH_SECRET="change-this-in-production"
@@ -357,8 +357,8 @@ npm run dev
 
 ---
 
-**Deployed**: October 8, 2025  
-**Version**: 2.0  
-**Status**: ✅ Production Ready  
-**Repository**: [zero-barriers-growth-accelerator-2.0](https://github.com/ShayneIsMagic/zero-barriers-growth-accelerator-2.0)  
+**Deployed**: October 8, 2025
+**Version**: 2.0
+**Status**: ✅ Production Ready
+**Repository**: [zero-barriers-growth-accelerator-2.0](https://github.com/ShayneIsMagic/zero-barriers-growth-accelerator-2.0)
 

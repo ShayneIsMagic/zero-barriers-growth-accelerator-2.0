@@ -56,7 +56,20 @@ logs
 # Prisma
 prisma/*.db
 prisma/*.db-journal
+*.db
+*.db-journal
 
 # Reports
 reports/*.json
 !reports/.gitkeep
+
+# Lighthouse reports (may contain sensitive info)
+lighthouse-report.*
+lint-results.txt
+
+# Additional security
+*.pem
+*.key
+*secret*
+!*secret*.example
+!*secret*.md

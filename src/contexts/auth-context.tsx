@@ -1,9 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@/lib/auth';
-import { DemoAuthService, DemoUser } from '@/lib/demo-auth';
-import { TestAuthService } from '@/lib/test-auth';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 interface AuthContextType {
   user: User | null;
@@ -26,13 +24,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkAuth = async () => {
     try {
-      // Use test auth service for immediate testing
-      const user = await TestAuthService.getCurrentUser();
-      if (user) {
-        setUser(user as User);
+      // Check for JWT token in localStorage
+      const token = localStorage.getItem('auth_token');
+      if (token) {
+        // Verify token with API
+        const response = await fetch('/api/auth/me', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData.user);
+        } else {
+          // Invalid token, clear it
+          localStorage.removeItem('auth_token');
+        }
       }
     } catch (error) {
       console.error('Auth check failed:', error);
+      localStorage.removeItem('auth_token');
     } finally {
       setLoading(false);
     }
@@ -40,10 +52,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string): Promise<boolean> => {
     try {
-      // Use test auth service for immediate testing
-      const user = await TestAuthService.signIn(email, password);
-      if (user) {
-        setUser(user as User);
+      // Real authentication with API
+      const response = await fetch('/api/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.user);
+        // Store JWT token
+        localStorage.setItem('auth_token', data.token);
         return true;
       }
       return false;
@@ -59,10 +81,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     name: string
   ): Promise<boolean> => {
     try {
-      // Use demo auth service for static deployment
-      const user = await DemoAuthService.signUp(email, password, name);
-      if (user) {
-        setUser(user as User);
+      // Real signup with API
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password, name })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.user);
+        // Store JWT token
+        localStorage.setItem('auth_token', data.token);
         return true;
       }
       return false;
@@ -74,8 +106,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      // Use test auth service for immediate testing
-      await TestAuthService.signOut();
+      // Clear token and user
+      localStorage.removeItem('auth_token');
       setUser(null);
     } catch (error) {
       console.error('Signout error:', error);

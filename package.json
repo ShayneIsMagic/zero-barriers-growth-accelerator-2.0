@@ -9,6 +9,8 @@
     "build:static": "node scripts/prepare-static.js && BUILD_STATIC=true next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "eslint --fix src/",
+    "lint:check": "eslint src/",
     "test": "NODE_ENV=test vitest",
     "test:watch": "NODE_ENV=test vitest --watch",
     "test:ui": "NODE_ENV=test vitest --ui",
@@ -38,7 +40,9 @@
     "qa:isolation": "node scripts/qa/test-component-isolation.js",
     "qa:all": "npm run qa:components && npm run qa:api && npm run qa:isolation",
     "test:trends": "node scripts/test-google-trends.js",
-    "test:google-analysis": "node scripts/test-comprehensive-google-analysis.js"
+    "test:google-analysis": "node scripts/test-comprehensive-google-analysis.js",
+    "test:routes": "node scripts/test-all-routes.js",
+    "setup:users": "node scripts/setup-production-users.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.63.0",
@@ -96,6 +100,7 @@
     "@types/react-dom": "^18",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^5.0.4",
     "autoprefixer": "^10.0.1",
     "axios": "^1.12.2",
     "cheerio": "^1.1.2",
