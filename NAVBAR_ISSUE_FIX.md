@@ -134,7 +134,7 @@ Let me implement the simple fix right now:
 
 ---
 
-**Should I implement Option 1 (wrap MobileNav to hide on desktop)?** 
+**Should I implement Option 1 (wrap MobileNav to hide on desktop)?**
 
 Or tell me which scenario (A, B, or C) matches what you're seeing and I'll fix it accordingly!
 
