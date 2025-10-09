@@ -11,7 +11,7 @@ Users exist locally, but login fails on Vercel.
 
 ### Possible Causes:
 1. ❌ Vercel doesn't have DATABASE_URL environment variable
-2. ❌ Vercel's DATABASE_URL points to wrong database  
+2. ❌ Vercel's DATABASE_URL points to wrong database
 3. ❌ Vercel's deployment is using old code
 4. ❌ Users don't exist in Supabase (connection issues)
 
