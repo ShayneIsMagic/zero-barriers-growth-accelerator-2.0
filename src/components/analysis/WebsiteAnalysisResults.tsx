@@ -1,25 +1,25 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
 import { WebsiteAnalysisResult } from '@/types/analysis';
-import { LighthouseAnalysisResults } from './LighthouseAnalysisResults';
-import { 
-  Target, 
-  TrendingUp, 
-  Users, 
-  Lightbulb, 
-  Share2, 
-  Download,
-  Gauge,
-  ExternalLink,
-  CheckCircle,
-  XCircle,
-  AlertCircle
+import {
+    AlertCircle,
+    CheckCircle,
+    Download,
+    ExternalLink,
+    Gauge,
+    Lightbulb,
+    Share2,
+    Target,
+    TrendingUp,
+    Users,
+    XCircle
 } from 'lucide-react';
+import { LighthouseAnalysisResults } from './LighthouseAnalysisResults';
 
 interface WebsiteAnalysisResultsProps {
   result: WebsiteAnalysisResult;
@@ -76,8 +76,8 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
             <div className="flex-1">
               <Progress value={result.overallScore * 10} className="h-3" />
               <p className="text-sm text-gray-600 mt-2">
-                {result.overallScore >= 8 ? 'Excellent' : 
-                 result.overallScore >= 6 ? 'Good' : 
+                {result.overallScore >= 8 ? 'Excellent' :
+                 result.overallScore >= 6 ? 'Good' :
                  result.overallScore >= 4 ? 'Needs Improvement' : 'Critical Issues'}
               </p>
             </div>
@@ -181,7 +181,7 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
                 </div>
                 <div className="space-y-3">
                   <p className="text-sm text-gray-600">{result.goldenCircle?.who?.currentState || 'No current state available'}</p>
-                  
+
                   <div>
                     <h5 className="text-sm font-medium text-blue-600 mb-1">Target Audiences:</h5>
                     <ul className="text-sm space-y-1">
