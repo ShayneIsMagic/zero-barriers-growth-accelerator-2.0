@@ -234,7 +234,7 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {Object.entries(result.elementsOfValue).filter(([key]) => key !== 'overallScore').map(([category, data]: [string, any]) => (
+              {result.elementsOfValue && Object.entries(result.elementsOfValue).filter(([key]) => key !== 'overallScore' && key !== 'insights').map(([category, data]: [string, any]) => (
                 <div key={category} className="border rounded-lg p-4">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="font-medium capitalize">{category.replace(/([A-Z])/g, ' $1')}</h4>
@@ -243,7 +243,7 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
                     </Badge>
                   </div>
                   <div className="grid grid-cols-2 gap-4 text-sm">
-                    {Object.entries(data.elements).map(([element, value]: [string, any]) => (
+                    {data.elements && Object.entries(data.elements).map(([element, value]: [string, any]) => (
                       <div key={element} className="flex items-center gap-2">
                         {value ? <CheckCircle className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-red-500" />}
                         <span className="capitalize">{element.replace(/([A-Z])/g, ' $1')}</span>
@@ -291,7 +291,7 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
                     </Badge>
                   </div>
                   <div className="grid grid-cols-2 gap-4 text-sm">
-                    {Object.entries(data.elements).map(([element, value]: [string, any]) => (
+                    {data.elements && Object.entries(data.elements).map(([element, value]: [string, any]) => (
                       <div key={element} className="flex items-center gap-2">
                         {value ? <CheckCircle className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-red-500" />}
                         <span className="capitalize">{element.replace(/([A-Z])/g, ' $1')}</span>
@@ -335,7 +335,7 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {Object.entries(result.cliftonStrengths).filter(([key]) => key !== 'overallScore').map(([domain, data]: [string, any]) => (
+              {result.cliftonStrengths && Object.entries(result.cliftonStrengths).filter(([key]) => key !== 'overallScore' && key !== 'insights' && key !== 'recommendations' && key !== 'topThemes').map(([domain, data]: [string, any]) => (
                 <div key={domain} className="border rounded-lg p-4">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="font-medium capitalize">{domain.replace(/([A-Z])/g, ' $1')}</h4>
