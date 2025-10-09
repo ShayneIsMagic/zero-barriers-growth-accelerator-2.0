@@ -61,7 +61,7 @@ Analysis Frameworks:
 
 **Authentication (3):**
 - ✅ POST /api/auth/signin
-- ✅ POST /api/auth/signup  
+- ✅ POST /api/auth/signup
 - ✅ GET  /api/auth/me
 
 **Analysis (9):**
@@ -100,7 +100,7 @@ Analysis Frameworks:
 
 ### **Authentication Flow:**
 ```
-LoginPage → AuthContext.signIn() 
+LoginPage → AuthContext.signIn()
   → POST /api/auth/signin
   → Prisma finds user
   → bcrypt verifies password
