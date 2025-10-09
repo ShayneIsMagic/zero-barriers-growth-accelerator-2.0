@@ -216,14 +216,14 @@ export async function POST(request: NextRequest) {
   (async () => {
     try {
       const { url } = await request.json();
-      
+
       // Assessment 1: Golden Circle
       writer.write(encoder.encode(`data: ${JSON.stringify({
         type: 'status',
         assessment: 'golden-circle',
         status: 'running'
       })}\n\n`));
-      
+
       const goldenCircle = await analyzeGoldenCircle(url);
       writer.write(encoder.encode(`data: ${JSON.stringify({
         type: 'result',
@@ -231,14 +231,14 @@ export async function POST(request: NextRequest) {
         status: 'complete',
         data: goldenCircle
       })}\n\n`));
-      
+
       // Assessment 2: Elements of Value
       writer.write(encoder.encode(`data: ${JSON.stringify({
         type: 'status',
         assessment: 'elements-value',
         status: 'running'
       })}\n\n`));
-      
+
       const elements = await analyzeElementsOfValue(url);
       writer.write(encoder.encode(`data: ${JSON.stringify({
         type: 'result',
@@ -246,9 +246,9 @@ export async function POST(request: NextRequest) {
         status: 'complete',
         data: elements
       })}\n\n`));
-      
+
       // ... continue for all assessments
-      
+
     } finally {
       writer.close();
     }
@@ -282,10 +282,10 @@ export function ProgressiveAnalysisPage() {
 
   const startAnalysis = async (url: string) => {
     const eventSource = new EventSource(`/api/analyze/progressive?url=${url}`);
-    
+
     eventSource.onmessage = (event) => {
       const update = JSON.parse(event.data);
-      
+
       setAssessments(prev => ({
         ...prev,
         [update.assessment]: {
@@ -293,7 +293,7 @@ export function ProgressiveAnalysisPage() {
           data: update.data
         }
       }));
-      
+
       // If complete, user can immediately view that section!
     };
   };
@@ -304,16 +304,16 @@ export function ProgressiveAnalysisPage() {
       {assessments.goldenCircle.status === 'complete' && (
         <GoldenCircleCard data={assessments.goldenCircle.data} />
       )}
-      
+
       {assessments.elementsValue.status === 'complete' && (
         <ElementsValueCard data={assessments.elementsValue.data} />
       )}
-      
+
       {/* Show "In Progress" for running */}
       {assessments.b2bElements.status === 'running' && (
         <LoadingCard title="B2B Elements" message="Analyzing..." />
       )}
-      
+
       {/* Show "Pending" for queued */}
       {assessments.cliftonStrengths.status === 'pending' && (
         <PendingCard title="CliftonStrengths" position={4} />
@@ -340,21 +340,21 @@ Assessment 1: Golden Circle
   Status: ✅ COMPLETE (0:30)
   Score: 8.0/10
   [View Results] [Download PDF]
-  
+
 Assessment 2: Elements of Value
   Status: ✅ COMPLETE (1:00)
   Score: 5.8/10
   [View Results] [Download PDF]
-  
+
 Assessment 3: B2B Elements
   Status: ⏳ RUNNING... (1:30)
   Progress: ████████░░░░ 60%
   Est: 15 sec remaining
-  
-Assessment 4: CliftonStrengths  
+
+Assessment 4: CliftonStrengths
   Status: ⏸️ WAITING (position 4 of 5)
   Est Start: 30 seconds
-  
+
 Assessment 5: Lighthouse Performance
   Status: ⏸️ WAITING (position 5 of 5)
   Est Start: 1 minute
@@ -470,18 +470,18 @@ Assessment 5: Lighthouse Performance
 export async function POST(request: NextRequest) {
   const stream = new TransformStream();
   const writer = stream.writable.getWriter();
-  
+
   (async () => {
     // Send each assessment as it completes
     const result1 = await analyzeGoldenCircle();
     await sendUpdate(writer, 'golden-circle', result1);
-    
+
     const result2 = await analyzeElements();
     await sendUpdate(writer, 'elements', result2);
-    
+
     // etc...
   })();
-  
+
   return new Response(stream.readable, {
     headers: { 'Content-Type': 'text/event-stream' }
   });
@@ -494,7 +494,7 @@ const eventSource = new EventSource('/api/analyze/stream');
 
 eventSource.onmessage = (event) => {
   const { assessment, data } = JSON.parse(event.data);
-  
+
   // Update state immediately - UI re-renders
   setAssessments(prev => ({
     ...prev,
@@ -579,8 +579,8 @@ const renderAssessment = (stepId: string, step: StepResult) => {
 
 ## ✅ **CURRENT STATUS**
 
-**Login**: ✅ **FIXED!** Users created in Supabase  
-**Demo Data**: ✅ **REMOVED** - No demo data anywhere  
+**Login**: ✅ **FIXED!** Users created in Supabase
+**Demo Data**: ✅ **REMOVED** - No demo data anywhere
 **Progressive Rendering**: ⚠️ **Partial** - Shows progress, but waits for all
 
 **Next Step**: Test login, then implement progressive results viewing (30 min)

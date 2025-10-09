@@ -28,12 +28,12 @@ Run this query in **Supabase SQL Editor**:
 ```sql
 -- Go to: https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/sql/new
 
-SELECT id, email, name, role, "createdAt" 
-FROM "User" 
+SELECT id, email, name, role, "createdAt"
+FROM "User"
 ORDER BY "createdAt" DESC;
 ```
 
-**Expected**: 3 users  
+**Expected**: 3 users
 **If 0 users**: Script failed silently
 
 ---
@@ -67,8 +67,8 @@ SELECT COUNT(*) as user_count FROM "User";
 
 -- If 0, create them manually:
 INSERT INTO "User" (id, email, password, name, role, "createdAt", "updatedAt")
-VALUES 
-  (gen_random_uuid()::text, 'shayne+1@devpipeline.com', 
+VALUES
+  (gen_random_uuid()::text, 'shayne+1@devpipeline.com',
    '$2a$12$oc1QpcAe/.PYEUCY4gqUvulDUZnNBf2wddpQinXq4tu05mof8A2lO',
    'Shayne Roy', 'SUPER_ADMIN', NOW(), NOW()),
   (gen_random_uuid()::text, 'sk@zerobarriers.io',
@@ -115,7 +115,7 @@ SELECT email, role FROM "User";
 
 ---
 
-**IMMEDIATE ACTION**: 
+**IMMEDIATE ACTION**:
 1. Check Supabase User table (should have 3 users)
 2. Add DATABASE_URL to Vercel if missing
 3. Redeploy
