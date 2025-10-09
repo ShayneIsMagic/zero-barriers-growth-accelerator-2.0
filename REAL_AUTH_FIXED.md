@@ -1,6 +1,6 @@
 # 🔐 Real Authentication Fixed!
 
-**Date**: October 9, 2025  
+**Date**: October 9, 2025
 **Status**: ✅ **FIXED - Login Now Works with Real Database**
 
 ---
@@ -179,12 +179,12 @@ npm install jsonwebtoken @types/jsonwebtoken
 - **Role**: SUPER_ADMIN
 
 ### Regular Users:
-1. **Email**: sk@zerobarriers.io  
-   **Password**: ZBuser123!  
+1. **Email**: sk@zerobarriers.io
+   **Password**: ZBuser123!
    **Role**: USER
 
-2. **Email**: shayne+2@devpipeline.com  
-   **Password**: ZBuser2123!  
+2. **Email**: shayne+2@devpipeline.com
+   **Password**: ZBuser2123!
    **Role**: USER
 
 ---
