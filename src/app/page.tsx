@@ -1,8 +1,7 @@
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Zap, Target, Users, BarChart3, Shield } from 'lucide-react';
+import { ArrowRight, BarChart3, Shield, Target, Users, Zap } from 'lucide-react';
+import Link from 'next/link';
 
 export default function HomePage() {
   return (
@@ -18,7 +17,7 @@ export default function HomePage() {
             </span>
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-            AI-powered marketing optimization platform that systematically analyzes content 
+            AI-powered marketing optimization platform that systematically analyzes content
             to identify growth barriers and provide actionable recommendations.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -164,7 +163,7 @@ export default function HomePage() {
             Ready to Accelerate Your Growth?
           </h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Get comprehensive analysis reports with actionable recommendations 
+            Get comprehensive analysis reports with actionable recommendations
             to eliminate growth barriers and optimize your marketing strategy.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
