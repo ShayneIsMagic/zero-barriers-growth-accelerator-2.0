@@ -256,12 +256,12 @@ export class ThreePhaseAnalyzer {
   // Helper methods for data collection
   private async scrapeWebsiteContent(): Promise<ProductionExtractionResult> {
     console.log(`📊 Step 1: Gathering website content and meta tags...`);
-    
+
     try {
       // Use reliable Puppeteer-based scraper
       const { scrapeWebsiteContent } = await import('./reliable-content-scraper');
       const scrapedData = await scrapeWebsiteContent(this.url);
-      
+
       // Convert to ProductionExtractionResult format
       return {
         content: scrapedData.cleanText,
@@ -270,8 +270,8 @@ export class ThreePhaseAnalyzer {
         wordCount: scrapedData.wordCount,
         imageCount: scrapedData.imageCount,
         linkCount: scrapedData.linkCount,
-        headingCount: (scrapedData.headings?.h1?.length || 0) + 
-                     (scrapedData.headings?.h2?.length || 0) + 
+        headingCount: (scrapedData.headings?.h1?.length || 0) +
+                     (scrapedData.headings?.h2?.length || 0) +
                      (scrapedData.headings?.h3?.length || 0),
         paragraphCount: Math.floor(scrapedData.wordCount / 50),
         listCount: 0,
@@ -297,7 +297,7 @@ export class ThreePhaseAnalyzer {
         ogDescription: scrapedData.ogDescription,
         schemaTypes: scrapedData.schemaTypes
       } as any;
-      
+
     } catch (error) {
       console.error('❌ Content scraping failed:', error);
       throw new Error(`Failed to gather website content: ${error instanceof Error ? error.message : 'Unknown error'}`);

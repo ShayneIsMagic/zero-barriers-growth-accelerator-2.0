@@ -124,23 +124,23 @@ npm install puppeteer
 import puppeteer from 'puppeteer';
 
 async function scrapeWithPuppeteer(url: string) {
-  const browser = await puppeteer.launch({ 
+  const browser = await puppeteer.launch({
     headless: true,
     args: ['--no-sandbox']
   });
-  
+
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: 'networkidle0' });
-  
+
   // Get rendered content
   const content = await page.evaluate(() => document.body.innerText);
   const title = await page.title();
-  const metaDesc = await page.$eval('meta[name="description"]', 
+  const metaDesc = await page.$eval('meta[name="description"]',
     el => el.getAttribute('content')
   );
-  
+
   await browser.close();
-  
+
   return { content, title, metaDescription: metaDesc };
 }
 ```

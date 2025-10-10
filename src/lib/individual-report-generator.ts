@@ -17,31 +17,122 @@ export interface IndividualReport {
  * Phase 1: Content Collection Report
  */
 export function generateContentCollectionReport(scrapedContent: any, url: string): IndividualReport {
-  const markdown = `# Content Collection Report
+  const markdown = `# Content & SEO Data Collection Report
 
-**URL:** ${url}
-**Date:** ${new Date().toLocaleString()}
-**Phase:** 1 - Data Collection
-
----
-
-## Website Content Summary
-
-### Basic Metrics
-- **Total Words:** ${scrapedContent.wordCount || 0}
-- **Total Images:** ${scrapedContent.imageCount || 0}
-- **Total Links:** ${scrapedContent.linkCount || 0}
-
-### Page Information
-- **Title:** ${scrapedContent.title || 'Not found'}
-- **Meta Description:** ${scrapedContent.metaDescription || 'Not found'}
-
-### Content Preview
-${scrapedContent.content ? scrapedContent.content.substring(0, 500) + '...' : 'No content extracted'}
+**URL:** ${url}  
+**Date:** ${new Date().toLocaleString()}  
+**Phase:** 1 - Data Collection  
+**Purpose:** Foundation data for all AI assessments
 
 ---
 
-**Note:** This is raw data collection. AI analysis begins in Phase 2.
+## 📊 What This Report Contains
+
+This report shows ALL the raw data collected from your website. This is the foundation that every AI assessment uses. Review this first to ensure we captured accurate data.
+
+---
+
+## 🏷️ Meta Tags & SEO Information
+
+### Title Tag
+\`\`\`
+${scrapedContent.title || 'Not found'}
+\`\`\`
+**Length:** ${(scrapedContent.title || '').length} characters  
+**Optimal:** 50-60 characters  
+**Status:** ${(scrapedContent.title || '').length >= 50 && (scrapedContent.title || '').length <= 60 ? '✅ Good' : '⚠️ Needs adjustment'}
+
+### Meta Description
+\`\`\`
+${scrapedContent.metaDescription || 'Not found'}
+\`\`\`
+**Length:** ${(scrapedContent.metaDescription || '').length} characters  
+**Optimal:** 150-160 characters  
+**Status:** ${(scrapedContent.metaDescription || '').length >= 150 && (scrapedContent.metaDescription || '').length <= 160 ? '✅ Good' : '⚠️ Needs adjustment'}
+
+### Open Graph Tags (Social Sharing)
+- **OG Title:** ${scrapedContent.ogTitle || 'Not set'}
+- **OG Description:** ${scrapedContent.ogDescription || 'Not set'}
+- **OG Image:** ${scrapedContent.ogImage || 'Not set'}
+
+### Technical SEO
+- **Canonical URL:** ${scrapedContent.canonicalUrl || 'Not set'}
+- **HTTPS/SSL:** ${scrapedContent.hasSSL ? '✅ Enabled' : '❌ Not enabled'}
+- **Structured Data:** ${scrapedContent.schemaTypes?.join(', ') || 'None detected'}
+
+---
+
+## 🔑 Keywords & Rankings
+
+### Meta Keywords Tag
+${scrapedContent.metaKeywords && scrapedContent.metaKeywords.length > 0 
+  ? scrapedContent.metaKeywords.join(', ') 
+  : 'No meta keywords set'}
+
+### Extracted Keywords (What You Might Rank For)
+${scrapedContent.extractedKeywords?.slice(0, 20).join(', ') || 'None extracted'}
+
+**How We Found These:**
+- Analyzed H1 and H2 headings
+- Identified frequent terms in content
+- Filtered out common words
+- These represent your site's main topics
+
+### Topic Clusters (From H2 Headings)
+${scrapedContent.topicClusters?.map((topic: string) => `- ${topic}`).join('\n') || 'None identified'}
+
+---
+
+## 📏 Content Statistics
+
+| Metric | Count | Notes |
+|--------|-------|-------|
+| **Total Words** | ${scrapedContent.wordCount || 0} | ${scrapedContent.wordCount > 1000 ? 'Good depth' : 'Consider adding more content'} |
+| **Images** | ${scrapedContent.imageCount || 0} | Visual content |
+| **Links** | ${scrapedContent.linkCount || 0} | Internal + External |
+| **H1 Headings** | ${scrapedContent.headings?.h1?.length || 0} | Should have 1 per page |
+| **H2 Headings** | ${scrapedContent.headings?.h2?.length || 0} | Section headers |
+| **H3 Headings** | ${scrapedContent.headings?.h3?.length || 0} | Subsections |
+
+---
+
+## 📝 Headings Structure
+
+### H1 (Main Page Title)
+${scrapedContent.headings?.h1?.map((h: string) => `- ${h}`).join('\n') || '- None found'}
+
+### H2 (Section Headers)
+${scrapedContent.headings?.h2?.slice(0, 10).map((h: string) => `- ${h}`).join('\n') || '- None found'}
+
+---
+
+## 📄 Content Preview (First 1000 characters)
+
+\`\`\`
+${scrapedContent.content?.substring(0, 1000) || scrapedContent.cleanText?.substring(0, 1000) || 'No content extracted'}
+\`\`\`
+
+---
+
+## ✅ What Happens Next
+
+**Phase 2 will analyze THIS content through multiple lenses:**
+1. **Golden Circle:** Looks for Why, How, What, Who in this content
+2. **Elements of Value:** Scores value propositions found in this content
+3. **B2B Elements:** Identifies business value in this content
+4. **CliftonStrengths:** Maps personality themes in this content
+
+**All using the same data you see above.**
+
+---
+
+## 📋 Copy This Data for Your Records
+
+Use the copy buttons in the app to save:
+- Meta tags for SEO audit
+- Keywords for content strategy
+- Headings for structure analysis
+- Content sample for review
 `;
 
   return {
