@@ -19,9 +19,9 @@ export interface IndividualReport {
 export function generateContentCollectionReport(scrapedContent: any, url: string): IndividualReport {
   const markdown = `# Content & SEO Data Collection Report
 
-**URL:** ${url}  
-**Date:** ${new Date().toLocaleString()}  
-**Phase:** 1 - Data Collection  
+**URL:** ${url}
+**Date:** ${new Date().toLocaleString()}
+**Phase:** 1 - Data Collection
 **Purpose:** Foundation data for all AI assessments
 
 ---
@@ -38,16 +38,16 @@ This report shows ALL the raw data collected from your website. This is the foun
 \`\`\`
 ${scrapedContent.title || 'Not found'}
 \`\`\`
-**Length:** ${(scrapedContent.title || '').length} characters  
-**Optimal:** 50-60 characters  
+**Length:** ${(scrapedContent.title || '').length} characters
+**Optimal:** 50-60 characters
 **Status:** ${(scrapedContent.title || '').length >= 50 && (scrapedContent.title || '').length <= 60 ? '✅ Good' : '⚠️ Needs adjustment'}
 
 ### Meta Description
 \`\`\`
 ${scrapedContent.metaDescription || 'Not found'}
 \`\`\`
-**Length:** ${(scrapedContent.metaDescription || '').length} characters  
-**Optimal:** 150-160 characters  
+**Length:** ${(scrapedContent.metaDescription || '').length} characters
+**Optimal:** 150-160 characters
 **Status:** ${(scrapedContent.metaDescription || '').length >= 150 && (scrapedContent.metaDescription || '').length <= 160 ? '✅ Good' : '⚠️ Needs adjustment'}
 
 ### Open Graph Tags (Social Sharing)
@@ -65,8 +65,8 @@ ${scrapedContent.metaDescription || 'Not found'}
 ## 🔑 Keywords & Rankings
 
 ### Meta Keywords Tag
-${scrapedContent.metaKeywords && scrapedContent.metaKeywords.length > 0 
-  ? scrapedContent.metaKeywords.join(', ') 
+${scrapedContent.metaKeywords && scrapedContent.metaKeywords.length > 0
+  ? scrapedContent.metaKeywords.join(', ')
   : 'No meta keywords set'}
 
 ### Extracted Keywords (What You Might Rank For)

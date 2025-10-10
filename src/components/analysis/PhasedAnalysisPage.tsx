@@ -9,6 +9,7 @@ import { ArrowRight, CheckCircle, Loader2, Play } from 'lucide-react';
 import { useState } from 'react';
 import { IndividualReportsView } from './IndividualReportsView';
 import { GoogleToolsButtons } from './GoogleToolsButtons';
+import { ContentPreviewCard } from './ContentPreviewCard';
 
 export function PhasedAnalysisPage() {
   const [url, setUrl] = useState('');
@@ -230,13 +231,38 @@ export function PhasedAnalysisPage() {
       {/* Phase 1 Results */}
       {phase1Reports.length > 0 && (
         <>
+          {/* Content Preview - Show What Was Collected */}
+          {phase1Data?.scrapedContent && (
+            <Card className="border-2 border-blue-500">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-blue-900 dark:text-blue-100">
+                      ✅ Content Successfully Collected
+                    </CardTitle>
+                    <CardDescription>
+                      Review the content, meta tags, and keywords we extracted. This is what AI will analyze in Phase 2.
+                    </CardDescription>
+                  </div>
+                  <Badge variant="default" className="bg-blue-500">
+                    Foundation Data
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <ContentPreviewCard data={phase1Data.scrapedContent} />
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Individual Reports */}
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Phase 1: Data Collection Results</CardTitle>
+                  <CardTitle>Phase 1: Data Collection Reports</CardTitle>
                   <CardDescription>
-                    {phase1Reports.length} reports generated
+                    {phase1Reports.length} reports • Download individually or all at once
                   </CardDescription>
                 </div>
                 <Badge variant="default" className="bg-green-500">
@@ -252,9 +278,9 @@ export function PhasedAnalysisPage() {
           {/* Google Tools - Run Automatically */}
           <Card>
             <CardHeader>
-              <CardTitle>Optional: Google Tools Analysis</CardTitle>
+              <CardTitle>Optional: Additional Google Tools</CardTitle>
               <CardDescription>
-                Click buttons to automatically run Google Tools and include results in your report
+                Click buttons to run Lighthouse and Trends analysis (optional enhancements)
               </CardDescription>
             </CardHeader>
             <CardContent>
