@@ -147,7 +147,6 @@ Provide:
         where: { id: newAnalysisId },
         create: {
           id: newAnalysisId,
-          url: url,
           status: 'IN_PROGRESS',
           content: JSON.stringify({
             phase: 1,
@@ -364,7 +363,6 @@ Return structured analysis with top 5 themes and scores.`;
         where: { id: newAnalysisId },
         create: {
           id: newAnalysisId,
-          url: url,
           status: 'IN_PROGRESS',
           content: JSON.stringify({
             phase: 2,
