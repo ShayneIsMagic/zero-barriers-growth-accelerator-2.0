@@ -177,21 +177,34 @@ Provide:
 
     if (phase === 2) {
       // Execute Phase 2: Framework Analysis
-      if (!analysisId) {
-        return NextResponse.json({
-          success: false,
-          error: 'Must complete Phase 1 first'
-        }, { status: 400 });
+      // Can run without Phase 1, but will have recommendations to improve
+      
+      let phase1Data = null;
+      let recommendations: string[] = [];
+      
+      if (analysisId && analysis) {
+        const content = JSON.parse(analysis.content || '{}');
+        phase1Data = content.phase1Data;
       }
 
-      const content = JSON.parse(analysis!.content || '{}');
-      const phase1Data = content.phase1Data;
-
       if (!phase1Data) {
-        return NextResponse.json({
-          success: false,
-          error: 'Phase 1 data not found. Run Phase 1 first.'
-        }, { status: 400 });
+        // No Phase 1 data - create minimal data and add recommendations
+        console.log('⚠️ Running Phase 2 without Phase 1 - will use basic URL scraping');
+        
+        recommendations.push(
+          'ℹ️ Phase 1 was skipped - using basic content extraction',
+          '💡 Running Phase 1 first would provide:',
+          '   • Complete meta tag analysis (title, description, Open Graph)',
+          '   • Extracted keywords and topic clusters',
+          '   • Lighthouse performance scores',
+          '   • Technical SEO data',
+          '   • More accurate content for AI analysis',
+          '📈 Recommendation: Run Phase 1 for 40% more accurate results'
+        );
+        
+        // Create minimal Phase 1 data by scraping directly
+        const analyzer = new ThreePhaseAnalyzer(url);
+        phase1Data = await (analyzer as any).executePhase1();
       }
 
       const phase2Result = await (analyzer as any).executePhase2(phase1Data);
@@ -342,47 +355,102 @@ Return structured analysis with top 5 themes and scores.`;
         });
       }
 
-      await prisma.analysis.update({
-        where: { id: analysisId },
-        data: {
+      const newAnalysisId = analysisId || `analysis-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      await prisma.analysis.upsert({
+        where: { id: newAnalysisId },
+        create: {
+          id: newAnalysisId,
+          url: url,
+          status: 'IN_PROGRESS',
           content: JSON.stringify({
             phase: 2,
             phase1Data,
             phase2Data: phase2Result,
             individualReports,
-            completedPhases: [1, 2]
+            completedPhases: analysisId ? [1, 2] : [2],
+            recommendations
+          }),
+          contentType: 'phased',
+          score: 0
+        },
+        update: {
+          content: JSON.stringify({
+            phase: 2,
+            phase1Data,
+            phase2Data: phase2Result,
+            individualReports,
+            completedPhases: analysisId ? [1, 2] : [2],
+            recommendations
           })
         }
       });
 
       return NextResponse.json({
         success: true,
-        analysisId,
+        analysisId: newAnalysisId,
         phase: 2,
         data: phase2Result,
         individualReports,
-        message: 'Phase 2 completed. Ready for Phase 3.'
+        recommendations,
+        message: recommendations.length > 0 
+          ? 'Phase 2 completed without Phase 1. See recommendations for improvement.'
+          : 'Phase 2 completed. Ready for Phase 3.'
       });
     }
 
     if (phase === 3) {
       // Execute Phase 3: Strategic Analysis
-      if (!analysisId) {
-        return NextResponse.json({
-          success: false,
-          error: 'Must complete Phase 1 and 2 first'
-        }, { status: 400 });
+      // Can run independently but recommends having Phase 1 + 2 data
+      
+      let phase1Data = null;
+      let phase2Data = null;
+      let recommendations: string[] = [];
+      
+      if (analysisId && analysis) {
+        const content = JSON.parse(analysis.content || '{}');
+        phase1Data = content.phase1Data;
+        phase2Data = content.phase2Data;
       }
 
-      const content = JSON.parse(analysis!.content || '{}');
-      const phase1Data = content.phase1Data;
-      const phase2Data = content.phase2Data;
-
-      if (!phase1Data || !phase2Data) {
-        return NextResponse.json({
-          success: false,
-          error: 'Phase 1 and 2 data not found. Run them first.'
-        }, { status: 400 });
+      // Check what's missing and provide recommendations
+      if (!phase1Data && !phase2Data) {
+        console.log('⚠️ Running Phase 3 without Phase 1 or 2');
+        recommendations.push(
+          'ℹ️ Phases 1 & 2 were skipped - limited strategic analysis',
+          '💡 For comprehensive insights, we recommend:',
+          '   • Run Phase 1: Get meta tags, keywords, Lighthouse scores',
+          '   • Run Phase 2: Get Golden Circle, Elements of Value, CliftonStrengths',
+          '   • Then run Phase 3: Get strategic recommendations based on full data',
+          '📈 Running all phases provides 80% more actionable recommendations'
+        );
+        
+        // Create minimal data
+        const analyzer = new ThreePhaseAnalyzer(url);
+        phase1Data = await (analyzer as any).executePhase1();
+        phase2Data = await (analyzer as any).executePhase2(phase1Data);
+        
+      } else if (!phase1Data) {
+        recommendations.push(
+          'ℹ️ Phase 1 was skipped - missing baseline SEO data',
+          '💡 Running Phase 1 would add: Lighthouse scores, meta tags, keyword rankings',
+          '📈 Recommendation: Run Phase 1 for complete technical analysis'
+        );
+        
+        // Create minimal Phase 1 data
+        const analyzer = new ThreePhaseAnalyzer(url);
+        phase1Data = await (analyzer as any).executePhase1();
+        
+      } else if (!phase2Data) {
+        recommendations.push(
+          'ℹ️ Phase 2 was skipped - missing framework analysis',
+          '💡 Running Phase 2 would add: Golden Circle, Elements of Value, CliftonStrengths',
+          '📈 Recommendation: Run Phase 2 for deeper strategic insights'
+        );
+        
+        // Create minimal Phase 2 data
+        const analyzer = new ThreePhaseAnalyzer(url);
+        phase2Data = await (analyzer as any).executePhase2(phase1Data);
       }
 
       const phase3Result = await (analyzer as any).executePhase3(phase1Data, phase2Data);

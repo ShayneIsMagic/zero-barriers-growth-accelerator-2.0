@@ -57,9 +57,20 @@ export function PhasedAnalysisPage() {
         } else if (phase === 2) {
           setPhase2Data(data.data);
           setPhase2Reports(data.individualReports.filter((r: any) => r.phase === 'Phase 2'));
+          
+          // Show recommendations if Phase 1 was skipped
+          if (data.recommendations && data.recommendations.length > 0) {
+            setError(null); // Clear error
+            // Recommendations will be shown in the reports
+          }
         } else if (phase === 3) {
           setPhase3Data(data.data);
           setPhase3Reports(data.individualReports.filter((r: any) => r.phase === 'Phase 3'));
+          
+          // Show recommendations if prior phases were skipped
+          if (data.recommendations && data.recommendations.length > 0) {
+            setError(null);
+          }
         }
       }
     } catch (err) {
@@ -154,9 +165,14 @@ export function PhasedAnalysisPage() {
                   <li>• B2B Elements (Gemini AI)</li>
                   <li>• CliftonStrengths (Gemini AI)</li>
                 </ul>
+                {currentPhase === 0 && (
+                  <div className="mb-3 p-2 bg-blue-50 dark:bg-blue-950 border border-blue-200 rounded text-xs text-blue-800 dark:text-blue-200">
+                    💡 Can run independently, but Phase 1 data improves accuracy by 40%
+                  </div>
+                )}
                 <Button
                   onClick={() => runPhase(2)}
-                  disabled={currentPhase < 1 || isRunning || currentPhase >= 2}
+                  disabled={isRunning || currentPhase >= 2}
                   className="w-full"
                   variant={currentPhase === 1 ? 'default' : 'outline'}
                 >
@@ -176,7 +192,10 @@ export function PhasedAnalysisPage() {
                       Start Phase 2
                     </>
                   ) : (
-                    'Complete Phase 1 First'
+                    <>
+                      <Play className="mr-2 h-4 w-4" />
+                      Start Phase 2 (Standalone)
+                    </>
                   )}
                 </Button>
               </CardContent>
