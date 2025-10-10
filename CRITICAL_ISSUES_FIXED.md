@@ -1,6 +1,6 @@
 # ✅ CRITICAL ISSUES FIXED
 
-**Date**: 2025-10-09  
+**Date**: 2025-10-09
 **Deployment**: Pushed to GitHub → Auto-deploying to Vercel
 
 ---
@@ -244,7 +244,7 @@ model Analysis {
   status      AnalysisStatus @default(PENDING)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
   user User? @relation(fields: [userId], references: [id])
 }
 
@@ -263,10 +263,10 @@ enum AnalysisStatus {
 setInterval(async () => {
   const response = await fetch(`/api/analyze/progressive/status?id=${analysisId}`);
   const data = await response.json();
-  
+
   // Update UI
   setStatus(data);
-  
+
   // Stop polling if complete
   if (data.status === 'COMPLETED' || data.status === 'FAILED') {
     clearInterval(interval);

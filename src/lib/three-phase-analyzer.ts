@@ -117,47 +117,35 @@ export class ThreePhaseAnalyzer {
   }
 
   /**
-   * Phase 1: Data Collection Foundation
+   * Phase 1: Data Collection Foundation (Simplified - Gemini AI Only)
    */
   private async executePhase1(): Promise<Phase1Report> {
-    console.log('📊 Phase 1: Data Collection Foundation');
+    console.log('📊 Phase 1: Data Collection Foundation (Gemini AI)');
     this.onProgressUpdate?.('Phase 1', 'Starting data collection', 0);
 
     // Step 1: Scrape content
-    this.onProgressUpdate?.('Phase 1', 'Scraping website content', 10);
+    this.onProgressUpdate?.('Phase 1', 'Scraping website content', 50);
     const scrapedContent = await this.scrapeWebsiteContent();
 
-    // Step 2: PageAudit analysis
-    this.onProgressUpdate?.('Phase 1', 'Running PageAudit analysis', 40);
-    const pageAuditData = await this.runPageAuditAnalysis();
-
-    // Step 3: Lighthouse analysis
-    this.onProgressUpdate?.('Phase 1', 'Running Lighthouse analysis', 60);
-    const lighthouseData = await this.runLighthouseAnalysis();
-
-    // Step 4: Google SEO Tools Analysis (Search Console, Keyword Planner, Google Trends)
-    this.onProgressUpdate?.('Phase 1', 'Running Google SEO tools analysis', 80);
-    const seoAnalysis = await this.runSEOAnalysis();
-
-    // Generate Phase 1 report
+    // Generate Phase 1 report (no external tools, just content)
     this.onProgressUpdate?.('Phase 1', 'Generating Phase 1 report', 90);
     const phase1Report: Phase1Report = {
       phase: 'Phase 1: Data Collection Foundation',
       url: this.url,
       timestamp: new Date().toISOString(),
       scrapedContent,
-      pageAuditData,
-      lighthouseData,
-      seoAnalysis,
+      pageAuditData: null,
+      lighthouseData: null,
+      seoAnalysis: null,
       summary: {
         totalWords: scrapedContent.wordCount || 0,
         totalImages: scrapedContent.imageCount || 0,
         totalLinks: scrapedContent.linkCount || 0,
-        seoScore: pageAuditData?.seoScore || 0,
-        performanceScore: lighthouseData?.scores?.performance || 0,
-        accessibilityScore: lighthouseData?.scores?.accessibility || 0,
-        technicalIssues: pageAuditData?.issues || [],
-        contentIssues: this.extractContentIssues(scrapedContent, pageAuditData)
+        seoScore: 0,
+        performanceScore: 0,
+        accessibilityScore: 0,
+        technicalIssues: [],
+        contentIssues: this.extractContentIssues(scrapedContent, null)
       }
     };
 
@@ -264,82 +252,8 @@ export class ThreePhaseAnalyzer {
     return await extractWithProduction(this.url);
   }
 
-  private async runPageAuditAnalysis(): Promise<any> {
-    // Use the existing PageAudit script
-    return await this.runScript('scripts/pageaudit-analysis.js', [this.url]);
-  }
-
-  private async runLighthouseAnalysis(): Promise<any> {
-    // Use the existing Lighthouse script
-    return await this.runScript('scripts/lighthouse-per-page.js', [this.url]);
-  }
-
-  /**
-   * Run Google SEO Tools Analysis (Search Console, Keyword Planner, Google Trends)
-   */
-  private async runSEOAnalysis(): Promise<any> {
-    try {
-      console.log('🔍 Running Google SEO Tools Analysis...');
-      
-      // Extract potential keywords from the scraped content
-      const scrapedContent = await this.scrapeWebsiteContent();
-      const extractedKeywords = this.extractKeywordsFromContent(scrapedContent);
-      
-      // Initialize SEO analysis service
-      const seoService = new SEOAnalysisService(
-        this.url,
-        extractedKeywords,
-        [] // No competitors for now, could be added later
-      );
-      
-      // Perform comprehensive SEO analysis
-      const seoAnalysis = await seoService.performSEOAnalysis();
-      
-      console.log(`✅ SEO Analysis completed - Found ${seoAnalysis.keywordResearch.targetKeywords.length} target keywords`);
-      return seoAnalysis;
-    } catch (error) {
-      console.error('SEO analysis failed:', error);
-      throw new Error(`SEO analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-  }
-
-  /**
-   * Extract potential keywords from scraped content
-   */
-  private extractKeywordsFromContent(content: ProductionExtractionResult): string[] {
-    const keywords: string[] = [];
-    
-    // Extract from title and meta description
-    if (content.title) {
-      const titleWords = content.title.toLowerCase()
-        .replace(/[^\w\s]/g, ' ')
-        .split(/\s+/)
-        .filter(word => word.length > 3);
-      keywords.push(...titleWords);
-    }
-    
-    if (content.metaDescription) {
-      const descWords = content.metaDescription.toLowerCase()
-        .replace(/[^\w\s]/g, ' ')
-        .split(/\s+/)
-        .filter(word => word.length > 3);
-      keywords.push(...descWords);
-    }
-    
-    // Extract from content (first 500 words)
-    if (content.content) {
-      const contentWords = content.content.toLowerCase()
-        .replace(/[^\w\s]/g, ' ')
-        .split(/\s+/)
-        .slice(0, 500)
-        .filter(word => word.length > 4);
-      keywords.push(...contentWords);
-    }
-    
-    // Remove duplicates and return top keywords
-    const uniqueKeywords = [...new Set(keywords)];
-    return uniqueKeywords.slice(0, 20); // Top 20 keywords
-  }
+  // Removed PageAudit, Lighthouse, and Google SEO Tools
+  // Using ONLY Gemini AI for all analysis
 
   private async runScript(scriptPath: string, args: string[]): Promise<any> {
     const { spawn } = require('child_process');
