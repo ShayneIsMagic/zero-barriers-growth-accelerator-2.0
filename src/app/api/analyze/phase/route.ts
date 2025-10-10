@@ -228,7 +228,7 @@ Extract:
 4. WHO (target audience) - exact quotes about their market
 
 Return structured analysis with scores and evidence.`;
-        
+
         individualReports.push({
           id: 'golden-circle-fallback',
           name: 'Golden Circle Analysis (Manual Fallback)',
@@ -273,7 +273,7 @@ Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
 
 Evaluate each of the 30 B2C Elements of Value and provide specific evidence from the content.
 Return structured analysis with scores for each element.`;
-        
+
         individualReports.push({
           id: 'elements-b2c-fallback',
           name: 'Elements of Value B2C (Manual Fallback)',
@@ -302,7 +302,7 @@ Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
 
 Evaluate each of the 40 B2B Elements of Value and provide specific evidence from the content.
 Return structured analysis with scores for each element.`;
-        
+
         individualReports.push({
           id: 'b2b-elements-fallback',
           name: 'B2B Elements (Manual Fallback)',
@@ -331,7 +331,7 @@ Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
 
 Evaluate each of the 34 CliftonStrengths themes and provide specific evidence from the content.
 Return structured analysis with top 5 themes and scores.`;
-        
+
         individualReports.push({
           id: 'clifton-strengths-fallback',
           name: 'CliftonStrengths (Manual Fallback)',
@@ -432,7 +432,7 @@ Provide comprehensive recommendations for:
 5. Overall business growth
 
 Return structured recommendations with quick wins and long-term strategy.`;
-        
+
         individualReports.push({
           id: 'comprehensive-fallback',
           name: 'Comprehensive Analysis (Manual Fallback)',

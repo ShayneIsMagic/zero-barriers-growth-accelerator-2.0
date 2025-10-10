@@ -46,7 +46,7 @@ AUTOMATIC FALLBACK:
 
 #### **1. Lighthouse Performance**
 
-**Automated:** 
+**Automated:**
 - API: `/api/tools/lighthouse`
 - Uses: Google PageSpeed Insights API
 - Free, no auth required
@@ -206,7 +206,7 @@ Total: 3 minutes, fully automated
 
 ### **Worst Case (All Manual):**
 ```
-Phase 1: 
+Phase 1:
   - Content: Click → ✅ Success (always works)
   - Lighthouse: Click → ❌ Fails → Copy prompt → Run manually → 2 min
   - Trends: Click → ❌ Fails → Copy prompt → Run manually → 2 min
