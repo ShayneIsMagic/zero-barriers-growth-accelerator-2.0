@@ -16,6 +16,9 @@ import { prisma } from '@/lib/prisma';
 import { ThreePhaseAnalyzer } from '@/lib/three-phase-analyzer';
 import { NextRequest, NextResponse } from 'next/server';
 
+// Increase timeout for Phase 1 (content scraping can take 30-60 seconds)
+export const maxDuration = 60;
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
