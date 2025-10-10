@@ -115,33 +115,42 @@ export class ThreePhaseAnalyzer {
   }
 
   /**
-   * Phase 1: Data Collection Foundation (Simplified - Gemini AI Only)
+   * Phase 1: Data Collection Foundation
+   * Collects data from Google Tools + Lighthouse, then Gemini AI analyzes it
    */
   private async executePhase1(): Promise<Phase1Report> {
-    console.log('📊 Phase 1: Data Collection Foundation (Gemini AI)');
+    console.log('📊 Phase 1: Data Collection Foundation');
     this.onProgressUpdate?.('Phase 1', 'Starting data collection', 0);
 
     // Step 1: Scrape content
-    this.onProgressUpdate?.('Phase 1', 'Scraping website content', 50);
+    this.onProgressUpdate?.('Phase 1', 'Scraping website content', 10);
     const scrapedContent = await this.scrapeWebsiteContent();
 
-    // Generate Phase 1 report (no external tools, just content)
+    // Step 2: Run Lighthouse analysis
+    this.onProgressUpdate?.('Phase 1', 'Running Lighthouse performance analysis', 40);
+    const lighthouseData = await this.runLighthouseAnalysis();
+
+    // Step 3: Collect Google SEO data (if available)
+    this.onProgressUpdate?.('Phase 1', 'Collecting Google Tools data', 70);
+    const seoAnalysis = await this.collectGoogleToolsData();
+
+    // Generate Phase 1 report
     this.onProgressUpdate?.('Phase 1', 'Generating Phase 1 report', 90);
     const phase1Report: Phase1Report = {
       phase: 'Phase 1: Data Collection Foundation',
       url: this.url,
       timestamp: new Date().toISOString(),
       scrapedContent,
-      pageAuditData: null,
-      lighthouseData: null,
-      seoAnalysis: null,
+      pageAuditData: null, // Optional
+      lighthouseData,
+      seoAnalysis,
       summary: {
         totalWords: scrapedContent.wordCount || 0,
         totalImages: scrapedContent.imageCount || 0,
         totalLinks: scrapedContent.linkCount || 0,
-        seoScore: 0,
-        performanceScore: 0,
-        accessibilityScore: 0,
+        seoScore: seoAnalysis?.overallScore || 0,
+        performanceScore: lighthouseData?.scores?.performance || 0,
+        accessibilityScore: lighthouseData?.scores?.accessibility || 0,
         technicalIssues: [],
         contentIssues: this.extractContentIssues(scrapedContent, null)
       }
@@ -250,8 +259,91 @@ export class ThreePhaseAnalyzer {
     return await extractWithProduction(this.url);
   }
 
-  // Removed PageAudit, Lighthouse, and Google SEO Tools
-  // Using ONLY Gemini AI for all analysis
+  /**
+   * Run Lighthouse performance analysis
+   */
+  private async runLighthouseAnalysis(): Promise<any> {
+    try {
+      console.log('🔍 Running Lighthouse analysis...');
+      const scriptPath = path.join(process.cwd(), 'scripts', 'lighthouse-per-page.js');
+      const command = `node "${scriptPath}" "${this.url}"`;
+      
+      const { stdout } = await this.execAsync(command, {
+        timeout: 120000,
+        maxBuffer: 1024 * 1024 * 10
+      });
+      
+      const jsonMatch = stdout.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const result = JSON.parse(jsonMatch[0]);
+        console.log(`✅ Lighthouse completed - Performance: ${result.scores?.performance || 'N/A'}`);
+        return result;
+      }
+      
+      console.warn('Lighthouse: No valid JSON output');
+      return null;
+    } catch (error) {
+      console.error('Lighthouse failed:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Collect Google Tools data (Search Console, Trends, etc.)
+   * Uses basic scraping - manual prompts provided if fails
+   */
+  private async collectGoogleToolsData(): Promise<any> {
+    try {
+      console.log('🔍 Collecting Google Tools data...');
+      
+      // Basic keyword extraction from content
+      const scrapedContent = await this.scrapeWebsiteContent();
+      const keywords = this.extractKeywordsFromContent(scrapedContent);
+      
+      return {
+        keywords: keywords,
+        overallScore: 0,
+        note: 'Use manual Google Tools prompts for full data',
+        extractedKeywords: keywords
+      };
+    } catch (error) {
+      console.error('Google Tools data collection failed:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Extract keywords from content for Google Tools
+   */
+  private extractKeywordsFromContent(content: ProductionExtractionResult): string[] {
+    const keywords: string[] = [];
+    
+    if (content.title) {
+      const titleWords = content.title.toLowerCase()
+        .replace(/[^\w\s]/g, ' ')
+        .split(/\s+/)
+        .filter(word => word.length > 3);
+      keywords.push(...titleWords);
+    }
+    
+    if (content.metaDescription) {
+      const descWords = content.metaDescription.toLowerCase()
+        .replace(/[^\w\s]/g, ' ')
+        .split(/\s+/)
+        .filter(word => word.length > 3);
+      keywords.push(...descWords);
+    }
+    
+    const uniqueKeywords = [...new Set(keywords)];
+    return uniqueKeywords.slice(0, 20);
+  }
+
+  private async execAsync(command: string, options: any): Promise<any> {
+    const { exec } = require('child_process');
+    const { promisify } = require('util');
+    const execAsync = promisify(exec);
+    return execAsync(command, options);
+  }
 
   private async runScript(scriptPath: string, args: string[]): Promise<any> {
     const { spawn } = require('child_process');
