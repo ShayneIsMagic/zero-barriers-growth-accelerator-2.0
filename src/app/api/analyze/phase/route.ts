@@ -56,6 +56,85 @@ export async function POST(request: NextRequest) {
       if (phase1Result.lighthouseData) {
         const lighthouseReport = generateLighthouseReport(phase1Result.lighthouseData, url);
         individualReports.push(lighthouseReport);
+      } else {
+        // Lighthouse failed - add manual fallback report
+        const fallbackReport = {
+          id: 'lighthouse-fallback',
+          name: 'Lighthouse Performance (Manual Fallback)',
+          phase: 'Phase 1',
+          prompt: `⚠️ Automated Lighthouse failed. Use manual option:
+
+1. Go to https://pagespeed.web.dev/
+2. Enter: ${url}
+3. Click "Analyze"
+4. Copy scores and paste into Gemini with this prompt:
+
+Analyze these Lighthouse scores for ${url}:
+- Performance: [YOUR_SCORE]/100
+- Accessibility: [YOUR_SCORE]/100
+- Best Practices: [YOUR_SCORE]/100
+- SEO: [YOUR_SCORE]/100
+
+Key Issues:
+[PASTE TOP 3-5 ISSUES FROM REPORT]
+
+Provide:
+1. What these scores mean
+2. Priority fixes
+3. Quick wins (< 1 hour)
+4. Impact on user experience`,
+          markdown: `# Lighthouse Performance - Manual Fallback Required
+
+**URL:** ${url}  
+**Date:** ${new Date().toLocaleString()}  
+**Status:** ⚠️ Automated analysis failed
+
+---
+
+## Manual Steps Required
+
+The automated Lighthouse analysis failed. Please run it manually:
+
+### Step 1: Run Lighthouse
+1. Go to: **https://pagespeed.web.dev/**
+2. Enter your URL: \`${url}\`
+3. Click "Analyze"
+4. Wait 30 seconds for results
+
+### Step 2: Copy Scores
+Note these scores:
+- Performance: ___/100
+- Accessibility: ___/100
+- Best Practices: ___/100
+- SEO: ___/100
+
+### Step 3: Get AI Analysis
+Copy this prompt and paste into Gemini (https://gemini.google.com/):
+
+\`\`\`
+Analyze these Lighthouse scores for ${url}:
+- Performance: [YOUR_SCORE]/100
+- Accessibility: [YOUR_SCORE]/100
+- Best Practices: [YOUR_SCORE]/100
+- SEO: [YOUR_SCORE]/100
+
+Key Issues:
+[PASTE TOP 3-5 ISSUES FROM REPORT]
+
+Provide:
+1. What these scores mean
+2. Priority fixes
+3. Quick wins (< 1 hour)
+4. Impact on user experience
+\`\`\`
+
+---
+
+**Why did automated fail?** The Lighthouse script may be missing or the API timed out. Manual analysis provides the same quality results.
+`,
+          timestamp: new Date().toISOString()
+        };
+        individualReports.push(fallbackReport);
       }
 
       // Store Phase 1 results

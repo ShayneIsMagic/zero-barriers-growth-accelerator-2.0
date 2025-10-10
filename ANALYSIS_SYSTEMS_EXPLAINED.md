@@ -101,7 +101,7 @@ You have **TWO** analysis options. Here's what each does:
   - Word count, images, links
   - Title, meta description
   - Content preview
-  
+
 - 📄 **Lighthouse Report** (markdown)
   - Performance: X/100
   - Accessibility: X/100
@@ -131,17 +131,17 @@ You have **TWO** analysis options. Here's what each does:
   - Scores for each
   - Evidence from website
   - **INCLUDES:** Exact prompt sent to Gemini
-  
+
 - 📄 **Elements of Value Report** (markdown + AI prompt)
   - 30 B2C elements scored
   - Evidence for each
   - **INCLUDES:** Exact prompt sent to Gemini
-  
+
 - 📄 **B2B Elements Report** (markdown + AI prompt)
   - 40 B2B elements scored
   - Evidence for each
   - **INCLUDES:** Exact prompt sent to Gemini
-  
+
 - 📄 **CliftonStrengths Report** (markdown + AI prompt)
   - Top 5 brand themes
   - All 34 themes scored
@@ -196,15 +196,15 @@ You have **TWO** analysis options. Here's what each does:
 3. **Google Search Console**
    - Requires OAuth authentication
    - Manual: See `MANUAL_GOOGLE_TOOLS_PROMPTS.md`
-   
+
 4. **Google Analytics**
    - Requires OAuth authentication
    - Manual: See `MANUAL_GOOGLE_TOOLS_PROMPTS.md`
-   
+
 5. **Google Trends**
    - No API integration (public data only)
    - Manual: See `MANUAL_GOOGLE_TOOLS_PROMPTS.md`
-   
+
 6. **Google Keyword Planner**
    - Requires Google Ads account
    - Manual: See `MANUAL_GOOGLE_TOOLS_PROMPTS.md`
@@ -265,7 +265,7 @@ Google APIs require:
 - **PageAudit** - External script may be missing
   - **Fix:** Not critical, can remove from UI
   - **Impact:** Won't break anything
-  
+
 - **All show "Waiting"** - No real-time updates in UI
   - **Fix:** Use Phased Analysis instead
   - **Impact:** Better UX with manual control

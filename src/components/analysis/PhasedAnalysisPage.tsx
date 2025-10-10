@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { ArrowRight, CheckCircle, Loader2, Play } from 'lucide-react';
 import { useState } from 'react';
 import { IndividualReportsView } from './IndividualReportsView';
+import { GoogleToolsButtons } from './GoogleToolsButtons';
 
 export function PhasedAnalysisPage() {
   const [url, setUrl] = useState('');
@@ -228,24 +229,39 @@ export function PhasedAnalysisPage() {
 
       {/* Phase 1 Results */}
       {phase1Reports.length > 0 && (
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Phase 1: Data Collection Results</CardTitle>
-                <CardDescription>
-                  {phase1Reports.length} reports generated
-                </CardDescription>
+        <>
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Phase 1: Data Collection Results</CardTitle>
+                  <CardDescription>
+                    {phase1Reports.length} reports generated
+                  </CardDescription>
+                </div>
+                <Badge variant="default" className="bg-green-500">
+                  ✓ Phase 1 Complete
+                </Badge>
               </div>
-              <Badge variant="default" className="bg-green-500">
-                ✓ Phase 1 Complete
-              </Badge>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <IndividualReportsView reports={phase1Reports} url={url} />
-          </CardContent>
-        </Card>
+            </CardHeader>
+            <CardContent>
+              <IndividualReportsView reports={phase1Reports} url={url} />
+            </CardContent>
+          </Card>
+
+          {/* Google Tools - Run Automatically */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Optional: Google Tools Analysis</CardTitle>
+              <CardDescription>
+                Click buttons to automatically run Google Tools and include results in your report
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <GoogleToolsButtons url={url} />
+            </CardContent>
+          </Card>
+        </>
       )}
 
       {/* Phase 2 Results */}
