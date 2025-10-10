@@ -1,8 +1,8 @@
 # ✅ Verify Supabase Connection
 
-**Date:** October 10, 2025  
-**Supabase Project:** `chkwezsyopfciibifmxx`  
-**GitHub Repo:** https://github.com/ShayneIsMagic/zero-barriers-growth-accelerator-2.0  
+**Date:** October 10, 2025
+**Supabase Project:** `chkwezsyopfciibifmxx`
+**GitHub Repo:** https://github.com/ShayneIsMagic/zero-barriers-growth-accelerator-2.0
 
 ---
 
@@ -10,8 +10,8 @@
 
 **YES, your Supabase project `chkwezsyopfciibifmxx` is connected to the CORRECT repo!**
 
-✅ **Correct Repo:** https://github.com/ShayneIsMagic/zero-barriers-growth-accelerator-2.0  
-✅ **Supabase Dashboard:** https://supabase.com/dashboard/project/chkwezsyopfciibifmxx  
+✅ **Correct Repo:** https://github.com/ShayneIsMagic/zero-barriers-growth-accelerator-2.0
+✅ **Supabase Dashboard:** https://supabase.com/dashboard/project/chkwezsyopfciibifmxx
 
 ---
 
@@ -113,8 +113,8 @@ https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/editor
 Run this in Supabase SQL Editor:
 ```sql
 -- Check what tables exist
-SELECT table_name 
-FROM information_schema.tables 
+SELECT table_name
+FROM information_schema.tables
 WHERE table_schema = 'public'
 ORDER BY table_name;
 ```
@@ -191,7 +191,7 @@ SELECT email, role FROM "User";
 
 -- If no users, create them:
 INSERT INTO "User" (id, email, name, role, password, "createdAt", "updatedAt")
-VALUES 
+VALUES
   (
     gen_random_uuid()::TEXT,
     'shayne+1@devpipeline.com',
@@ -358,7 +358,7 @@ DATABASE_URL="postgresql://postgres.chkwezsyopfciibifmxx:[PASSWORD]@aws-0-us-eas
 
 ---
 
-**Last Updated:** October 10, 2025  
-**Supabase Project:** chkwezsyopfciibifmxx  
+**Last Updated:** October 10, 2025
+**Supabase Project:** chkwezsyopfciibifmxx
 **Status:** ✅ Connected to Correct Repo
 
