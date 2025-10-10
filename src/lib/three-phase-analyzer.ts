@@ -209,30 +209,93 @@ export class ThreePhaseAnalyzer {
   }
 
   /**
-   * Phase 3: Strategic Analysis
+   * Phase 3: Strategic Analysis + Optional Performance & SEO Data
+   * Tries to get Lighthouse and Google Trends via APIs (graceful failure)
    */
   private async executePhase3(phase1Report: Phase1Report, phase2Report: Phase2Report): Promise<Phase3Report> {
-    console.log('🎯 Phase 3: Strategic Analysis');
+    console.log('🎯 Phase 3: Strategic Analysis with optional Lighthouse & Google Tools');
     this.onProgressUpdate?.('Phase 3', 'Starting strategic analysis', 0);
 
-    // Step 1: Comprehensive Analysis
-    this.onProgressUpdate?.('Phase 3', 'Generating comprehensive analysis', 50);
-    const comprehensiveAnalysis = await this.generateComprehensiveAnalysis(phase1Report, phase2Report);
+    // Step 1: Try to get Lighthouse data via PageSpeed Insights API (graceful failure)
+    this.onProgressUpdate?.('Phase 3', 'Collecting Lighthouse performance data (optional)', 15);
+    let lighthouseData = null;
+    try {
+      console.log('⚡ Trying PageSpeed Insights API for Lighthouse...');
+      const lighthouseResponse = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(this.url)}&category=PERFORMANCE&category=ACCESSIBILITY&category=BEST_PRACTICES&category=SEO`);
+      if (lighthouseResponse.ok) {
+        const lighthouseResult = await lighthouseResponse.json();
+        const lhr = lighthouseResult.lighthouseResult;
+        lighthouseData = {
+          scores: {
+            performance: Math.round((lhr.categories.performance?.score || 0) * 100),
+            accessibility: Math.round((lhr.categories.accessibility?.score || 0) * 100),
+            bestPractices: Math.round((lhr.categories['best-practices']?.score || 0) * 100),
+            seo: Math.round((lhr.categories.seo?.score || 0) * 100)
+          }
+        };
+        console.log(`✅ Lighthouse data collected - Performance: ${lighthouseData.scores.performance}/100`);
+      }
+    } catch (error) {
+      console.log('⚠️ Lighthouse not available - will generate recommendations without it');
+    }
 
-    // Step 2: Generate Final Report
-    this.onProgressUpdate?.('Phase 3', 'Generating final report', 90);
-    const finalReport = await this.generateFinalReport(phase1Report, phase2Report, comprehensiveAnalysis);
+    // Step 2: Try to get Google Trends data (graceful failure)
+    this.onProgressUpdate?.('Phase 3', 'Collecting Google Trends SEO data (optional)', 30);
+    let trendsData = null;
+    try {
+      if (phase1Report.scrapedContent.extractedKeywords && phase1Report.scrapedContent.extractedKeywords.length > 0) {
+        console.log('🔍 Trying Google Trends API...');
+        const googleTrends = require('google-trends-api');
+        const keyword = phase1Report.scrapedContent.extractedKeywords[0];
+        
+        // Get related queries
+        const relatedQueriesResult = await googleTrends.relatedQueries({
+          keyword,
+          startTime: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000) // Last 90 days
+        });
+        
+        const relatedParsed = JSON.parse(relatedQueriesResult);
+        const topQueries = relatedParsed.default?.rankedList?.[0]?.rankedKeyword || [];
+        const risingQueries = relatedParsed.default?.rankedList?.[1]?.rankedKeyword || [];
+        
+        trendsData = {
+          keyword,
+          relatedQueries: topQueries.slice(0, 5).map((q: any) => q.topic?.title || q.query),
+          risingQueries: risingQueries.slice(0, 5).map((q: any) => q.topic?.title || q.query),
+          overallScore: 75 // Placeholder score
+        };
+        
+        console.log(`✅ Google Trends data collected - ${trendsData.relatedQueries.length} related queries found`);
+      }
+    } catch (error) {
+      console.log('⚠️ Google Trends not available - will generate recommendations without it');
+    }
+
+    // Step 3: Create enhanced Phase 1 report with optional data
+    const enhancedPhase1Report = {
+      ...phase1Report,
+      lighthouseData,
+      seoAnalysis: trendsData
+    };
+
+    // Step 4: Generate Comprehensive Analysis
+    this.onProgressUpdate?.('Phase 3', 'Generating comprehensive strategic analysis', 60);
+    const comprehensiveAnalysis = await this.generateComprehensiveAnalysis(enhancedPhase1Report, phase2Report);
+
+    // Step 5: Generate Final Report
+    this.onProgressUpdate?.('Phase 3', 'Generating final strategic report', 85);
+    const finalReport = await this.generateFinalReport(enhancedPhase1Report, phase2Report, comprehensiveAnalysis);
 
     const phase3Report: Phase3Report = {
       phase: 'Phase 3: Strategic Analysis',
       url: this.url,
       timestamp: new Date().toISOString(),
-      phase1Data: phase1Report,
+      phase1Data: enhancedPhase1Report,
       phase2Data: phase2Report,
       comprehensiveAnalysis,
       finalReport,
       summary: {
-        overallScore: this.calculateOverallScore(phase1Report, phase2Report),
+        overallScore: this.calculateOverallScore(enhancedPhase1Report, phase2Report),
         primaryRecommendations: comprehensiveAnalysis?.primaryRecommendations || [],
         quickWins: comprehensiveAnalysis?.quickWins || [],
         longTermImprovements: comprehensiveAnalysis?.longTermImprovements || [],
@@ -244,7 +307,10 @@ export class ThreePhaseAnalyzer {
     };
 
     this.onProgressUpdate?.('Phase 3', 'Phase 3 completed', 100);
-    console.log('✅ Phase 3 completed');
+    
+    const dataStatus = lighthouseData ? '✅ with Lighthouse' : '⚠️ framework-only';
+    console.log(`✅ Phase 3 completed ${dataStatus}`);
+    
     return phase3Report;
   }
 

@@ -1,6 +1,6 @@
 # 🔧 Lighthouse & Google Tools on Vercel - Best Solution
 
-**Date:** October 10, 2025, 11:45 PM  
+**Date:** October 10, 2025, 11:45 PM
 **Question:** Will Lighthouse and Google Tools work on Vercel in Phase 3?
 
 ---
@@ -57,10 +57,10 @@ Includes: Whatever data you collected above
 async function runLighthouse(url: string) {
   // Call Google's FREE API
   const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${url}&category=PERFORMANCE&category=ACCESSIBILITY&category=BEST_PRACTICES&category=SEO`;
-  
+
   const response = await fetch(apiUrl);
   const data = await response.json();
-  
+
   // Extract scores
   return {
     performance: data.lighthouseResult.categories.performance.score * 100,
@@ -89,18 +89,18 @@ async function runLighthouse(url: string) {
 // In Phase 3
 async function runGoogleTrends(keywords: string[]) {
   const googleTrends = require('google-trends-api');
-  
+
   // Get related queries
   const relatedQueries = await googleTrends.relatedQueries({
     keyword: keywords[0],
     startTime: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000) // Last 90 days
   });
-  
+
   // Get interest over time
   const interestData = await googleTrends.interestOverTime({
     keyword: keywords[0]
   });
-  
+
   return {
     relatedQueries,
     risingQueries,
@@ -132,11 +132,11 @@ Backend does:
   1. Try PageSpeed Insights API for Lighthouse
      ✅ If works: Include in recommendations
      ⚠️ If fails: Skip, note in report
-  
+
   2. Try Google Trends API with Phase 1 keywords
      ✅ If works: Include in recommendations
      ⚠️ If fails: Skip, note in report
-  
+
   3. Generate comprehensive recommendations (Gemini AI)
      Uses: Phase 2 frameworks (always)
            + Lighthouse data (if available)
@@ -165,12 +165,12 @@ Phase 3: Strategic Analysis
 If APIs fail, show manual instructions:
 
 "⚠️ Automated Lighthouse failed
- 
+
  Manual option:
  1. Go to: https://pagespeed.web.dev/
  2. Enter your URL
  3. Copy the scores
- 
+
  Then paste into Gemini with this prompt:
  [COPYABLE PROMPT HERE]"
 ```
@@ -191,7 +191,7 @@ async executePhase3(phase1Data, phase2Data) {
   } catch {
     console.log('Lighthouse not available, using framework data only');
   }
-  
+
   // Try Google Trends (won't fail whole phase if it errors)
   let trendsData = null;
   try {
@@ -200,7 +200,7 @@ async executePhase3(phase1Data, phase2Data) {
   } catch {
     console.log('Trends not available, using framework data only');
   }
-  
+
   // Generate recommendations with whatever we have
   const recommendations = await generateWithGemini({
     phase1: phase1Data,
@@ -208,7 +208,7 @@ async executePhase3(phase1Data, phase2Data) {
     lighthouse: lighthouseData, // May be null
     trends: trendsData          // May be null
   });
-  
+
   return recommendations; // Always succeeds!
 }
 ```
