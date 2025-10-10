@@ -4,8 +4,8 @@
  * Side-by-side analysis showing improvements
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { scrapeWebsiteContent } from '@/lib/reliable-content-scraper';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
@@ -80,12 +80,12 @@ function extractKeywordsFromText(text: string): string[] {
     .replace(/[^\w\s]/g, ' ')
     .split(/\s+/)
     .filter(word => word.length > 4);
-  
+
   const wordFreq: Record<string, number> = {};
   words.forEach(word => {
     wordFreq[word] = (wordFreq[word] || 0) + 1;
   });
-  
+
   return Object.entries(wordFreq)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 20)
@@ -103,7 +103,7 @@ function extractHeadings(content: string): { h1: string[]; h2: string[]; h3: str
 
 async function generateComparisonReport(existing: any, proposed: any, url: string, analysisType: string) {
   const { analyzeWithGemini } = await import('@/lib/free-ai-analysis');
-  
+
   const prompt = `Compare existing website content vs. proposed new content:
 
 URL: ${url}

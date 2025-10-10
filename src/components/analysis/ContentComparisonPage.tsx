@@ -1,14 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, GitCompare, Copy, Download } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import { Copy, Download, GitCompare, Loader2 } from 'lucide-react';
+import { useState } from 'react';
 
 export function ContentComparisonPage() {
   const [url, setUrl] = useState('');
@@ -244,7 +244,7 @@ New compelling description that highlights our unique value proposition.
                     {result.comparison && (
                       <div className="mt-6 space-y-4">
                         <h3 className="text-xl font-semibold">AI Analysis Results</h3>
-                        
+
                         {/* Show comparison data */}
                         <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-950">
                           <h4 className="font-semibold mb-2">Overall Recommendation</h4>
@@ -332,24 +332,24 @@ New compelling description that highlights our unique value proposition.
 function generateComparisonMarkdown(result: any): string {
   return `# Content Comparison Analysis
 
-**URL:** ${result.existing.url || 'N/A'}  
+**URL:** ${result.existing.url || 'N/A'}
 **Date:** ${new Date().toLocaleString()}
 
 ---
 
 ## Existing Content
 
-**Title:** ${result.existing.title}  
-**Meta Description:** ${result.existing.metaDescription}  
-**Word Count:** ${result.existing.wordCount}  
+**Title:** ${result.existing.title}
+**Meta Description:** ${result.existing.metaDescription}
+**Word Count:** ${result.existing.wordCount}
 **Keywords:** ${result.existing.extractedKeywords.slice(0, 10).join(', ')}
 
 ${result.proposed ? `
 ## Proposed Content
 
-**Title:** ${result.proposed.title}  
-**Meta Description:** ${result.proposed.metaDescription}  
-**Word Count:** ${result.proposed.wordCount}  
+**Title:** ${result.proposed.title}
+**Meta Description:** ${result.proposed.metaDescription}
+**Word Count:** ${result.proposed.wordCount}
 **Keywords:** ${result.proposed.extractedKeywords.slice(0, 10).join(', ')}
 
 ---
