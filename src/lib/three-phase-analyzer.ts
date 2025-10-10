@@ -247,24 +247,24 @@ export class ThreePhaseAnalyzer {
         console.log('🔍 Trying Google Trends API...');
         const googleTrends = require('google-trends-api');
         const keyword = phase1Report.scrapedContent.extractedKeywords[0];
-        
+
         // Get related queries
         const relatedQueriesResult = await googleTrends.relatedQueries({
           keyword,
           startTime: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000) // Last 90 days
         });
-        
+
         const relatedParsed = JSON.parse(relatedQueriesResult);
         const topQueries = relatedParsed.default?.rankedList?.[0]?.rankedKeyword || [];
         const risingQueries = relatedParsed.default?.rankedList?.[1]?.rankedKeyword || [];
-        
+
         trendsData = {
           keyword,
           relatedQueries: topQueries.slice(0, 5).map((q: any) => q.topic?.title || q.query),
           risingQueries: risingQueries.slice(0, 5).map((q: any) => q.topic?.title || q.query),
           overallScore: 75 // Placeholder score
         };
-        
+
         console.log(`✅ Google Trends data collected - ${trendsData.relatedQueries.length} related queries found`);
       }
     } catch (error) {
@@ -307,10 +307,10 @@ export class ThreePhaseAnalyzer {
     };
 
     this.onProgressUpdate?.('Phase 3', 'Phase 3 completed', 100);
-    
+
     const dataStatus = lighthouseData ? '✅ with Lighthouse' : '⚠️ framework-only';
     console.log(`✅ Phase 3 completed ${dataStatus}`);
-    
+
     return phase3Report;
   }
 
