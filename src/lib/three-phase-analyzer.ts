@@ -1,18 +1,18 @@
 /**
  * Three-Phase Website Analysis System
- * 
+ *
  * Phase 1: Data Collection Foundation
  * - Website scraping and content extraction
  * - PageAudit technical analysis
  * - Lighthouse performance analysis
  * - Generate Phase 1 consolidated report
- * 
+ *
  * Phase 2: Framework Analysis
  * - Golden Circle analysis (Why, How, What, Who)
  * - Elements of Value analysis (B2C & B2B)
  * - CliftonStrengths analysis
  * - Generate Phase 2 consolidated report
- * 
+ *
  * Phase 3: Strategic Analysis
  * - Comprehensive insights and recommendations
  * - Performance optimization recommendations
@@ -22,9 +22,7 @@
  */
 
 import { ProductionExtractionResult } from './production-content-extractor';
-import { WebsiteAnalysisResult } from '../types/analysis';
 import { WebsiteEvaluationFramework } from './website-evaluation-framework';
-import { SEOAnalysisService } from './seo-analysis-service';
 
 export interface Phase1Report {
   phase: 'Phase 1: Data Collection Foundation';
@@ -102,16 +100,16 @@ export class ThreePhaseAnalyzer {
    */
   async execute(): Promise<Phase3Report> {
     console.log(`🚀 Starting 3-Phase Analysis for: ${this.url}`);
-    
+
     // Phase 1: Data Collection Foundation
     const phase1Report = await this.executePhase1();
-    
+
     // Phase 2: Framework Analysis
     const phase2Report = await this.executePhase2(phase1Report);
-    
+
     // Phase 3: Strategic Analysis
     const phase3Report = await this.executePhase3(phase1Report, phase2Report);
-    
+
     console.log(`✅ 3-Phase Analysis completed for: ${this.url}`);
     return phase3Report;
   }
@@ -259,25 +257,25 @@ export class ThreePhaseAnalyzer {
     const { spawn } = require('child_process');
     return new Promise((resolve, reject) => {
       const child = spawn('node', [scriptPath, ...args], { stdio: 'pipe' });
-      
+
       let output = '';
       let errorOutput = '';
-      
+
       child.stdout.on('data', (data: Buffer) => {
         output += data.toString();
       });
-      
+
       child.stderr.on('data', (data: Buffer) => {
         errorOutput += data.toString();
       });
-      
+
       child.on('close', (code: number) => {
         if (code === 0) {
           try {
             // Find the JSON output in the script output
             const lines = output.split('\n');
             const jsonLine = lines.find(line => line.trim().startsWith('{'));
-            
+
             if (jsonLine) {
               const result = JSON.parse(jsonLine);
               resolve(result);
@@ -324,7 +322,7 @@ export class ThreePhaseAnalyzer {
 
   private async generateComprehensiveAnalysis(phase1Report: Phase1Report, phase2Report: Phase2Report): Promise<any> {
     console.log('🎯 Running comprehensive website evaluation framework...');
-    
+
     // Use the comprehensive evaluation framework
     const evaluator = new WebsiteEvaluationFramework(
       this.url,
@@ -332,15 +330,15 @@ export class ThreePhaseAnalyzer {
       phase1Report.lighthouseData,
       phase1Report.pageAuditData
     );
-    
+
     const evaluationResult = await evaluator.evaluate();
-    
+
     // Combine with Gemini analysis for deeper insights
     try {
       const { analyzeWithGemini } = await import('./free-ai-analysis');
       const prompt = this.createComprehensiveAnalysisPrompt(phase1Report, phase2Report);
       const geminiInsights = await analyzeWithGemini(prompt, 'comprehensive-analysis');
-      
+
       return {
         evaluationFramework: evaluationResult,
         geminiInsights: geminiInsights,
@@ -358,7 +356,7 @@ export class ThreePhaseAnalyzer {
 
   private async generateFinalReport(phase1Report: Phase1Report, phase2Report: Phase2Report, comprehensiveAnalysis: any): Promise<any> {
     const evaluationResult = comprehensiveAnalysis?.evaluationFramework;
-    
+
     return {
       url: this.url,
       timestamp: new Date().toISOString(),
@@ -530,17 +528,17 @@ Return JSON format with specific, actionable recommendations.
 
   private combineRecommendations(evaluationResult: any, geminiInsights: any): string[] {
     const recommendations = [];
-    
+
     // Add evaluation framework recommendations
     if (evaluationResult?.priorityRecommendations) {
       recommendations.push(...evaluationResult.priorityRecommendations);
     }
-    
+
     // Add Gemini insights if available
     if (geminiInsights?.primaryRecommendations) {
       recommendations.push(...geminiInsights.primaryRecommendations);
     }
-    
+
     // Remove duplicates and return
     return [...new Set(recommendations)];
   }
@@ -549,7 +547,7 @@ Return JSON format with specific, actionable recommendations.
     const evaluationResult = comprehensiveAnalysis?.evaluationFramework;
     const overallScore = evaluationResult?.overallScore || 0;
     const rating = evaluationResult?.rating || 'Not Rated';
-    
+
     return `
 Executive Summary for ${this.url}:
 
