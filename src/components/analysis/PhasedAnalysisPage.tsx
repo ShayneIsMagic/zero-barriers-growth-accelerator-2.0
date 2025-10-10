@@ -7,9 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { ArrowRight, CheckCircle, Loader2, Play } from 'lucide-react';
 import { useState } from 'react';
-import { IndividualReportsView } from './IndividualReportsView';
-import { GoogleToolsButtons } from './GoogleToolsButtons';
 import { ContentPreviewCard } from './ContentPreviewCard';
+import { GoogleToolsButtons } from './GoogleToolsButtons';
+import { IndividualReportsView } from './IndividualReportsView';
 
 export function PhasedAnalysisPage() {
   const [url, setUrl] = useState('');
@@ -57,7 +57,7 @@ export function PhasedAnalysisPage() {
         } else if (phase === 2) {
           setPhase2Data(data.data);
           setPhase2Reports(data.individualReports.filter((r: any) => r.phase === 'Phase 2'));
-          
+
           // Show recommendations if Phase 1 was skipped
           if (data.recommendations && data.recommendations.length > 0) {
             setError(null); // Clear error
@@ -66,7 +66,7 @@ export function PhasedAnalysisPage() {
         } else if (phase === 3) {
           setPhase3Data(data.data);
           setPhase3Reports(data.individualReports.filter((r: any) => r.phase === 'Phase 3'));
-          
+
           // Show recommendations if prior phases were skipped
           if (data.recommendations && data.recommendations.length > 0) {
             setError(null);
