@@ -1,6 +1,6 @@
 # 🔍 Deployment Status Check
 
-**Date:** October 10, 2025, 11:30 PM  
+**Date:** October 10, 2025, 11:30 PM
 **Issue:** Deploy to Vercel looks like it failed in GitHub
 
 ---
@@ -45,7 +45,7 @@
 
 This workflow might fail because:
 1. Missing VERCEL_TOKEN secret
-2. Missing VERCEL_ORG_ID secret  
+2. Missing VERCEL_ORG_ID secret
 3. Missing VERCEL_PROJECT_ID secret
 4. OR workflow is trying to do manual deployment
 
