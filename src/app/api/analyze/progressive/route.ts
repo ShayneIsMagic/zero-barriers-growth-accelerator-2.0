@@ -140,14 +140,14 @@ export async function GET(request: NextRequest) {
 async function runProgressiveAnalysis(analysisId: string, url: string) {
   let currentStepIndex = 0;
   const individualReports: any[] = [];
-  
+
   const updateStep = async (stepId: string, status: 'running' | 'completed' | 'failed', data?: any, reportData?: any) => {
     const analysis = await prisma.analysis.findUnique({ where: { id: analysisId } });
     if (!analysis || !analysis.content) return;
-    
+
     const content = JSON.parse(analysis.content);
     const stepIndex = content.steps.findIndex((s: any) => s.id === stepId);
-    
+
     if (stepIndex >= 0) {
       content.steps[stepIndex].status = status;
       if (data) {
@@ -157,15 +157,15 @@ async function runProgressiveAnalysis(analysisId: string, url: string) {
         content.steps[stepIndex].report = reportData;
         individualReports.push(reportData);
       }
-      
+
       if (status === 'completed') {
         currentStepIndex = stepIndex + 1;
         content.currentStep = currentStepIndex;
       }
     }
-    
+
     content.individualReports = individualReports;
-    
+
     await prisma.analysis.update({
       where: { id: analysisId },
       data: {
@@ -173,7 +173,7 @@ async function runProgressiveAnalysis(analysisId: string, url: string) {
         status: status === 'failed' ? 'FAILED' : (currentStepIndex >= 9 ? 'COMPLETED' : 'IN_PROGRESS')
       }
     });
-    
+
     console.log(`📊 ${analysisId}: ${stepId} → ${status}`);
   };
 

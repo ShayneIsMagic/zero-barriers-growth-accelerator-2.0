@@ -5,9 +5,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { generateMarkdownReport } from '@/lib/markdown-report-generator';
 import { CheckCircle, Clock, Download, FileText, Loader2, Play, XCircle } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { generateMarkdownReport } from '@/lib/markdown-report-generator';
 import { IndividualReportsView } from './IndividualReportsView';
 
 interface StepStatus {
@@ -320,8 +320,8 @@ export function ProgressiveAnalysisPage() {
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <IndividualReportsView 
-                          reports={(status as any).individualReports} 
+                        <IndividualReportsView
+                          reports={(status as any).individualReports}
                           url={status.url}
                         />
                       </CardContent>
