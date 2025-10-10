@@ -255,8 +255,53 @@ export class ThreePhaseAnalyzer {
 
   // Helper methods for data collection
   private async scrapeWebsiteContent(): Promise<ProductionExtractionResult> {
-    const { extractWithProduction } = await import('./production-content-extractor');
-    return await extractWithProduction(this.url);
+    console.log(`📊 Step 1: Gathering website content and meta tags...`);
+    
+    try {
+      // Use reliable Puppeteer-based scraper
+      const { scrapeWebsiteContent } = await import('./reliable-content-scraper');
+      const scrapedData = await scrapeWebsiteContent(this.url);
+      
+      // Convert to ProductionExtractionResult format
+      return {
+        content: scrapedData.cleanText,
+        title: scrapedData.title,
+        metaDescription: scrapedData.metaDescription,
+        wordCount: scrapedData.wordCount,
+        imageCount: scrapedData.imageCount,
+        linkCount: scrapedData.linkCount,
+        headingCount: (scrapedData.headings?.h1?.length || 0) + 
+                     (scrapedData.headings?.h2?.length || 0) + 
+                     (scrapedData.headings?.h3?.length || 0),
+        paragraphCount: Math.floor(scrapedData.wordCount / 50),
+        listCount: 0,
+        formCount: 0,
+        videoCount: 0,
+        socialMediaLinks: [],
+        contactInfo: { phone: [], email: [], address: [] },
+        technicalInfo: {
+          loadTime: scrapedData.loadTime,
+          hasSSL: scrapedData.hasSSL,
+          mobileFriendly: true,
+          hasSchema: scrapedData.schemaTypes.length > 0,
+          viewport: { width: 1920, height: 1080 }
+        },
+        extractedAt: scrapedData.timestamp,
+        method: 'fetch',
+        // Add new fields for better analysis
+        metaKeywords: scrapedData.metaKeywords,
+        extractedKeywords: scrapedData.extractedKeywords,
+        topicClusters: scrapedData.topicClusters,
+        headings: scrapedData.headings,
+        ogTitle: scrapedData.ogTitle,
+        ogDescription: scrapedData.ogDescription,
+        schemaTypes: scrapedData.schemaTypes
+      } as any;
+      
+    } catch (error) {
+      console.error('❌ Content scraping failed:', error);
+      throw new Error(`Failed to gather website content: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   /**
