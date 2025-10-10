@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS "User" (
 );
 
 -- Step 2: Delete any existing test users (clean slate)
-DELETE FROM "User" 
+DELETE FROM "User"
 WHERE email IN (
   'shayne+1@devpipeline.com',
   'sk@zerobarriers.io',
@@ -27,7 +27,7 @@ WHERE email IN (
 
 -- Step 3: Insert the 3 users with hashed passwords
 INSERT INTO "User" (id, email, name, password, role, "createdAt", "updatedAt")
-VALUES 
+VALUES
   (
     'admin-1',
     'shayne+1@devpipeline.com',
@@ -57,8 +57,8 @@ VALUES
   );
 
 -- Step 4: Verify users were created
-SELECT id, email, name, role, "createdAt" 
-FROM "User" 
+SELECT id, email, name, role, "createdAt"
+FROM "User"
 ORDER BY role DESC, email;
 
 -- Expected output:
@@ -74,7 +74,7 @@ ORDER BY role DESC, email;
 -- S Roy (User):       ZBuser2123!
 -- ========================================
 
--- ✅ DONE! 
+-- ✅ DONE!
 -- Now test login at:
 -- https://zero-barriers-growth-accelerator-20.vercel.app/auth/signin
 
