@@ -119,7 +119,7 @@ export function PhasedAnalysisPage() {
               </CardHeader>
               <CardContent>
                 <ul className="text-sm space-y-1 text-muted-foreground mb-3">
-                  <li>• Scrape website content & metadata</li>
+                  <li>• Collect website content & metadata</li>
                   <li>• Extract keywords & topics</li>
                   <li>• Prepare data for AI analysis</li>
                 </ul>
