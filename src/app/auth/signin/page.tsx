@@ -31,7 +31,8 @@ export default function SignInPage() {
     try {
       const success = await signIn(email, password);
       if (success) {
-        router.push('/dashboard');
+        // Redirect to phased analysis (primary tool) instead of generic dashboard
+        router.push('/dashboard/phased-analysis');
       } else {
         setError('Invalid email or password');
       }
