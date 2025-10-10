@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Download, FileText, Eye, Code } from 'lucide-react';
 import { IndividualReport } from '@/lib/individual-report-generator';
+import { Code, Download, Eye, FileText } from 'lucide-react';
+import { useState } from 'react';
 
 interface IndividualReportsViewProps {
   reports: IndividualReport[];
@@ -81,7 +81,7 @@ export function IndividualReportsView({ reports, url }: IndividualReportsViewPro
             <FileText className="mr-2 h-4 w-4" />
             Download .md
           </Button>
-          {report.prompt !== 'N/A - Direct web scraping, no AI prompt' && 
+          {report.prompt !== 'N/A - Direct web scraping, no AI prompt' &&
            report.prompt !== 'N/A - Google Lighthouse automated tool' && (
             <Button
               size="sm"

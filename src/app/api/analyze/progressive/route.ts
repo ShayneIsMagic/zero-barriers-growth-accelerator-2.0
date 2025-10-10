@@ -135,29 +135,37 @@ export async function GET(request: NextRequest) {
 
 /**
  * Run analysis in background, updating database after each step
+ * Generates individual reports with prompts for each assessment
  */
 async function runProgressiveAnalysis(analysisId: string, url: string) {
   let currentStepIndex = 0;
-
-  const updateStep = async (stepId: string, status: 'running' | 'completed' | 'failed', data?: any) => {
+  const individualReports: any[] = [];
+  
+  const updateStep = async (stepId: string, status: 'running' | 'completed' | 'failed', data?: any, reportData?: any) => {
     const analysis = await prisma.analysis.findUnique({ where: { id: analysisId } });
     if (!analysis || !analysis.content) return;
-
+    
     const content = JSON.parse(analysis.content);
     const stepIndex = content.steps.findIndex((s: any) => s.id === stepId);
-
+    
     if (stepIndex >= 0) {
       content.steps[stepIndex].status = status;
       if (data) {
         content.steps[stepIndex].data = data;
       }
-
+      if (reportData) {
+        content.steps[stepIndex].report = reportData;
+        individualReports.push(reportData);
+      }
+      
       if (status === 'completed') {
         currentStepIndex = stepIndex + 1;
         content.currentStep = currentStepIndex;
       }
     }
-
+    
+    content.individualReports = individualReports;
+    
     await prisma.analysis.update({
       where: { id: analysisId },
       data: {
@@ -165,48 +173,77 @@ async function runProgressiveAnalysis(analysisId: string, url: string) {
         status: status === 'failed' ? 'FAILED' : (currentStepIndex >= 9 ? 'COMPLETED' : 'IN_PROGRESS')
       }
     });
-
+    
     console.log(`📊 ${analysisId}: ${stepId} → ${status}`);
   };
 
   try {
-    // Execute analysis with progress tracking
+    // Import report generators
+    const {
+      generateContentCollectionReport,
+      generateLighthouseReport,
+      generateGoldenCircleReport,
+      generateElementsB2CReport,
+      generateB2BElementsReport,
+      generateCliftonStrengthsReport,
+      generateComprehensiveReport
+    } = await import('@/lib/individual-report-generator');
+
+    // Execute analysis with progress tracking and report generation
     const analyzer = new ThreePhaseAnalyzer(url, async (phase, step, progress) => {
       console.log(`📊 ${phase}: ${step} - ${progress.toFixed(1)}%`);
-
-      // Map phases to step IDs
-      if (step.includes('Scraping') || step.includes('data collection')) {
-        await updateStep('scrape_content', 'running');
-      } else if (step.includes('PageAudit')) {
-        if (progress === 100) await updateStep('scrape_content', 'completed');
-        await updateStep('pageaudit', 'running');
-      } else if (step.includes('Lighthouse')) {
-        if (progress === 100) await updateStep('pageaudit', 'completed');
-        await updateStep('lighthouse', 'running');
-      } else if (step.includes('Golden Circle')) {
-        if (progress === 100) await updateStep('lighthouse', 'completed');
-        await updateStep('golden_circle', 'running');
-      } else if (step.includes('Elements of Value') && !step.includes('B2B')) {
-        if (progress === 100) await updateStep('golden_circle', 'completed');
-        await updateStep('elements_of_value', 'running');
-      } else if (step.includes('B2B')) {
-        if (progress === 100) await updateStep('elements_of_value', 'completed');
-        await updateStep('b2b_elements', 'running');
-      } else if (step.includes('CliftonStrengths') || step.includes('Strengths')) {
-        if (progress === 100) await updateStep('b2b_elements', 'completed');
-        await updateStep('clifton_strengths', 'running');
-      } else if (step.includes('insights') || step.includes('Strategic')) {
-        if (progress === 100) await updateStep('clifton_strengths', 'completed');
-        await updateStep('gemini_insights', 'running');
-      } else if (step.includes('report') || step.includes('final')) {
-        if (progress === 100) await updateStep('gemini_insights', 'completed');
-        await updateStep('generate_report', 'running');
-      }
     });
 
     const result = await analyzer.execute();
 
-    // Mark all steps as completed
+    // Generate individual reports with prompts
+    console.log('📝 Generating individual reports...');
+
+    // Content Collection Report
+    const contentReport = generateContentCollectionReport(result.phase1Data?.scrapedContent, url);
+    await updateStep('scrape_content', 'completed', result.phase1Data?.scrapedContent, contentReport);
+
+    // Lighthouse Report
+    if (result.phase1Data?.lighthouseData) {
+      const lighthouseReport = generateLighthouseReport(result.phase1Data.lighthouseData, url);
+      await updateStep('lighthouse', 'completed', result.phase1Data.lighthouseData, lighthouseReport);
+    }
+
+    // Golden Circle Report (with prompt)
+    if (result.phase2Data?.goldenCircle) {
+      const prompt = `Analyze the website content for Golden Circle framework (Why, How, What, Who):\n\nURL: ${url}\nContent: ${result.phase1Data?.scrapedContent?.content?.substring(0, 2000)}...\n\nExtract:\n1. WHY (dominant purpose) - exact quotes from website\n2. HOW (unique methodology) - exact quotes about their approach\n3. WHAT (products/services) - exact list of offerings\n4. WHO (target audience) - exact quotes about their market\n\nReturn structured analysis with scores and evidence.`;
+      const goldenReport = generateGoldenCircleReport(result.phase2Data.goldenCircle, url, prompt);
+      await updateStep('golden_circle', 'completed', result.phase2Data.goldenCircle, goldenReport);
+    }
+
+    // Elements of Value (B2C) Report
+    if (result.phase2Data?.elementsOfValue) {
+      const prompt = `Analyze the website content for B2C Elements of Value (30 elements):\n\nURL: ${url}\nContent: ${result.phase1Data?.scrapedContent?.content?.substring(0, 2000)}...\n\nEvaluate each of the 30 B2C Elements of Value and provide specific evidence from the content.\n\nReturn structured analysis with scores for each element.`;
+      const elementsReport = generateElementsB2CReport(result.phase2Data.elementsOfValue, url, prompt);
+      await updateStep('elements_of_value', 'completed', result.phase2Data.elementsOfValue, elementsReport);
+    }
+
+    // B2B Elements Report
+    if (result.phase2Data?.b2bElements) {
+      const prompt = `Analyze the website content for B2B Elements of Value (40 elements):\n\nURL: ${url}\nContent: ${result.phase1Data?.scrapedContent?.content?.substring(0, 2000)}...\n\nEvaluate each of the 40 B2B Elements of Value and provide specific evidence from the content.\n\nReturn structured analysis with scores for each element.`;
+      const b2bReport = generateB2BElementsReport(result.phase2Data.b2bElements, url, prompt);
+      await updateStep('b2b_elements', 'completed', result.phase2Data.b2bElements, b2bReport);
+    }
+
+    // CliftonStrengths Report
+    if (result.phase2Data?.cliftonStrengths) {
+      const prompt = `Analyze the website content for CliftonStrengths (34 themes):\n\nURL: ${url}\nContent: ${result.phase1Data?.scrapedContent?.content?.substring(0, 2000)}...\n\nEvaluate each of the 34 CliftonStrengths themes and provide specific evidence from the content.\n\nReturn structured analysis with top 5 themes and scores.`;
+      const strengthsReport = generateCliftonStrengthsReport(result.phase2Data.cliftonStrengths, url, prompt);
+      await updateStep('clifton_strengths', 'completed', result.phase2Data.cliftonStrengths, strengthsReport);
+    }
+
+    // Comprehensive Report
+    if (result.phase3Data) {
+      const prompt = `Comprehensive Strategic Analysis:\n\nPhase 1 Data:\n- SEO Score: ${result.phase1Data?.summary.seoScore}/100\n- Performance Score: ${result.phase1Data?.summary.performanceScore}/100\n\nPhase 2 Data:\n- Golden Circle Score: ${result.phase2Data?.summary.goldenCircleScore}/100\n- Elements of Value Score: ${result.phase2Data?.summary.elementsOfValueScore}/100\n\nProvide comprehensive recommendations for:\n1. Performance optimization\n2. SEO improvements\n3. Lead generation improvements\n4. Sales optimization\n5. Overall business growth\n\nReturn structured recommendations with quick wins and long-term strategy.`;
+      const comprehensiveReport = generateComprehensiveReport(result.phase3Data.comprehensiveAnalysis, url, prompt);
+      await updateStep('gemini_insights', 'completed', result.phase3Data, comprehensiveReport);
+    }
+
     await updateStep('generate_report', 'completed', result);
 
     // Update final result
@@ -218,13 +255,14 @@ async function runProgressiveAnalysis(analysisId: string, url: string) {
           currentStep: 9,
           totalSteps: 9,
           completed: true,
-          result: result
+          result: result,
+          individualReports: individualReports
         }),
         score: result.finalReport?.evaluationFramework?.overallScore || 0
       }
     });
 
-    console.log(`✅ Progressive analysis completed: ${analysisId}`);
+    console.log(`✅ Progressive analysis completed with ${individualReports.length} individual reports: ${analysisId}`);
 
   } catch (error) {
     console.error(`❌ Progressive analysis failed: ${analysisId}`, error);

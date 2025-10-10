@@ -373,8 +373,8 @@ When you paste these prompts with your data, you should get:
 
 If the app can't automatically call these APIs, **these manual prompts give you the same analysis quality** - just copy/paste the data yourself.
 
-**Time required:** 10-15 minutes for complete data collection  
-**AI analysis time:** 2-3 minutes  
+**Time required:** 10-15 minutes for complete data collection
+**AI analysis time:** 2-3 minutes
 **Total:** ~20 minutes for full report
 
 ---

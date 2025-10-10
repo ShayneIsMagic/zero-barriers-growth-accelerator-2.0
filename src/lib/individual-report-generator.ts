@@ -19,8 +19,8 @@ export interface IndividualReport {
 export function generateContentCollectionReport(scrapedContent: any, url: string): IndividualReport {
   const markdown = `# Content Collection Report
 
-**URL:** ${url}  
-**Date:** ${new Date().toLocaleString()}  
+**URL:** ${url}
+**Date:** ${new Date().toLocaleString()}
 **Phase:** 1 - Data Collection
 
 ---
@@ -60,8 +60,8 @@ ${scrapedContent.content ? scrapedContent.content.substring(0, 500) + '...' : 'N
 export function generateLighthouseReport(lighthouseData: any, url: string): IndividualReport {
   const markdown = `# Lighthouse Performance Report
 
-**URL:** ${url}  
-**Date:** ${new Date().toLocaleString()}  
+**URL:** ${url}
+**Date:** ${new Date().toLocaleString()}
 **Tool:** Google Lighthouse
 
 ---
@@ -79,7 +79,7 @@ export function generateLighthouseReport(lighthouseData: any, url: string): Indi
 
 ## Key Metrics
 
-${lighthouseData?.metrics ? Object.entries(lighthouseData.metrics).map(([key, value]) => 
+${lighthouseData?.metrics ? Object.entries(lighthouseData.metrics).map(([key, value]) =>
   `- **${key}:** ${value}`
 ).join('\n') : 'No metrics available'}
 
@@ -109,9 +109,9 @@ Enter: ${url}
 export function generateGoldenCircleReport(analysis: any, url: string, prompt: string): IndividualReport {
   const markdown = `# Golden Circle Analysis
 
-**URL:** ${url}  
-**Date:** ${new Date().toLocaleString()}  
-**Phase:** 2 - Framework Analysis  
+**URL:** ${url}
+**Date:** ${new Date().toLocaleString()}
+**Phase:** 2 - Framework Analysis
 **AI Tool:** Google Gemini
 
 ---
@@ -177,10 +177,10 @@ ${prompt}
 export function generateElementsB2CReport(analysis: any, url: string, prompt: string): IndividualReport {
   const markdown = `# Elements of Value Analysis (B2C)
 
-**URL:** ${url}  
-**Date:** ${new Date().toLocaleString()}  
-**Phase:** 2 - Framework Analysis  
-**Framework:** 30 Elements of Value (Consumer)  
+**URL:** ${url}
+**Date:** ${new Date().toLocaleString()}
+**Phase:** 2 - Framework Analysis
+**Framework:** 30 Elements of Value (Consumer)
 **AI Tool:** Google Gemini
 
 ---
@@ -192,22 +192,22 @@ export function generateElementsB2CReport(analysis: any, url: string, prompt: st
 ## Value Pyramid
 
 ### Functional Value
-${analysis.functional ? Object.entries(analysis.functional).map(([key, value]: [string, any]) => 
+${analysis.functional ? Object.entries(analysis.functional).map(([key, value]: [string, any]) =>
   `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence found'}`
 ).join('\n') : 'Not analyzed'}
 
 ### Emotional Value
-${analysis.emotional ? Object.entries(analysis.emotional).map(([key, value]: [string, any]) => 
+${analysis.emotional ? Object.entries(analysis.emotional).map(([key, value]: [string, any]) =>
   `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence found'}`
 ).join('\n') : 'Not analyzed'}
 
 ### Life Changing Value
-${analysis.lifeChanging ? Object.entries(analysis.lifeChanging).map(([key, value]: [string, any]) => 
+${analysis.lifeChanging ? Object.entries(analysis.lifeChanging).map(([key, value]: [string, any]) =>
   `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence found'}`
 ).join('\n') : 'Not analyzed'}
 
 ### Social Impact
-${analysis.socialImpact ? Object.entries(analysis.socialImpact).map(([key, value]: [string, any]) => 
+${analysis.socialImpact ? Object.entries(analysis.socialImpact).map(([key, value]: [string, any]) =>
   `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence found'}`
 ).join('\n') : 'Not analyzed'}
 
@@ -242,10 +242,10 @@ ${prompt}
 export function generateB2BElementsReport(analysis: any, url: string, prompt: string): IndividualReport {
   const markdown = `# B2B Elements of Value Analysis
 
-**URL:** ${url}  
-**Date:** ${new Date().toLocaleString()}  
-**Phase:** 2 - Framework Analysis  
-**Framework:** 40 B2B Elements of Value  
+**URL:** ${url}
+**Date:** ${new Date().toLocaleString()}
+**Phase:** 2 - Framework Analysis
+**Framework:** 40 B2B Elements of Value
 **AI Tool:** Google Gemini
 
 ---
@@ -257,27 +257,27 @@ export function generateB2BElementsReport(analysis: any, url: string, prompt: st
 ## B2B Value Stack
 
 ### Table Stakes
-${analysis.tableStakes ? Object.entries(analysis.tableStakes).map(([key, value]: [string, any]) => 
+${analysis.tableStakes ? Object.entries(analysis.tableStakes).map(([key, value]: [string, any]) =>
   `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence'}`
 ).join('\n') : 'Not analyzed'}
 
 ### Functional Value
-${analysis.functional ? Object.entries(analysis.functional).map(([key, value]: [string, any]) => 
+${analysis.functional ? Object.entries(analysis.functional).map(([key, value]: [string, any]) =>
   `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence'}`
 ).join('\n') : 'Not analyzed'}
 
 ### Ease of Doing Business
-${analysis.ease ? Object.entries(analysis.ease).map(([key, value]: [string, any]) => 
+${analysis.ease ? Object.entries(analysis.ease).map(([key, value]: [string, any]) =>
   `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence'}`
 ).join('\n') : 'Not analyzed'}
 
 ### Individual Value
-${analysis.individual ? Object.entries(analysis.individual).map(([key, value]: [string, any]) => 
+${analysis.individual ? Object.entries(analysis.individual).map(([key, value]: [string, any]) =>
   `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence'}`
 ).join('\n') : 'Not analyzed'}
 
 ### Inspirational Value
-${analysis.inspirational ? Object.entries(analysis.inspirational).map(([key, value]: [string, any]) => 
+${analysis.inspirational ? Object.entries(analysis.inspirational).map(([key, value]: [string, any]) =>
   `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence'}`
 ).join('\n') : 'Not analyzed'}
 
@@ -307,10 +307,10 @@ ${prompt}
 export function generateCliftonStrengthsReport(analysis: any, url: string, prompt: string): IndividualReport {
   const markdown = `# CliftonStrengths Brand Analysis
 
-**URL:** ${url}  
-**Date:** ${new Date().toLocaleString()}  
-**Phase:** 2 - Framework Analysis  
-**Framework:** 34 CliftonStrengths Themes  
+**URL:** ${url}
+**Date:** ${new Date().toLocaleString()}
+**Phase:** 2 - Framework Analysis
+**Framework:** 34 CliftonStrengths Themes
 **AI Tool:** Google Gemini
 
 ---
@@ -321,10 +321,10 @@ export function generateCliftonStrengthsReport(analysis: any, url: string, promp
 
 ## Top 5 Brand Strengths
 
-${analysis.topStrengths ? analysis.topStrengths.map((strength: any, i: number) => 
+${analysis.topStrengths ? analysis.topStrengths.map((strength: any, i: number) =>
   `### ${i + 1}. ${strength.name}
-**Domain:** ${strength.domain}  
-**Score:** ${strength.score}/10  
+**Domain:** ${strength.domain}
+**Score:** ${strength.score}/10
 **Evidence:** ${strength.evidence || 'Not specified'}
 `
 ).join('\n') : 'Not analyzed'}
@@ -334,22 +334,22 @@ ${analysis.topStrengths ? analysis.topStrengths.map((strength: any, i: number) =
 ## All Themes by Domain
 
 ### Executing Themes
-${analysis.executing ? analysis.executing.map((theme: any) => 
+${analysis.executing ? analysis.executing.map((theme: any) =>
   `- **${theme.name}:** ${theme.score}/10`
 ).join('\n') : 'Not analyzed'}
 
 ### Influencing Themes
-${analysis.influencing ? analysis.influencing.map((theme: any) => 
+${analysis.influencing ? analysis.influencing.map((theme: any) =>
   `- **${theme.name}:** ${theme.score}/10`
 ).join('\n') : 'Not analyzed'}
 
 ### Relationship Building Themes
-${analysis.relationshipBuilding ? analysis.relationshipBuilding.map((theme: any) => 
+${analysis.relationshipBuilding ? analysis.relationshipBuilding.map((theme: any) =>
   `- **${theme.name}:** ${theme.score}/10`
 ).join('\n') : 'Not analyzed'}
 
 ### Strategic Thinking Themes
-${analysis.strategicThinking ? analysis.strategicThinking.map((theme: any) => 
+${analysis.strategicThinking ? analysis.strategicThinking.map((theme: any) =>
   `- **${theme.name}:** ${theme.score}/10`
 ).join('\n') : 'Not analyzed'}
 
@@ -384,23 +384,23 @@ ${prompt}
 export function generateComprehensiveReport(analysis: any, url: string, prompt: string): IndividualReport {
   const markdown = `# Comprehensive Strategic Analysis
 
-**URL:** ${url}  
-**Date:** ${new Date().toLocaleString()}  
-**Phase:** 3 - Strategic Analysis  
+**URL:** ${url}
+**Date:** ${new Date().toLocaleString()}
+**Phase:** 3 - Strategic Analysis
 **AI Tool:** Google Gemini
 
 ---
 
 ## Executive Summary
 
-**Overall Score:** ${analysis.overallScore || 0}/100  
+**Overall Score:** ${analysis.overallScore || 0}/100
 **Rating:** ${analysis.rating || 'Not Rated'}
 
 ---
 
 ## Priority Recommendations
 
-${analysis.priorityRecommendations ? analysis.priorityRecommendations.map((rec: string, i: number) => 
+${analysis.priorityRecommendations ? analysis.priorityRecommendations.map((rec: string, i: number) =>
   `${i + 1}. **${rec}**`
 ).join('\n') : 'No recommendations'}
 
@@ -408,7 +408,7 @@ ${analysis.priorityRecommendations ? analysis.priorityRecommendations.map((rec: 
 
 ## Quick Wins (< 1 Week)
 
-${analysis.quickWins ? analysis.quickWins.map((win: string) => 
+${analysis.quickWins ? analysis.quickWins.map((win: string) =>
   `- 🎯 ${win}`
 ).join('\n') : 'No quick wins identified'}
 
@@ -416,7 +416,7 @@ ${analysis.quickWins ? analysis.quickWins.map((win: string) =>
 
 ## Long-Term Improvements (3-6 Months)
 
-${analysis.longTermImprovements ? analysis.longTermImprovements.map((improvement: string) => 
+${analysis.longTermImprovements ? analysis.longTermImprovements.map((improvement: string) =>
   `- 📈 ${improvement}`
 ).join('\n') : 'No long-term improvements identified'}
 
@@ -424,7 +424,7 @@ ${analysis.longTermImprovements ? analysis.longTermImprovements.map((improvement
 
 ## Performance Optimizations
 
-${analysis.performanceOptimizations ? analysis.performanceOptimizations.map((opt: string) => 
+${analysis.performanceOptimizations ? analysis.performanceOptimizations.map((opt: string) =>
   `- ⚡ ${opt}`
 ).join('\n') : 'No performance optimizations identified'}
 
@@ -432,7 +432,7 @@ ${analysis.performanceOptimizations ? analysis.performanceOptimizations.map((opt
 
 ## SEO Improvements
 
-${analysis.seoImprovements ? analysis.seoImprovements.map((seo: string) => 
+${analysis.seoImprovements ? analysis.seoImprovements.map((seo: string) =>
   `- 🔍 ${seo}`
 ).join('\n') : 'No SEO improvements identified'}
 

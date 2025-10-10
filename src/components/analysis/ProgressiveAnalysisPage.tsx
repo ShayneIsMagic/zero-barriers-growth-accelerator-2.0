@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { CheckCircle, Clock, Download, FileText, Loader2, Play, XCircle } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { generateMarkdownReport } from '@/lib/markdown-report-generator';
+import { IndividualReportsView } from './IndividualReportsView';
 
 interface StepStatus {
   id: string;
@@ -285,27 +286,47 @@ export function ProgressiveAnalysisPage() {
 
               {/* Completion Actions */}
               {status.completed && (
-                <div className="mt-6 p-4 bg-green-50 dark:bg-green-950 border border-green-200 rounded-lg">
-                  <div className="flex flex-col gap-3">
-                    <div>
-                      <div className="font-medium text-green-900 dark:text-green-100">
-                        Analysis Complete!
+                <div className="mt-6 space-y-4">
+                  <div className="p-4 bg-green-50 dark:bg-green-950 border border-green-200 rounded-lg">
+                    <div className="flex flex-col gap-3">
+                      <div>
+                        <div className="font-medium text-green-900 dark:text-green-100">
+                          Analysis Complete!
+                        </div>
+                        <div className="text-sm text-green-700 dark:text-green-300 mt-1">
+                          Overall Score: {status.score}/100 • {(status as any).individualReports?.length || 0} Individual Reports Generated
+                        </div>
                       </div>
-                      <div className="text-sm text-green-700 dark:text-green-300 mt-1">
-                        Overall Score: {status.score}/100
+                      <div className="flex gap-2">
+                        <Button onClick={downloadMarkdown} variant="default">
+                          <FileText className="mr-2 h-4 w-4" />
+                          Download Full Report
+                        </Button>
+                        <Button onClick={downloadJSON} variant="outline">
+                          <Download className="mr-2 h-4 w-4" />
+                          Download JSON
+                        </Button>
                       </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button onClick={downloadMarkdown} variant="default">
-                        <FileText className="mr-2 h-4 w-4" />
-                        Download Markdown
-                      </Button>
-                      <Button onClick={downloadJSON} variant="outline">
-                        <Download className="mr-2 h-4 w-4" />
-                        Download JSON
-                      </Button>
                     </div>
                   </div>
+
+                  {/* Individual Reports View */}
+                  {(status as any).individualReports && (status as any).individualReports.length > 0 && (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Individual Assessment Reports</CardTitle>
+                        <CardDescription>
+                          View each assessment separately with its AI prompt
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <IndividualReportsView 
+                          reports={(status as any).individualReports} 
+                          url={status.url}
+                        />
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
               )}
 

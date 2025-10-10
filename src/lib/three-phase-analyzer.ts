@@ -267,19 +267,19 @@ export class ThreePhaseAnalyzer {
       console.log('🔍 Running Lighthouse analysis...');
       const scriptPath = path.join(process.cwd(), 'scripts', 'lighthouse-per-page.js');
       const command = `node "${scriptPath}" "${this.url}"`;
-      
+
       const { stdout } = await this.execAsync(command, {
         timeout: 120000,
         maxBuffer: 1024 * 1024 * 10
       });
-      
+
       const jsonMatch = stdout.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         const result = JSON.parse(jsonMatch[0]);
         console.log(`✅ Lighthouse completed - Performance: ${result.scores?.performance || 'N/A'}`);
         return result;
       }
-      
+
       console.warn('Lighthouse: No valid JSON output');
       return null;
     } catch (error) {
@@ -295,11 +295,11 @@ export class ThreePhaseAnalyzer {
   private async collectGoogleToolsData(): Promise<any> {
     try {
       console.log('🔍 Collecting Google Tools data...');
-      
+
       // Basic keyword extraction from content
       const scrapedContent = await this.scrapeWebsiteContent();
       const keywords = this.extractKeywordsFromContent(scrapedContent);
-      
+
       return {
         keywords: keywords,
         overallScore: 0,
@@ -317,7 +317,7 @@ export class ThreePhaseAnalyzer {
    */
   private extractKeywordsFromContent(content: ProductionExtractionResult): string[] {
     const keywords: string[] = [];
-    
+
     if (content.title) {
       const titleWords = content.title.toLowerCase()
         .replace(/[^\w\s]/g, ' ')
@@ -325,7 +325,7 @@ export class ThreePhaseAnalyzer {
         .filter(word => word.length > 3);
       keywords.push(...titleWords);
     }
-    
+
     if (content.metaDescription) {
       const descWords = content.metaDescription.toLowerCase()
         .replace(/[^\w\s]/g, ' ')
@@ -333,7 +333,7 @@ export class ThreePhaseAnalyzer {
         .filter(word => word.length > 3);
       keywords.push(...descWords);
     }
-    
+
     const uniqueKeywords = [...new Set(keywords)];
     return uniqueKeywords.slice(0, 20);
   }
