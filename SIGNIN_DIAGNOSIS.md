@@ -1,7 +1,7 @@
 # 🔍 SIGNIN DIAGNOSIS
 
-**Date:** October 10, 2025, 1:05 AM  
-**Issue:** User reports signin is broken  
+**Date:** October 10, 2025, 1:05 AM
+**Issue:** User reports signin is broken
 **Status:** ✅ **API WORKS, NEED TO CHECK FRONTEND**
 
 ---
@@ -10,7 +10,7 @@
 
 ### **Test 1: Signin API - ✅ SUCCESS**
 
-**Endpoint:** `POST /api/auth/signin`  
+**Endpoint:** `POST /api/auth/signin`
 **Test Credentials:**
 ```
 Email: shayne+1@devpipeline.com
