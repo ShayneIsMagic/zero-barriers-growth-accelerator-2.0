@@ -249,7 +249,7 @@ model IndividualReport {
   phase      String
   markdown   String
   createdAt  DateTime @default(now())
-  
+
   @@map("individual_reports")
 }
 ```
@@ -281,7 +281,7 @@ Vercel automatically:
   ✅ Runs prisma generate (updates Prisma Client)
   ✅ Runs next build
   ✅ Deploys new code
-  
+
 Vercel does NOT:
   ❌ Run prisma migrate
   ❌ Run prisma db push
@@ -298,7 +298,7 @@ https://zero-barriers-growth-accelerator-20.vercel.app
   ✅ Has updated Prisma Client (can query new table)
   ✅ Connects to Supabase
   ✅ Can read/write to individual_reports table
-  
+
 # Because:
   ✅ You manually updated Supabase (Step 2)
   ✅ Vercel automatically updated Prisma Client (Step 4)
@@ -349,7 +349,7 @@ https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/sql
 ## ⚠️ Common Misconceptions
 
 ### **Myth 1: "Prisma auto-updates Supabase"**
-**Reality:** 
+**Reality:**
 - ✅ Prisma generates TypeScript client code
 - ❌ Prisma does NOT modify database (unless you run migrate/push)
 
@@ -452,7 +452,7 @@ https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/editor
 
 ---
 
-**Last Updated:** October 10, 2025  
-**Status:** Complete explanation  
+**Last Updated:** October 10, 2025
+**Status:** Complete explanation
 **Next Step:** Deploy to Vercel, then manually update Supabase if needed
 

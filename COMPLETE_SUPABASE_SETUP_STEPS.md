@@ -1,7 +1,7 @@
 # 🎯 Complete Supabase Setup - Step by Step
 
-**Goal:** Create markdown storage tables in Supabase  
-**Time:** 5 minutes  
+**Goal:** Create markdown storage tables in Supabase
+**Time:** 5 minutes
 **Difficulty:** Easy (copy & paste)
 
 ---
@@ -140,8 +140,8 @@ You should now see these tables:
 **In Supabase SQL Editor, run this:**
 
 ```sql
-SELECT routine_name 
-FROM information_schema.routines 
+SELECT routine_name
+FROM information_schema.routines
 WHERE routine_schema = 'public'
   AND (routine_name LIKE '%report%' OR routine_name LIKE '%markdown%')
 ORDER BY routine_name;
@@ -166,8 +166,8 @@ ORDER BY routine_name;
 
 ```sql
 -- Test 1: Check tables exist
-SELECT table_name 
-FROM information_schema.tables 
+SELECT table_name
+FROM information_schema.tables
 WHERE table_name IN ('individual_reports', 'markdown_exports')
   AND table_schema = 'public';
 
@@ -380,7 +380,7 @@ https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/editor
 
 ### **Verification Query:**
 ```sql
-SELECT table_name FROM information_schema.tables 
+SELECT table_name FROM information_schema.tables
 WHERE table_name IN ('individual_reports', 'markdown_exports');
 ```
 
@@ -397,7 +397,7 @@ WHERE table_name IN ('individual_reports', 'markdown_exports');
 
 **Time taken:** 5 minutes
 
-**Result:** 
+**Result:**
 - ✅ Markdown storage enabled
 - ✅ Reports persist in database
 - ✅ Can retrieve anytime
@@ -407,8 +407,8 @@ WHERE table_name IN ('individual_reports', 'markdown_exports');
 
 ---
 
-**Created:** October 10, 2025  
-**Difficulty:** ⭐ Easy (copy & paste)  
-**Time:** ⏱️ 5 minutes  
+**Created:** October 10, 2025
+**Difficulty:** ⭐ Easy (copy & paste)
+**Time:** ⏱️ 5 minutes
 **Status:** ✅ Ready to execute
 

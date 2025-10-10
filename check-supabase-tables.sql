@@ -4,7 +4,7 @@
 -- ===============================================
 
 -- 1. List all tables in your database
-SELECT 
+SELECT
   table_name,
   table_type
 FROM information_schema.tables
@@ -22,18 +22,18 @@ ORDER BY table_name;
 -- ===============================================
 
 -- Check User table
-SELECT 
+SELECT
   'User table' AS table_name,
   CASE WHEN EXISTS (
-    SELECT 1 FROM information_schema.tables 
+    SELECT 1 FROM information_schema.tables
     WHERE table_name = 'User' AND table_schema = 'public'
   ) THEN '✅ EXISTS' ELSE '❌ MISSING' END AS status;
 
 -- Check Analysis table
-SELECT 
+SELECT
   'Analysis table' AS table_name,
   CASE WHEN EXISTS (
-    SELECT 1 FROM information_schema.tables 
+    SELECT 1 FROM information_schema.tables
     WHERE table_name = 'Analysis' AND table_schema = 'public'
   ) THEN '✅ EXISTS' ELSE '❌ MISSING' END AS status;
 
@@ -42,18 +42,18 @@ SELECT
 -- ===============================================
 
 -- Check individual_reports table
-SELECT 
+SELECT
   'individual_reports table' AS table_name,
   CASE WHEN EXISTS (
-    SELECT 1 FROM information_schema.tables 
+    SELECT 1 FROM information_schema.tables
     WHERE table_name = 'individual_reports' AND table_schema = 'public'
   ) THEN '✅ EXISTS' ELSE '⚠️  NOT CREATED (optional)' END AS status;
 
 -- Check markdown_exports table
-SELECT 
+SELECT
   'markdown_exports table' AS table_name,
   CASE WHEN EXISTS (
-    SELECT 1 FROM information_schema.tables 
+    SELECT 1 FROM information_schema.tables
     WHERE table_name = 'markdown_exports' AND table_schema = 'public'
   ) THEN '✅ EXISTS' ELSE '⚠️  NOT CREATED (optional)' END AS status;
 
@@ -62,14 +62,14 @@ SELECT
 -- ===============================================
 
 -- Count users
-SELECT 
+SELECT
   'User' AS table_name,
   COUNT(*) AS row_count,
   CASE WHEN COUNT(*) > 0 THEN '✅ Has data' ELSE '⚠️  Empty' END AS status
 FROM "User";
 
 -- Count analyses
-SELECT 
+SELECT
   'Analysis' AS table_name,
   COUNT(*) AS row_count,
   CASE WHEN COUNT(*) > 0 THEN '✅ Has data' ELSE '⚠️  Empty' END AS status
@@ -99,7 +99,7 @@ END $$;
 -- 5. Show User table structure
 -- ===============================================
 
-SELECT 
+SELECT
   column_name,
   data_type,
   is_nullable,
@@ -112,7 +112,7 @@ ORDER BY ordinal_position;
 -- 6. Show Analysis table structure
 -- ===============================================
 
-SELECT 
+SELECT
   column_name,
   data_type,
   is_nullable,
@@ -133,14 +133,14 @@ REQUIRED TABLES (Must exist for app to work):
 OPTIONAL TABLES (For markdown feature):
   ⚠️  individual_reports - Stores individual markdown reports
   ⚠️  markdown_exports - Stores combined markdown reports
-  
+
 If optional tables are missing:
   - App still works ✅
   - Markdown generation works ✅
   - Markdown is returned in API response ✅
   - But markdown is NOT saved to database ⚠️
   - User must download reports immediately
-  
+
 To create optional tables:
   - Run: supabase-markdown-schema.sql
   - Or run: npx prisma db push (from local machine)

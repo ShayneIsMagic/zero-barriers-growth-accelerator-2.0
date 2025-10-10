@@ -119,9 +119,9 @@ export function PhasedAnalysisPage() {
               </CardHeader>
               <CardContent>
                 <ul className="text-sm space-y-1 text-muted-foreground mb-3">
-                  <li>• Scrape website content</li>
-                  <li>• Lighthouse performance</li>
-                  <li>• Google Tools data</li>
+                  <li>• Scrape website content & metadata</li>
+                  <li>• Extract keywords & topics</li>
+                  <li>• Prepare data for AI analysis</li>
                 </ul>
                 <Button
                   onClick={() => runPhase(1)}
@@ -164,9 +164,9 @@ export function PhasedAnalysisPage() {
                   <li>• B2B Elements (Gemini AI)</li>
                   <li>• CliftonStrengths (Gemini AI)</li>
                 </ul>
-                {currentPhase === 0 && (
-                  <div className="mb-3 p-2 bg-blue-50 dark:bg-blue-950 border border-blue-200 rounded text-xs text-blue-800 dark:text-blue-200">
-                    💡 Can run independently, but Phase 1 data improves accuracy by 40%
+                {currentPhase === 1 && (
+                  <div className="mb-3 p-2 bg-green-50 dark:bg-green-950 border border-green-200 rounded text-xs text-green-800 dark:text-green-200">
+                    ✅ Ready! Will analyze content from Phase 1
                   </div>
                 )}
                 <Button
