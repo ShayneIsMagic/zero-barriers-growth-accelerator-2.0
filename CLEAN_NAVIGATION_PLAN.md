@@ -141,7 +141,7 @@ Create: `src/app/dashboard/[page]/page.tsx.disabled`
 
 ```typescript
 // Rename file extensions:
-// step-by-step-analysis/page.tsx 
+// step-by-step-analysis/page.tsx
 //   → step-by-step-analysis/page.tsx.disabled
 
 // Next.js won't route to .disabled files
@@ -176,7 +176,7 @@ export const FEATURE_FLAGS = {
 };
 
 // In navigation component:
-const navItems = allNavItems.filter(item => 
+const navItems = allNavItems.filter(item =>
   FEATURE_FLAGS[item.featureFlag] !== false
 );
 ```
