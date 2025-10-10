@@ -1,6 +1,6 @@
 /**
  * Phased Analysis Page
- * 
+ *
  * Manual control over each phase:
  * - Phase 1: Data Collection (run first)
  * - Phase 2: Framework Analysis (after reviewing Phase 1)

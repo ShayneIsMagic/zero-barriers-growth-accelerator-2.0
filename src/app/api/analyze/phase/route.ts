@@ -3,18 +3,18 @@
  * Allows running Phase 1, 2, or 3 independently with manual control
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import {
+    generateB2BElementsReport,
+    generateCliftonStrengthsReport,
+    generateComprehensiveReport,
+    generateContentCollectionReport,
+    generateElementsB2CReport,
+    generateGoldenCircleReport,
+    generateLighthouseReport
+} from '@/lib/individual-report-generator';
 import { prisma } from '@/lib/prisma';
 import { ThreePhaseAnalyzer } from '@/lib/three-phase-analyzer';
-import {
-  generateContentCollectionReport,
-  generateLighthouseReport,
-  generateGoldenCircleReport,
-  generateElementsB2CReport,
-  generateB2BElementsReport,
-  generateCliftonStrengthsReport,
-  generateComprehensiveReport
-} from '@/lib/individual-report-generator';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
 
       // Store Phase 1 results
       const newAnalysisId = analysisId || `analysis-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
+
       await prisma.analysis.upsert({
         where: { id: newAnalysisId },
         create: {

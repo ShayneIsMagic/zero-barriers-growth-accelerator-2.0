@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Loader2, Play, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { ArrowRight, CheckCircle, Loader2, Play } from 'lucide-react';
+import { useState } from 'react';
 import { IndividualReportsView } from './IndividualReportsView';
 
 export function PhasedAnalysisPage() {
@@ -15,11 +15,11 @@ export function PhasedAnalysisPage() {
   const [currentPhase, setCurrentPhase] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [phase1Reports, setPhase1Reports] = useState<any[]>([]);
   const [phase2Reports, setPhase2Reports] = useState<any[]>([]);
   const [phase3Reports, setPhase3Reports] = useState<any[]>([]);
-  
+
   const [phase1Data, setPhase1Data] = useState<any>(null);
   const [phase2Data, setPhase2Data] = useState<any>(null);
   const [phase3Data, setPhase3Data] = useState<any>(null);
@@ -288,7 +288,7 @@ export function PhasedAnalysisPage() {
           </CardHeader>
           <CardContent>
             <IndividualReportsView reports={phase3Reports} url={url} />
-            
+
             {phase3Data && (
               <div className="mt-6 p-4 bg-green-50 dark:bg-green-950 border border-green-200 rounded-lg">
                 <h3 className="text-lg font-semibold text-green-900 dark:text-green-100 mb-2">
