@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate",
     "build:cloudflare": "node scripts/build-cloudflare.js",
     "build:static": "node scripts/prepare-static.js && BUILD_STATIC=true next build",
     "start": "next start",
