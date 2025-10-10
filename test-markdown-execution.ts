@@ -4,19 +4,19 @@
  */
 
 import {
-  generateContentCollectionReport,
-  generateLighthouseReport,
-  generateGoldenCircleReport,
-  generateElementsB2CReport,
-  generateB2BElementsReport,
-  generateCliftonStrengthsReport,
-  generateComprehensiveReport,
-  IndividualReport
+    generateB2BElementsReport,
+    generateCliftonStrengthsReport,
+    generateComprehensiveReport,
+    generateContentCollectionReport,
+    generateElementsB2CReport,
+    generateGoldenCircleReport,
+    generateLighthouseReport,
+    IndividualReport
 } from './src/lib/individual-report-generator';
 
-import { generateMarkdownReport } from './src/lib/markdown-report-generator';
 import * as fs from 'fs';
 import * as path from 'path';
+import { generateMarkdownReport } from './src/lib/markdown-report-generator';
 
 // Sample data for testing
 const TEST_URL = 'https://example.com';
@@ -302,7 +302,7 @@ const completeAnalysisData = {
 async function main() {
   console.log('🚀 MARKDOWN GENERATION TEST SUITE\n');
   console.log('=' .repeat(80));
-  
+
   const outputDir = path.join(process.cwd(), 'test-markdown-output');
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
@@ -473,12 +473,12 @@ async function main() {
       individualReports: reports.slice(0, 2), // Phase 1 reports
       message: 'Phase 1 completed. Ready for Phase 2.'
     };
-    
+
     fs.writeFileSync(
       path.join(outputDir, '9-api-response-structure.json'),
       JSON.stringify(apiResponse, null, 2)
     );
-    
+
     console.log('✅ PASS - API Response Structure validated');
     console.log(`   - Reports in response: ${apiResponse.individualReports.length}`);
     testResults.push({ test: 'API Response', status: 'PASS', reports: apiResponse.individualReports.length });
@@ -491,18 +491,18 @@ async function main() {
   // Generate Summary Report
   console.log('\n' + '='.repeat(80));
   console.log('📊 TEST SUMMARY\n');
-  
+
   const passed = testResults.filter(r => r.status === 'PASS').length;
   const failed = testResults.filter(r => r.status === 'FAIL').length;
-  
+
   console.log(`Total Tests: ${testResults.length}`);
   console.log(`✅ Passed: ${passed}`);
   console.log(`❌ Failed: ${failed}`);
   console.log(`Success Rate: ${(passed / testResults.length * 100).toFixed(1)}%`);
-  
+
   console.log('\n📁 Output Files:');
   console.log(`   ${outputDir}/`);
-  
+
   const files = fs.readdirSync(outputDir);
   files.forEach(file => {
     const stats = fs.statSync(path.join(outputDir, file));
