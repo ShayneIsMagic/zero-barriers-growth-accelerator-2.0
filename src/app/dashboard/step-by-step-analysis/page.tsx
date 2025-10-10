@@ -1,5 +1,10 @@
-import StepByStepAnalysisPage from '@/components/analysis/StepByStepAnalysisPage';
+/**
+ * DEPRECATED - Redirects to Phased Analysis
+ * This page has been replaced with a better version
+ */
 
-export default function StepByStepAnalysis() {
-  return <StepByStepAnalysisPage />;
+import { redirect } from 'next/navigation';
+
+export default function OldStepByStepAnalysis() {
+  redirect('/dashboard/phased-analysis');
 }

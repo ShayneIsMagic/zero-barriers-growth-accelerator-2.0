@@ -1,5 +1,10 @@
-import { StepByStepExecutionPage } from '@/components/analysis/StepByStepExecutionPage';
+/**
+ * DEPRECATED - Redirects to Progressive Analysis
+ * This page has been replaced with a better version
+ */
 
-export default function StepByStepExecutionDashboardPage() {
-  return <StepByStepExecutionPage />;
+import { redirect } from 'next/navigation';
+
+export default function OldStepByStepExecution() {
+  redirect('/dashboard/progressive-analysis');
 }

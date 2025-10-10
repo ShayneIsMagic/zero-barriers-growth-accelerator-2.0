@@ -1,13 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { ArrowRight, GitCompare, Layers, Zap, Eye, Download, ExternalLink } from 'lucide-react';
+import { ArrowRight, Download, ExternalLink, Eye, GitCompare, Layers, Zap } from 'lucide-react';
 import Link from 'next/link';
-import { prisma } from '@/lib/prisma';
+import { useEffect, useState } from 'react';
 
 interface AnalysisByUrl {
   url: string;
@@ -48,12 +47,12 @@ export default function DashboardPage() {
     const urlMap: Record<string, any[]> = {};
 
     analyses.forEach(analysis => {
-      const content = typeof analysis.data === 'string' 
-        ? JSON.parse(analysis.data) 
+      const content = typeof analysis.data === 'string'
+        ? JSON.parse(analysis.data)
         : analysis.data;
-      
+
       const url = content.url || analysis.url || 'Unknown URL';
-      
+
       if (!urlMap[url]) {
         urlMap[url] = [];
       }
@@ -62,10 +61,10 @@ export default function DashboardPage() {
 
     return Object.entries(urlMap).map(([url, urlAnalyses]) => {
       const latest = urlAnalyses[0];
-      const content = typeof latest.data === 'string' 
-        ? JSON.parse(latest.data) 
+      const content = typeof latest.data === 'string'
+        ? JSON.parse(latest.data)
         : latest.data;
-      
+
       const completedPhases = content.completedPhases?.length || 0;
       const totalPhases = 3;
       const completionPercentage = Math.round((completedPhases / totalPhases) * 100);
@@ -217,8 +216,8 @@ export default function DashboardPage() {
                 {/* Phase Status */}
                 <div className="grid grid-cols-3 gap-2 text-xs">
                   <div className={`p-2 border rounded text-center ${
-                    siteData.completedPhases >= 1 
-                      ? 'bg-green-50 dark:bg-green-950 border-green-500' 
+                    siteData.completedPhases >= 1
+                      ? 'bg-green-50 dark:bg-green-950 border-green-500'
                       : 'bg-gray-50 dark:bg-gray-900'
                   }`}>
                     <div className="font-semibold">Phase 1</div>
@@ -227,8 +226,8 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className={`p-2 border rounded text-center ${
-                    siteData.completedPhases >= 2 
-                      ? 'bg-green-50 dark:bg-green-950 border-green-500' 
+                    siteData.completedPhases >= 2
+                      ? 'bg-green-50 dark:bg-green-950 border-green-500'
                       : 'bg-gray-50 dark:bg-gray-900'
                   }`}>
                     <div className="font-semibold">Phase 2</div>
@@ -237,8 +236,8 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className={`p-2 border rounded text-center ${
-                    siteData.completedPhases >= 3 
-                      ? 'bg-green-50 dark:bg-green-950 border-green-500' 
+                    siteData.completedPhases >= 3
+                      ? 'bg-green-50 dark:bg-green-950 border-green-500'
                       : 'bg-gray-50 dark:bg-gray-900'
                   }`}>
                     <div className="font-semibold">Phase 3</div>
@@ -250,8 +249,8 @@ export default function DashboardPage() {
 
                 {/* Actions */}
                 <div className="flex gap-2">
-                  <Button 
-                    variant="default" 
+                  <Button
+                    variant="default"
                     className="flex-1"
                     onClick={() => window.location.href = `/dashboard/phased-analysis?analysisId=${siteData.analyses[0].id}`}
                   >
@@ -259,7 +258,7 @@ export default function DashboardPage() {
                     View Reports
                   </Button>
                   {siteData.completedPhases < 3 && (
-                    <Button 
+                    <Button
                       variant="outline"
                       onClick={() => window.location.href = `/dashboard/phased-analysis?url=${encodeURIComponent(siteData.url)}&continue=${siteData.analyses[0].id}`}
                     >
@@ -268,13 +267,13 @@ export default function DashboardPage() {
                     </Button>
                   )}
                   {siteData.completedPhases === 3 && (
-                    <Button 
+                    <Button
                       variant="outline"
                       onClick={() => {
                         // Download all reports for this site
                         siteData.analyses.forEach(analysis => {
-                          const content = typeof analysis.data === 'string' 
-                            ? JSON.parse(analysis.data) 
+                          const content = typeof analysis.data === 'string'
+                            ? JSON.parse(analysis.data)
                             : analysis.data;
                           const markdown = JSON.stringify(content, null, 2);
                           const blob = new Blob([markdown], { type: 'text/markdown' });
