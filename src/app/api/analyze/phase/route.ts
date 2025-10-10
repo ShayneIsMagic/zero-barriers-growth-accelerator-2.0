@@ -85,8 +85,8 @@ Provide:
 4. Impact on user experience`,
           markdown: `# Lighthouse Performance - Manual Fallback Required
 
-**URL:** ${url}  
-**Date:** ${new Date().toLocaleString()}  
+**URL:** ${url}
+**Date:** ${new Date().toLocaleString()}
 **Status:** ⚠️ Automated analysis failed
 
 ---
@@ -213,6 +213,46 @@ Extract:
 Return structured analysis with scores and evidence.`;
         const goldenReport = generateGoldenCircleReport(phase2Result.goldenCircle, url, prompt);
         individualReports.push(goldenReport);
+      } else {
+        // Golden Circle failed - add manual fallback
+        const fallbackPrompt = `Analyze the website content for Golden Circle framework (Why, How, What, Who):
+
+URL: ${url}
+Title: ${phase1Data.scrapedContent?.title}
+Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
+
+Extract:
+1. WHY (dominant purpose) - exact quotes from website
+2. HOW (unique methodology) - exact quotes about their approach
+3. WHAT (products/services) - exact list of offerings
+4. WHO (target audience) - exact quotes about their market
+
+Return structured analysis with scores and evidence.`;
+        
+        individualReports.push({
+          id: 'golden-circle-fallback',
+          name: 'Golden Circle Analysis (Manual Fallback)',
+          phase: 'Phase 2',
+          prompt: fallbackPrompt,
+          markdown: `# Golden Circle Analysis - Manual Required
+
+⚠️ Automated Gemini AI analysis failed.
+
+## Run This Manually
+
+1. Go to: **https://gemini.google.com/**
+2. Copy and paste this prompt:
+
+\`\`\`
+${fallbackPrompt}
+\`\`\`
+
+3. Review the AI response
+4. Save the results
+
+**Why did it fail?** API rate limit or network issue. Manual execution provides same quality.`,
+          timestamp: new Date().toISOString()
+        });
       }
 
       if (phase2Result.elementsOfValue) {
@@ -225,6 +265,23 @@ Evaluate each of the 30 B2C Elements of Value and provide specific evidence from
 Return structured analysis with scores for each element.`;
         const elementsReport = generateElementsB2CReport(phase2Result.elementsOfValue, url, prompt);
         individualReports.push(elementsReport);
+      } else {
+        const fallbackPrompt = `Analyze the website content for B2C Elements of Value (30 elements):
+
+URL: ${url}
+Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
+
+Evaluate each of the 30 B2C Elements of Value and provide specific evidence from the content.
+Return structured analysis with scores for each element.`;
+        
+        individualReports.push({
+          id: 'elements-b2c-fallback',
+          name: 'Elements of Value B2C (Manual Fallback)',
+          phase: 'Phase 2',
+          prompt: fallbackPrompt,
+          markdown: `# Elements of Value (B2C) - Manual Required\n\n⚠️ Automated analysis failed.\n\n## Run at https://gemini.google.com/\n\n\`\`\`\n${fallbackPrompt}\n\`\`\``,
+          timestamp: new Date().toISOString()
+        });
       }
 
       if (phase2Result.b2bElements) {
@@ -237,6 +294,23 @@ Evaluate each of the 40 B2B Elements of Value and provide specific evidence from
 Return structured analysis with scores for each element.`;
         const b2bReport = generateB2BElementsReport(phase2Result.b2bElements, url, prompt);
         individualReports.push(b2bReport);
+      } else {
+        const fallbackPrompt = `Analyze the website content for B2B Elements of Value (40 elements):
+
+URL: ${url}
+Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
+
+Evaluate each of the 40 B2B Elements of Value and provide specific evidence from the content.
+Return structured analysis with scores for each element.`;
+        
+        individualReports.push({
+          id: 'b2b-elements-fallback',
+          name: 'B2B Elements (Manual Fallback)',
+          phase: 'Phase 2',
+          prompt: fallbackPrompt,
+          markdown: `# B2B Elements of Value - Manual Required\n\n⚠️ Automated analysis failed.\n\n## Run at https://gemini.google.com/\n\n\`\`\`\n${fallbackPrompt}\n\`\`\``,
+          timestamp: new Date().toISOString()
+        });
       }
 
       if (phase2Result.cliftonStrengths) {
@@ -249,6 +323,23 @@ Evaluate each of the 34 CliftonStrengths themes and provide specific evidence fr
 Return structured analysis with top 5 themes and scores.`;
         const strengthsReport = generateCliftonStrengthsReport(phase2Result.cliftonStrengths, url, prompt);
         individualReports.push(strengthsReport);
+      } else {
+        const fallbackPrompt = `Analyze the website content for CliftonStrengths (34 themes):
+
+URL: ${url}
+Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
+
+Evaluate each of the 34 CliftonStrengths themes and provide specific evidence from the content.
+Return structured analysis with top 5 themes and scores.`;
+        
+        individualReports.push({
+          id: 'clifton-strengths-fallback',
+          name: 'CliftonStrengths (Manual Fallback)',
+          phase: 'Phase 2',
+          prompt: fallbackPrompt,
+          markdown: `# CliftonStrengths Analysis - Manual Required\n\n⚠️ Automated analysis failed.\n\n## Run at https://gemini.google.com/\n\n\`\`\`\n${fallbackPrompt}\n\`\`\``,
+          timestamp: new Date().toISOString()
+        });
       }
 
       await prisma.analysis.update({
@@ -321,6 +412,35 @@ Provide comprehensive recommendations for:
 Return structured recommendations with quick wins and long-term strategy.`;
         const comprehensiveReport = generateComprehensiveReport(phase3Result.comprehensiveAnalysis, url, prompt);
         individualReports.push(comprehensiveReport);
+      } else {
+        const fallbackPrompt = `Comprehensive Strategic Analysis:
+
+Phase 1 Data:
+- SEO Score: ${phase1Data.summary.seoScore}/100
+- Performance Score: ${phase1Data.summary.performanceScore}/100
+- Total Words: ${phase1Data.summary.totalWords}
+
+Phase 2 Data:
+- Golden Circle Score: ${phase2Data.summary.goldenCircleScore}/100
+- Elements of Value Score: ${phase2Data.summary.elementsOfValueScore}/100
+
+Provide comprehensive recommendations for:
+1. Performance optimization
+2. SEO improvements
+3. Lead generation improvements
+4. Sales optimization
+5. Overall business growth
+
+Return structured recommendations with quick wins and long-term strategy.`;
+        
+        individualReports.push({
+          id: 'comprehensive-fallback',
+          name: 'Comprehensive Analysis (Manual Fallback)',
+          phase: 'Phase 3',
+          prompt: fallbackPrompt,
+          markdown: `# Comprehensive Analysis - Manual Required\n\n⚠️ Automated analysis failed.\n\n## Run at https://gemini.google.com/\n\n\`\`\`\n${fallbackPrompt}\n\`\`\``,
+          timestamp: new Date().toISOString()
+        });
       }
 
       const overallScore = phase3Result.finalReport?.evaluationFramework?.overallScore || 0;

@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 
         const parsed = JSON.parse(interestOverTime);
         const timelineData = parsed.default?.timelineData || [];
-        
+
         // Calculate trend
         const values = timelineData.map((d: any) => d.value[0]);
         const avgValue = values.reduce((a: number, b: number) => a + b, 0) / values.length;
