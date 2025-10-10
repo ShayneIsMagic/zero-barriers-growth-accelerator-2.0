@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { ArrowRight, CheckCircle, Loader2, Play } from 'lucide-react';
 import { useState } from 'react';
 import { ContentPreviewCard } from './ContentPreviewCard';
-import { GoogleToolsButtons } from './GoogleToolsButtons';
 import { IndividualReportsView } from './IndividualReportsView';
 
 export function PhasedAnalysisPage() {
@@ -291,19 +290,6 @@ export function PhasedAnalysisPage() {
             </CardHeader>
             <CardContent>
               <IndividualReportsView reports={phase1Reports} url={url} />
-            </CardContent>
-          </Card>
-
-          {/* Google Tools - Run Automatically */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Optional: Additional Google Tools</CardTitle>
-              <CardDescription>
-                Click buttons to run Lighthouse and Trends analysis (optional enhancements)
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <GoogleToolsButtons url={url} />
             </CardContent>
           </Card>
         </>

@@ -1,0 +1,109 @@
+{
+  "success": true,
+  "analysisId": "test-123",
+  "phase": 1,
+  "data": {
+    "scrapedContent": {
+      "title": "Example Business - Leading Digital Solutions Provider",
+      "metaDescription": "We provide cutting-edge digital solutions for modern businesses. Transform your operations with our innovative technology platform and expert consulting services.",
+      "metaKeywords": [
+        "digital solutions",
+        "technology",
+        "consulting"
+      ],
+      "ogTitle": "Example Business - Digital Solutions",
+      "ogDescription": "Transform your business with our solutions",
+      "ogImage": "https://example.com/og-image.jpg",
+      "canonicalUrl": "https://example.com",
+      "hasSSL": true,
+      "schemaTypes": [
+        "Organization",
+        "WebSite"
+      ],
+      "extractedKeywords": [
+        "digital",
+        "solutions",
+        "technology",
+        "business",
+        "innovation",
+        "platform"
+      ],
+      "topicClusters": [
+        "Digital Transformation",
+        "Cloud Solutions",
+        "Business Analytics"
+      ],
+      "wordCount": 1547,
+      "imageCount": 12,
+      "linkCount": 34,
+      "headings": {
+        "h1": [
+          "Transform Your Business with Digital Solutions"
+        ],
+        "h2": [
+          "Our Services",
+          "Why Choose Us",
+          "Success Stories",
+          "Get Started Today"
+        ],
+        "h3": [
+          "Cloud Migration",
+          "Data Analytics",
+          "Custom Development"
+        ]
+      },
+      "content": "We help businesses transform through digital solutions. Our expert team delivers cloud migration, data analytics, and custom development services...",
+      "cleanText": "Transform Your Business with Digital Solutions. We help businesses succeed in the digital age."
+    },
+    "lighthouseData": {
+      "scores": {
+        "performance": 87,
+        "accessibility": 92,
+        "bestPractices": 95,
+        "seo": 88
+      },
+      "metrics": {
+        "First Contentful Paint": "1.2s",
+        "Largest Contentful Paint": "2.4s",
+        "Time to Interactive": "3.1s",
+        "Cumulative Layout Shift": "0.05",
+        "Speed Index": "2.1s"
+      }
+    },
+    "summary": {
+      "totalWords": 1547,
+      "totalImages": 12,
+      "totalLinks": 34,
+      "seoScore": 88,
+      "performanceScore": 87,
+      "accessibilityScore": 92,
+      "technicalIssues": [
+        "Some images missing alt text",
+        "Mobile performance needs improvement"
+      ],
+      "contentIssues": [
+        "Meta description missing on some pages"
+      ]
+    }
+  },
+  "individualReports": [
+    {
+      "id": "content-collection",
+      "name": "Content Collection",
+      "phase": "Phase 1",
+      "prompt": "N/A - Direct web scraping, no AI prompt",
+      "markdown": "# Content & SEO Data Collection Report\n\n**URL:** https://example.com\n**Date:** 10/10/2025, 2:59:15 PM\n**Phase:** 1 - Data Collection\n**Purpose:** Foundation data for all AI assessments\n\n---\n\n## 📊 What This Report Contains\n\nThis report shows ALL the raw data collected from your website. This is the foundation that every AI assessment uses. Review this first to ensure we captured accurate data.\n\n---\n\n## 🏷️ Meta Tags & SEO Information\n\n### Title Tag\n```\nExample Business - Leading Digital Solutions Provider\n```\n**Length:** 53 characters\n**Optimal:** 50-60 characters\n**Status:** ✅ Good\n\n### Meta Description\n```\nWe provide cutting-edge digital solutions for modern businesses. Transform your operations with our innovative technology platform and expert consulting services.\n```\n**Length:** 162 characters\n**Optimal:** 150-160 characters\n**Status:** ⚠️ Needs adjustment\n\n### Open Graph Tags (Social Sharing)\n- **OG Title:** Example Business - Digital Solutions\n- **OG Description:** Transform your business with our solutions\n- **OG Image:** https://example.com/og-image.jpg\n\n### Technical SEO\n- **Canonical URL:** https://example.com\n- **HTTPS/SSL:** ✅ Enabled\n- **Structured Data:** Organization, WebSite\n\n---\n\n## 🔑 Keywords & Rankings\n\n### Meta Keywords Tag\ndigital solutions, technology, consulting\n\n### Extracted Keywords (What You Might Rank For)\ndigital, solutions, technology, business, innovation, platform\n\n**How We Found These:**\n- Analyzed H1 and H2 headings\n- Identified frequent terms in content\n- Filtered out common words\n- These represent your site's main topics\n\n### Topic Clusters (From H2 Headings)\n- Digital Transformation\n- Cloud Solutions\n- Business Analytics\n\n---\n\n## 📏 Content Statistics\n\n| Metric | Count | Notes |\n|--------|-------|-------|\n| **Total Words** | 1547 | Good depth |\n| **Images** | 12 | Visual content |\n| **Links** | 34 | Internal + External |\n| **H1 Headings** | 1 | Should have 1 per page |\n| **H2 Headings** | 4 | Section headers |\n| **H3 Headings** | 3 | Subsections |\n\n---\n\n## 📝 Headings Structure\n\n### H1 (Main Page Title)\n- Transform Your Business with Digital Solutions\n\n### H2 (Section Headers)\n- Our Services\n- Why Choose Us\n- Success Stories\n- Get Started Today\n\n---\n\n## 📄 Content Preview (First 1000 characters)\n\n```\nWe help businesses transform through digital solutions. Our expert team delivers cloud migration, data analytics, and custom development services...\n```\n\n---\n\n## ✅ What Happens Next\n\n**Phase 2 will analyze THIS content through multiple lenses:**\n1. **Golden Circle:** Looks for Why, How, What, Who in this content\n2. **Elements of Value:** Scores value propositions found in this content\n3. **B2B Elements:** Identifies business value in this content\n4. **CliftonStrengths:** Maps personality themes in this content\n\n**All using the same data you see above.**\n\n---\n\n## 📋 Copy This Data for Your Records\n\nUse the copy buttons in the app to save:\n- Meta tags for SEO audit\n- Keywords for content strategy\n- Headings for structure analysis\n- Content sample for review\n",
+      "timestamp": "2025-10-10T20:59:15.586Z"
+    },
+    {
+      "id": "lighthouse",
+      "name": "Lighthouse Performance",
+      "phase": "Phase 1",
+      "prompt": "N/A - Google Lighthouse automated tool",
+      "markdown": "# Lighthouse Performance Report\n\n**URL:** https://example.com\n**Date:** 10/10/2025, 2:59:15 PM\n**Tool:** Google Lighthouse\n\n---\n\n## Performance Scores\n\n| Metric | Score | Status |\n|--------|-------|--------|\n| Performance | 87/100 | 🟡 Good |\n| Accessibility | 92/100 | 🟢 Excellent |\n| Best Practices | 95/100 | 🟢 Excellent |\n| SEO | 88/100 | 🟡 Good |\n\n---\n\n## Key Metrics\n\n- **First Contentful Paint:** 1.2s\n- **Largest Contentful Paint:** 2.4s\n- **Time to Interactive:** 3.1s\n- **Cumulative Layout Shift:** 0.05\n- **Speed Index:** 2.1s\n\n---\n\n## Manual Tool Link\nIf automated Lighthouse failed, run manually:\n**https://pagespeed.web.dev/**\n\nEnter: https://example.com\n",
+      "timestamp": "2025-10-10T20:59:15.587Z",
+      "score": 87
+    }
+  ],
+  "message": "Phase 1 completed. Ready for Phase 2."
+}
