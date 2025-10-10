@@ -115,49 +115,44 @@ export class ThreePhaseAnalyzer {
   }
 
   /**
-   * Phase 1: Data Collection Foundation
-   * Collects data from Google Tools + Lighthouse, then Gemini AI analyzes it
+   * Phase 1: Content Collection ONLY
+   * Fast and reliable - just collects website content for Phase 2
    */
   private async executePhase1(): Promise<Phase1Report> {
-    console.log('📊 Phase 1: Data Collection Foundation');
-    this.onProgressUpdate?.('Phase 1', 'Starting data collection', 0);
+    console.log('📊 Phase 1: Content Collection (35 seconds)');
+    this.onProgressUpdate?.('Phase 1', 'Starting content collection', 0);
 
-    // Step 1: Scrape content
-    this.onProgressUpdate?.('Phase 1', 'Scraping website content', 10);
+    // Step 1: Scrape content (ONLY step in Phase 1 now!)
+    this.onProgressUpdate?.('Phase 1', 'Extracting website content and keywords', 30);
     const scrapedContent = await this.scrapeWebsiteContent();
 
-    // Step 2: Run Lighthouse analysis
-    this.onProgressUpdate?.('Phase 1', 'Running Lighthouse performance analysis', 40);
-    const lighthouseData = await this.runLighthouseAnalysis();
-
-    // Step 3: Collect Google SEO data (if available)
-    this.onProgressUpdate?.('Phase 1', 'Collecting Google Tools data', 70);
-    const seoAnalysis = await this.collectGoogleToolsData();
+    // Step 2: Quick structure analysis (no external tools)
+    this.onProgressUpdate?.('Phase 1', 'Analyzing content structure', 80);
+    const contentIssues = this.extractContentIssues(scrapedContent, null);
 
     // Generate Phase 1 report
-    this.onProgressUpdate?.('Phase 1', 'Generating Phase 1 report', 90);
+    this.onProgressUpdate?.('Phase 1', 'Phase 1 complete', 100);
     const phase1Report: Phase1Report = {
       phase: 'Phase 1: Data Collection Foundation',
       url: this.url,
       timestamp: new Date().toISOString(),
       scrapedContent,
-      pageAuditData: null, // Optional
-      lighthouseData,
-      seoAnalysis,
+      pageAuditData: null,
+      lighthouseData: null, // Moved to Phase 3
+      seoAnalysis: null, // Moved to Phase 3
       summary: {
         totalWords: scrapedContent.wordCount || 0,
         totalImages: scrapedContent.imageCount || 0,
         totalLinks: scrapedContent.linkCount || 0,
-        seoScore: seoAnalysis?.overallScore || 0,
-        performanceScore: lighthouseData?.scores?.performance || 0,
-        accessibilityScore: lighthouseData?.scores?.accessibility || 0,
+        seoScore: 0, // Will be in Phase 3 if Lighthouse is run
+        performanceScore: 0, // Will be in Phase 3 if Lighthouse is run
+        accessibilityScore: 0, // Will be in Phase 3 if Lighthouse is run
         technicalIssues: [],
-        contentIssues: this.extractContentIssues(scrapedContent, null)
+        contentIssues
       }
     };
 
-    this.onProgressUpdate?.('Phase 1', 'Phase 1 completed', 100);
-    console.log('✅ Phase 1 completed');
+    console.log(`✅ Phase 1 completed - Collected ${scrapedContent.wordCount} words, ${scrapedContent.extractedKeywords?.length || 0} keywords`);
     return phase1Report;
   }
 
