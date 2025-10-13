@@ -145,7 +145,7 @@ export function GoogleToolsButtons({ url, onToolComplete }: GoogleToolsButtonsPr
                 <ol className="text-sm text-blue-800 dark:text-blue-200 space-y-2 mb-3">
                   <li>1. Go to: <a href="https://pagespeed.web.dev/" target="_blank" rel="noopener noreferrer" className="underline font-mono">https://pagespeed.web.dev/</a></li>
                   <li>2. Enter your URL: <code className="bg-blue-100 dark:bg-blue-900 px-1">{url}</code></li>
-                  <li>3. Click "Analyze"</li>
+                  <li>3. Click &quot;Analyze&quot;</li>
                   <li>4. Copy the 4 scores (Performance, Accessibility, Best Practices, SEO)</li>
                   <li>5. Paste into Gemini with this prompt:</li>
                 </ol>

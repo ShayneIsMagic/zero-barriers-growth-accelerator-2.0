@@ -29,7 +29,7 @@ User confused: "Should I click these? Are they part of Phase 1?"
 Phase 1: Content collection only
   - No Google Tools buttons
   - Lighthouse runs automatically (or shows manual fallback)
-  
+
 Phase 3: Where Google Tools should be
   - Lighthouse API (tries automatically, graceful failure)
   - Google Trends API (tries automatically)

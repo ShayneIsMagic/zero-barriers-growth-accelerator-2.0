@@ -182,7 +182,7 @@ Provide:
       // Can run without Phase 1, but will have recommendations to improve
 
       let phase1Data = null;
-      let recommendations: string[] = [];
+      const recommendations: string[] = [];
 
       if (analysisId && analysis) {
         const content = JSON.parse(analysis.content || '{}');
@@ -406,7 +406,7 @@ Return structured analysis with top 5 themes and scores.`;
 
       let phase1Data = null;
       let phase2Data = null;
-      let recommendations: string[] = [];
+      const recommendations: string[] = [];
 
       if (analysisId && analysis) {
         const content = JSON.parse(analysis.content || '{}');

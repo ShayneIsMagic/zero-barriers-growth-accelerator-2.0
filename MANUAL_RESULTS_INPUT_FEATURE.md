@@ -44,7 +44,7 @@ When Lighthouse fallback shows, add:
 ```typescript
 <div className="fallback-section">
   <h3>⚠️ Automated Lighthouse Failed</h3>
-  
+
   {/* Step 1: Show manual instructions */}
   <div className="manual-instructions">
     <h4>Run Manually:</h4>
@@ -54,18 +54,18 @@ When Lighthouse fallback shows, add:
       <li>Copy scores below</li>
     </ol>
   </div>
-  
+
   {/* Step 2: Show Gemini prompt */}
   <div className="prompt-display">
     <h4>Copy This Prompt for Gemini:</h4>
     <pre>{lighthouseFallbackPrompt}</pre>
     <button>Copy Prompt</button>
   </div>
-  
+
   {/* Step 3: INPUT AREA - NEW! */}
   <div className="manual-input">
     <h4>Paste Gemini's Response Here:</h4>
-    <textarea 
+    <textarea
       rows={10}
       placeholder="Paste Gemini's analysis here..."
       onChange={(e) => handleManualLighthouseInput(e.target.value)}
@@ -82,7 +82,7 @@ When Lighthouse fallback shows, add:
 function handleManualLighthouseInput(geminiResponse: string) {
   // Parse Gemini's response
   const parsedData = parseGeminiLighthouseAnalysis(geminiResponse);
-  
+
   // Create a report from it
   const manualReport = {
     id: 'lighthouse-manual',
@@ -93,10 +93,10 @@ function handleManualLighthouseInput(geminiResponse: string) {
     timestamp: new Date().toISOString(),
     score: parsedData.averageScore
   };
-  
+
   // Add to Phase 1 reports
   updatePhase1Reports([...phase1Reports, manualReport]);
-  
+
   // Save to Supabase
   await saveIndividualReport(manualReport, analysisId);
 }
@@ -118,7 +118,7 @@ function handleManualLighthouseInput(geminiResponse: string) {
    - Accessibility: 90/100
    - Best Practices: 96/100
    - SEO: 100/100
-   
+
    Key Issues:
    - Improve image delivery Est savings of 1,607 KiB
    - Render blocking requests Est savings of 470 ms
@@ -185,7 +185,7 @@ Since automated Lighthouse often fails:
    ✅ Scrape website content & metadata
    ✅ Extract keywords & topics
    ✅ Prepare data for AI analysis
-   
+
    Should NOT say:
    ❌ "Google Tools data"
    ❌ "Lighthouse performance audit" (as automatic)

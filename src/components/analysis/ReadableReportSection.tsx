@@ -105,10 +105,10 @@ export function ReadableReportSection({ title, description, sections, prompt }: 
             📋 How to Use This in Client Reports
           </h4>
           <ol className="text-sm text-green-800 dark:text-green-200 space-y-1">
-            <li>1. Click "Copy" on any section you want to include</li>
+            <li>1. Click &quot;Copy&quot; on any section you want to include</li>
             <li>2. Paste into your client report document</li>
             <li>3. Each section is pre-formatted and ready to use</li>
-            <li>4. Or click "Copy All" to get the entire analysis</li>
+            <li>4. Or click &quot;Copy All&quot; to get the entire analysis</li>
           </ol>
         </div>
       </CardContent>

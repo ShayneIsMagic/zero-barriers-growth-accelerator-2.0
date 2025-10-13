@@ -309,11 +309,11 @@ export default function DashboardPage() {
             💡 How to Use This Dashboard
           </h3>
           <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-            <li>• Each card represents one website you've analyzed</li>
+            <li>• Each card represents one website you&apos;ve analyzed</li>
             <li>• Progress bar shows how many phases are complete (1, 2, or 3)</li>
-            <li>• Click "View Reports" to see all assessments for that site</li>
-            <li>• Click "Continue Analysis" to finish incomplete phases</li>
-            <li>• Click "Download All" when all 3 phases are done</li>
+            <li>• Click &quot;View Reports&quot; to see all assessments for that site</li>
+            <li>• Click &quot;Continue Analysis&quot; to finish incomplete phases</li>
+            <li>• Click &quot;Download All&quot; when all 3 phases are done</li>
             <li>• Start a new analysis using the buttons at the top</li>
           </ul>
         </CardContent>
