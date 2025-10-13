@@ -56,8 +56,16 @@ export function setupReactDevToolsHelpers() {
   }
 
   // Add helper to access React DevTools from console
-  (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__ =
-    (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__ || {};
+  // Note: __REACT_DEVTOOLS_GLOBAL_HOOK__ is read-only in modern React
+  // We'll just check if it exists and provide helpers
+  try {
+    if (!(window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__) {
+      console.log('💡 React DevTools not detected - install React DevTools browser extension');
+    }
+  } catch (e) {
+    // Property is read-only, which is expected in production builds
+    console.log('💡 React DevTools hook is read-only (production build detected)');
+  }
 
   // Helper function to log component tree
   (window as any).logComponentTree = () => {

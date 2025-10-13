@@ -7,27 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id                  String                @id @default(dbgenerated("(gen_random_uuid())::text"))
-  email               String                @unique
-  name                String?
-  password            String?
-  role                String?               @default("USER")
-  createdAt           DateTime?             @default(now()) @db.Timestamp(6)
-  updatedAt           DateTime?             @default(now()) @updatedAt @db.Timestamp(6)
-  analyses            Analysis[]
-  analysis_audit_log  analysis_audit_log[]
-  api_usage_log       api_usage_log[]
-  credit_transactions credit_transactions[]
-  generated_reports   generated_reports[]
-  notifications       notifications[]
-  report_templates    report_templates[]
-  subscriptions       subscriptions[]
-  system_config       system_config[]
-  user_preferences    user_preferences[]
-  websites            websites[]
-}
-
 model Analysis {
   id                                                                  String                      @id @default(dbgenerated("(gen_random_uuid())::text"))
   content                                                             String
@@ -36,10 +15,10 @@ model Analysis {
   score                                                               Float?
   userId                                                              String?
   createdAt                                                           DateTime?                   @default(now()) @db.Timestamp(6)
-  updatedAt                                                           DateTime?                   @default(now()) @updatedAt @db.Timestamp(6)
+  updatedAt                                                           DateTime?                   @default(now()) @db.Timestamp(6)
   insights                                                            String?
   frameworks                                                          String?
-  user                                                                User?                       @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User                                                                User?                       @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   analysis_audit_log                                                  analysis_audit_log[]
   analysis_comparisons_analysis_comparisons_analysis_id_newToAnalysis analysis_comparisons[]      @relation("analysis_comparisons_analysis_id_newToAnalysis")
   analysis_comparisons_analysis_comparisons_analysis_id_oldToAnalysis analysis_comparisons[]      @relation("analysis_comparisons_analysis_id_oldToAnalysis")
@@ -63,6 +42,27 @@ model Analysis {
   value_insights                                                      value_insights[]
 
   @@index([userId])
+}
+
+model User {
+  id                  String                @id @default(dbgenerated("(gen_random_uuid())::text"))
+  email               String                @unique
+  name                String?
+  password            String?
+  role                String?               @default("USER")
+  createdAt           DateTime?             @default(now()) @db.Timestamp(6)
+  updatedAt           DateTime?             @default(now()) @db.Timestamp(6)
+  Analysis            Analysis[]
+  analysis_audit_log  analysis_audit_log[]
+  api_usage_log       api_usage_log[]
+  credit_transactions credit_transactions[]
+  generated_reports   generated_reports[]
+  notifications       notifications[]
+  report_templates    report_templates[]
+  subscriptions       subscriptions[]
+  system_config       system_config[]
+  user_preferences    user_preferences[]
+  websites            websites[]
 }
 
 model accessibility_issues {

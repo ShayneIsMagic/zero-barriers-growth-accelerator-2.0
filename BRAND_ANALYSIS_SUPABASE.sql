@@ -8,7 +8,7 @@
 -- =====================================================
 
 -- Add brand analysis columns to golden_circle_analyses
-ALTER TABLE golden_circle_analyses 
+ALTER TABLE golden_circle_analyses
 ADD COLUMN IF NOT EXISTS main_value_theme TEXT,
 ADD COLUMN IF NOT EXISTS brand_alignment_score DECIMAL(5,2),
 ADD COLUMN IF NOT EXISTS target_audience_specificity DECIMAL(5,2),
@@ -16,7 +16,7 @@ ADD COLUMN IF NOT EXISTS value_consistency_score DECIMAL(5,2),
 ADD COLUMN IF NOT EXISTS brand_clarity_score DECIMAL(5,2);
 
 -- Add brand analysis columns to content_analyses
-ALTER TABLE content_analyses 
+ALTER TABLE content_analyses
 ADD COLUMN IF NOT EXISTS brand_pillar_alignment JSONB,
 ADD COLUMN IF NOT EXISTS sentiment_score DECIMAL(3,2),
 ADD COLUMN IF NOT EXISTS value_theme_consistency DECIMAL(5,2),
@@ -123,7 +123,7 @@ CREATE INDEX IF NOT EXISTS idx_brand_patterns_text ON brand_patterns(pattern_tex
 
 INSERT INTO brand_theme_reference (theme_name, theme_category, theme_description, common_phrases, associated_elements, associated_strengths) VALUES
 -- Innovation & Technology
-('Innovation', 'technology', 'Focus on cutting-edge technology and innovation', 
+('Innovation', 'technology', 'Focus on cutting-edge technology and innovation',
  '["cutting-edge", "innovative", "breakthrough", "revolutionary", "advanced", "next-generation", "state-of-the-art"]',
  '["innovation", "quality", "simplifies", "integrates"]',
  '["Futuristic", "Ideation", "Strategic", "Learner"]'),
@@ -238,26 +238,26 @@ DECLARE
     v_overall DECIMAL;
 BEGIN
     -- Get scores from existing analysis
-    SELECT COALESCE(overall_score, 0) INTO v_gc_score 
+    SELECT COALESCE(overall_score, 0) INTO v_gc_score
     FROM golden_circle_analyses WHERE analysis_id = p_analysis_id;
-    
-    SELECT COALESCE(overall_score, 0) INTO v_eov_score 
+
+    SELECT COALESCE(overall_score, 0) INTO v_eov_score
     FROM elements_of_value_b2c WHERE analysis_id = p_analysis_id;
-    
-    SELECT COALESCE(overall_score, 0) INTO v_cs_score 
+
+    SELECT COALESCE(overall_score, 0) INTO v_cs_score
     FROM clifton_strengths_analyses WHERE analysis_id = p_analysis_id;
-    
+
     -- Calculate brand-specific scores
     SELECT AVG(stated_vs_demonstrated_alignment) INTO v_pillar_score
     FROM brand_pillars bp
     JOIN brand_analysis ba ON bp.brand_analysis_id = ba.id
     WHERE ba.analysis_id = p_analysis_id;
-    
+
     SELECT AVG(sentiment_score) INTO v_consistency_score
     FROM content_snippets cs
     JOIN brand_analysis ba ON cs.brand_analysis_id = ba.id
     WHERE ba.analysis_id = p_analysis_id;
-    
+
     -- Weighted calculation
     v_overall := (
         (COALESCE(v_gc_score, 0) * 0.25) +
@@ -266,7 +266,7 @@ BEGIN
         (COALESCE(v_pillar_score, 0) * 0.20) +
         (COALESCE(v_consistency_score, 0) * 0.15)
     );
-    
+
     RETURN ROUND(v_overall, 2);
 END;
 $$ LANGUAGE plpgsql;
@@ -290,7 +290,7 @@ BEGIN
         SELECT
             btr.theme_name,
             bp.pattern_text,
-            (LENGTH(p_content) - LENGTH(REPLACE(LOWER(p_content), LOWER(bp.pattern_text), ''))) / 
+            (LENGTH(p_content) - LENGTH(REPLACE(LOWER(p_content), LOWER(bp.pattern_text), ''))) /
                 NULLIF(LENGTH(bp.pattern_text), 0) AS match_count,
             bp.pattern_weight,
             btr.associated_elements,
@@ -343,12 +343,12 @@ DECLARE
     brand_themes INT;
     brand_patterns INT;
 BEGIN
-    SELECT COUNT(*) INTO brand_tables FROM information_schema.tables 
+    SELECT COUNT(*) INTO brand_tables FROM information_schema.tables
     WHERE table_name IN ('brand_analysis', 'brand_pillars', 'content_snippets', 'brand_theme_reference', 'brand_patterns');
-    
+
     SELECT COUNT(*) INTO brand_themes FROM brand_theme_reference;
     SELECT COUNT(*) INTO brand_patterns FROM brand_patterns;
-    
+
     RAISE NOTICE '========================================';
     RAISE NOTICE '✅ BRAND ANALYSIS LAYER INSTALLED!';
     RAISE NOTICE '========================================';

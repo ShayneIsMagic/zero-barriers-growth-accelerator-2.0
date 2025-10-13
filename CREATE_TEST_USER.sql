@@ -12,21 +12,17 @@ INSERT INTO "User" (
     email,
     name,
     password,
-    "emailVerified",
-    image,
     role,
     "createdAt",
     "updatedAt"
 )
 VALUES (
-    gen_random_uuid(),
+    (gen_random_uuid())::text,
     'test@zerobarriers.com',
     'Test User',
     -- This is bcrypt hash of 'TestPassword123!' with salt rounds = 10
     -- You should generate your own hash using bcrypt
     '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
-    NOW(),
-    NULL,
     'USER',
     NOW(),
     NOW()
@@ -39,20 +35,16 @@ INSERT INTO "User" (
     email,
     name,
     password,
-    "emailVerified",
-    image,
     role,
     "createdAt",
     "updatedAt"
 )
 VALUES (
-    gen_random_uuid(),
+    (gen_random_uuid())::text,
     'admin@zerobarriers.com',
     'Admin User',
     -- Same password: TestPassword123!
     '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
-    NOW(),
-    NULL,
     'ADMIN',
     NOW(),
     NOW()
@@ -60,12 +52,11 @@ VALUES (
 ON CONFLICT (email) DO NOTHING;
 
 -- Verify users were created
-SELECT 
+SELECT
     id,
     email,
     name,
     role,
-    "emailVerified",
     "createdAt"
 FROM "User"
 ORDER BY "createdAt" DESC
