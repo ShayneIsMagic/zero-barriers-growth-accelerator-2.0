@@ -1,8 +1,8 @@
 # 🚀 Advanced Schema Implementation Plan
 
-**Branch:** feature/advanced-schema  
-**Scope:** 80+ tables, 160+ industry terms, synonym detection  
-**Timeline:** This session + follow-ups  
+**Branch:** feature/advanced-schema
+**Scope:** 80+ tables, 160+ industry terms, synonym detection
+**Timeline:** This session + follow-ups
 **Status:** IN PROGRESS
 
 ---
@@ -204,7 +204,7 @@ Total: 26 hours of focused development
 
 ---
 
-**Status:** In progress - implementing full 80-table schema  
-**Branch:** feature/advanced-schema  
+**Status:** In progress - implementing full 80-table schema
+**Branch:** feature/advanced-schema
 **Completion:** 8% (Phase 1 in progress)
 

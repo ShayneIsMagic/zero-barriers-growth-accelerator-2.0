@@ -8,32 +8,1186 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String?
-  role      String   @default("SUPER_ADMIN")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  analyses Analysis[]
+  id                  String                @id @default(dbgenerated("(gen_random_uuid())::text"))
+  email               String                @unique
+  name                String?
+  password            String?
+  role                String?               @default("USER")
+  createdAt           DateTime?             @default(now()) @db.Timestamp(6)
+  updatedAt           DateTime?             @default(now()) @updatedAt @db.Timestamp(6)
+  analyses            Analysis[]
+  analysis_audit_log  analysis_audit_log[]
+  api_usage_log       api_usage_log[]
+  credit_transactions credit_transactions[]
+  generated_reports   generated_reports[]
+  notifications       notifications[]
+  report_templates    report_templates[]
+  subscriptions       subscriptions[]
+  system_config       system_config[]
+  user_preferences    user_preferences[]
+  websites            websites[]
 }
 
 model Analysis {
-  id          String   @id @default(cuid())
-  content     String
-  contentType String
-  status      String   @default("PENDING")
-  score       Float?
-  insights    String?
-  frameworks  String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  user   User?  @relation(fields: [userId], references: [id])
-  userId String?
+  id                                                                  String                      @id @default(dbgenerated("(gen_random_uuid())::text"))
+  content                                                             String
+  contentType                                                         String?
+  status                                                              String?                     @default("PENDING")
+  score                                                               Float?
+  userId                                                              String?
+  createdAt                                                           DateTime?                   @default(now()) @db.Timestamp(6)
+  updatedAt                                                           DateTime?                   @default(now()) @updatedAt @db.Timestamp(6)
+  insights                                                            String?
+  frameworks                                                          String?
+  user                                                                User?                       @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  analysis_audit_log                                                  analysis_audit_log[]
+  analysis_comparisons_analysis_comparisons_analysis_id_newToAnalysis analysis_comparisons[]      @relation("analysis_comparisons_analysis_id_newToAnalysis")
+  analysis_comparisons_analysis_comparisons_analysis_id_oldToAnalysis analysis_comparisons[]      @relation("analysis_comparisons_analysis_id_oldToAnalysis")
+  analysis_progress                                                   analysis_progress[]
+  api_usage_log                                                       api_usage_log[]
+  clifton_strengths_analyses                                          clifton_strengths_analyses?
+  content_analyses                                                    content_analyses[]
+  credit_transactions                                                 credit_transactions[]
+  elements_of_value_b2b                                               elements_of_value_b2b?
+  elements_of_value_b2c                                               elements_of_value_b2c?
+  generated_reports                                                   generated_reports[]
+  golden_circle_analyses                                              golden_circle_analyses?
+  individual_reports                                                  individual_reports[]
+  lighthouse_analyses                                                 lighthouse_analyses[]
+  markdown_exports                                                    markdown_exports?
+  page_screenshots                                                    page_screenshots[]
+  pattern_matches                                                     pattern_matches[]
+  recommendations                                                     recommendations[]
+  seo_analyses                                                        seo_analyses?
+  transformation_analyses                                             transformation_analyses?
+  value_insights                                                      value_insights[]
 
   @@index([userId])
-  @@index([status])
-  @@index([createdAt])
+}
+
+model accessibility_issues {
+  id                  String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  lighthouse_id       String?              @db.Uuid
+  severity            String?              @db.VarChar(20)
+  issue_type          String?              @db.VarChar(100)
+  wcag_level          String?              @db.VarChar(10)
+  wcag_criterion      String?              @db.VarChar(50)
+  description         String
+  element_selector    String?              @db.VarChar(500)
+  affected_elements   Int?
+  fix_recommendation  String?
+  created_at          DateTime?            @default(now()) @db.Timestamp(6)
+  lighthouse_analyses lighthouse_analyses? @relation(fields: [lighthouse_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([severity], map: "idx_accessibility_severity")
+}
+
+model analysis_audit_log {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  analysis_id    String?
+  user_id        String?
+  action         String    @db.VarChar(100)
+  action_details Json?
+  ip_address     String?   @db.Inet
+  user_agent     String?
+  created_at     DateTime? @default(now()) @db.Timestamp(6)
+  Analysis       Analysis? @relation(fields: [analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  User           User?     @relation(fields: [user_id], references: [id], onUpdate: NoAction)
+
+  @@index([analysis_id], map: "idx_audit_log_analysis")
+}
+
+model analysis_comparisons {
+  id                                                      String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  website_id                                              String?   @db.Uuid
+  analysis_id_old                                         String?
+  analysis_id_new                                         String?
+  comparison_summary                                      Json?
+  score_changes                                           Json?
+  recommendations_completed                               Int?
+  recommendations_pending                                 Int?
+  created_at                                              DateTime? @default(now()) @db.Timestamp(6)
+  Analysis_analysis_comparisons_analysis_id_newToAnalysis Analysis? @relation("analysis_comparisons_analysis_id_newToAnalysis", fields: [analysis_id_new], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  Analysis_analysis_comparisons_analysis_id_oldToAnalysis Analysis? @relation("analysis_comparisons_analysis_id_oldToAnalysis", fields: [analysis_id_old], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  websites                                                websites? @relation(fields: [website_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([website_id], map: "idx_comparisons_website")
+}
+
+model analysis_progress {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  analysis_id         String?
+  step_name           String    @db.VarChar(100)
+  step_order          Int
+  status              String?   @default("pending") @db.VarChar(50)
+  progress_percentage Int?      @default(0)
+  started_at          DateTime? @db.Timestamp(6)
+  completed_at        DateTime? @db.Timestamp(6)
+  duration_seconds    Int?
+  error_message       String?
+  created_at          DateTime? @default(now()) @db.Timestamp(6)
+  Analysis            Analysis? @relation(fields: [analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([analysis_id], map: "idx_progress_analysis_id")
+  @@index([status], map: "idx_progress_status")
+}
+
+model api_usage_log {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id          String?
+  analysis_id      String?
+  api_service      String?   @db.VarChar(100)
+  endpoint         String?   @db.VarChar(255)
+  request_method   String?   @db.VarChar(10)
+  request_payload  Json?
+  response_status  Int?
+  response_time_ms Int?
+  tokens_used      Int?
+  cost_usd         Decimal?  @db.Decimal(10, 6)
+  error_message    String?
+  created_at       DateTime? @default(now()) @db.Timestamp(6)
+  Analysis         Analysis? @relation(fields: [analysis_id], references: [id], onUpdate: NoAction)
+  User             User?     @relation(fields: [user_id], references: [id], onUpdate: NoAction)
+
+  @@index([created_at(sort: Desc)], map: "idx_api_usage_created")
+  @@index([api_service], map: "idx_api_usage_service")
+  @@index([user_id], map: "idx_api_usage_user")
+}
+
+model b2b_element_scores {
+  id                    String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eov_b2b_id            String?                @db.Uuid
+  element_name          String                 @db.VarChar(100)
+  element_category      String                 @db.VarChar(50)
+  category_level        Int?
+  score                 Decimal?               @db.Decimal(5, 2)
+  weight                Decimal?               @db.Decimal(5, 2)
+  weighted_score        Decimal?               @db.Decimal(5, 2)
+  evidence              Json?
+  recommendations       Json?
+  created_at            DateTime?              @default(now()) @db.Timestamp(6)
+  elements_of_value_b2b elements_of_value_b2b? @relation(fields: [eov_b2b_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([element_category], map: "idx_b2b_elements_category")
+  @@index([score], map: "idx_b2b_elements_score")
+}
+
+model b2b_value_element_reference {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  element_name      String    @unique @db.VarChar(100)
+  category          String    @db.VarChar(50)
+  subcategory       String?   @db.VarChar(50)
+  display_name      String?   @db.VarChar(100)
+  definition        String?
+  importance_weight Decimal?  @default(1.0) @db.Decimal(5, 2)
+  created_at        DateTime? @default(now()) @db.Timestamp(6)
+  updated_at        DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([category], map: "idx_b2b_element_category")
+  @@index([subcategory], map: "idx_b2b_element_subcategory")
+}
+
+model b2c_element_scores {
+  id                    String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eov_b2c_id            String?                @db.Uuid
+  element_name          String                 @db.VarChar(100)
+  element_category      String                 @db.VarChar(50)
+  pyramid_level         Int?
+  score                 Decimal?               @db.Decimal(5, 2)
+  weight                Decimal?               @db.Decimal(5, 2)
+  weighted_score        Decimal?               @db.Decimal(5, 2)
+  evidence              Json?
+  created_at            DateTime?              @default(now()) @db.Timestamp(6)
+  elements_of_value_b2c elements_of_value_b2c? @relation(fields: [eov_b2c_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([element_category], map: "idx_b2c_elements_category")
+  @@index([score], map: "idx_b2c_elements_score")
+}
+
+model best_practice_issues {
+  id                  String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  lighthouse_id       String?              @db.Uuid
+  category            String?              @db.VarChar(100)
+  severity            String?              @db.VarChar(20)
+  description         String
+  affected_resources  Json?
+  recommendation      String?
+  created_at          DateTime?            @default(now()) @db.Timestamp(6)
+  lighthouse_analyses lighthouse_analyses? @relation(fields: [lighthouse_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model brand_analysis {
+  id                      Int                @id
+  website_url             String?            @db.VarChar(255)
+  company_name            String?            @db.VarChar(255)
+  analysis_date           DateTime?          @db.Date
+  main_value_theme        String?
+  why_statement           String?
+  target_audience         String?            @db.VarChar(255)
+  analysis_id             String?
+  brand_alignment_score   Decimal?           @db.Decimal(5, 2)
+  value_consistency_score Decimal?           @db.Decimal(5, 2)
+  brand_clarity_score     Decimal?           @db.Decimal(5, 2)
+  overall_brand_score     Decimal?           @db.Decimal(5, 2)
+  created_at              DateTime?          @default(now()) @db.Timestamp(6)
+  updated_at              DateTime?          @default(now()) @db.Timestamp(6)
+  brand_pillars           brand_pillars[]
+  content_snippets        content_snippets[]
+
+  @@index([analysis_id], map: "idx_brand_analysis_analysis")
+  @@index([company_name], map: "idx_brand_analysis_company")
+}
+
+model brand_patterns {
+  id                    String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  theme_id              String?                @db.Uuid
+  pattern_type          String?                @db.VarChar(50)
+  pattern_text          String                 @db.VarChar(500)
+  pattern_weight        Decimal?               @default(1.0) @db.Decimal(3, 2)
+  context_required      String?                @db.VarChar(100)
+  examples              String?
+  created_at            DateTime?              @default(now()) @db.Timestamp(6)
+  brand_theme_reference brand_theme_reference? @relation(fields: [theme_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([theme_id], map: "idx_brand_patterns_theme")
+  @@index([pattern_type], map: "idx_brand_patterns_type")
+}
+
+model brand_pillars {
+  id                  Int                @id
+  brand_analysis_id   Int?
+  pillar_rank         Int?
+  pillar_name         String?            @db.VarChar(100)
+  pillar_description  String?
+  supporting_evidence String?
+  frequency_score     Int?
+  brand_analysis      brand_analysis?    @relation(fields: [brand_analysis_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  content_snippets    content_snippets[]
+
+  @@index([brand_analysis_id], map: "idx_brand_pillars_brand")
+  @@index([pillar_rank], map: "idx_brand_pillars_rank")
+}
+
+model brand_theme_reference {
+  id                   String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  theme_name           String           @unique @db.VarChar(100)
+  theme_category       String?          @db.VarChar(50)
+  theme_description    String?
+  common_phrases       Json?
+  associated_elements  Json?
+  associated_strengths Json?
+  created_at           DateTime?        @default(now()) @db.Timestamp(6)
+  brand_patterns       brand_patterns[]
+
+  @@index([theme_category], map: "idx_brand_theme_category")
+}
+
+model call_to_actions {
+  id                  String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  content_analysis_id String?           @db.Uuid
+  cta_text            String            @db.VarChar(500)
+  cta_url             String?           @db.VarChar(2048)
+  cta_type            String?           @db.VarChar(50)
+  prominence          String?           @db.VarChar(20)
+  position_on_page    String?           @db.VarChar(50)
+  clarity_score       Decimal?          @db.Decimal(5, 2)
+  urgency_level       String?           @db.VarChar(20)
+  created_at          DateTime?         @default(now()) @db.Timestamp(6)
+  content_analyses    content_analyses? @relation(fields: [content_analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([content_analysis_id], map: "idx_ctas_analysis")
+}
+
+model clifton_insights {
+  id                         String                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clifton_analysis_id        String?                     @db.Uuid
+  insight_category           String?                     @db.VarChar(50)
+  title                      String                      @db.VarChar(255)
+  description                String
+  supporting_themes          Json?
+  priority                   String?                     @db.VarChar(20)
+  created_at                 DateTime?                   @default(now()) @db.Timestamp(6)
+  clifton_strengths_analyses clifton_strengths_analyses? @relation(fields: [clifton_analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model clifton_strengths_analyses {
+  id                          String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  analysis_id                 String?                @unique
+  overall_score               Decimal?               @db.Decimal(5, 2)
+  strategic_thinking_score    Decimal?               @db.Decimal(5, 2)
+  executing_score             Decimal?               @db.Decimal(5, 2)
+  influencing_score           Decimal?               @db.Decimal(5, 2)
+  relationship_building_score Decimal?               @db.Decimal(5, 2)
+  dominant_domain             String?                @db.VarChar(50)
+  created_at                  DateTime?              @default(now()) @db.Timestamp(6)
+  clifton_insights            clifton_insights[]
+  Analysis                    Analysis?              @relation(fields: [analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  clifton_theme_scores        clifton_theme_scores[]
+
+  @@index([analysis_id], map: "idx_clifton_analysis")
+}
+
+model clifton_theme_patterns {
+  id                       String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  theme_id                 String?                   @db.Uuid
+  pattern_type             String?                   @db.VarChar(50)
+  pattern_text             String                    @db.VarChar(500)
+  strength_indicator       Decimal?                  @db.Decimal(3, 2)
+  context_clues            String?
+  examples                 String?
+  created_at               DateTime?                 @default(now()) @db.Timestamp(6)
+  clifton_themes_reference clifton_themes_reference? @relation(fields: [theme_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([theme_id], map: "idx_clifton_patterns_theme")
+}
+
+model clifton_theme_scores {
+  id                         String                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clifton_analysis_id        String?                     @db.Uuid
+  theme_name                 String                      @db.VarChar(100)
+  domain                     String                      @db.VarChar(50)
+  score                      Decimal?                    @db.Decimal(5, 2)
+  rank                       Int?
+  is_top_5                   Boolean?                    @default(false)
+  is_top_10                  Boolean?                    @default(false)
+  evidence                   Json?
+  manifestation_description  String?
+  created_at                 DateTime?                   @default(now()) @db.Timestamp(6)
+  clifton_strengths_analyses clifton_strengths_analyses? @relation(fields: [clifton_analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([domain], map: "idx_clifton_themes_domain")
+  @@index([rank], map: "idx_clifton_themes_rank")
+  @@index([score(sort: Desc)], map: "idx_clifton_themes_score")
+}
+
+model clifton_themes_reference {
+  id                     String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  theme_name             String                   @unique @db.VarChar(100)
+  domain                 String                   @db.VarChar(50)
+  description            String?
+  key_indicators         Json?
+  complementary_themes   Json?
+  created_at             DateTime?                @default(now()) @db.Timestamp(6)
+  clifton_theme_patterns clifton_theme_patterns[]
+}
+
+model competitive_keywords {
+  id                  String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seo_analysis_id     String?       @db.Uuid
+  competitor_url      String        @db.VarChar(2048)
+  competitor_name     String?       @db.VarChar(255)
+  keyword             String        @db.VarChar(255)
+  our_position        Int?
+  competitor_position Int?
+  position_gap        Int?
+  search_volume       Int?
+  keyword_value       Decimal?      @db.Decimal(10, 2)
+  priority            String?       @db.VarChar(20)
+  created_at          DateTime?     @default(now()) @db.Timestamp(6)
+  seo_analyses        seo_analyses? @relation(fields: [seo_analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model content_analyses {
+  id                          String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  analysis_id                 String?
+  page_url                    String              @db.VarChar(2048)
+  title                       String?             @db.VarChar(500)
+  meta_description            String?
+  word_count                  Int?
+  reading_level               String?             @db.VarChar(50)
+  reading_ease_score          Decimal?            @db.Decimal(5, 2)
+  keyword_density             Json?
+  content_quality_score       Decimal?            @db.Decimal(5, 2)
+  created_at                  DateTime?           @default(now()) @db.Timestamp(6)
+  brand_pillar_alignment      Json?
+  sentiment_score             Decimal?            @db.Decimal(3, 2)
+  value_theme_consistency     Decimal?            @db.Decimal(5, 2)
+  brand_messaging_consistency Decimal?            @db.Decimal(5, 2)
+  call_to_actions             call_to_actions[]
+  Analysis                    Analysis?           @relation(fields: [analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  content_structure           content_structure[]
+  media_analysis              media_analysis[]
+
+  @@index([analysis_id], map: "idx_content_analysis")
+}
+
+model content_gaps {
+  id                      String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seo_analysis_id         String?       @db.Uuid
+  topic                   String        @db.VarChar(255)
+  opportunity_description String?
+  target_keywords         Json?
+  estimated_traffic       Int?
+  competition_level       String?       @db.VarChar(20)
+  content_type            String?       @db.VarChar(50)
+  priority                String?       @db.VarChar(20)
+  recommended_word_count  Int?
+  suggested_outline       Json?
+  created_at              DateTime?     @default(now()) @db.Timestamp(6)
+  seo_analyses            seo_analyses? @relation(fields: [seo_analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([priority], map: "idx_content_gaps_priority")
+}
+
+model content_snippets {
+  id                   Int             @id
+  brand_analysis_id    Int?
+  page_section         String?         @db.VarChar(100)
+  snippet_text         String?
+  sentiment_score      Decimal?        @db.Decimal(3, 2)
+  associated_pillar_id Int?
+  brand_pillars        brand_pillars?  @relation(fields: [associated_pillar_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  brand_analysis       brand_analysis? @relation(fields: [brand_analysis_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([brand_analysis_id], map: "idx_content_snippets_brand")
+  @@index([associated_pillar_id], map: "idx_content_snippets_pillar")
+  @@index([sentiment_score], map: "idx_content_snippets_sentiment")
+}
+
+model content_structure {
+  id                  String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  content_analysis_id String?           @db.Uuid
+  element_type        String?           @db.VarChar(50)
+  element_level       Int?
+  element_order       Int?
+  content             String?
+  attributes          Json?
+  created_at          DateTime?         @default(now()) @db.Timestamp(6)
+  content_analyses    content_analyses? @relation(fields: [content_analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([content_analysis_id], map: "idx_content_structure_analysis")
+}
+
+model core_web_vitals {
+  id                  String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  lighthouse_id       String?              @db.Uuid
+  fcp_ms              Int?
+  lcp_ms              Int?
+  tbt_ms              Int?
+  cls_score           Decimal?             @db.Decimal(5, 3)
+  si_ms               Int?
+  tti_ms              Int?
+  fmp_ms              Int?
+  created_at          DateTime?            @default(now()) @db.Timestamp(6)
+  lighthouse_analyses lighthouse_analyses? @relation(fields: [lighthouse_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([lighthouse_id], map: "idx_vitals_lighthouse")
+}
+
+model credit_transactions {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id          String?
+  analysis_id      String?
+  transaction_type String?   @db.VarChar(50)
+  amount           Int?
+  balance_after    Int?
+  description      String?   @db.VarChar(255)
+  created_at       DateTime? @default(now()) @db.Timestamp(6)
+  Analysis         Analysis? @relation(fields: [analysis_id], references: [id], onUpdate: NoAction)
+  User             User?     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([created_at(sort: Desc)], map: "idx_credit_transactions_created")
+  @@index([user_id], map: "idx_credit_transactions_user")
+}
+
+model elements_of_value_b2b {
+  id                     String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  analysis_id            String?              @unique
+  overall_score          Decimal?             @db.Decimal(5, 2)
+  table_stakes_score     Decimal?             @db.Decimal(5, 2)
+  functional_score       Decimal?             @db.Decimal(5, 2)
+  ease_of_business_score Decimal?             @db.Decimal(5, 2)
+  individual_score       Decimal?             @db.Decimal(5, 2)
+  inspirational_score    Decimal?             @db.Decimal(5, 2)
+  created_at             DateTime?            @default(now()) @db.Timestamp(6)
+  b2b_element_scores     b2b_element_scores[]
+  Analysis               Analysis?            @relation(fields: [analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([analysis_id], map: "idx_b2b_eov_analysis")
+}
+
+model elements_of_value_b2c {
+  id                  String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  analysis_id         String?              @unique
+  overall_score       Decimal?             @db.Decimal(5, 2)
+  functional_score    Decimal?             @db.Decimal(5, 2)
+  emotional_score     Decimal?             @db.Decimal(5, 2)
+  life_changing_score Decimal?             @db.Decimal(5, 2)
+  social_impact_score Decimal?             @db.Decimal(5, 2)
+  created_at          DateTime?            @default(now()) @db.Timestamp(6)
+  b2c_element_scores  b2c_element_scores[]
+  Analysis            Analysis?            @relation(fields: [analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([analysis_id], map: "idx_b2c_eov_analysis")
+}
+
+model feature_flags {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  flag_name          String    @unique @db.VarChar(100)
+  is_enabled         Boolean?  @default(false)
+  description        String?
+  rollout_percentage Int?      @default(0)
+  target_users       Json?
+  created_at         DateTime? @default(now()) @db.Timestamp(6)
+  updated_at         DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model generated_reports {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  analysis_id       String?
+  user_id           String?
+  report_type       String?   @db.VarChar(50)
+  report_format     String?   @db.VarChar(20)
+  file_url          String?   @db.VarChar(2048)
+  file_size_kb      Int?
+  sections_included Json?
+  customizations    Json?
+  generated_at      DateTime? @default(now()) @db.Timestamp(6)
+  downloaded_at     DateTime? @db.Timestamp(6)
+  download_count    Int?      @default(0)
+  expires_at        DateTime? @db.Timestamp(6)
+  created_at        DateTime? @default(now()) @db.Timestamp(6)
+  Analysis          Analysis? @relation(fields: [analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  User              User?     @relation(fields: [user_id], references: [id], onUpdate: NoAction)
+
+  @@index([analysis_id], map: "idx_reports_analysis")
+  @@index([user_id], map: "idx_reports_user")
+}
+
+model golden_circle_analyses {
+  id                          String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  analysis_id                 String?             @unique
+  overall_score               Decimal?            @db.Decimal(5, 2)
+  alignment_score             Decimal?            @db.Decimal(5, 2)
+  clarity_score               Decimal?            @db.Decimal(5, 2)
+  created_at                  DateTime?           @default(now()) @db.Timestamp(6)
+  main_value_theme            String?
+  brand_alignment_score       Decimal?            @db.Decimal(5, 2)
+  target_audience_specificity Decimal?            @db.Decimal(5, 2)
+  value_consistency_score     Decimal?            @db.Decimal(5, 2)
+  brand_clarity_score         Decimal?            @db.Decimal(5, 2)
+  Analysis                    Analysis?           @relation(fields: [analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  golden_circle_how           golden_circle_how?
+  golden_circle_what          golden_circle_what?
+  golden_circle_who           golden_circle_who?
+  golden_circle_why           golden_circle_why?
+
+  @@index([analysis_id], map: "idx_golden_circle_analysis_id")
+}
+
+model golden_circle_how {
+  id                     String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  golden_circle_id       String?                 @unique @db.Uuid
+  score                  Decimal?                @db.Decimal(5, 2)
+  current_state          String
+  uniqueness_rating      Decimal?                @db.Decimal(5, 2)
+  clarity_rating         Decimal?                @db.Decimal(5, 2)
+  credibility_rating     Decimal?                @db.Decimal(5, 2)
+  specificity_rating     Decimal?                @db.Decimal(5, 2)
+  evidence               Json?
+  recommendations        Json?
+  created_at             DateTime?               @default(now()) @db.Timestamp(6)
+  golden_circle_analyses golden_circle_analyses? @relation(fields: [golden_circle_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model golden_circle_patterns {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  dimension        String?   @db.VarChar(20)
+  indicator_type   String?   @db.VarChar(50)
+  pattern_category String?   @db.VarChar(50)
+  pattern_text     String    @db.VarChar(500)
+  score_impact     Decimal?  @db.Decimal(3, 2)
+  examples         String?
+  created_at       DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([dimension], map: "idx_gc_patterns_dimension")
+}
+
+model golden_circle_what {
+  id                        String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  golden_circle_id          String?                 @unique @db.Uuid
+  score                     Decimal?                @db.Decimal(5, 2)
+  current_state             String
+  clarity_rating            Decimal?                @db.Decimal(5, 2)
+  completeness_rating       Decimal?                @db.Decimal(5, 2)
+  value_articulation_rating Decimal?                @db.Decimal(5, 2)
+  cta_clarity_rating        Decimal?                @db.Decimal(5, 2)
+  evidence                  Json?
+  recommendations           Json?
+  created_at                DateTime?               @default(now()) @db.Timestamp(6)
+  golden_circle_analyses    golden_circle_analyses? @relation(fields: [golden_circle_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model golden_circle_who {
+  id                     String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  golden_circle_id       String?                 @unique @db.Uuid
+  score                  Decimal?                @db.Decimal(5, 2)
+  current_state          String
+  specificity_rating     Decimal?                @db.Decimal(5, 2)
+  resonance_rating       Decimal?                @db.Decimal(5, 2)
+  accessibility_rating   Decimal?                @db.Decimal(5, 2)
+  conversion_path_rating Decimal?                @db.Decimal(5, 2)
+  evidence               Json?
+  recommendations        Json?
+  target_personas        Json?
+  created_at             DateTime?               @default(now()) @db.Timestamp(6)
+  golden_circle_analyses golden_circle_analyses? @relation(fields: [golden_circle_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model golden_circle_why {
+  id                         String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  golden_circle_id           String?                 @unique @db.Uuid
+  score                      Decimal?                @db.Decimal(5, 2)
+  current_state              String
+  clarity_rating             Decimal?                @db.Decimal(5, 2)
+  authenticity_rating        Decimal?                @db.Decimal(5, 2)
+  emotional_resonance_rating Decimal?                @db.Decimal(5, 2)
+  differentiation_rating     Decimal?                @db.Decimal(5, 2)
+  evidence                   Json?
+  recommendations            Json?
+  created_at                 DateTime?               @default(now()) @db.Timestamp(6)
+  golden_circle_analyses     golden_circle_analyses? @relation(fields: [golden_circle_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model google_trends_data {
+  id                 String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seo_analysis_id    String?       @db.Uuid
+  keyword            String        @db.VarChar(255)
+  trend_direction    String?       @db.VarChar(20)
+  trend_percentage   Decimal?      @db.Decimal(5, 2)
+  peak_interest_date DateTime?     @db.Date
+  seasonal_pattern   Json?
+  geographic_data    Json?
+  related_queries    Json?
+  related_topics     Json?
+  fetched_at         DateTime?     @default(now()) @db.Timestamp(6)
+  created_at         DateTime?     @default(now()) @db.Timestamp(6)
+  seo_analyses       seo_analyses? @relation(fields: [seo_analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([keyword], map: "idx_trends_keyword")
+}
+
+model growth_barriers {
+  id                      String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  transformation_id       String?                  @db.Uuid
+  barrier_type            String?                  @db.VarChar(100)
+  title                   String                   @db.VarChar(255)
+  description             String
+  severity                String?                  @db.VarChar(20)
+  impact_score            Decimal?                 @db.Decimal(5, 2)
+  affected_areas          Json?
+  root_cause              String?
+  created_at              DateTime?                @default(now()) @db.Timestamp(6)
+  transformation_analyses transformation_analyses? @relation(fields: [transformation_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([severity], map: "idx_barriers_severity")
+}
+
+model growth_opportunities {
+  id                      String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  transformation_id       String?                  @db.Uuid
+  opportunity_type        String?                  @db.VarChar(100)
+  title                   String                   @db.VarChar(255)
+  description             String
+  potential_impact        String?                  @db.VarChar(20)
+  impact_score            Decimal?                 @db.Decimal(5, 2)
+  effort_required         String?                  @db.VarChar(20)
+  timeframe               String?                  @db.VarChar(50)
+  supporting_data         Json?
+  created_at              DateTime?                @default(now()) @db.Timestamp(6)
+  transformation_analyses transformation_analyses? @relation(fields: [transformation_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([impact_score(sort: Desc)], map: "idx_opportunities_impact")
+}
+
+model individual_reports {
+  id          String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  analysis_id String
+  name        String
+  phase       String
+  prompt      String
+  markdown    String
+  score       Int?
+  timestamp   DateTime? @default(now()) @db.Timestamptz(6)
+  createdAt   DateTime? @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime? @default(now()) @db.Timestamptz(6)
+  Analysis    Analysis  @relation(fields: [analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_analysis")
+
+  @@index([analysis_id], map: "idx_individual_reports_analysis_id")
+  @@index([createdAt(sort: Desc)], map: "idx_individual_reports_createdat")
+  @@index([phase], map: "idx_individual_reports_phase")
+  @@index([timestamp(sort: Desc)], map: "idx_individual_reports_timestamp")
+}
+
+model industry_terminology {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  industry         String    @db.VarChar(100)
+  standard_term    String    @db.VarChar(100)
+  industry_term    String    @db.VarChar(100)
+  confidence_score Decimal?  @default(0.8) @db.Decimal(3, 2)
+  usage_examples   String?
+  created_at       DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([industry, standard_term], map: "idx_industry_terms")
+}
+
+model keyword_opportunities {
+  id                 String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seo_analysis_id    String?       @db.Uuid
+  keyword            String        @db.VarChar(255)
+  search_volume      Int?
+  competition        String?       @db.VarChar(20)
+  keyword_difficulty Int?
+  opportunity_score  Decimal?      @db.Decimal(5, 2)
+  relevance_score    Decimal?      @db.Decimal(5, 2)
+  current_ranking    Int?
+  estimated_traffic  Int?
+  priority           String?       @db.VarChar(20)
+  content_gap        Boolean?      @default(false)
+  recommended_action String?
+  created_at         DateTime?     @default(now()) @db.Timestamp(6)
+  seo_analyses       seo_analyses? @relation(fields: [seo_analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([priority], map: "idx_opportunities_priority")
+}
+
+model keyword_rankings {
+  id                 String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seo_analysis_id    String?       @db.Uuid
+  keyword            String        @db.VarChar(255)
+  current_position   Int?
+  previous_position  Int?
+  position_change    Int?
+  search_volume      Int?
+  impressions        Int?
+  clicks             Int?
+  ctr                Decimal?      @db.Decimal(5, 2)
+  avg_position       Decimal?      @db.Decimal(5, 2)
+  competition_level  String?       @db.VarChar(20)
+  keyword_difficulty Int?
+  opportunity_score  Decimal?      @db.Decimal(5, 2)
+  checked_at         DateTime?     @default(now()) @db.Timestamp(6)
+  created_at         DateTime?     @default(now()) @db.Timestamp(6)
+  seo_analyses       seo_analyses? @relation(fields: [seo_analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([keyword], map: "idx_keyword_rankings_keyword")
+  @@index([seo_analysis_id], map: "idx_keyword_rankings_seo")
+}
+
+model lighthouse_analyses {
+  id                   String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  analysis_id          String?
+  page_url             String                 @db.VarChar(2048)
+  performance_score    Decimal?               @db.Decimal(5, 2)
+  accessibility_score  Decimal?               @db.Decimal(5, 2)
+  best_practices_score Decimal?               @db.Decimal(5, 2)
+  seo_score            Decimal?               @db.Decimal(5, 2)
+  pwa_score            Decimal?               @db.Decimal(5, 2)
+  overall_grade        String?                @db.VarChar(10)
+  tested_at            DateTime?              @default(now()) @db.Timestamp(6)
+  test_device          String?                @db.VarChar(50)
+  created_at           DateTime?              @default(now()) @db.Timestamp(6)
+  accessibility_issues accessibility_issues[]
+  best_practice_issues best_practice_issues[]
+  core_web_vitals      core_web_vitals[]
+  Analysis             Analysis?              @relation(fields: [analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  performance_metrics  performance_metrics[]
+  seo_issues           seo_issues[]
+
+  @@index([analysis_id], map: "idx_lighthouse_analysis")
+  @@index([page_url], map: "idx_lighthouse_page_url")
+}
+
+model markdown_exports {
+  id            String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  analysis_id   String    @unique
+  url           String
+  markdown      String
+  overall_score Int?
+  rating        String?
+  exported_at   DateTime? @default(now()) @db.Timestamptz(6)
+  createdAt     DateTime? @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime? @default(now()) @db.Timestamptz(6)
+  Analysis      Analysis  @relation(fields: [analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_analysis_export")
+
+  @@index([analysis_id], map: "idx_markdown_exports_analysis_id")
+  @@index([createdAt(sort: Desc)], map: "idx_markdown_exports_createdat")
+  @@index([url], map: "idx_markdown_exports_url")
+}
+
+model media_analysis {
+  id                          String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  content_analysis_id         String?           @db.Uuid
+  media_type                  String?           @db.VarChar(50)
+  media_url                   String?           @db.VarChar(2048)
+  alt_text                    String?
+  file_size_kb                Int?
+  dimensions                  String?           @db.VarChar(50)
+  format                      String?           @db.VarChar(20)
+  optimized                   Boolean?          @default(false)
+  optimization_recommendation String?
+  created_at                  DateTime?         @default(now()) @db.Timestamp(6)
+  content_analyses            content_analyses? @relation(fields: [content_analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([content_analysis_id], map: "idx_media_analysis")
+}
+
+model notifications {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id           String?
+  notification_type String?   @db.VarChar(100)
+  title             String    @db.VarChar(255)
+  message           String?
+  action_url        String?   @db.VarChar(2048)
+  priority          String?   @default("normal") @db.VarChar(20)
+  read_at           DateTime? @db.Timestamp(6)
+  is_read           Boolean?  @default(false)
+  created_at        DateTime? @default(now()) @db.Timestamp(6)
+  User              User?     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([created_at(sort: Desc)], map: "idx_notifications_created")
+  @@index([is_read], map: "idx_notifications_read")
+  @@index([user_id], map: "idx_notifications_user")
+}
+
+model page_screenshots {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  analysis_id     String?
+  page_url        String    @db.VarChar(2048)
+  screenshot_url  String?   @db.VarChar(2048)
+  device_type     String?   @db.VarChar(50)
+  viewport_width  Int?
+  viewport_height Int?
+  file_size_kb    Int?
+  captured_at     DateTime? @default(now()) @db.Timestamp(6)
+  created_at      DateTime? @default(now()) @db.Timestamp(6)
+  Analysis        Analysis? @relation(fields: [analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([analysis_id], map: "idx_screenshots_analysis")
+}
+
+model page_seo_scores {
+  id                       String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seo_analysis_id          String?       @db.Uuid
+  page_url                 String        @db.VarChar(2048)
+  page_title               String?       @db.VarChar(500)
+  title_tag_score          Decimal?      @db.Decimal(5, 2)
+  meta_description_score   Decimal?      @db.Decimal(5, 2)
+  heading_structure_score  Decimal?      @db.Decimal(5, 2)
+  content_quality_score    Decimal?      @db.Decimal(5, 2)
+  image_optimization_score Decimal?      @db.Decimal(5, 2)
+  internal_linking_score   Decimal?      @db.Decimal(5, 2)
+  overall_page_score       Decimal?      @db.Decimal(5, 2)
+  primary_keyword          String?       @db.VarChar(255)
+  word_count               Int?
+  recommendations          Json?
+  created_at               DateTime?     @default(now()) @db.Timestamp(6)
+  seo_analyses             seo_analyses? @relation(fields: [seo_analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model pattern_matches {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  analysis_id         String?
+  pattern_type        String?   @db.VarChar(50)
+  pattern_id          String?   @db.Uuid
+  matched_text        String?
+  context_text        String?
+  confidence_score    Decimal?  @db.Decimal(5, 4)
+  page_url            String?   @db.VarChar(2048)
+  position_in_content Int?
+  created_at          DateTime? @default(now()) @db.Timestamp(6)
+  Analysis            Analysis? @relation(fields: [analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([analysis_id], map: "idx_pattern_matches_analysis")
+}
+
+model performance_metrics {
+  id                  String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  lighthouse_id       String?              @db.Uuid
+  metric_name         String               @db.VarChar(100)
+  metric_value        Decimal?             @db.Decimal(10, 2)
+  metric_unit         String?              @db.VarChar(20)
+  rating              String?              @db.VarChar(20)
+  target_value        Decimal?             @db.Decimal(10, 2)
+  created_at          DateTime?            @default(now()) @db.Timestamp(6)
+  lighthouse_analyses lighthouse_analyses? @relation(fields: [lighthouse_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model recommendations {
+  id                   String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  analysis_id          String?
+  category             String?           @db.VarChar(100)
+  priority             String?           @db.VarChar(20)
+  priority_score       Int?
+  title                String            @db.VarChar(255)
+  description          String
+  expected_impact      String?           @db.VarChar(20)
+  impact_score         Decimal?          @db.Decimal(5, 2)
+  effort_required      String?           @db.VarChar(20)
+  timeframe            String?           @db.VarChar(50)
+  success_metrics      Json?
+  implementation_steps Json?
+  resources_needed     Json?
+  dependencies         Json?
+  status               String?           @default("pending") @db.VarChar(50)
+  created_at           DateTime?         @default(now()) @db.Timestamp(6)
+  Analysis             Analysis?         @relation(fields: [analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  roadmap_actions      roadmap_actions[]
+
+  @@index([category], map: "idx_recommendations_category")
+  @@index([priority, priority_score(sort: Desc)], map: "idx_recommendations_priority")
+  @@index([status], map: "idx_recommendations_status")
+}
+
+model report_templates {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  template_name String    @db.VarChar(255)
+  template_type String?   @db.VarChar(50)
+  description   String?
+  sections      Json?
+  styling       Json?
+  is_default    Boolean?  @default(false)
+  created_by    String?
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
+  User          User?     @relation(fields: [created_by], references: [id], onUpdate: NoAction)
+}
+
+model roadmap_actions {
+  id                String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  phase_id          String?          @db.Uuid
+  recommendation_id String?          @db.Uuid
+  action_order      Int?
+  title             String           @db.VarChar(255)
+  description       String
+  action_type       String?          @db.VarChar(100)
+  owner_role        String?          @db.VarChar(100)
+  estimated_hours   Int?
+  expected_impact   String?          @db.VarChar(20)
+  status            String?          @default("not-started") @db.VarChar(50)
+  dependencies      Json?
+  resources         Json?
+  notes             String?
+  created_at        DateTime?        @default(now()) @db.Timestamp(6)
+  roadmap_phases    roadmap_phases?  @relation(fields: [phase_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  recommendations   recommendations? @relation(fields: [recommendation_id], references: [id], onUpdate: NoAction)
+}
+
+model roadmap_phases {
+  id                      String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  transformation_id       String?                  @db.Uuid
+  phase_number            Int
+  phase_name              String                   @db.VarChar(100)
+  duration_weeks          Int?
+  start_date              DateTime?                @db.Date
+  end_date                DateTime?                @db.Date
+  objectives              Json?
+  success_criteria        Json?
+  created_at              DateTime?                @default(now()) @db.Timestamp(6)
+  roadmap_actions         roadmap_actions[]
+  transformation_analyses transformation_analyses? @relation(fields: [transformation_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model seo_analyses {
+  id                         String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  analysis_id                String?                 @unique
+  website_id                 String?                 @db.Uuid
+  primary_keyword            String?                 @db.VarChar(255)
+  overall_seo_score          Decimal?                @db.Decimal(5, 2)
+  technical_seo_score        Decimal?                @db.Decimal(5, 2)
+  content_quality_score      Decimal?                @db.Decimal(5, 2)
+  keyword_optimization_score Decimal?                @db.Decimal(5, 2)
+  backlink_score             Decimal?                @db.Decimal(5, 2)
+  created_at                 DateTime?               @default(now()) @db.Timestamp(6)
+  competitive_keywords       competitive_keywords[]
+  content_gaps               content_gaps[]
+  google_trends_data         google_trends_data[]
+  keyword_opportunities      keyword_opportunities[]
+  keyword_rankings           keyword_rankings[]
+  page_seo_scores            page_seo_scores[]
+  Analysis                   Analysis?               @relation(fields: [analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  websites                   websites?               @relation(fields: [website_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  technical_seo_audit        technical_seo_audit[]
+
+  @@index([analysis_id], map: "idx_seo_analysis")
+}
+
+model seo_issues {
+  id                  String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  lighthouse_id       String?              @db.Uuid
+  severity            String?              @db.VarChar(20)
+  issue_type          String?              @db.VarChar(100)
+  description         String
+  current_value       String?
+  recommended_value   String?
+  impact_score        Decimal?             @db.Decimal(5, 2)
+  fix_effort          String?              @db.VarChar(20)
+  created_at          DateTime?            @default(now()) @db.Timestamp(6)
+  lighthouse_analyses lighthouse_analyses? @relation(fields: [lighthouse_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([severity], map: "idx_seo_issues_severity")
+}
+
+model subscriptions {
+  id                     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id                String?
+  plan                   String    @db.VarChar(50)
+  status                 String?   @default("active") @db.VarChar(50)
+  billing_cycle          String?   @db.VarChar(20)
+  price_per_cycle        Decimal?  @db.Decimal(10, 2)
+  currency               String?   @default("USD") @db.VarChar(3)
+  credits_per_cycle      Int?
+  started_at             DateTime? @default(now()) @db.Timestamp(6)
+  current_period_start   DateTime? @db.Timestamp(6)
+  current_period_end     DateTime? @db.Timestamp(6)
+  cancel_at_period_end   Boolean?  @default(false)
+  cancelled_at           DateTime? @db.Timestamp(6)
+  ended_at               DateTime? @db.Timestamp(6)
+  stripe_subscription_id String?   @db.VarChar(255)
+  created_at             DateTime? @default(now()) @db.Timestamp(6)
+  updated_at             DateTime? @default(now()) @db.Timestamp(6)
+  User                   User?     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([status], map: "idx_subscriptions_status")
+  @@index([user_id], map: "idx_subscriptions_user")
+}
+
+model success_metrics {
+  id                      String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  transformation_id       String?                  @db.Uuid
+  metric_name             String                   @db.VarChar(255)
+  metric_category         String?                  @db.VarChar(100)
+  current_value           Decimal?                 @db.Decimal(10, 2)
+  target_value            Decimal?                 @db.Decimal(10, 2)
+  unit                    String?                  @db.VarChar(50)
+  timeframe               String?                  @db.VarChar(50)
+  measurement_method      String?
+  tracking_tool           String?                  @db.VarChar(100)
+  priority                String?                  @db.VarChar(20)
+  created_at              DateTime?                @default(now()) @db.Timestamp(6)
+  transformation_analyses transformation_analyses? @relation(fields: [transformation_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model system_config {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  config_key   String    @unique @db.VarChar(100)
+  config_value String?
+  config_type  String?   @db.VarChar(50)
+  description  String?
+  is_public    Boolean?  @default(false)
+  updated_by   String?
+  created_at   DateTime? @default(now()) @db.Timestamp(6)
+  updated_at   DateTime? @default(now()) @db.Timestamp(6)
+  User         User?     @relation(fields: [updated_by], references: [id], onUpdate: NoAction)
+}
+
+model technical_seo_audit {
+  id                 String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seo_analysis_id    String?       @db.Uuid
+  audit_category     String?       @db.VarChar(100)
+  issue_type         String?       @db.VarChar(100)
+  severity           String?       @db.VarChar(20)
+  description        String
+  affected_pages     Int?
+  affected_urls      Json?
+  fix_recommendation String?
+  fix_effort         String?       @db.VarChar(20)
+  impact_score       Decimal?      @db.Decimal(5, 2)
+  created_at         DateTime?     @default(now()) @db.Timestamp(6)
+  seo_analyses       seo_analyses? @relation(fields: [seo_analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model transformation_analyses {
+  id                   String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  analysis_id          String?                @unique
+  current_state        String
+  desired_state        String
+  transformation_score Decimal?               @db.Decimal(5, 2)
+  gap_analysis         String?
+  created_at           DateTime?              @default(now()) @db.Timestamp(6)
+  growth_barriers      growth_barriers[]
+  growth_opportunities growth_opportunities[]
+  roadmap_phases       roadmap_phases[]
+  success_metrics      success_metrics[]
+  Analysis             Analysis?              @relation(fields: [analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([analysis_id], map: "idx_transformation_analysis")
+}
+
+model user_preferences {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id          String?
+  preference_key   String    @db.VarChar(100)
+  preference_value String?
+  created_at       DateTime? @default(now()) @db.Timestamp(6)
+  updated_at       DateTime? @default(now()) @db.Timestamp(6)
+  User             User?     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, preference_key])
+  @@index([user_id], map: "idx_user_preferences_user")
+}
+
+model value_element_patterns {
+  id                      String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  element_id              String?                  @db.Uuid
+  pattern_type            String?                  @db.VarChar(50)
+  pattern_text            String                   @db.VarChar(500)
+  pattern_weight          Decimal?                 @default(1.0) @db.Decimal(3, 2)
+  context_required        String?                  @db.VarChar(100)
+  examples                String?
+  language                String?                  @default("en") @db.VarChar(10)
+  created_at              DateTime?                @default(now()) @db.Timestamp(6)
+  value_element_reference value_element_reference? @relation(fields: [element_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([element_id], map: "idx_patterns_element")
+  @@index([pattern_text], map: "idx_patterns_text")
+}
+
+model value_element_reference {
+  id                     String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  element_name           String                   @unique @db.VarChar(100)
+  element_category       String                   @db.VarChar(50)
+  display_name           String?                  @db.VarChar(100)
+  definition             String?
+  business_type          String?                  @db.VarChar(20)
+  importance_weight      Decimal?                 @default(1.0) @db.Decimal(5, 2)
+  created_at             DateTime?                @default(now()) @db.Timestamp(6)
+  updated_at             DateTime?                @default(now()) @db.Timestamp(6)
+  value_element_patterns value_element_patterns[]
+
+  @@index([element_category], map: "idx_value_element_ref")
+}
+
+model value_insights {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  analysis_id         String?
+  insight_type        String?   @db.VarChar(50)
+  category            String?   @db.VarChar(50)
+  priority            String?   @db.VarChar(20)
+  description         String
+  supporting_elements Json?
+  created_at          DateTime? @default(now()) @db.Timestamp(6)
+  Analysis            Analysis? @relation(fields: [analysis_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([analysis_id], map: "idx_insights_analysis")
+  @@index([priority], map: "idx_insights_priority")
+}
+
+model websites {
+  id                   String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  url                  String                 @unique @db.VarChar(2048)
+  domain               String                 @db.VarChar(255)
+  title                String?                @db.VarChar(500)
+  description          String?
+  industry             String?                @db.VarChar(100)
+  business_type        String?                @db.VarChar(50)
+  first_analyzed_at    DateTime?              @default(now()) @db.Timestamp(6)
+  last_analyzed_at     DateTime?              @db.Timestamp(6)
+  total_analyses       Int?                   @default(0)
+  created_by           String?
+  analysis_comparisons analysis_comparisons[]
+  seo_analyses         seo_analyses[]
+  User                 User?                  @relation(fields: [created_by], references: [id], onUpdate: NoAction)
+
+  @@index([created_by], map: "idx_websites_created_by")
+  @@index([domain], map: "idx_websites_domain")
 }

@@ -200,10 +200,10 @@ await prisma.golden_circle_how.create({
 
 // Similar for WHAT and WHO...
 
-return NextResponse.json({ 
-  success: true, 
+return NextResponse.json({
+  success: true,
   analysisId: analysis.id,
-  goldenCircleId: gc.id 
+  goldenCircleId: gc.id
 })
 ```
 
@@ -221,7 +221,7 @@ export class SynonymDetectionService {
    * Find value patterns in content using database pattern matching
    */
   static async findValuePatterns(
-    content: string, 
+    content: string,
     industry?: string
   ) {
     const patterns = await prisma.$queryRaw<Array<{
@@ -236,7 +236,7 @@ export class SynonymDetectionService {
       )
       LIMIT 100
     `
-    
+
     return patterns
   }
 
@@ -321,23 +321,23 @@ import { SynonymDetectionService } from '@/lib/services/synonym-detection.servic
 case 2:
   // Get industry from analysis metadata
   const industry = JSON.parse(analysis.content).industry || 'general'
-  
+
   // Run pattern detection BEFORE calling AI
   const patterns = await SynonymDetectionService.findValuePatterns(
     analysis.content,
     industry
   )
-  
+
   // Build enhanced prompt with industry context
   const enhancedPrompt = await SynonymDetectionService.buildEnhancedPrompt(
     originalPrompt,
     analysis.content,
     industry
   )
-  
+
   // Call AI with enhanced prompt
   const aiResponse = await callGeminiWithPrompt(enhancedPrompt)
-  
+
   // Store detailed results
   const gc = await prisma.golden_circle_analyses.create({
     data: {
@@ -346,14 +346,14 @@ case 2:
       // ... other scores
     }
   })
-  
+
   // Store pattern matches
   await SynonymDetectionService.storePatternMatches(
     analysis.id,
     patterns,
     analysis.url
   )
-  
+
   // Store dimension details
   await prisma.golden_circle_why.create({
     data: {
@@ -427,7 +427,7 @@ export function GoldenCircleResults({ analysisId }: { analysisId: string }) {
               Score: {data.why.clarity_rating}/10
             </span>
           </h3>
-          
+
           <div className="bg-blue-50 p-4 rounded mb-4">
             <p className="text-lg">{data.why.current_state}</p>
           </div>
