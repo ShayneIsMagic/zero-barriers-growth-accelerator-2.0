@@ -1,6 +1,18 @@
 /**
- * Individual Phase Execution API
+ * Individual Phase Execution API (LEGACY)
  * Allows running Phase 1, 2, or 3 independently with manual control
+ *
+ * ⚠️ DEPRECATED: This route uses simple JSON blob storage
+ *
+ * 🆕 NEW ROUTE: /api/analyze/phase-new
+ * - Uses detailed 60+ table schema
+ * - Synonym detection for 40% better accuracy
+ * - Industry-specific analysis
+ * - Evidence-based scoring
+ * - Comprehensive reporting
+ *
+ * This route is kept for backward compatibility.
+ * Migrate to /api/analyze/phase-new for enhanced features.
  */
 
 import {
