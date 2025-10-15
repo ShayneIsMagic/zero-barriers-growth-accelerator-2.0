@@ -69,37 +69,48 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * PHASE 1: Data Collection (Keep current behavior)
+ * PHASE 1: Data Collection (FIXED - Uses working scraper pattern)
  */
 async function handlePhase1(
   url: string,
   analysisId?: string,
   industry?: string
 ) {
-  console.log('📊 Phase 1: Data Collection')
+  console.log('📊 Phase 1: Data Collection (Using working scraper pattern)')
 
-  // Use existing scraper
-  const analyzer = new ThreePhaseAnalyzer(url)
-  const phase1Result = await (analyzer as any).executePhase1()
+  // Use the WORKING scraper from content comparison page
+  const { scrapeWebsiteContent } = await import('@/lib/reliable-content-scraper')
+  
+  console.log('🔍 Step 1: Scraping website content...')
+  const scrapedContent = await scrapeWebsiteContent(url)
+  
+  console.log(`✅ Successfully scraped ${scrapedContent.wordCount} words from ${url}`)
+
+  // Create Phase 1 result in the same format as ThreePhaseAnalyzer
+  const phase1Result = {
+    phase: 'Phase 1: Data Collection Foundation',
+    url: url,
+    timestamp: new Date().toISOString(),
+    scrapedContent,
+    pageAuditData: null,
+    lighthouseData: null,
+    seoAnalysis: null,
+    summary: {
+      totalWords: scrapedContent.wordCount || 0,
+      totalImages: scrapedContent.imageCount || 0,
+      totalLinks: scrapedContent.linkCount || 0,
+      seoScore: 0,
+      performanceScore: 0,
+      accessibilityScore: 0,
+      technicalIssues: [],
+      contentIssues: []
+    }
+  }
 
   // Create or update analysis
   const newAnalysisId = analysisId || `analysis-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
-  // Create website record
-  await prisma.$queryRaw`
-    INSERT INTO websites (url, domain, industry, total_analyses)
-    VALUES (
-      ${url},
-      ${new URL(url).hostname},
-      ${industry || 'general'},
-      1
-    )
-    ON CONFLICT (url) DO UPDATE
-    SET total_analyses = websites.total_analyses + 1,
-        last_analyzed_at = NOW()
-  `
-
-  // Store Phase 1 data
+  // Store Phase 1 data (avoiding prisma.$queryRaw)
   await prisma.analysis.upsert({
     where: { id: newAnalysisId },
     create: {
@@ -126,6 +137,8 @@ async function handlePhase1(
       })
     }
   })
+
+  console.log(`✅ Phase 1 completed - Collected ${scrapedContent.wordCount} words, ${scrapedContent.extractedKeywords?.length || 0} keywords`)
 
   return NextResponse.json({
     success: true,
