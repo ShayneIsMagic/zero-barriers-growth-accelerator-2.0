@@ -249,54 +249,42 @@ Return as JSON:
     aiResponse: any,
     patterns: PatternMatch[]
   ): Promise<ElementsOfValueB2BAnalysis> {
-    // Create main record
-    const eov = await prisma.$queryRaw<Array<{ id: string }>>`
-      INSERT INTO elements_of_value_b2b (
-        analysis_id, overall_score, table_stakes_score,
-        functional_score, ease_of_business_score,
-        individual_score, inspirational_score
-      ) VALUES (
-        ${analysisId}::text,
-        ${aiResponse.overall_score || 0},
-        ${aiResponse.table_stakes_score || 0},
-        ${aiResponse.functional_score || 0},
-        ${aiResponse.ease_of_business_score || 0},
-        ${aiResponse.individual_score || 0},
-        ${aiResponse.inspirational_score || 0}
-      )
-      RETURNING id
-    `
+    // Create main record using Prisma client
+    const eov = await prisma.elements_of_value_b2b.create({
+      data: {
+        analysis_id: analysisId,
+        overall_score: aiResponse.overall_score || 0,
+        table_stakes_score: aiResponse.table_stakes_score || 0,
+        functional_score: aiResponse.functional_score || 0,
+        ease_of_business_score: aiResponse.ease_of_business_score || 0,
+        individual_score: aiResponse.individual_score || 0,
+        inspirational_score: aiResponse.inspirational_score || 0
+      }
+    })
 
-    const eovId = eov[0].id
-
-    // Store element scores
+    // Store element scores using Prisma client
     const elements: B2BElementScore[] = []
 
     for (const elem of aiResponse.elements || []) {
-      const stored = await prisma.$queryRaw<Array<B2BElementScore>>`
-        INSERT INTO b2b_element_scores (
-          eov_b2b_id, element_name, element_category,
-          category_level, score, weight, weighted_score,
-          evidence, recommendations
-        ) VALUES (
-          ${eovId}::uuid,
-          ${elem.element_name},
-          ${elem.element_category},
-          ${elem.category_level || 1},
-          ${elem.score || 0},
-          ${1.0},
-          ${elem.score || 0},
-          ${JSON.stringify(elem.evidence || {})}::jsonb,
-          ${JSON.stringify(elem.recommendations || [])}::jsonb
-        )
-        RETURNING *
-      `
+      const stored = await prisma.b2b_element_scores.create({
+        data: {
+          eov_b2b_id: eov.id,
+          element_name: elem.element_name,
+          element_category: elem.element_category,
+          category_level: elem.category_level || 1,
+          score: elem.score || 0,
+          weight: 1.0,
+          weighted_score: elem.score || 0,
+          evidence: elem.evidence || {},
+          recommendations: elem.recommendations || []
+        }
+      })
 
-      if (stored[0]) elements.push(stored[0])
+      elements.push(stored)
     }
 
     return {
-      id: eovId,
+      id: eov.id,
       analysis_id: analysisId,
       overall_score: aiResponse.overall_score,
       table_stakes_score: aiResponse.table_stakes_score,
@@ -313,20 +301,26 @@ Return as JSON:
    */
   static async getByAnalysisId(analysisId: string): Promise<ElementsOfValueB2BAnalysis | null> {
     try {
-      const eov = await prisma.$queryRaw<any[]>`
-        SELECT
-          eov.*,
-          json_agg(es.*) as elements
-        FROM elements_of_value_b2b eov
-        LEFT JOIN b2b_element_scores es ON es.eov_b2b_id = eov.id
-        WHERE eov.analysis_id = ${analysisId}::text
-        GROUP BY eov.id
-        LIMIT 1
-      `
+      const eov = await prisma.elements_of_value_b2b.findFirst({
+        where: { analysis_id: analysisId },
+        include: {
+          b2b_element_scores: true
+        }
+      })
 
-      if (eov.length === 0) return null
+      if (!eov) return null
 
-      return eov[0] as ElementsOfValueB2BAnalysis
+      return {
+        id: eov.id,
+        analysis_id: eov.analysis_id,
+        overall_score: eov.overall_score,
+        table_stakes_score: eov.table_stakes_score,
+        functional_score: eov.functional_score,
+        ease_of_business_score: eov.ease_of_business_score,
+        individual_score: eov.individual_score,
+        inspirational_score: eov.inspirational_score,
+        elements: eov.b2b_element_scores
+      }
     } catch (error) {
       console.error('Failed to fetch B2B Elements:', error)
       return null

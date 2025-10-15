@@ -271,128 +271,99 @@ Return response as valid JSON with this structure:
     aiResponse: any,
     patterns: PatternMatch[]
   ): Promise<GoldenCircleAnalysis> {
-    // Create main Golden Circle record
-    const gc = await prisma.$queryRaw<Array<{ id: string }>>`
-      INSERT INTO golden_circle_analyses (
-        analysis_id, overall_score, alignment_score, clarity_score
-      ) VALUES (
-        ${analysisId}::text,
-        ${aiResponse.overall_score || 0},
-        ${aiResponse.alignment_score || 0},
-        ${aiResponse.clarity_score || 0}
-      )
-      RETURNING id
-    `
-
-    const goldenCircleId = gc[0].id
+    // Create main Golden Circle record using Prisma client
+    const gc = await prisma.golden_circle_analyses.create({
+      data: {
+        analysis_id: analysisId,
+        overall_score: aiResponse.overall_score || 0,
+        alignment_score: aiResponse.alignment_score || 0,
+        clarity_score: aiResponse.clarity_score || 0
+      }
+    })
 
     // Store WHY dimension
-    const why = await prisma.$queryRaw<Array<WhyDimension>>`
-      INSERT INTO golden_circle_why (
-        golden_circle_id, score, current_state,
-        clarity_rating, authenticity_rating,
-        emotional_resonance_rating, differentiation_rating,
-        evidence, recommendations
-      ) VALUES (
-        ${goldenCircleId}::uuid,
-        ${aiResponse.why.clarity_rating * 10 || 0},
-        ${aiResponse.why.statement || ''},
-        ${aiResponse.why.clarity_rating || 0},
-        ${aiResponse.why.authenticity_rating || 0},
-        ${aiResponse.why.emotional_resonance_rating || 0},
-        ${aiResponse.why.differentiation_rating || 0},
-        ${JSON.stringify({
+    const why = await prisma.golden_circle_why.create({
+      data: {
+        golden_circle_id: gc.id,
+        score: (aiResponse.why.clarity_rating || 0) * 10,
+        current_state: aiResponse.why.statement || '',
+        clarity_rating: aiResponse.why.clarity_rating || 0,
+        authenticity_rating: aiResponse.why.authenticity_rating || 0,
+        emotional_resonance_rating: aiResponse.why.emotional_resonance_rating || 0,
+        differentiation_rating: aiResponse.why.differentiation_rating || 0,
+        evidence: {
           patterns: patterns.slice(0, 5),
           citations: aiResponse.why.evidence?.citations || []
-        })}::jsonb,
-        ${JSON.stringify(aiResponse.why.recommendations || [])}::jsonb
-      )
-      RETURNING *
-    `
+        },
+        recommendations: aiResponse.why.recommendations || []
+      }
+    })
 
     // Store HOW dimension
-    const how = await prisma.$queryRaw<Array<HowDimension>>`
-      INSERT INTO golden_circle_how (
-        golden_circle_id, score, current_state,
-        uniqueness_rating, clarity_rating,
-        credibility_rating, specificity_rating,
-        evidence, recommendations
-      ) VALUES (
-        ${goldenCircleId}::uuid,
-        ${aiResponse.how.uniqueness_rating * 10 || 0},
-        ${aiResponse.how.statement || ''},
-        ${aiResponse.how.uniqueness_rating || 0},
-        ${aiResponse.how.clarity_rating || 0},
-        ${aiResponse.how.credibility_rating || 0},
-        ${aiResponse.how.specificity_rating || 0},
-        ${JSON.stringify({
+    const how = await prisma.golden_circle_how.create({
+      data: {
+        golden_circle_id: gc.id,
+        score: (aiResponse.how.uniqueness_rating || 0) * 10,
+        current_state: aiResponse.how.statement || '',
+        uniqueness_rating: aiResponse.how.uniqueness_rating || 0,
+        clarity_rating: aiResponse.how.clarity_rating || 0,
+        credibility_rating: aiResponse.how.credibility_rating || 0,
+        specificity_rating: aiResponse.how.specificity_rating || 0,
+        evidence: {
           patterns: patterns.filter(p => p.element_name === 'simplifies' || p.element_name === 'quality'),
           citations: aiResponse.how.evidence?.citations || []
-        })}::jsonb,
-        ${JSON.stringify(aiResponse.how.recommendations || [])}::jsonb
-      )
-      RETURNING *
-    `
+        },
+        recommendations: aiResponse.how.recommendations || []
+      }
+    })
 
     // Store WHAT dimension
-    const what = await prisma.$queryRaw<Array<WhatDimension>>`
-      INSERT INTO golden_circle_what (
-        golden_circle_id, score, current_state,
-        clarity_rating, completeness_rating,
-        value_articulation_rating, cta_clarity_rating,
-        evidence, recommendations
-      ) VALUES (
-        ${goldenCircleId}::uuid,
-        ${aiResponse.what.clarity_rating * 10 || 0},
-        ${aiResponse.what.statement || ''},
-        ${aiResponse.what.clarity_rating || 0},
-        ${aiResponse.what.completeness_rating || 0},
-        ${aiResponse.what.value_articulation_rating || 0},
-        ${aiResponse.what.cta_clarity_rating || 0},
-        ${JSON.stringify({
+    const what = await prisma.golden_circle_what.create({
+      data: {
+        golden_circle_id: gc.id,
+        score: (aiResponse.what.clarity_rating || 0) * 10,
+        current_state: aiResponse.what.statement || '',
+        clarity_rating: aiResponse.what.clarity_rating || 0,
+        completeness_rating: aiResponse.what.completeness_rating || 0,
+        value_articulation_rating: aiResponse.what.value_articulation_rating || 0,
+        cta_clarity_rating: aiResponse.what.cta_clarity_rating || 0,
+        evidence: {
           patterns: patterns.slice(5, 10),
           citations: aiResponse.what.evidence?.citations || []
-        })}::jsonb,
-        ${JSON.stringify(aiResponse.what.recommendations || [])}::jsonb
-      )
-      RETURNING *
-    `
+        },
+        recommendations: aiResponse.what.recommendations || []
+      }
+    })
 
     // Store WHO dimension
-    const who = await prisma.$queryRaw<Array<WhoDimension>>`
-      INSERT INTO golden_circle_who (
-        golden_circle_id, score, current_state,
-        specificity_rating, resonance_rating,
-        accessibility_rating, conversion_path_rating,
-        target_personas, evidence, recommendations
-      ) VALUES (
-        ${goldenCircleId}::uuid,
-        ${aiResponse.who.specificity_rating * 10 || 0},
-        ${aiResponse.who.statement || ''},
-        ${aiResponse.who.specificity_rating || 0},
-        ${aiResponse.who.resonance_rating || 0},
-        ${aiResponse.who.accessibility_rating || 0},
-        ${aiResponse.who.conversion_path_rating || 0},
-        ${JSON.stringify(aiResponse.who.target_personas || [])}::jsonb,
-        ${JSON.stringify({
+    const who = await prisma.golden_circle_who.create({
+      data: {
+        golden_circle_id: gc.id,
+        score: (aiResponse.who.specificity_rating || 0) * 10,
+        current_state: aiResponse.who.statement || '',
+        specificity_rating: aiResponse.who.specificity_rating || 0,
+        resonance_rating: aiResponse.who.resonance_rating || 0,
+        accessibility_rating: aiResponse.who.accessibility_rating || 0,
+        conversion_path_rating: aiResponse.who.conversion_path_rating || 0,
+        target_personas: aiResponse.who.target_personas || [],
+        evidence: {
           patterns: [],
           citations: aiResponse.who.evidence?.citations || []
-        })}::jsonb,
-        ${JSON.stringify(aiResponse.who.recommendations || [])}::jsonb
-      )
-      RETURNING *
-    `
+        },
+        recommendations: aiResponse.who.recommendations || []
+      }
+    })
 
     return {
-      id: goldenCircleId,
+      id: gc.id,
       analysis_id: analysisId,
       overall_score: aiResponse.overall_score,
       alignment_score: aiResponse.alignment_score,
       clarity_score: aiResponse.clarity_score,
-      why: why[0],
-      how: how[0],
-      what: what[0],
-      who: who[0]
+      why,
+      how,
+      what,
+      who
     }
   }
 
@@ -401,25 +372,29 @@ Return response as valid JSON with this structure:
    */
   static async getByAnalysisId(analysisId: string): Promise<GoldenCircleAnalysis | null> {
     try {
-      const gc = await prisma.$queryRaw<any[]>`
-        SELECT
-          gc.*,
-          row_to_json(gw.*) as why,
-          row_to_json(gh.*) as how,
-          row_to_json(gwa.*) as what,
-          row_to_json(gwh.*) as who
-        FROM golden_circle_analyses gc
-        LEFT JOIN golden_circle_why gw ON gw.golden_circle_id = gc.id
-        LEFT JOIN golden_circle_how gh ON gh.golden_circle_id = gc.id
-        LEFT JOIN golden_circle_what gwa ON gwa.golden_circle_id = gc.id
-        LEFT JOIN golden_circle_who gwh ON gwh.golden_circle_id = gc.id
-        WHERE gc.analysis_id = ${analysisId}::text
-        LIMIT 1
-      `
+      const gc = await prisma.golden_circle_analyses.findFirst({
+        where: { analysis_id: analysisId },
+        include: {
+          golden_circle_why: true,
+          golden_circle_how: true,
+          golden_circle_what: true,
+          golden_circle_who: true
+        }
+      })
 
-      if (gc.length === 0) return null
+      if (!gc) return null
 
-      return gc[0] as GoldenCircleAnalysis
+      return {
+        id: gc.id,
+        analysis_id: gc.analysis_id,
+        overall_score: gc.overall_score,
+        alignment_score: gc.alignment_score,
+        clarity_score: gc.clarity_score,
+        why: gc.golden_circle_why,
+        how: gc.golden_circle_how,
+        what: gc.golden_circle_what,
+        who: gc.golden_circle_who
+      }
     } catch (error) {
       console.error('Failed to fetch Golden Circle:', error)
       return null

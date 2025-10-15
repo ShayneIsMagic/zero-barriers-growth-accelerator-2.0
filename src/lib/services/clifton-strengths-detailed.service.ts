@@ -234,54 +234,42 @@ Return as JSON:
     aiResponse: any,
     patterns: PatternMatch[]
   ): Promise<CliftonStrengthsAnalysis> {
-    // Create main record
-    const cs = await prisma.$queryRaw<Array<{ id: string }>>`
-      INSERT INTO clifton_strengths_analyses (
-        analysis_id, overall_score, strategic_thinking_score,
-        executing_score, influencing_score, relationship_building_score,
-        dominant_domain
-      ) VALUES (
-        ${analysisId}::text,
-        ${aiResponse.overall_score || 0},
-        ${aiResponse.strategic_thinking_score || 0},
-        ${aiResponse.executing_score || 0},
-        ${aiResponse.influencing_score || 0},
-        ${aiResponse.relationship_building_score || 0},
-        ${aiResponse.dominant_domain || 'strategic_thinking'}
-      )
-      RETURNING id
-    `
+    // Create main record using Prisma client
+    const cs = await prisma.clifton_strengths_analyses.create({
+      data: {
+        analysis_id: analysisId,
+        overall_score: aiResponse.overall_score || 0,
+        strategic_thinking_score: aiResponse.strategic_thinking_score || 0,
+        executing_score: aiResponse.executing_score || 0,
+        influencing_score: aiResponse.influencing_score || 0,
+        relationship_building_score: aiResponse.relationship_building_score || 0,
+        dominant_domain: aiResponse.dominant_domain || 'strategic_thinking'
+      }
+    })
 
-    const csId = cs[0].id
-
-    // Store theme scores
+    // Store theme scores using Prisma client
     const themes: ThemeScore[] = []
 
     for (const theme of aiResponse.themes || []) {
-      const stored = await prisma.$queryRaw<Array<ThemeScore>>`
-        INSERT INTO clifton_theme_scores (
-          clifton_analysis_id, theme_name, domain,
-          score, rank, is_top_5, is_top_10,
-          evidence, manifestation_description
-        ) VALUES (
-          ${csId}::uuid,
-          ${theme.theme_name},
-          ${theme.domain},
-          ${theme.score || 0},
-          ${theme.rank || 0},
-          ${theme.rank <= 5},
-          ${theme.rank <= 10},
-          ${JSON.stringify(theme.evidence || {})}::jsonb,
-          ${theme.manifestation || ''}
-        )
-        RETURNING *
-      `
+      const stored = await prisma.clifton_theme_scores.create({
+        data: {
+          clifton_analysis_id: cs.id,
+          theme_name: theme.theme_name,
+          domain: theme.domain,
+          score: theme.score || 0,
+          rank: theme.rank || 0,
+          is_top_5: (theme.rank || 0) <= 5,
+          is_top_10: (theme.rank || 0) <= 10,
+          evidence: theme.evidence || {},
+          manifestation_description: theme.manifestation || ''
+        }
+      })
 
-      if (stored[0]) themes.push(stored[0])
+      themes.push(stored)
     }
 
     return {
-      id: csId,
+      id: cs.id,
       analysis_id: analysisId,
       overall_score: aiResponse.overall_score,
       strategic_thinking_score: aiResponse.strategic_thinking_score,
@@ -299,35 +287,28 @@ Return as JSON:
    */
   static async getByAnalysisId(analysisId: string): Promise<CliftonStrengthsAnalysis | null> {
     try {
-      const cs = await prisma.$queryRaw<any[]>`
-        SELECT
-          cs.*,
-          json_agg(
-            json_build_object(
-              'id', cts.id,
-              'theme_name', cts.theme_name,
-              'domain', cts.domain,
-              'score', cts.score,
-              'rank', cts.rank,
-              'is_top_5', cts.is_top_5,
-              'evidence', cts.evidence,
-              'manifestation_description', cts.manifestation_description
-            ) ORDER BY cts.rank
-          ) as themes
-        FROM clifton_strengths_analyses cs
-        LEFT JOIN clifton_theme_scores cts ON cts.clifton_analysis_id = cs.id
-        WHERE cs.analysis_id = ${analysisId}::text
-        GROUP BY cs.id
-        LIMIT 1
-      `
+      const cs = await prisma.clifton_strengths_analyses.findFirst({
+        where: { analysis_id: analysisId },
+        include: {
+          clifton_theme_scores: {
+            orderBy: { rank: 'asc' }
+          }
+        }
+      })
 
-      if (cs.length === 0) return null
+      if (!cs) return null
 
-      const result = cs[0]
       return {
-        ...result,
-        top_5: result.themes.filter((t: any) => t.rank <= 5),
-        all_themes: result.themes
+        id: cs.id,
+        analysis_id: cs.analysis_id,
+        overall_score: cs.overall_score,
+        strategic_thinking_score: cs.strategic_thinking_score,
+        executing_score: cs.executing_score,
+        influencing_score: cs.influencing_score,
+        relationship_building_score: cs.relationship_building_score,
+        dominant_domain: cs.dominant_domain,
+        top_5: cs.clifton_theme_scores.filter(t => t.rank <= 5),
+        all_themes: cs.clifton_theme_scores
       }
     } catch (error) {
       console.error('Failed to fetch CliftonStrengths:', error)

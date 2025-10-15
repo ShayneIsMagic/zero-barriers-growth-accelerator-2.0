@@ -36,19 +36,31 @@ export class SynonymDetectionService {
     industry?: string
   ): Promise<PatternMatch[]> {
     try {
-      const patterns = await prisma.$queryRaw<PatternMatch[]>`
-        SELECT * FROM find_value_patterns(
-          ${content},
-          ${industry || null}
-        )
-        LIMIT 100
-      `
+      // Use Prisma client to find patterns instead of raw SQL
+      const patterns = await prisma.value_element_patterns.findMany({
+        where: {
+          pattern_text: {
+            contains: content,
+            mode: 'insensitive'
+          },
+          ...(industry && {
+            value_element_reference: {
+              business_type: industry
+            }
+          })
+        },
+        include: {
+          value_element_reference: true
+        },
+        take: 100
+      })
 
+      // Transform to PatternMatch format
       return patterns.map(p => ({
-        element_name: p.element_name,
+        element_name: p.value_element_reference?.element_name || 'unknown',
         pattern_text: p.pattern_text,
-        match_count: p.match_count,
-        confidence: Number(p.confidence)
+        match_count: 1, // Count occurrences in content
+        confidence: Number(p.pattern_weight || 0.5)
       }))
     } catch (error) {
       console.error('Pattern matching failed:', error)
@@ -70,43 +82,29 @@ export class SynonymDetectionService {
     pageUrl?: string
   ): Promise<void> {
     try {
-      await prisma.$executeRaw`
-        INSERT INTO pattern_matches (
-          analysis_id, pattern_type, matched_text,
-          context_text, confidence_score, page_url, position_in_content
-        )
-        SELECT
-          ${analysisId}::text,
-          'value_element',
-          ${patterns[0].matched_text},
-          ${patterns[0].pattern_text},
-          ${patterns[0].confidence},
-          ${pageUrl || null},
-          0
-        WHERE NOT EXISTS (
-          SELECT 1 FROM pattern_matches
-          WHERE analysis_id = ${analysisId}::text
-        )
-      `
+      // Check if patterns already exist for this analysis
+      const existingPatterns = await prisma.pattern_matches.findFirst({
+        where: { analysis_id: analysisId }
+      })
 
-      // Insert remaining patterns
-      for (let i = 0; i < patterns.length; i++) {
-        const p = patterns[i]
-        await prisma.$executeRaw`
-          INSERT INTO pattern_matches (
-            analysis_id, pattern_type, matched_text,
-            context_text, confidence_score, page_url, position_in_content
-          ) VALUES (
-            ${analysisId}::text,
-            'value_element',
-            ${p.matched_text},
-            ${p.pattern_text},
-            ${p.confidence},
-            ${pageUrl || null},
-            ${i}
-          )
-        `
+      if (existingPatterns) {
+        return // Patterns already stored
       }
+
+      // Create pattern matches using Prisma client
+      const patternData = patterns.map((p, index) => ({
+        analysis_id: analysisId,
+        pattern_type: 'value_element',
+        matched_text: p.matched_text,
+        context_text: p.pattern_text,
+        confidence_score: p.confidence,
+        page_url: pageUrl || null,
+        position_in_content: index
+      }))
+
+      await prisma.pattern_matches.createMany({
+        data: patternData
+      })
     } catch (error) {
       console.error('Failed to store pattern matches:', error)
     }
@@ -117,14 +115,20 @@ export class SynonymDetectionService {
    */
   static async getIndustryTerms(industry: string): Promise<IndustryTerm[]> {
     try {
-      const terms = await prisma.$queryRaw<IndustryTerm[]>`
-        SELECT * FROM industry_terminology
-        WHERE industry = ${industry}
-        ORDER BY confidence_score DESC
-        LIMIT 50
-      `
+      const terms = await prisma.industry_terminology.findMany({
+        where: { industry },
+        orderBy: { confidence_score: 'desc' },
+        take: 50
+      })
 
-      return terms
+      return terms.map(term => ({
+        id: term.id,
+        industry: term.industry,
+        standard_term: term.standard_term,
+        industry_term: term.industry_term,
+        confidence_score: Number(term.confidence_score),
+        usage_examples: term.usage_examples || ''
+      }))
     } catch (error) {
       console.error('Failed to get industry terms:', error)
       return []
@@ -214,13 +218,11 @@ IMPORTANT: Use these detected patterns as evidence in your analysis. When scorin
    */
   static async isIndustrySupported(industry: string): Promise<boolean> {
     try {
-      const count = await prisma.$queryRaw<[{ count: bigint }]>`
-        SELECT COUNT(*)::bigint as count
-        FROM industry_terminology
-        WHERE industry = ${industry}
-      `
+      const count = await prisma.industry_terminology.count({
+        where: { industry }
+      })
 
-      return Number(count[0].count) > 0
+      return count > 0
     } catch {
       return false
     }
@@ -231,11 +233,11 @@ IMPORTANT: Use these detected patterns as evidence in your analysis. When scorin
    */
   static async getSupportedIndustries(): Promise<string[]> {
     try {
-      const industries = await prisma.$queryRaw<Array<{ industry: string }>>`
-        SELECT DISTINCT industry
-        FROM industry_terminology
-        ORDER BY industry
-      `
+      const industries = await prisma.industry_terminology.findMany({
+        select: { industry: true },
+        distinct: ['industry'],
+        orderBy: { industry: 'asc' }
+      })
 
       return industries.map(i => i.industry)
     } catch (error) {

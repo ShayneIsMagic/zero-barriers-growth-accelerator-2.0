@@ -218,50 +218,40 @@ Return as valid JSON:
     aiResponse: any,
     patterns: PatternMatch[]
   ): Promise<ElementsOfValueB2CAnalysis> {
-    // Create main EoV B2C record
-    const eov = await prisma.$queryRaw<Array<{ id: string }>>`
-      INSERT INTO elements_of_value_b2c (
-        analysis_id, overall_score, functional_score,
-        emotional_score, life_changing_score, social_impact_score
-      ) VALUES (
-        ${analysisId}::text,
-        ${aiResponse.overall_score || 0},
-        ${aiResponse.functional_score || 0},
-        ${aiResponse.emotional_score || 0},
-        ${aiResponse.life_changing_score || 0},
-        ${aiResponse.social_impact_score || 0}
-      )
-      RETURNING id
-    `
+    // Create main EoV B2C record using Prisma client
+    const eov = await prisma.elements_of_value_b2c.create({
+      data: {
+        analysis_id: analysisId,
+        overall_score: aiResponse.overall_score || 0,
+        functional_score: aiResponse.functional_score || 0,
+        emotional_score: aiResponse.emotional_score || 0,
+        life_changing_score: aiResponse.life_changing_score || 0,
+        social_impact_score: aiResponse.social_impact_score || 0
+      }
+    })
 
-    const eovId = eov[0].id
-
-    // Store individual element scores
+    // Store individual element scores using Prisma client
     const elements: ElementScore[] = []
 
     for (const elem of aiResponse.elements || []) {
-      const stored = await prisma.$queryRaw<Array<ElementScore>>`
-        INSERT INTO b2c_element_scores (
-          eov_b2c_id, element_name, element_category,
-          pyramid_level, score, weight, weighted_score, evidence
-        ) VALUES (
-          ${eovId}::uuid,
-          ${elem.element_name},
-          ${elem.element_category},
-          ${elem.pyramid_level || 1},
-          ${elem.score || 0},
-          ${1.0},
-          ${elem.score || 0},
-          ${JSON.stringify(elem.evidence || {})}::jsonb
-        )
-        RETURNING *
-      `
+      const stored = await prisma.b2c_element_scores.create({
+        data: {
+          eov_b2c_id: eov.id,
+          element_name: elem.element_name,
+          element_category: elem.element_category,
+          pyramid_level: elem.pyramid_level || 1,
+          score: elem.score || 0,
+          weight: 1.0,
+          weighted_score: elem.score || 0,
+          evidence: elem.evidence || {}
+        }
+      })
 
-      if (stored[0]) elements.push(stored[0])
+      elements.push(stored)
     }
 
     return {
-      id: eovId,
+      id: eov.id,
       analysis_id: analysisId,
       overall_score: aiResponse.overall_score,
       functional_score: aiResponse.functional_score,
@@ -277,20 +267,25 @@ Return as valid JSON:
    */
   static async getByAnalysisId(analysisId: string): Promise<ElementsOfValueB2CAnalysis | null> {
     try {
-      const eov = await prisma.$queryRaw<any[]>`
-        SELECT
-          eov.*,
-          json_agg(es.*) as elements
-        FROM elements_of_value_b2c eov
-        LEFT JOIN b2c_element_scores es ON es.eov_b2c_id = eov.id
-        WHERE eov.analysis_id = ${analysisId}::text
-        GROUP BY eov.id
-        LIMIT 1
-      `
+      const eov = await prisma.elements_of_value_b2c.findFirst({
+        where: { analysis_id: analysisId },
+        include: {
+          b2c_element_scores: true
+        }
+      })
 
-      if (eov.length === 0) return null
+      if (!eov) return null
 
-      return eov[0] as ElementsOfValueB2CAnalysis
+      return {
+        id: eov.id,
+        analysis_id: eov.analysis_id,
+        overall_score: eov.overall_score,
+        functional_score: eov.functional_score,
+        emotional_score: eov.emotional_score,
+        life_changing_score: eov.life_changing_score,
+        social_impact_score: eov.social_impact_score,
+        elements: eov.b2c_element_scores
+      }
     } catch (error) {
       console.error('Failed to fetch Elements of Value B2C:', error)
       return null
