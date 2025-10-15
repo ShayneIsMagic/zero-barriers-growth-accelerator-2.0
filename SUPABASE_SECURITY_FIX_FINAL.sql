@@ -1,7 +1,7 @@
 -- =====================================================
--- CORRECTED SUPABASE SECURITY FIX
+-- FINAL SUPABASE SECURITY FIX
 -- Fixes all 10 RLS errors and 6 Function warnings
--- Uses correct column names from actual schema
+-- Drops existing functions first to avoid conflicts
 -- =====================================================
 
 -- =====================================================
@@ -200,9 +200,18 @@ USING (true);
 
 -- =====================================================
 -- PART 3: FIX FUNCTION SEARCH PATH WARNINGS
+-- Drop existing functions first to avoid conflicts
 -- =====================================================
 
--- Fix calculate_brand_alignment_score function
+-- Drop existing functions if they exist
+DROP FUNCTION IF EXISTS "public"."calculate_brand_alignment_score"(text);
+DROP FUNCTION IF EXISTS "public"."find_brand_patterns_in_content"(text, text);
+DROP FUNCTION IF EXISTS "public"."update_updated_at_column"();
+DROP FUNCTION IF EXISTS "public"."deduct_credits"(text, integer);
+DROP FUNCTION IF EXISTS "public"."calculate_overall_score"(text);
+DROP FUNCTION IF EXISTS "public"."find_value_patterns"(text, text);
+
+-- Recreate functions with proper search_path
 CREATE OR REPLACE FUNCTION "public"."calculate_brand_alignment_score"(
   brand_analysis_id_param text
 )
@@ -221,7 +230,6 @@ BEGIN
 END;
 $$;
 
--- Fix find_brand_patterns_in_content function
 CREATE OR REPLACE FUNCTION "public"."find_brand_patterns_in_content"(
   content_text text,
   brand_analysis_id_param text
@@ -237,7 +245,6 @@ BEGIN
 END;
 $$;
 
--- Fix update_updated_at_column function
 CREATE OR REPLACE FUNCTION "public"."update_updated_at_column"()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -250,7 +257,6 @@ BEGIN
 END;
 $$;
 
--- Fix deduct_credits function
 CREATE OR REPLACE FUNCTION "public"."deduct_credits"(
   user_id_param text,
   credits_to_deduct integer
@@ -266,7 +272,6 @@ BEGIN
 END;
 $$;
 
--- Fix calculate_overall_score function
 CREATE OR REPLACE FUNCTION "public"."calculate_overall_score"(
   analysis_id_param text
 )
@@ -283,7 +288,6 @@ BEGIN
 END;
 $$;
 
--- Fix find_value_patterns function
 CREATE OR REPLACE FUNCTION "public"."find_value_patterns"(
   content_text text,
   industry_param text DEFAULT NULL

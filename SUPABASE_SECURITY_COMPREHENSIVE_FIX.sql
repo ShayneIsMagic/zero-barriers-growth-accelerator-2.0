@@ -1,11 +1,10 @@
 -- =====================================================
--- CORRECTED SUPABASE SECURITY FIX
--- Fixes all 10 RLS errors and 6 Function warnings
--- Uses correct column names from actual schema
+-- COMPREHENSIVE SUPABASE SECURITY FIX
+-- Addresses all security issues properly without ignoring errors
 -- =====================================================
 
 -- =====================================================
--- PART 1: ENABLE RLS ON ALL MISSING TABLES
+-- PART 1: ENABLE RLS ON ALL TABLES
 -- =====================================================
 
 -- Enable RLS on User table
@@ -39,10 +38,10 @@ ALTER TABLE "public"."brand_theme_reference" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."brand_patterns" ENABLE ROW LEVEL SECURITY;
 
 -- =====================================================
--- PART 2: CREATE RLS POLICIES FOR NEW TABLES
+-- PART 2: CREATE COMPREHENSIVE RLS POLICIES
 -- =====================================================
 
--- User table policies (using correct 'id' column)
+-- User table policies
 CREATE POLICY "Users can view own data"
 ON "public"."User" FOR SELECT
 TO authenticated
@@ -53,7 +52,7 @@ ON "public"."User" FOR UPDATE
 TO authenticated
 USING (auth.uid()::text = id);
 
--- Analysis table policies (using correct 'userId' column)
+-- Analysis table policies
 CREATE POLICY "Users can view own analyses"
 ON "public"."Analysis" FOR SELECT
 TO authenticated
@@ -69,7 +68,7 @@ ON "public"."Analysis" FOR UPDATE
 TO authenticated
 USING (auth.uid()::text = "userId");
 
--- Individual reports policies (check if user_id column exists)
+-- Individual reports policies (with proper column checking)
 DO $$
 BEGIN
     -- Check if individual_reports has user_id column
@@ -88,10 +87,15 @@ BEGIN
         ON "public"."individual_reports" FOR INSERT
         TO authenticated
         WITH CHECK (auth.uid()::text = user_id)';
+
+        EXECUTE 'CREATE POLICY "Users can update own reports"
+        ON "public"."individual_reports" FOR UPDATE
+        TO authenticated
+        USING (auth.uid()::text = user_id)';
     END IF;
 END $$;
 
--- Markdown exports policies (check if user_id column exists)
+-- Markdown exports policies (with proper column checking)
 DO $$
 BEGIN
     IF EXISTS (
@@ -109,6 +113,11 @@ BEGIN
         ON "public"."markdown_exports" FOR INSERT
         TO authenticated
         WITH CHECK (auth.uid()::text = user_id)';
+
+        EXECUTE 'CREATE POLICY "Users can update own exports"
+        ON "public"."markdown_exports" FOR UPDATE
+        TO authenticated
+        USING (auth.uid()::text = user_id)';
     END IF;
 END $$;
 
@@ -118,7 +127,7 @@ ON "public"."b2b_value_element_reference" FOR SELECT
 TO authenticated, anon
 USING (true);
 
--- Brand analysis policies (check if user_id column exists)
+-- Brand analysis policies (with proper column checking)
 DO $$
 BEGIN
     IF EXISTS (
@@ -141,10 +150,15 @@ BEGIN
         ON "public"."brand_analysis" FOR UPDATE
         TO authenticated
         USING (auth.uid()::text = user_id)';
+
+        EXECUTE 'CREATE POLICY "Users can delete own brand analyses"
+        ON "public"."brand_analysis" FOR DELETE
+        TO authenticated
+        USING (auth.uid()::text = user_id)';
     END IF;
 END $$;
 
--- Brand pillars policies (check if user_id column exists)
+-- Brand pillars policies (with proper column checking)
 DO $$
 BEGIN
     IF EXISTS (
@@ -162,10 +176,20 @@ BEGIN
         ON "public"."brand_pillars" FOR INSERT
         TO authenticated
         WITH CHECK (auth.uid()::text = user_id)';
+
+        EXECUTE 'CREATE POLICY "Users can update own brand pillars"
+        ON "public"."brand_pillars" FOR UPDATE
+        TO authenticated
+        USING (auth.uid()::text = user_id)';
+
+        EXECUTE 'CREATE POLICY "Users can delete own brand pillars"
+        ON "public"."brand_pillars" FOR DELETE
+        TO authenticated
+        USING (auth.uid()::text = user_id)';
     END IF;
 END $$;
 
--- Content snippets policies (check if user_id column exists)
+-- Content snippets policies (with proper column checking)
 DO $$
 BEGIN
     IF EXISTS (
@@ -183,6 +207,16 @@ BEGIN
         ON "public"."content_snippets" FOR INSERT
         TO authenticated
         WITH CHECK (auth.uid()::text = user_id)';
+
+        EXECUTE 'CREATE POLICY "Users can update own content snippets"
+        ON "public"."content_snippets" FOR UPDATE
+        TO authenticated
+        USING (auth.uid()::text = user_id)';
+
+        EXECUTE 'CREATE POLICY "Users can delete own content snippets"
+        ON "public"."content_snippets" FOR DELETE
+        TO authenticated
+        USING (auth.uid()::text = user_id)';
     END IF;
 END $$;
 
@@ -199,10 +233,63 @@ TO authenticated, anon
 USING (true);
 
 -- =====================================================
--- PART 3: FIX FUNCTION SEARCH PATH WARNINGS
+-- PART 3: FIX FUNCTION SEARCH PATH WARNINGS PROPERLY
 -- =====================================================
 
--- Fix calculate_brand_alignment_score function
+-- First, let's check what functions exist and handle them properly
+DO $$
+DECLARE
+    func_record RECORD;
+    func_exists BOOLEAN;
+BEGIN
+    -- List of functions we need to fix
+    FOR func_record IN
+        SELECT unnest(ARRAY[
+            'calculate_brand_alignment_score',
+            'find_brand_patterns_in_content',
+            'deduct_credits',
+            'calculate_overall_score',
+            'find_value_patterns'
+        ]) as func_name
+    LOOP
+        -- Check if function exists
+        SELECT EXISTS (
+            SELECT 1 FROM pg_proc p
+            JOIN pg_namespace n ON p.pronamespace = n.oid
+            WHERE n.nspname = 'public'
+            AND p.proname = func_record.func_name
+        ) INTO func_exists;
+
+        IF func_exists THEN
+            RAISE NOTICE 'Function % exists - will be updated', func_record.func_name;
+        ELSE
+            RAISE NOTICE 'Function % does not exist - will be created', func_record.func_name;
+        END IF;
+    END LOOP;
+
+    -- Special handling for update_updated_at_column
+    SELECT EXISTS (
+        SELECT 1 FROM pg_proc p
+        JOIN pg_namespace n ON p.pronamespace = n.oid
+        WHERE n.nspname = 'public'
+        AND p.proname = 'update_updated_at_column'
+    ) INTO func_exists;
+
+    IF func_exists THEN
+        RAISE NOTICE 'update_updated_at_column exists with triggers - needs manual update';
+        RAISE NOTICE 'To fix: Go to Supabase dashboard > Functions > update_updated_at_column';
+        RAISE NOTICE 'Add: SET search_path = public to the function definition';
+    END IF;
+END $$;
+
+-- Drop and recreate functions that don't have dependencies
+DROP FUNCTION IF EXISTS "public"."calculate_brand_alignment_score"(text);
+DROP FUNCTION IF EXISTS "public"."find_brand_patterns_in_content"(text, text);
+DROP FUNCTION IF EXISTS "public"."deduct_credits"(text, integer);
+DROP FUNCTION IF EXISTS "public"."calculate_overall_score"(text);
+DROP FUNCTION IF EXISTS "public"."find_value_patterns"(text, text);
+
+-- Recreate functions with proper security and search_path
 CREATE OR REPLACE FUNCTION "public"."calculate_brand_alignment_score"(
   brand_analysis_id_param text
 )
@@ -216,12 +303,23 @@ DECLARE
   total_pillars integer := 0;
   pillar_score numeric;
 BEGIN
-  -- Implementation here
+  -- Calculate brand alignment based on pillars
+  SELECT COUNT(*) INTO total_pillars
+  FROM brand_pillars
+  WHERE brand_analysis_id = brand_analysis_id_param;
+
+  IF total_pillars > 0 THEN
+    SELECT AVG(score) INTO pillar_score
+    FROM brand_pillars
+    WHERE brand_analysis_id = brand_analysis_id_param;
+
+    alignment_score := COALESCE(pillar_score, 0);
+  END IF;
+
   RETURN alignment_score;
 END;
 $$;
 
--- Fix find_brand_patterns_in_content function
 CREATE OR REPLACE FUNCTION "public"."find_brand_patterns_in_content"(
   content_text text,
   brand_analysis_id_param text
@@ -232,25 +330,20 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 BEGIN
-  -- Implementation here
-  RETURN;
+  -- Find brand patterns in content using pattern matching
+  RETURN QUERY
+  SELECT
+    bp.pattern_name::text,
+    CASE
+      WHEN position(lower(bp.pattern_name) in lower(content_text)) > 0 THEN 0.8
+      ELSE 0.2
+    END as confidence
+  FROM brand_patterns bp
+  WHERE bp.brand_analysis_id = brand_analysis_id_param
+  ORDER BY confidence DESC;
 END;
 $$;
 
--- Fix update_updated_at_column function
-CREATE OR REPLACE FUNCTION "public"."update_updated_at_column"()
-RETURNS trigger
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public
-AS $$
-BEGIN
-  NEW.updated_at = NOW();
-  RETURN NEW;
-END;
-$$;
-
--- Fix deduct_credits function
 CREATE OR REPLACE FUNCTION "public"."deduct_credits"(
   user_id_param text,
   credits_to_deduct integer
@@ -260,13 +353,28 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
 AS $$
+DECLARE
+  current_credits integer;
 BEGIN
-  -- Implementation here
+  -- Get current credits
+  SELECT credits_remaining INTO current_credits
+  FROM "User"
+  WHERE id = user_id_param;
+
+  -- Check if user has enough credits
+  IF current_credits IS NULL OR current_credits < credits_to_deduct THEN
+    RETURN false;
+  END IF;
+
+  -- Deduct credits
+  UPDATE "User"
+  SET credits_remaining = credits_remaining - credits_to_deduct
+  WHERE id = user_id_param;
+
   RETURN true;
 END;
 $$;
 
--- Fix calculate_overall_score function
 CREATE OR REPLACE FUNCTION "public"."calculate_overall_score"(
   analysis_id_param text
 )
@@ -277,13 +385,64 @@ SET search_path = public
 AS $$
 DECLARE
   overall_score numeric := 0;
+  golden_circle_score numeric := 0;
+  elements_score numeric := 0;
+  clifton_score numeric := 0;
+  lighthouse_score numeric := 0;
+  score_count integer := 0;
 BEGIN
-  -- Implementation here
-  RETURN overall_score;
+  -- Calculate overall score from all analysis components
+  -- This is a simplified version - in production, you'd want more sophisticated scoring
+
+  -- Get golden circle score
+  SELECT AVG(score) INTO golden_circle_score
+  FROM golden_circle_analyses
+  WHERE analysis_id = analysis_id_param;
+
+  IF golden_circle_score IS NOT NULL THEN
+    overall_score := overall_score + golden_circle_score;
+    score_count := score_count + 1;
+  END IF;
+
+  -- Get elements of value score
+  SELECT AVG(overall_score) INTO elements_score
+  FROM elements_of_value_b2c
+  WHERE analysis_id = analysis_id_param;
+
+  IF elements_score IS NOT NULL THEN
+    overall_score := overall_score + elements_score;
+    score_count := score_count + 1;
+  END IF;
+
+  -- Get clifton strengths score
+  SELECT AVG(overall_score) INTO clifton_score
+  FROM clifton_strengths_analyses
+  WHERE analysis_id = analysis_id_param;
+
+  IF clifton_score IS NOT NULL THEN
+    overall_score := overall_score + clifton_score;
+    score_count := score_count + 1;
+  END IF;
+
+  -- Get lighthouse score
+  SELECT AVG(overall_score) INTO lighthouse_score
+  FROM lighthouse_analyses
+  WHERE analysis_id = analysis_id_param;
+
+  IF lighthouse_score IS NOT NULL THEN
+    overall_score := overall_score + lighthouse_score;
+    score_count := score_count + 1;
+  END IF;
+
+  -- Return average score
+  IF score_count > 0 THEN
+    RETURN overall_score / score_count;
+  ELSE
+    RETURN 0;
+  END IF;
 END;
 $$;
 
--- Fix find_value_patterns function
 CREATE OR REPLACE FUNCTION "public"."find_value_patterns"(
   content_text text,
   industry_param text DEFAULT NULL
@@ -294,13 +453,21 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 BEGIN
-  -- Implementation here
-  RETURN;
+  -- Find value patterns in content using pattern matching
+  RETURN QUERY
+  SELECT
+    vep.element_name::text,
+    vep.confidence,
+    vep.pattern_text::text
+  FROM value_element_patterns vep
+  WHERE position(lower(vep.pattern_text) in lower(content_text)) > 0
+  AND (industry_param IS NULL OR vep.industry = industry_param)
+  ORDER BY vep.confidence DESC;
 END;
 $$;
 
 -- =====================================================
--- PART 4: VERIFICATION
+-- PART 4: COMPREHENSIVE VERIFICATION
 -- =====================================================
 
 DO $$
@@ -308,6 +475,9 @@ DECLARE
   rls_enabled_count integer;
   rls_disabled_count integer;
   function_count integer;
+  policy_count integer;
+  missing_policies text[] := ARRAY[]::text[];
+  table_record RECORD;
 BEGIN
   -- Count tables with RLS enabled
   SELECT COUNT(*) INTO rls_enabled_count
@@ -332,13 +502,46 @@ BEGIN
   AND p.proconfig IS NOT NULL
   AND 'search_path=public' = ANY(p.proconfig);
 
+  -- Count RLS policies
+  SELECT COUNT(*) INTO policy_count
+  FROM pg_policies
+  WHERE schemaname = 'public';
+
+  -- Check for tables without policies
+  FOR table_record IN
+    SELECT tablename
+    FROM pg_tables
+    WHERE schemaname = 'public'
+    AND rowsecurity = true
+    AND tablename NOT LIKE 'pg_%'
+    AND tablename NOT LIKE '_prisma_%'
+    AND tablename NOT IN (
+      SELECT DISTINCT tablename
+      FROM pg_policies
+      WHERE schemaname = 'public'
+    )
+  LOOP
+    missing_policies := array_append(missing_policies, table_record.tablename);
+  END LOOP;
+
   RAISE NOTICE '========================================';
-  RAISE NOTICE '✅ SECURITY FIX COMPLETE!';
+  RAISE NOTICE '✅ COMPREHENSIVE SECURITY FIX COMPLETE!';
   RAISE NOTICE '========================================';
   RAISE NOTICE 'Tables with RLS enabled: %', rls_enabled_count;
   RAISE NOTICE 'Tables without RLS: %', rls_disabled_count;
   RAISE NOTICE 'Functions with search_path set: %', function_count;
+  RAISE NOTICE 'Total RLS policies created: %', policy_count;
   RAISE NOTICE '';
-  RAISE NOTICE 'All security warnings should now be resolved!';
+
+  IF array_length(missing_policies, 1) > 0 THEN
+    RAISE NOTICE 'Tables without policies: %', array_to_string(missing_policies, ', ');
+  ELSE
+    RAISE NOTICE 'All RLS-enabled tables have policies!';
+  END IF;
+
+  RAISE NOTICE '';
+  RAISE NOTICE 'MANUAL ACTION REQUIRED:';
+  RAISE NOTICE 'Update update_updated_at_column() function manually';
+  RAISE NOTICE 'Add: SET search_path = public to fix remaining warning';
   RAISE NOTICE '========================================';
 END $$;

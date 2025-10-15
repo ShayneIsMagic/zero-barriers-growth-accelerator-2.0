@@ -5,27 +5,24 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import GoogleToolsPanel from '@/components/GoogleToolsPanel';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Target, 
-  CheckCircle, 
-  XCircle, 
-  Clock,
-  Download,
-  ExternalLink,
-  Brain,
-  TrendingUp,
-  BarChart3,
-  Users
+import {
+    Brain,
+    Clock,
+    Download,
+    ExternalLink,
+    Target,
+    XCircle
 } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 interface GoldenCircleAnalysis {
   overall_score: number;
@@ -91,10 +88,10 @@ export default function GoldenCirclePage() {
 
   const runAnalysis = async () => {
     if (!url) return;
-    
+
     setIsAnalyzing(true);
     setError(null);
-    
+
     try {
       // Run Phase 1: Data Collection
       const phase1Response = await fetch('/api/analyze/phase-new', {
@@ -102,33 +99,33 @@ export default function GoldenCirclePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url, phase: 1 })
       });
-      
+
       if (!phase1Response.ok) {
         throw new Error('Phase 1 failed');
       }
-      
+
       const phase1Data = await phase1Response.json();
       const newAnalysisId = phase1Data.analysisId;
       setAnalysisId(newAnalysisId);
-      
+
       // Run Phase 2: Framework Analysis (includes Golden Circle)
       const phase2Response = await fetch('/api/analyze/phase-new', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url, phase: 2, analysisId: newAnalysisId })
       });
-      
+
       if (!phase2Response.ok) {
         throw new Error('Phase 2 failed');
       }
-      
+
       // Fetch Golden Circle analysis
       const goldenCircleResponse = await fetch(`/api/analysis/golden-circle/${newAnalysisId}`);
       if (goldenCircleResponse.ok) {
         const goldenCircleData = await goldenCircleResponse.json();
         setAnalysis(goldenCircleData);
       }
-      
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Analysis failed');
     } finally {
@@ -179,16 +176,16 @@ export default function GoldenCirclePage() {
                 onChange={(e) => setUrl(e.target.value)}
               />
             </div>
-            
+
             {error && (
               <Alert variant="destructive">
                 <XCircle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            
-            <Button 
-              onClick={runAnalysis} 
+
+            <Button
+              onClick={runAnalysis}
               disabled={!url || isAnalyzing}
               className="w-full"
             >
@@ -266,7 +263,7 @@ export default function GoldenCirclePage() {
                     <h4 className="font-semibold mb-2">Statement:</h4>
                     <p className="text-gray-700">{analysis.why.statement}</p>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                       <div className="text-sm text-gray-600">Clarity</div>
@@ -338,7 +335,7 @@ export default function GoldenCirclePage() {
                     <h4 className="font-semibold mb-2">Statement:</h4>
                     <p className="text-gray-700">{analysis.how.statement}</p>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                       <div className="text-sm text-gray-600">Uniqueness</div>
@@ -410,7 +407,7 @@ export default function GoldenCirclePage() {
                     <h4 className="font-semibold mb-2">Statement:</h4>
                     <p className="text-gray-700">{analysis.what.statement}</p>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                       <div className="text-sm text-gray-600">Clarity</div>
@@ -491,7 +488,7 @@ export default function GoldenCirclePage() {
                       ))}
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                       <div className="text-sm text-gray-600">Specificity</div>
@@ -564,6 +561,11 @@ export default function GoldenCirclePage() {
           </div>
         </div>
       )}
+
+      {/* Google Tools Panel */}
+      <div className="mt-8">
+        <GoogleToolsPanel url={url} />
+      </div>
     </div>
   );
 }

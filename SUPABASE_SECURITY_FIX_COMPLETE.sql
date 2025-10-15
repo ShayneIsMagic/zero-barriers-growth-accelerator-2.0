@@ -1,7 +1,6 @@
 -- =====================================================
--- CORRECTED SUPABASE SECURITY FIX
+-- COMPLETE SUPABASE SECURITY FIX
 -- Fixes all 10 RLS errors and 6 Function warnings
--- Uses correct column names from actual schema
 -- =====================================================
 
 -- =====================================================
@@ -11,7 +10,7 @@
 -- Enable RLS on User table
 ALTER TABLE "public"."User" ENABLE ROW LEVEL SECURITY;
 
--- Enable RLS on Analysis table
+-- Enable RLS on Analysis table  
 ALTER TABLE "public"."Analysis" ENABLE ROW LEVEL SECURITY;
 
 -- Enable RLS on individual_reports table
@@ -42,7 +41,7 @@ ALTER TABLE "public"."brand_patterns" ENABLE ROW LEVEL SECURITY;
 -- PART 2: CREATE RLS POLICIES FOR NEW TABLES
 -- =====================================================
 
--- User table policies (using correct 'id' column)
+-- User table policies
 CREATE POLICY "Users can view own data"
 ON "public"."User" FOR SELECT
 TO authenticated
@@ -53,7 +52,7 @@ ON "public"."User" FOR UPDATE
 TO authenticated
 USING (auth.uid()::text = id);
 
--- Analysis table policies (using correct 'userId' column)
+-- Analysis table policies
 CREATE POLICY "Users can view own analyses"
 ON "public"."Analysis" FOR SELECT
 TO authenticated
@@ -69,48 +68,27 @@ ON "public"."Analysis" FOR UPDATE
 TO authenticated
 USING (auth.uid()::text = "userId");
 
--- Individual reports policies (check if user_id column exists)
-DO $$
-BEGIN
-    -- Check if individual_reports has user_id column
-    IF EXISTS (
-        SELECT 1 FROM information_schema.columns
-        WHERE table_name = 'individual_reports'
-        AND column_name = 'user_id'
-        AND table_schema = 'public'
-    ) THEN
-        EXECUTE 'CREATE POLICY "Users can view own reports"
-        ON "public"."individual_reports" FOR SELECT
-        TO authenticated
-        USING (auth.uid()::text = user_id)';
+-- Individual reports policies
+CREATE POLICY "Users can view own reports"
+ON "public"."individual_reports" FOR SELECT
+TO authenticated
+USING (auth.uid()::text = user_id);
 
-        EXECUTE 'CREATE POLICY "Users can create reports"
-        ON "public"."individual_reports" FOR INSERT
-        TO authenticated
-        WITH CHECK (auth.uid()::text = user_id)';
-    END IF;
-END $$;
+CREATE POLICY "Users can create reports"
+ON "public"."individual_reports" FOR INSERT
+TO authenticated
+WITH CHECK (auth.uid()::text = user_id);
 
--- Markdown exports policies (check if user_id column exists)
-DO $$
-BEGIN
-    IF EXISTS (
-        SELECT 1 FROM information_schema.columns
-        WHERE table_name = 'markdown_exports'
-        AND column_name = 'user_id'
-        AND table_schema = 'public'
-    ) THEN
-        EXECUTE 'CREATE POLICY "Users can view own exports"
-        ON "public"."markdown_exports" FOR SELECT
-        TO authenticated
-        USING (auth.uid()::text = user_id)';
+-- Markdown exports policies
+CREATE POLICY "Users can view own exports"
+ON "public"."markdown_exports" FOR SELECT
+TO authenticated
+USING (auth.uid()::text = user_id);
 
-        EXECUTE 'CREATE POLICY "Users can create exports"
-        ON "public"."markdown_exports" FOR INSERT
-        TO authenticated
-        WITH CHECK (auth.uid()::text = user_id)';
-    END IF;
-END $$;
+CREATE POLICY "Users can create exports"
+ON "public"."markdown_exports" FOR INSERT
+TO authenticated
+WITH CHECK (auth.uid()::text = user_id);
 
 -- B2B value element reference (public read access)
 CREATE POLICY "Public read access for B2B elements"
@@ -118,73 +96,43 @@ ON "public"."b2b_value_element_reference" FOR SELECT
 TO authenticated, anon
 USING (true);
 
--- Brand analysis policies (check if user_id column exists)
-DO $$
-BEGIN
-    IF EXISTS (
-        SELECT 1 FROM information_schema.columns
-        WHERE table_name = 'brand_analysis'
-        AND column_name = 'user_id'
-        AND table_schema = 'public'
-    ) THEN
-        EXECUTE 'CREATE POLICY "Users can view own brand analyses"
-        ON "public"."brand_analysis" FOR SELECT
-        TO authenticated
-        USING (auth.uid()::text = user_id)';
+-- Brand analysis policies
+CREATE POLICY "Users can view own brand analyses"
+ON "public"."brand_analysis" FOR SELECT
+TO authenticated
+USING (auth.uid()::text = user_id);
 
-        EXECUTE 'CREATE POLICY "Users can create brand analyses"
-        ON "public"."brand_analysis" FOR INSERT
-        TO authenticated
-        WITH CHECK (auth.uid()::text = user_id)';
+CREATE POLICY "Users can create brand analyses"
+ON "public"."brand_analysis" FOR INSERT
+TO authenticated
+WITH CHECK (auth.uid()::text = user_id);
 
-        EXECUTE 'CREATE POLICY "Users can update own brand analyses"
-        ON "public"."brand_analysis" FOR UPDATE
-        TO authenticated
-        USING (auth.uid()::text = user_id)';
-    END IF;
-END $$;
+CREATE POLICY "Users can update own brand analyses"
+ON "public"."brand_analysis" FOR UPDATE
+TO authenticated
+USING (auth.uid()::text = user_id);
 
--- Brand pillars policies (check if user_id column exists)
-DO $$
-BEGIN
-    IF EXISTS (
-        SELECT 1 FROM information_schema.columns
-        WHERE table_name = 'brand_pillars'
-        AND column_name = 'user_id'
-        AND table_schema = 'public'
-    ) THEN
-        EXECUTE 'CREATE POLICY "Users can view own brand pillars"
-        ON "public"."brand_pillars" FOR SELECT
-        TO authenticated
-        USING (auth.uid()::text = user_id)';
+-- Brand pillars policies
+CREATE POLICY "Users can view own brand pillars"
+ON "public"."brand_pillars" FOR SELECT
+TO authenticated
+USING (auth.uid()::text = user_id);
 
-        EXECUTE 'CREATE POLICY "Users can create brand pillars"
-        ON "public"."brand_pillars" FOR INSERT
-        TO authenticated
-        WITH CHECK (auth.uid()::text = user_id)';
-    END IF;
-END $$;
+CREATE POLICY "Users can create brand pillars"
+ON "public"."brand_pillars" FOR INSERT
+TO authenticated
+WITH CHECK (auth.uid()::text = user_id);
 
--- Content snippets policies (check if user_id column exists)
-DO $$
-BEGIN
-    IF EXISTS (
-        SELECT 1 FROM information_schema.columns
-        WHERE table_name = 'content_snippets'
-        AND column_name = 'user_id'
-        AND table_schema = 'public'
-    ) THEN
-        EXECUTE 'CREATE POLICY "Users can view own content snippets"
-        ON "public"."content_snippets" FOR SELECT
-        TO authenticated
-        USING (auth.uid()::text = user_id)';
+-- Content snippets policies
+CREATE POLICY "Users can view own content snippets"
+ON "public"."content_snippets" FOR SELECT
+TO authenticated
+USING (auth.uid()::text = user_id);
 
-        EXECUTE 'CREATE POLICY "Users can create content snippets"
-        ON "public"."content_snippets" FOR INSERT
-        TO authenticated
-        WITH CHECK (auth.uid()::text = user_id)';
-    END IF;
-END $$;
+CREATE POLICY "Users can create content snippets"
+ON "public"."content_snippets" FOR INSERT
+TO authenticated
+WITH CHECK (auth.uid()::text = user_id);
 
 -- Brand theme reference (public read access)
 CREATE POLICY "Public read access for brand themes"
@@ -314,7 +262,7 @@ BEGIN
   FROM pg_tables
   WHERE schemaname = 'public'
   AND rowsecurity = true;
-
+  
   -- Count tables without RLS
   SELECT COUNT(*) INTO rls_disabled_count
   FROM pg_tables
@@ -322,7 +270,7 @@ BEGIN
   AND rowsecurity = false
   AND tablename NOT LIKE 'pg_%'
   AND tablename NOT LIKE '_prisma_%';
-
+  
   -- Count functions with search_path set
   SELECT COUNT(*) INTO function_count
   FROM pg_proc p
@@ -331,7 +279,7 @@ BEGIN
   AND p.prosecdef = true
   AND p.proconfig IS NOT NULL
   AND 'search_path=public' = ANY(p.proconfig);
-
+  
   RAISE NOTICE '========================================';
   RAISE NOTICE '✅ SECURITY FIX COMPLETE!';
   RAISE NOTICE '========================================';

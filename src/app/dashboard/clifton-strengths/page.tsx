@@ -5,27 +5,22 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Users, 
-  CheckCircle, 
-  XCircle, 
-  Clock,
-  Download,
-  ExternalLink,
-  Target,
-  TrendingUp,
-  BarChart3,
-  Brain
+import {
+    Brain,
+    Clock,
+    Download,
+    ExternalLink,
+    Users,
+    XCircle
 } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 interface ThemeScore {
   theme_name: string;
@@ -57,10 +52,10 @@ export default function CliftonStrengthsPage() {
 
   const runAnalysis = async () => {
     if (!url) return;
-    
+
     setIsAnalyzing(true);
     setError(null);
-    
+
     try {
       // Run Phase 1: Data Collection
       const phase1Response = await fetch('/api/analyze/phase-new', {
@@ -68,33 +63,33 @@ export default function CliftonStrengthsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url, phase: 1 })
       });
-      
+
       if (!phase1Response.ok) {
         throw new Error('Phase 1 failed');
       }
-      
+
       const phase1Data = await phase1Response.json();
       const newAnalysisId = phase1Data.analysisId;
       setAnalysisId(newAnalysisId);
-      
+
       // Run Phase 2: Framework Analysis (includes CliftonStrengths)
       const phase2Response = await fetch('/api/analyze/phase-new', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url, phase: 2, analysisId: newAnalysisId })
       });
-      
+
       if (!phase2Response.ok) {
         throw new Error('Phase 2 failed');
       }
-      
+
       // Fetch CliftonStrengths analysis
       const cliftonResponse = await fetch(`/api/analysis/clifton-strengths/${newAnalysisId}`);
       if (cliftonResponse.ok) {
         const cliftonData = await cliftonResponse.json();
         setAnalysis(cliftonData);
       }
-      
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Analysis failed');
     } finally {
@@ -161,15 +156,15 @@ export default function CliftonStrengthsPage() {
                         {getScoreBadge(theme.score)}
                       </div>
                     </div>
-                    
+
                     <div className="text-sm text-gray-600 mb-2">
                       Confidence: {(theme.evidence.confidence * 100).toFixed(0)}%
                     </div>
-                    
+
                     <div className="text-sm text-gray-700 mb-3">
                       {theme.manifestation_description}
                     </div>
-                    
+
                     {theme.evidence.patterns.length > 0 && (
                       <div className="mb-2">
                         <div className="text-sm font-medium mb-1">Detected Patterns:</div>
@@ -182,7 +177,7 @@ export default function CliftonStrengthsPage() {
                         </div>
                       </div>
                     )}
-                    
+
                     {theme.evidence.citations.length > 0 && (
                       <div>
                         <div className="text-sm font-medium mb-1">Evidence:</div>
@@ -234,16 +229,16 @@ export default function CliftonStrengthsPage() {
                 onChange={(e) => setUrl(e.target.value)}
               />
             </div>
-            
+
             {error && (
               <Alert variant="destructive">
                 <XCircle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            
-            <Button 
-              onClick={runAnalysis} 
+
+            <Button
+              onClick={runAnalysis}
               disabled={!url || isAnalyzing}
               className="w-full"
             >
