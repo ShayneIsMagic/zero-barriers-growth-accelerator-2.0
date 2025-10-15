@@ -37,15 +37,16 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
     setIsAnalyzing(true);
 
     try {
-      const response = await fetch('/api/analyze/website', {
+      // Use the new Phase 1 system
+      const response = await fetch('/api/analyze/phase-new', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           url,
-          content: content || undefined,
-          analysisType,
+          phase: 1, // Start with Phase 1 data collection
+          industry: 'general'
         }),
       });
 
