@@ -4,7 +4,7 @@
  */
 
 import { prisma } from '../prisma';
-import { SimpleSimpleSynonymDetectionService, PatternMatch } from './simple-synonym-detection.service';
+import { SimpleSynonymDetectionService, PatternMatch } from './simple-synonym-detection.service';
 
 export interface FocusedAnalysisResult {
   success: boolean;
