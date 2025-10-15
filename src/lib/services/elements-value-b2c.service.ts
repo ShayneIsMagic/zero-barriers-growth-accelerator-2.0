@@ -72,14 +72,14 @@ export class ElementsOfValueB2CService {
   ): Promise<string> {
     const basePrompt = `
 Analyze this website using the Elements of Value (B2C) framework.
-Score each of the 28 value elements on a scale of 0-100.
+Score each of the 30 value elements on a scale of 0-100.
 
 WEBSITE CONTENT:
 ${JSON.stringify(content, null, 2)}
 
-THE 28 B2C VALUE ELEMENTS:
+THE 30 B2C VALUE ELEMENTS (Bain & Company Framework):
 
-FUNCTIONAL (Pyramid Level 1):
+FUNCTIONAL (Pyramid Level 1 - 14 elements):
 1. saves_time - Helps complete tasks faster
 2. simplifies - Makes things easier
 3. makes_money - Helps earn income
@@ -92,28 +92,30 @@ FUNCTIONAL (Pyramid Level 1):
 10. quality - Superior standards
 11. variety - Offers choices
 12. informs - Provides knowledge
+13. avoids_hassles - Avoiding or reducing hassles and inconveniences
+14. sensory_appeal - Appealing in taste, smell, hearing and other senses
 
-EMOTIONAL (Pyramid Level 2):
-13. reduces_anxiety - Peace of mind
-14. rewards_me - Incentives/recognition
-15. nostalgia - Positive memories
-16. design_aesthetics - Visual appeal
-17. badge_value - Status signal
-18. wellness - Health promotion
-19. therapeutic - Stress relief
-20. fun_entertainment - Enjoyment
-21. attractiveness - Personal appeal
-22. provides_access - Exclusive opportunities
+EMOTIONAL (Pyramid Level 2 - 10 elements):
+15. reduces_anxiety - Peace of mind
+16. rewards_me - Incentives/recognition
+17. nostalgia - Positive memories
+18. design_aesthetics - Visual appeal
+19. badge_value - Status signal
+20. wellness - Health promotion
+21. therapeutic - Stress relief
+22. fun_entertainment - Enjoyment
+23. attractiveness - Personal appeal
+24. provides_access - Exclusive opportunities
 
-LIFE CHANGING (Pyramid Level 3):
-23. provides_hope - Inspires optimism
-24. self_actualization - Achieve potential
-25. motivation - Inspires action
-26. heirloom - Legacy value
-27. affiliation - Sense of belonging
+LIFE CHANGING (Pyramid Level 3 - 5 elements):
+25. provides_hope - Inspires optimism
+26. self_actualization - Achieve potential
+27. motivation - Inspires action
+28. heirloom - Legacy value
+29. affiliation - Sense of belonging
 
-SOCIAL IMPACT (Pyramid Level 4):
-28. self_transcendence - Greater good
+SOCIAL IMPACT (Pyramid Level 4 - 1 element):
+30. self_transcendence - Greater good
 
 For each element:
 - Score 0-100 (0 = not present, 100 = strongly present)

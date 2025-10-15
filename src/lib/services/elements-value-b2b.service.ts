@@ -74,51 +74,76 @@ Score each element for ORGANIZATIONAL/GROUP decision-making (not individual).
 WEBSITE CONTENT:
 ${JSON.stringify(content, null, 2)}
 
-THE 40 B2B VALUE ELEMENTS (5 Categories):
+THE 40 B2B VALUE ELEMENTS (Bain & Company Framework):
 
-CATEGORY 1: TABLE STAKES (Must-haves)
-1. acceptable_quality - Meets basic standards
-2. regulatory_compliance - Follows regulations
-3. ethical_standards - Ethical business practices
-4. appropriate_specifications - Meets requirements
+CATEGORY 1: TABLE STAKES (4 elements - Must-haves)
+1. meeting_specifications - Conforms to customer's internal specifications
+2. acceptable_price - Provides products/services at acceptable price
+3. regulatory_compliance - Complies with regulations
+4. ethical_standards - Performs activities in ethical manner
 
-CATEGORY 2: FUNCTIONAL VALUE
-5. cost_reduction - Lowers costs
-6. scalability - Grows with organization
-7. product_quality - Superior product
-8. variety - Multiple options
-9. organizational_quality - Well-run org
-10. informative - Provides information
-11. transparency - Open communication
-12. integration - Works with systems
-13. flexibility - Adaptable solution
+CATEGORY 2: FUNCTIONAL VALUE (9 elements)
+Economic (2 elements):
+5. improved_top_line - Helps customer increase revenue
+6. cost_reduction - Reduces cost for customer's organization
 
-CATEGORY 3: EASE OF DOING BUSINESS
-14. relationship - Strong partnerships
-15. responsiveness - Quick response
-16. cultural_fit - Aligns with culture
-17. commitment - Long-term focus
-18. stability - Reliable partner
-19. expertise - Industry knowledge
+Performance (3 elements):
+7. product_quality - Provides high-quality goods or services
+8. scalability - Expands easily to additional demand/processes
+9. innovation - Provides innovative capabilities
 
-CATEGORY 4: INDIVIDUAL VALUE (Personal benefits for decision-makers)
-20. reduces_anxiety - Peace of mind
-21. design_aesthetic - Good design
-22. growth_development - Career growth
-23. problem_solving - Solves challenges
-24. time_savings - Saves time
-25. simplifies - Makes easier
-26. connects - Network building
-27. information - Access to data
-28. variety_for_individuals - Personal choices
-29. reduces_effort - Less work
+Strategic (4 elements):
+10. risk_reduction - Protects customer against loss/risk
+11. reach - Allows customer to operate in more locations
+12. flexibility - Moves beyond standard to allow customization
+13. component_quality - Improves perceived quality of customer's products
 
-CATEGORY 5: INSPIRATIONAL VALUE
-30. vision - Future-focused
-31. social_responsibility - Good for society
-32. hope - Optimistic future
-33. customer_engagement - Engagement focus
-34. corporate_responsibility - Ethical operations
+CATEGORY 3: EASE OF DOING BUSINESS (17 elements)
+Productivity (3 elements):
+14. time_savings - Saves time for users/organization
+15. reduced_effort - Helps organization get things done with less effort
+16. decreased_hassles - Helps customer avoid unnecessary hassles
+
+Information (2 elements):
+17. information - Helps users become informed
+18. transparency - Provides clear view into customer's organization
+
+Operational (4 elements):
+19. organization - Helps users become more organized
+20. simplification - Reduces complexity and keeps things simple
+21. connection - Connects organizations and users with others
+22. integration - Helps integrate different facets of business
+
+Access (4 elements):
+23. access - Provides access to resources/services/capabilities
+24. availability - Available when and where needed
+25. variety - Provides variety of goods/services to choose from
+26. configurability - Can be configured to customer's specific needs
+
+Relationship (5 elements):
+27. responsiveness - Responds promptly and professionally
+28. expertise - Provides know-how for relevant industry
+29. commitment - Shows commitment to customer's success
+30. stability - Is stable company for foreseeable future
+31. cultural_fit - Fits well with customer's culture and people
+
+CATEGORY 4: INDIVIDUAL VALUE (7 elements - Personal benefits for decision-makers)
+Career (3 elements):
+32. network_expansion - Helps users expand professional network
+33. marketability - Makes users more marketable in their field
+34. reputational_assurance - Does not jeopardize buyer's reputation
+
+Personal (4 elements):
+35. design_aesthetics_b2b - Provides aesthetically pleasing goods/services
+36. growth_development - Helps users develop personally
+37. reduced_anxiety_b2b - Helps buyers feel more secure
+38. fun_perks - Is enjoyable to interact with or rewarding
+
+CATEGORY 5: INSPIRATIONAL VALUE (4 elements)
+39. vision - Helps customer anticipate direction of markets
+40. hope_b2b - Gives buyers hope for future of their organization
+41. social_responsibility - Helps customer be more socially responsible
+42. purpose - Aligns with customer's organizational purpose
 
 For each element, provide:
 - Score (0-100)

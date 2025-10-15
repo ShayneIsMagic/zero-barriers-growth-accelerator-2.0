@@ -142,226 +142,96 @@ ANALYSIS FRAMEWORKS:
 
 REQUIRED OUTPUT FORMAT (JSON):
 {
-  "overallScore": 75,
-  "executiveSummary": "Brief summary of findings",
+  "overallScore": 0,
+  "executiveSummary": "Your analysis summary here",
   "goldenCircle": {
-    "why": {"score": 7, "insights": ["insight1", "insight2"]},
-    "how": {"score": 8, "insights": ["insight1", "insight2"]},
-    "what": {"score": 9, "insights": ["insight1", "insight2"]},
-    "who": {"score": 8, "targetAudience": ["audience1", "audience2"], "emotionalConnection": "connection description", "insights": ["insight1", "insight2"]},
-    "overallScore": 80,
-    "recommendations": ["rec1", "rec2"]
+    "why": {"score": 0, "insights": []},
+    "how": {"score": 0, "insights": []},
+    "what": {"score": 0, "insights": []},
+    "who": {"score": 0, "targetAudience": [], "emotionalConnection": "", "insights": []},
+    "overallScore": 0,
+    "recommendations": []
   },
   "elementsOfValue": {
     "functional": {
-      "score": 8,
-      "elements": {
-        "savesTime": true,
-        "simplifies": true,
-        "makesMoney": false,
-        "reducesRisk": true,
-        "organizes": true,
-        "integrates": false,
-        "connects": true,
-        "reducesEffort": true,
-        "avoidsHassles": true,
-        "reducesCost": false,
-        "quality": true,
-        "variety": false,
-        "sensoryAppeal": false,
-        "informs": true
-      },
-      "recommendations": ["rec1", "rec2"]
+      "score": 0,
+      "elements": {},
+      "recommendations": []
     },
     "emotional": {
-      "score": 6,
-      "elements": {
-        "reducesAnxiety": true,
-        "rewardsMe": false,
-        "nostalgia": false,
-        "designAesthetics": true,
-        "badgeValue": false,
-        "wellness": false,
-        "therapeuticValue": false,
-        "funEntertainment": false,
-        "attractiveness": true,
-        "providesAccess": true
-      },
-      "recommendations": ["rec1", "rec2"]
+      "score": 0,
+      "elements": {},
+      "recommendations": []
     },
     "lifeChanging": {
-      "score": 5,
-      "elements": {
-        "providesHope": true,
-        "selfActualization": false,
-        "motivation": true,
-        "heirloom": false,
-        "affiliationBelonging": false
-      },
-      "recommendations": ["rec1", "rec2"]
+      "score": 0,
+      "elements": {},
+      "recommendations": []
     },
     "socialImpact": {
-      "score": 4,
-      "elements": {
-        "selfTranscendence": false
-      },
-      "recommendations": ["rec1", "rec2"]
+      "score": 0,
+      "elements": {},
+      "recommendations": []
     },
-    "overallScore": 6
+    "overallScore": 0
   },
   "b2bElements": {
-    "inspirational": {
-      "score": 6,
-      "elements": {
-        "purpose": true,
-        "vision": false,
-        "hope": true,
-        "socialResponsibility": false
-      },
-      "recommendations": ["rec1", "rec2"]
-    },
-    "individual": {
-      "score": 7,
-      "career": {
-        "networkExpansion": true,
-        "marketability": true,
-        "reputationalAssurance": false
-      },
-      "personal": {
-        "designAesthetics": true,
-        "growthDevelopment": true,
-        "reducedAnxiety": true,
-        "funPerks": false
-      },
-      "recommendations": ["rec1", "rec2"]
-    },
-    "easeOfDoingBusiness": {
-      "score": 8,
-      "productivity": {
-        "timeSavings": true,
-        "reducedEffort": true,
-        "decreasedHassles": true,
-        "information": true,
-        "transparency": false
-      },
-      "operational": {
-        "organization": true,
-        "simplification": true,
-        "connection": true,
-        "integration": false
-      },
-      "access": {
-        "availability": true,
-        "variety": false,
-        "configurability": false
-      },
-      "relationship": {
-        "responsiveness": true,
-        "expertise": true,
-        "commitment": true,
-        "stability": true,
-        "culturalFit": false
-      },
-      "strategic": {
-        "riskReduction": true,
-        "reach": false,
-        "flexibility": true,
-        "componentQuality": true
-      },
-      "recommendations": ["rec1", "rec2"]
+    "tableStakes": {
+      "score": 0,
+      "elements": {},
+      "recommendations": []
     },
     "functional": {
-      "score": 8,
-      "economic": {
-        "improvedTopLine": true,
-        "costReduction": true
-      },
-      "performance": {
-        "productQuality": true,
-        "scalability": true,
-        "innovation": false
-      },
-      "recommendations": ["rec1", "rec2"]
+      "score": 0,
+      "elements": {},
+      "recommendations": []
     },
-    "tableStakes": {
-      "score": 9,
-      "elements": {
-        "meetingSpecifications": true,
-        "acceptablePrice": true,
-        "regulatoryCompliance": true,
-        "ethicalStandards": true
-      },
-      "recommendations": ["rec1", "rec2"]
+    "easeOfDoingBusiness": {
+      "score": 0,
+      "elements": {},
+      "recommendations": []
     },
-    "overallScore": 8
+    "individual": {
+      "score": 0,
+      "elements": {},
+      "recommendations": []
+    },
+    "inspirational": {
+      "score": 0,
+      "elements": {},
+      "recommendations": []
+    },
+    "overallScore": 0
   },
   "cliftonStrengths": {
     "strategicThinking": {
-      "score": 8,
-      "elements": {
-        "analytical": true,
-        "context": true,
-        "futuristic": false,
-        "ideation": true,
-        "input": true,
-        "intellection": true,
-        "learner": true,
-        "strategic": true
-      },
-      "recommendations": ["rec1", "rec2"]
+      "score": 0,
+      "elements": {},
+      "recommendations": []
     },
     "executing": {
-      "score": 7,
-      "elements": {
-        "achiever": true,
-        "arranger": true,
-        "belief": false,
-        "consistency": true,
-        "deliberative": true,
-        "discipline": true,
-        "focus": true,
-        "responsibility": true,
-        "restorative": false
-      },
-      "recommendations": ["rec1", "rec2"]
+      "score": 0,
+      "elements": {},
+      "recommendations": []
     },
     "influencing": {
-      "score": 6,
-      "elements": {
-        "activator": false,
-        "command": false,
-        "communication": true,
-        "competition": false,
-        "maximizer": true,
-        "selfAssurance": true,
-        "significance": false,
-        "woo": false
-      },
-      "recommendations": ["rec1", "rec2"]
+      "score": 0,
+      "elements": {},
+      "recommendations": []
     },
     "relationshipBuilding": {
-      "score": 5,
-      "elements": {
-        "adaptability": true,
-        "connectedness": false,
-        "developer": true,
-        "empathy": true,
-        "harmony": false,
-        "includer": false,
-        "individualization": true,
-        "positivity": false,
-        "relator": false
-      },
-      "recommendations": ["rec1", "rec2"]
+      "score": 0,
+      "elements": {},
+      "recommendations": []
     },
-    "overallScore": 65
+    "overallScore": 0
   },
   "transformationAnalysis": {
-    "messaging": {"current": "current state", "recommended": "improved state", "score": 6, "insights": ["insight1"]},
-    "socialMedia": {"current": "current state", "recommended": "improved state", "score": 5, "insights": ["insight1"]},
-    "competitive": {"current": "current state", "recommended": "improved state", "score": 7, "insights": ["insight1"]},
-    "overallScore": 60,
-    "recommendations": ["rec1", "rec2"]
+    "messaging": {"current": "", "recommended": "", "score": 0, "insights": []},
+    "socialMedia": {"current": "", "recommended": "", "score": 0, "insights": []},
+    "competitive": {"current": "", "recommended": "", "score": 0, "insights": []},
+    "overallScore": 0,
+    "recommendations": []
   }
 }
 

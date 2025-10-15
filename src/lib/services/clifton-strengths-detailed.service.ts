@@ -97,6 +97,13 @@ export class CliftonStrengthsService {
     industry?: string,
     patterns?: PatternMatch[]
   ): Promise<string> {
+    // Group themes by domain for better organization
+    const themesByDomain = themes.reduce((acc, theme) => {
+      if (!acc[theme.domain]) acc[theme.domain] = [];
+      acc[theme.domain].push(theme);
+      return acc;
+    }, {} as Record<string, Array<{ theme_name: string; domain: string; description: string }>>);
+
     const basePrompt = `
 Analyze this organization's website to identify CliftonStrengths themes.
 Score all 34 themes and identify the top 5 that are most evident.
@@ -104,21 +111,32 @@ Score all 34 themes and identify the top 5 that are most evident.
 WEBSITE CONTENT:
 ${JSON.stringify(content, null, 2)}
 
-THE 34 CLIFTONSTRENGTHS THEMES:
+THE 34 CLIFTONSTRENGTHS THEMES BY DOMAIN:
 
-${themes.map(t => `${t.theme_name} (${t.domain}): ${t.description}`).join('\n')}
+STRATEGIC THINKING (8 themes):
+${themesByDomain.strategic_thinking?.map(t => `• ${t.theme_name}: ${t.description}`).join('\n') || 'No themes found'}
 
-For each theme:
+EXECUTING (9 themes):
+${themesByDomain.executing?.map(t => `• ${t.theme_name}: ${t.description}`).join('\n') || 'No themes found'}
+
+INFLUENCING (8 themes):
+${themesByDomain.influencing?.map(t => `• ${t.theme_name}: ${t.description}`).join('\n') || 'No themes found'}
+
+RELATIONSHIP BUILDING (9 themes):
+${themesByDomain.relationship_building?.map(t => `• ${t.theme_name}: ${t.description}`).join('\n') || 'No themes found'}
+
+ANALYSIS INSTRUCTIONS:
+For each of the 34 themes:
 - Score 0-100 based on evidence in content
 - Identify specific manifestations (how the theme shows up)
-- Provide evidence with citations
+- Provide evidence with citations from the website
 - Rank themes (1 = strongest, 34 = weakest)
 
 Calculate domain scores:
-- strategic_thinking_score = avg of Strategic Thinking themes
-- executing_score = avg of Executing themes
-- influencing_score = avg of Influencing themes
-- relationship_building_score = avg of Relationship Building themes
+- strategic_thinking_score = average of Strategic Thinking themes
+- executing_score = average of Executing themes  
+- influencing_score = average of Influencing themes
+- relationship_building_score = average of Relationship Building themes
 - overall_score = average of all 34 themes
 - dominant_domain = domain with highest score
 
@@ -141,13 +159,12 @@ Return as JSON:
         "patterns": ["future-focused", "planning", "strategy"],
         "manifestations": [
           "Creates multiple pathways to success",
-          "Anticipates future challenges",
+          "Anticipates future challenges", 
           "Plans for various scenarios"
         ],
         "citations": ["homepage", "about page", "services"]
       }
-    },
-    // ... 33 more themes (all ranked)
+    }
   ]
 }
 `
