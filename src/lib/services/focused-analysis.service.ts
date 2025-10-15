@@ -4,7 +4,7 @@
  */
 
 import { prisma } from '../prisma';
-import { SynonymDetectionService, PatternMatch } from './synonym-detection.service';
+import { SimpleSimpleSynonymDetectionService, PatternMatch } from './simple-synonym-detection.service';
 
 export interface FocusedAnalysisResult {
   success: boolean;
@@ -22,7 +22,7 @@ export class FocusedAnalysisService {
     industry?: string
   ): Promise<FocusedAnalysisResult> {
     try {
-      const patterns = await SynonymDetectionService.findValuePatterns(
+      const patterns = await SimpleSynonymDetectionService.findValuePatterns(
         content.text || content.content,
         industry
       );
@@ -75,7 +75,7 @@ Return as JSON:
     industry?: string
   ): Promise<FocusedAnalysisResult> {
     try {
-      const patterns = await SynonymDetectionService.findValuePatterns(
+      const patterns = await SimpleSynonymDetectionService.findValuePatterns(
         content.text || content.content,
         industry
       );
@@ -141,7 +141,7 @@ Return as JSON:
   ): Promise<FocusedAnalysisResult> {
     try {
       const themes = await this.getStrategicThinkingThemes();
-      const patterns = await SynonymDetectionService.findValuePatterns(
+      const patterns = await SimpleSynonymDetectionService.findValuePatterns(
         content.text || content.content,
         industry
       );
@@ -195,7 +195,7 @@ Return as JSON:
     industry?: string
   ): Promise<FocusedAnalysisResult> {
     try {
-      const patterns = await SynonymDetectionService.findValuePatterns(
+      const patterns = await SimpleSynonymDetectionService.findValuePatterns(
         content.text || content.content,
         industry
       );
@@ -246,13 +246,13 @@ Return as JSON:
    */
   private static async getStrategicThinkingThemes(): Promise<Array<{ theme_name: string; description: string }>> {
     try {
-      const themes = await prisma.$queryRaw`
-        SELECT theme_name, description 
-        FROM clifton_themes_reference 
-        WHERE domain = 'strategic_thinking'
-        ORDER BY theme_name
-      `;
-      return themes as Array<{ theme_name: string; description: string }>;
+      // Use Prisma client instead of $queryRaw to avoid prepared statement issues
+      const themes = await prisma.clifton_themes_reference.findMany({
+        where: { domain: 'strategic_thinking' },
+        select: { theme_name: true, description: true },
+        orderBy: { theme_name: 'asc' }
+      });
+      return themes;
     } catch (error) {
       console.error('Failed to get Strategic Thinking themes:', error);
       return [];

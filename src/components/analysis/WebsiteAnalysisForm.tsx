@@ -37,15 +37,14 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
     setIsAnalyzing(true);
 
     try {
-      // Use the new Phase 1 system
-      const response = await fetch('/api/analyze/phase-new', {
+      // Use the working Phase 1 simple system
+      const response = await fetch('/api/analyze/phase1-simple', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           url,
-          phase: 1, // Start with Phase 1 data collection
           industry: 'general'
         }),
       });
@@ -106,29 +105,32 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
         return;
       }
 
-      // Success - save to localStorage and notify parent
+      // Success - Phase 1 data collection completed
       try {
-        // Convert WebsiteAnalysisResult to AnalysisResult format for storage
+        // Create analysis result for Phase 1
         const analysisForStorage = {
-          id: result.data.id,
-          url: result.data.url,
-          overallScore: result.data.overallScore,
-          summary: result.data.executiveSummary || 'Analysis completed',
-          status: 'completed' as const,
-          timestamp: result.data.createdAt || new Date().toISOString(),
-          goldenCircle: result.data.goldenCircle || { why: '', how: '', what: '', overallScore: 0, insights: [] },
-          elementsOfValue: result.data.elementsOfValue || { functional: {}, emotional: {}, lifeChanging: {}, socialImpact: {}, overallScore: 0, insights: [] },
-          cliftonStrengths: result.data.cliftonStrengths || { themes: [], recommendations: [], overallScore: 0, insights: [] },
-          recommendations: []
+          id: `analysis-${Date.now()}`,
+          url: result.url,
+          overallScore: 0, // Placeholder, actual score comes from Phase 2
+          summary: result.message || 'Phase 1 data collection completed',
+          status: 'phase1_complete' as const,
+          timestamp: new Date().toISOString(),
+          goldenCircle: null,
+          elementsOfValue: null,
+          cliftonStrengths: null,
+          recommendations: [],
+          scrapedContent: result.data, // Store scraped content for Phase 2
+          phase: 1
         };
         
         AnalysisClient.saveAnalysis(analysisForStorage);
-        console.log('✅ Analysis saved to localStorage');
+        console.log('✅ Phase 1 data saved to localStorage');
+        
+        // Notify parent component
+        onAnalysisComplete?.(analysisForStorage);
       } catch (saveError) {
-        console.error('Failed to save analysis:', saveError);
+        console.error('Failed to save Phase 1 data:', saveError);
       }
-      
-      onAnalysisComplete(result.data);
     } catch (err) {
       setError({
         type: 'error',

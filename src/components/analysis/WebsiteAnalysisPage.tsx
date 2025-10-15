@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { WebsiteAnalysisForm } from './WebsiteAnalysisForm';
 import { WebsiteAnalysisResults } from './WebsiteAnalysisResults';
+import { Phase2Button } from './Phase2Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -24,6 +25,11 @@ export function WebsiteAnalysisPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const handleAnalysisComplete = (result: WebsiteAnalysisResult) => {
+    setAnalysisResult(result);
+    setIsAnalyzing(false);
+  };
+
+  const handlePhase2Complete = (result: WebsiteAnalysisResult) => {
     setAnalysisResult(result);
     setIsAnalyzing(false);
   };
@@ -51,6 +57,31 @@ export function WebsiteAnalysisPage() {
         </div>
 
         <WebsiteAnalysisResults result={analysisResult} />
+        
+        {/* Phase 2 Button - Show if Phase 1 is complete but Phase 2 is not */}
+        {analysisResult?.phase === 1 && analysisResult?.scrapedContent && (
+          <div className="mt-8">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Brain className="h-5 w-5 text-purple-600" />
+                  Ready for Phase 2: AI Analysis
+                </CardTitle>
+                <CardDescription>
+                  Phase 1 data collection is complete. Run AI analysis to get insights from Golden Circle, Elements of Value, and CliftonStrengths frameworks.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Phase2Button
+                  scrapedContent={analysisResult.scrapedContent}
+                  url={analysisResult.url}
+                  industry="general"
+                  onPhase2Complete={handlePhase2Complete}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     );
   }
