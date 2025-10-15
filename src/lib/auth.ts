@@ -1,5 +1,5 @@
-import { SignJWT, jwtVerify } from 'jose';
 import bcrypt from 'bcryptjs';
+import { SignJWT, jwtVerify } from 'jose';
 import { prisma } from './prisma';
 
 const JWT_SECRET = new TextEncoder().encode(
