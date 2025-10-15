@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { prisma } from './prisma';
 
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production'
+  process.env.NEXTAUTH_SECRET || 'your-super-secret-jwt-key-change-in-production'
 );
 
 export interface User {
