@@ -3,21 +3,15 @@
 -- Run this in Supabase SQL Editor
 -- =====================================================
 
--- Update ONLY the test user with the correct password hash
--- Password: TestPassword123!
--- This hash was generated with: bcrypt.hash('TestPassword123!', 10)
--- NOTE: Preserving existing admin credentials
+-- Update your admin user with the correct password hash
+-- Password: ZBadmin123!
+-- This hash was generated with: bcrypt.hash('ZBadmin123!', 10)
 
 UPDATE "User"
-SET password = '$2a$10$VsWMhaFBAeyihbKTklqq4.dbdgRjjdhQmjS/.CnkejRKRF7PH3qd.'
-WHERE email = 'test@zerobarriers.com';
+SET password = '$2a$10$G2w9G2c9K8fROlh/GCnOEe7jsyRgjlZV8TvM9HiCuHYvT02czCMZC'
+WHERE email = 'shayne+1@devpipeline.com';
 
--- Do NOT update admin user - preserving existing credentials
--- UPDATE "User"
--- SET password = '$2a$10$VsWMhaFBAeyihbKTklqq4.dbdgRjjdhQmjS/.CnkejRKRF7PH3qd.'
--- WHERE email = 'admin@zerobarriers.com';
-
--- Verify the update (only test user)
+-- Verify the update (your admin user)
 SELECT
     id,
     email,
@@ -29,7 +23,7 @@ SELECT
         ELSE 'No password'
     END as password_status
 FROM "User"
-WHERE email = 'test@zerobarriers.com';
+WHERE email = 'shayne+1@devpipeline.com';
 
 -- =====================================================
 -- SUCCESS MESSAGE
@@ -37,15 +31,11 @@ WHERE email = 'test@zerobarriers.com';
 
 DO $$
 BEGIN
-    RAISE NOTICE '✅ TEST USER PASSWORD FIXED!';
+    RAISE NOTICE '✅ ADMIN PASSWORD FIXED!';
     RAISE NOTICE '';
-    RAISE NOTICE '🔑 Test Credentials:';
-    RAISE NOTICE '   Email: test@zerobarriers.com';
-    RAISE NOTICE '   Password: TestPassword123!';
+    RAISE NOTICE '👑 Your Admin Credentials:';
+    RAISE NOTICE '   Email: shayne+1@devpipeline.com';
+    RAISE NOTICE '   Password: ZBadmin123!';
     RAISE NOTICE '';
-    RAISE NOTICE '👑 Admin Credentials:';
-    RAISE NOTICE '   Email: admin@zerobarriers.com';
-    RAISE NOTICE '   Password: [PRESERVED - unchanged]';
-    RAISE NOTICE '';
-    RAISE NOTICE '🚀 Ready to test login with test user!';
+    RAISE NOTICE '🚀 Ready to login to your site!';
 END $$;
