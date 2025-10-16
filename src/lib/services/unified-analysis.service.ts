@@ -3,8 +3,8 @@
  * Runs multiple assessments from a single website scrape
  */
 
-import { scrapeWebsiteContent } from '@/lib/reliable-content-scraper';
 import { EnhancedAnalysisService } from '@/lib/ai-engines/enhanced-analysis.service';
+import { scrapeWebsiteContent } from '@/lib/reliable-content-scraper';
 
 export interface UnifiedAnalysisResult {
   success: boolean;
@@ -33,7 +33,7 @@ export class UnifiedAnalysisService {
    * Run multiple analyses from a single website scrape
    */
   static async analyzeWebsite(
-    url: string, 
+    url: string,
     options: AnalysisOptions = {
       includeGoldenCircle: true,
       includeElementsValueB2C: true,
@@ -43,11 +43,11 @@ export class UnifiedAnalysisService {
   ): Promise<UnifiedAnalysisResult> {
     try {
       console.log(`🌐 Starting unified analysis for: ${url}`);
-      
+
       // Step 1: Scrape website content once
       console.log('🕷️ Step 1: Scraping website content...');
       const scrapedData = await scrapeWebsiteContent(url);
-      
+
       if (!scrapedData) {
         throw new Error('Failed to scrape website content');
       }
@@ -57,7 +57,7 @@ export class UnifiedAnalysisService {
 
       // Step 2: Run multiple analyses in parallel
       console.log('🧠 Step 2: Running multiple analyses in parallel...');
-      
+
       const analyses: any = {};
       const errors: { [key: string]: string } = {};
       const completedAnalyses: string[] = [];
@@ -102,16 +102,16 @@ export class UnifiedAnalysisService {
       // Process results
       results.forEach((result, index) => {
         const analysisName = analysisPromises[index].name;
-        
+
         if (result.status === 'fulfilled' && result.value.success) {
           analyses[analysisName] = result.value.analysis;
           completedAnalyses.push(analysisName);
           console.log(`✅ ${analysisName} analysis completed`);
         } else {
-          const error = result.status === 'rejected' 
+          const error = result.status === 'rejected'
             ? result.reason?.message || 'Unknown error'
             : result.value.error || 'Analysis failed';
-          
+
           errors[analysisName] = error;
           failedAnalyses.push(analysisName);
           console.error(`❌ ${analysisName} analysis failed:`, error);
@@ -150,8 +150,8 @@ export class UnifiedAnalysisService {
    * Run a single analysis type
    */
   private static async runSingleAnalysis(
-    assessmentType: string, 
-    scrapedData: any, 
+    assessmentType: string,
+    scrapedData: any,
     url: string
   ): Promise<{ success: boolean; analysis: any; error?: string }> {
     try {

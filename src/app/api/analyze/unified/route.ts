@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { UnifiedAnalysisService } from '@/lib/services/unified-analysis.service';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 120; // 2 minutes for multiple analyses
 
@@ -16,17 +16,17 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`🌐 Starting unified analysis for: ${url}`);
-    
+
     // Run unified analysis
     const result = await UnifiedAnalysisService.analyzeWebsite(url, options || {});
 
     if (result.success) {
       console.log(`✅ Unified analysis completed for: ${url}`);
       console.log(`📊 Completed analyses: ${result.completedAnalyses.join(', ')}`);
-      
+
       // Generate comprehensive report
       const report = UnifiedAnalysisService.generateComprehensiveReport(result);
-      
+
       return NextResponse.json({
         success: true,
         data: result,

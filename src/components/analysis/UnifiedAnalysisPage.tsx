@@ -1,22 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { 
-  BarChart3, 
-  Brain, 
-  CheckCircle, 
-  Loader2, 
-  Target, 
-  TrendingUp, 
-  Users, 
-  X,
-  Zap
+import { Input } from '@/components/ui/input';
+import {
+    BarChart3,
+    Brain,
+    CheckCircle,
+    Loader2,
+    Target,
+    Users,
+    X,
+    Zap
 } from 'lucide-react';
+import { useState } from 'react';
 
 interface AnalysisOptions {
   includeGoldenCircle?: boolean;
