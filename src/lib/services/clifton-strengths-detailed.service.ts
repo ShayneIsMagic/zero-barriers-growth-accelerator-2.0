@@ -71,15 +71,17 @@ export class CliftonStrengthsService {
    */
   private static async getAllThemes(): Promise<Array<{ theme_name: string; domain: string; description: string }>> {
     try {
-      const themes = await prisma.$queryRaw<Array<{
-        theme_name: string
-        domain: string
-        description: string
-      }>>`
-        SELECT theme_name, domain, description
-        FROM clifton_themes_reference
-        ORDER BY domain, theme_name
-      `
+      const themes = await prisma.clifton_themes_reference.findMany({
+        select: {
+          theme_name: true,
+          domain: true,
+          description: true
+        },
+        orderBy: [
+          { domain: 'asc' },
+          { theme_name: 'asc' }
+        ]
+      })
 
       return themes
     } catch (error) {

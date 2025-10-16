@@ -86,22 +86,29 @@ export function ContentComparisonPage() {
         <CardContent className="space-y-4">
           {/* URL Input */}
           <div>
-            <label className="text-sm font-medium mb-2 block">Website URL</label>
+            <label htmlFor="website-url" className="text-sm font-medium mb-2 block">
+              Website URL
+            </label>
             <Input
+              id="website-url"
+              name="website-url"
               type="url"
               placeholder="https://example.com"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               disabled={isAnalyzing}
+              aria-label="Enter website URL to analyze"
             />
           </div>
 
           {/* Proposed Content */}
           <div>
-            <label className="text-sm font-medium mb-2 block">
+            <label htmlFor="proposed-content" className="text-sm font-medium mb-2 block">
               Proposed New Content (Optional)
             </label>
             <Textarea
+              id="proposed-content"
+              name="proposed-content"
               placeholder="Paste your proposed new content here...
 
 Example:
@@ -119,6 +126,7 @@ New compelling description that highlights our unique value proposition.
               onChange={(e) => setProposedContent(e.target.value)}
               disabled={isAnalyzing}
               className="min-h-[200px] font-mono text-sm"
+              aria-label="Enter proposed new content for comparison"
             />
             <p className="text-xs text-muted-foreground mt-2">
               💡 Leave empty to just analyze existing content. Add proposed content to see side-by-side comparison.

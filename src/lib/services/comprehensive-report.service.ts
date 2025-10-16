@@ -523,15 +523,12 @@ Keep the response professional and actionable. Focus on strategic insights.
     synthesized: string,
     overallScore: number
   ): Promise<ComprehensiveReport> {
-    const report = await prisma.$queryRaw<Array<{ id: string }>>`
-      INSERT INTO generated_reports (
-        analysis_id, report_type, report_format,
-        sections_included, generated_at
-      ) VALUES (
-        ${analysisId}::text,
-        ${'comprehensive'},
-        ${'markdown'},
-        ${JSON.stringify({
+    const report = await prisma.generated_reports.create({
+      data: {
+        analysis_id: analysisId,
+        report_type: 'comprehensive',
+        report_format: 'markdown',
+        sections_included: {
           golden_circle: true,
           elements_value: true,
           clifton_strengths: true,
@@ -539,14 +536,12 @@ Keep the response professional and actionable. Focus on strategic insights.
           seo: true,
           recommendations: true,
           roadmap: true
-        })}::jsonb,
-        NOW()
-      )
-      RETURNING id
-    `
+        }
+      }
+    })
 
     return {
-      id: report[0].id,
+      id: report.id,
       analysis_id: analysisId,
       report_type: 'comprehensive',
       report_format: 'markdown',
@@ -571,15 +566,17 @@ Keep the response professional and actionable. Focus on strategic insights.
    */
   static async getByAnalysisId(analysisId: string): Promise<ComprehensiveReport | null> {
     try {
-      const report = await prisma.$queryRaw<any[]>`
-        SELECT * FROM generated_reports
-        WHERE analysis_id = ${analysisId}::text
-        AND report_type = 'comprehensive'
-        ORDER BY generated_at DESC
-        LIMIT 1
-      `
+      const report = await prisma.generated_reports.findFirst({
+        where: {
+          analysis_id: analysisId,
+          report_type: 'comprehensive'
+        },
+        orderBy: {
+          generated_at: 'desc'
+        }
+      })
 
-      if (report.length === 0) return null
+      if (!report) return null
 
       // Reconstruct full report by querying all data
       return await this.generate(analysisId)

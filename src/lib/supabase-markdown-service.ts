@@ -26,33 +26,25 @@ export async function saveIndividualReport(
   analysisId: string
 ): Promise<void> {
   try {
-    // Use raw SQL to save to individual_reports table
-    await prisma.$executeRaw`
-      INSERT INTO individual_reports (
-        id,
-        analysis_id,
-        name,
-        phase,
-        prompt,
-        markdown,
-        score,
-        timestamp
-      ) VALUES (
-        ${report.id},
-        ${analysisId},
-        ${report.name},
-        ${report.phase},
-        ${report.prompt},
-        ${report.markdown},
-        ${report.score || null},
-        ${report.timestamp}
-      )
-      ON CONFLICT (id)
-      DO UPDATE SET
-        markdown = EXCLUDED.markdown,
-        score = EXCLUDED.score,
-        updated_at = NOW()
-    `;
+    // Use proper Prisma client method to save to individual_reports table
+    await prisma.individual_reports.upsert({
+      where: { id: report.id },
+      update: {
+        markdown: report.markdown,
+        score: report.score || null,
+        updated_at: new Date()
+      },
+      create: {
+        id: report.id,
+        analysis_id: analysisId,
+        name: report.name,
+        phase: report.phase,
+        prompt: report.prompt,
+        markdown: report.markdown,
+        score: report.score || null,
+        timestamp: report.timestamp
+      }
+    });
 
     console.log(`✅ Saved individual report: ${report.id} (${report.name})`);
   } catch (error) {
@@ -82,19 +74,10 @@ export async function saveIndividualReports(
  */
 export async function getAnalysisReports(analysisId: string): Promise<IndividualReport[]> {
   try {
-    const reports = await prisma.$queryRaw<any[]>`
-      SELECT
-        id,
-        name,
-        phase,
-        prompt,
-        markdown,
-        score,
-        timestamp
-      FROM individual_reports
-      WHERE analysis_id = ${analysisId}
-      ORDER BY timestamp ASC
-    `;
+    const reports = await prisma.individual_reports.findMany({
+      where: { analysis_id: analysisId },
+      orderBy: { timestamp: 'asc' }
+    });
 
     return reports.map(r => ({
       id: r.id,
@@ -119,21 +102,13 @@ export async function getPhaseReports(
   phase: string
 ): Promise<IndividualReport[]> {
   try {
-    const reports = await prisma.$queryRaw<any[]>`
-      SELECT
-        id,
-        name,
-        phase,
-        prompt,
-        markdown,
-        score,
-        timestamp
-      FROM individual_reports
-      WHERE
-        analysis_id = ${analysisId}
-        AND phase = ${phase}
-      ORDER BY timestamp ASC
-    `;
+    const reports = await prisma.individual_reports.findMany({
+      where: {
+        analysis_id: analysisId,
+        phase: phase
+      },
+      orderBy: { timestamp: 'asc' }
+    });
 
     return reports.map(r => ({
       id: r.id,
@@ -161,31 +136,25 @@ export async function saveMarkdownExport(
   rating?: string
 ): Promise<string> {
   try {
-    const result = await prisma.$queryRaw<{ id: string }[]>`
-      INSERT INTO markdown_exports (
-        analysis_id,
-        url,
-        markdown,
-        overall_score,
-        rating
-      ) VALUES (
-        ${analysisId},
-        ${url},
-        ${markdown},
-        ${overallScore || null},
-        ${rating || null}
-      )
-      ON CONFLICT (analysis_id)
-      DO UPDATE SET
-        markdown = EXCLUDED.markdown,
-        overall_score = EXCLUDED.overall_score,
-        rating = EXCLUDED.rating,
-        exported_at = NOW(),
-        updated_at = NOW()
-      RETURNING id
-    `;
+    const result = await prisma.markdown_exports.upsert({
+      where: { analysis_id: analysisId },
+      update: {
+        markdown: markdown,
+        overall_score: overallScore || null,
+        rating: rating || null,
+        exported_at: new Date(),
+        updated_at: new Date()
+      },
+      create: {
+        analysis_id: analysisId,
+        url: url,
+        markdown: markdown,
+        overall_score: overallScore || null,
+        rating: rating || null
+      }
+    });
 
-    const exportId = result[0]?.id || 'unknown';
+    const exportId = result.id;
     console.log(`✅ Saved markdown export: ${exportId}`);
     return exportId;
   } catch (error) {
@@ -199,27 +168,14 @@ export async function saveMarkdownExport(
  */
 export async function getMarkdownExport(analysisId: string): Promise<MarkdownExport | null> {
   try {
-    const results = await prisma.$queryRaw<any[]>`
-      SELECT
-        id,
-        analysis_id,
-        url,
-        markdown,
-        overall_score,
-        rating,
-        exported_at,
-        created_at,
-        updated_at
-      FROM markdown_exports
-      WHERE analysis_id = ${analysisId}
-      LIMIT 1
-    `;
+    const result = await prisma.markdown_exports.findFirst({
+      where: { analysis_id: analysisId }
+    });
 
-    if (results.length === 0) {
+    if (!result) {
       return null;
     }
 
-    const result = results[0];
     return {
       id: result.id,
       analysisId: result.analysis_id,
@@ -242,35 +198,39 @@ export async function getMarkdownExport(analysisId: string): Promise<MarkdownExp
  */
 export async function getCompleteAnalysisMarkdown(analysisId: string): Promise<any> {
   try {
-    const result = await prisma.$queryRaw<any[]>`
-      SELECT
-        json_build_object(
-          'analysisId', ${analysisId},
-          'export', (
-            SELECT row_to_json(e)
-            FROM markdown_exports e
-            WHERE e.analysis_id = ${analysisId}
-          ),
-          'individualReports', (
-            SELECT json_agg(
-              json_build_object(
-                'id', r.id,
-                'name', r.name,
-                'phase', r.phase,
-                'prompt', r.prompt,
-                'markdown', r.markdown,
-                'score', r.score,
-                'timestamp', r.timestamp
-              )
-              ORDER BY r.timestamp ASC
-            )
-            FROM individual_reports r
-            WHERE r.analysis_id = ${analysisId}
-          )
-        ) AS data
-    `;
+    const [export, reports] = await Promise.all([
+      prisma.markdown_exports.findFirst({
+        where: { analysis_id: analysisId }
+      }),
+      prisma.individual_reports.findMany({
+        where: { analysis_id: analysisId },
+        orderBy: { timestamp: 'asc' }
+      })
+    ]);
 
-    return result[0]?.data || null;
+    return {
+      analysisId,
+      export: export ? {
+        id: export.id,
+        analysis_id: export.analysis_id,
+        url: export.url,
+        markdown: export.markdown,
+        overall_score: export.overall_score,
+        rating: export.rating,
+        exported_at: export.exported_at,
+        created_at: export.created_at,
+        updated_at: export.updated_at
+      } : null,
+      individualReports: reports.map(r => ({
+        id: r.id,
+        name: r.name,
+        phase: r.phase,
+        prompt: r.prompt,
+        markdown: r.markdown,
+        score: r.score,
+        timestamp: r.timestamp
+      }))
+    };
   } catch (error) {
     console.error(`❌ Error fetching complete analysis:`, error);
     throw error;
@@ -282,13 +242,14 @@ export async function getCompleteAnalysisMarkdown(analysisId: string): Promise<a
  */
 export async function deleteAnalysisReports(analysisId: string): Promise<void> {
   try {
-    await prisma.$executeRaw`
-      DELETE FROM individual_reports WHERE analysis_id = ${analysisId}
-    `;
-
-    await prisma.$executeRaw`
-      DELETE FROM markdown_exports WHERE analysis_id = ${analysisId}
-    `;
+    await Promise.all([
+      prisma.individual_reports.deleteMany({
+        where: { analysis_id: analysisId }
+      }),
+      prisma.markdown_exports.deleteMany({
+        where: { analysis_id: analysisId }
+      })
+    ]);
 
     console.log(`🗑️ Deleted all reports for analysis: ${analysisId}`);
   } catch (error) {
@@ -307,23 +268,22 @@ export async function getReportStats(analysisId: string): Promise<{
   phase3: number;
 }> {
   try {
-    const result = await prisma.$queryRaw<any[]>`
-      SELECT
-        COUNT(*) AS total,
-        COUNT(*) FILTER (WHERE phase = 'Phase 1') AS phase1,
-        COUNT(*) FILTER (WHERE phase = 'Phase 2') AS phase2,
-        COUNT(*) FILTER (WHERE phase = 'Phase 3') AS phase3
-      FROM individual_reports
-      WHERE analysis_id = ${analysisId}
-    `;
+    const [total, phase1, phase2, phase3] = await Promise.all([
+      prisma.individual_reports.count({
+        where: { analysis_id: analysisId }
+      }),
+      prisma.individual_reports.count({
+        where: { analysis_id: analysisId, phase: 'Phase 1' }
+      }),
+      prisma.individual_reports.count({
+        where: { analysis_id: analysisId, phase: 'Phase 2' }
+      }),
+      prisma.individual_reports.count({
+        where: { analysis_id: analysisId, phase: 'Phase 3' }
+      })
+    ]);
 
-    const stats = result[0];
-    return {
-      total: Number(stats.total),
-      phase1: Number(stats.phase1),
-      phase2: Number(stats.phase2),
-      phase3: Number(stats.phase3)
-    };
+    return { total, phase1, phase2, phase3 };
   } catch (error) {
     console.error(`❌ Error fetching report stats:`, error);
     return { total: 0, phase1: 0, phase2: 0, phase3: 0 };
@@ -338,17 +298,15 @@ export async function checkMarkdownTablesExist(): Promise<{
   markdownExports: boolean;
 }> {
   try {
-    const tables = await prisma.$queryRaw<any[]>`
-      SELECT table_name
-      FROM information_schema.tables
-      WHERE table_name IN ('individual_reports', 'markdown_exports')
-    `;
-
-    const tableNames = tables.map(t => t.table_name);
+    // Check if tables exist by trying to query them
+    const [individualReports, markdownExports] = await Promise.allSettled([
+      prisma.individual_reports.findFirst(),
+      prisma.markdown_exports.findFirst()
+    ]);
 
     return {
-      individualReports: tableNames.includes('individual_reports'),
-      markdownExports: tableNames.includes('markdown_exports')
+      individualReports: individualReports.status === 'fulfilled',
+      markdownExports: markdownExports.status === 'fulfilled'
     };
   } catch (error) {
     console.error(`❌ Error checking tables:`, error);
