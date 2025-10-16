@@ -10,6 +10,7 @@ import {
     Clock,
     ExternalLink,
     Target,
+    TrendingUp,
     Users,
     Zap
 } from 'lucide-react';
@@ -35,6 +36,60 @@ export default function DashboardPage() {
       ],
       estimatedTime: '2-3 minutes',
       complexity: 'Beginner',
+      prerequisites: 'None - just enter your website URL'
+    },
+    {
+      id: 'revenue-golden-circle',
+      name: 'Revenue-Focused Golden Circle',
+      status: 'ready',
+      description: 'Identify revenue opportunities and calculate potential ROI using the Golden Circle framework - perfect for growth-focused businesses',
+      icon: Target,
+      route: '/dashboard/golden-circle-standalone',
+      whatYouGet: [
+        'Revenue impact analysis for WHY, HOW, WHAT, and WHO',
+        'Market opportunity identification with size estimates',
+        'ROI calculations for each recommendation',
+        'High-value target persona identification',
+        'Competitive advantage scoring'
+      ],
+      estimatedTime: '2-3 minutes',
+      complexity: 'Intermediate',
+      prerequisites: 'None - just enter your website URL'
+    },
+    {
+      id: 'revenue-elements-value',
+      name: 'Revenue-Focused Elements of Value',
+      status: 'ready',
+      description: 'Discover which value elements drive the most revenue and identify opportunities for premium pricing and market expansion',
+      icon: BarChart3,
+      route: '/dashboard/elements-value-standalone',
+      whatYouGet: [
+        'B2C and B2B value element revenue analysis',
+        'Premium pricing opportunity identification',
+        'Market gap analysis with revenue potential',
+        'Implementation effort vs ROI prioritization',
+        'Target audience revenue value scoring'
+      ],
+      estimatedTime: '2-3 minutes',
+      complexity: 'Intermediate',
+      prerequisites: 'None - just enter your website URL'
+    },
+    {
+      id: 'revenue-trends',
+      name: 'Revenue-Focused Market Analysis',
+      status: 'ready',
+      description: 'Identify underserved market demand and emerging revenue opportunities through AI-powered content strategy analysis',
+      icon: TrendingUp,
+      route: '/dashboard/revenue-trends',
+      whatYouGet: [
+        'Market opportunity scoring and gap analysis',
+        'Revenue opportunity briefs with ROI calculations',
+        'Content strategy recommendations with revenue impact',
+        'Competitive analysis and differentiation opportunities',
+        'Content calendar suggestions with traffic estimates'
+      ],
+      estimatedTime: '2-3 minutes',
+      complexity: 'Advanced',
       prerequisites: 'None - just enter your website URL'
     }
   ];
