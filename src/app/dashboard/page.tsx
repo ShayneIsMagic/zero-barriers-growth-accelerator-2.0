@@ -1,20 +1,20 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Brain, 
-  CheckCircle, 
-  Clock,
-  ExternalLink,
-  Zap,
-  Target,
-  BarChart3,
-  Users
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    BarChart3,
+    Brain,
+    CheckCircle,
+    Clock,
+    ExternalLink,
+    Target,
+    Users,
+    Zap
 } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function DashboardPage() {
   const [url, setUrl] = useState('');
@@ -51,7 +51,7 @@ export default function DashboardPage() {
     {
       id: 'elements-of-value',
       name: 'Elements of Value',
-      status: 'testing', 
+      status: 'testing',
       description: 'Individual B2C and B2B value elements analysis',
       eta: 'Next week',
       icon: BarChart3
@@ -91,7 +91,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       <div className="container mx-auto py-8 px-4">
-        
+
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -108,7 +108,7 @@ export default function DashboardPage() {
             <CheckCircle className="mr-2 text-green-500" />
             Ready to Use
           </h2>
-          
+
           <div className="grid gap-6">
             {workingAssessments.map((assessment) => {
               const IconComponent = assessment.icon;
@@ -140,7 +140,7 @@ export default function DashboardPage() {
                     <CardDescription className="text-base mb-4">
                       {assessment.description}
                     </CardDescription>
-                    
+
                     <div className="space-y-3">
                       <div>
                         <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
@@ -152,7 +152,7 @@ export default function DashboardPage() {
                           ))}
                         </ul>
                       </div>
-                      
+
                       <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
                         <span>⏱️ {assessment.estimatedTime}</span>
                         <span>📊 {assessment.complexity}</span>
@@ -168,13 +168,21 @@ export default function DashboardPage() {
 
         {/* Coming Soon Features */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
-            <Clock className="mr-2 text-yellow-500" />
-            Coming Soon
-          </h2>
-          
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+              <Clock className="mr-2 text-yellow-500" />
+              Coming Soon
+            </h2>
+            <Link href="/dashboard/coming-soon">
+              <Button variant="outline" className="flex items-center gap-2">
+                View All Features
+                <ExternalLink className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {comingSoonAssessments.map((assessment) => {
+            {comingSoonAssessments.slice(0, 3).map((assessment) => {
               const IconComponent = assessment.icon;
               return (
                 <Card key={assessment.id} className="border-yellow-200 bg-yellow-50 dark:bg-yellow-900/10">
@@ -205,6 +213,14 @@ export default function DashboardPage() {
                 </Card>
               );
             })}
+          </div>
+
+          <div className="mt-4 text-center">
+            <Link href="/dashboard/coming-soon">
+              <Button variant="ghost" className="text-yellow-600 hover:text-yellow-700">
+                View all coming soon features with manual prompts →
+              </Button>
+            </Link>
           </div>
         </div>
 

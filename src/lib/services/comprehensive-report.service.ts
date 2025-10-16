@@ -7,11 +7,10 @@
 
 import { prisma } from '@/lib/prisma'
 import { CliftonStrengthsService } from './clifton-strengths-detailed.service'
+import { ComingSoonService } from './coming-soon.service'
 import { ElementsOfValueB2BService } from './elements-value-b2b.service'
 import { ElementsOfValueB2CService } from './elements-value-b2c.service'
 import { GoldenCircleDetailedService } from './golden-circle-detailed.service'
-import { LighthouseDetailedService } from './lighthouse-detailed.service'
-import { SEOOpportunitiesService } from './seo-opportunities.service'
 
 export interface ComprehensiveReport {
   id: string
@@ -40,15 +39,41 @@ export class ComprehensiveReportService {
    */
   static async generate(analysisId: string): Promise<ComprehensiveReport> {
     // Fetch all analysis data in parallel
-    const [goldenCircle, eovB2C, eovB2B, cliftonStrengths, lighthouse, seo] =
+    const [goldenCircle, eovB2C, eovB2B, cliftonStrengths] =
       await Promise.all([
         GoldenCircleDetailedService.getByAnalysisId(analysisId),
         ElementsOfValueB2CService.getByAnalysisId(analysisId),
         ElementsOfValueB2BService.getByAnalysisId(analysisId),
-        CliftonStrengthsService.getByAnalysisId(analysisId),
-        LighthouseDetailedService.getByAnalysisId(analysisId),
-        SEOOpportunitiesService.getByAnalysisId(analysisId)
+        CliftonStrengthsService.getByAnalysisId(analysisId)
       ])
+
+    // Get coming soon modules for missing functionality
+    const lighthouseModule = ComingSoonService.getModule('lighthouse')
+    const seoModule = ComingSoonService.getModule('seo_opportunities')
+
+    // Create placeholder data with coming soon information
+    const lighthouse = {
+      performance_score: 0,
+      accessibility_score: 0,
+      best_practices_score: 0,
+      seo_score: 0,
+      core_web_vitals: null,
+      status: 'coming_soon',
+      module: lighthouseModule,
+      manualPrompt: lighthouseModule ? ComingSoonService.generateManualPrompt('lighthouse', { url: 'your-website-url' }) : null
+    }
+
+    const seo = {
+      overall_seo_score: 0,
+      technical_seo_score: 0,
+      content_quality_score: 0,
+      keyword_optimization_score: 0,
+      opportunities: [],
+      content_gaps: [],
+      status: 'coming_soon',
+      module: seoModule,
+      manualPrompt: seoModule ? ComingSoonService.generateManualPrompt('seo_opportunities', { url: 'your-website-url' }) : null
+    }
 
     // Build comprehensive markdown
     const markdown = await this.buildMarkdownReport({
@@ -221,6 +246,26 @@ ${this.formatTopStrengths(cliftonStrengths?.top_5)}
 
 ## 5. Performance Analysis (Lighthouse)
 
+${lighthouse?.status === 'coming_soon' ? `
+🚧 **Coming Soon: Automated Lighthouse Analysis**
+
+**Status:** ${lighthouse.module?.name} - ${lighthouse.module?.estimatedCompletion}
+
+**Manual Analysis Prompt:**
+\`\`\`
+${lighthouse.manualPrompt}
+\`\`\`
+
+**Alternative Action:** ${lighthouse.module?.alternativeAction}
+
+**Current Placeholder Scores:**
+- Performance: ${lighthouse?.performance_score || 0}/100
+- Accessibility: ${lighthouse?.accessibility_score || 0}/100
+- Best Practices: ${lighthouse?.best_practices_score || 0}/100
+- SEO: ${lighthouse?.seo_score || 0}/100
+
+*Use the manual prompt above with Google PageSpeed Insights for immediate analysis.*
+` : `
 **Performance Score:** ${lighthouse?.performance_score || 0}/100
 
 **Core Scores:**
@@ -231,11 +276,31 @@ ${this.formatTopStrengths(cliftonStrengths?.top_5)}
 
 **Core Web Vitals:**
 ${this.formatCoreWebVitals(lighthouse?.core_web_vitals)}
+`}
 
 ---
 
 ## 6. SEO Opportunities
 
+${seo?.status === 'coming_soon' ? `
+🚧 **Coming Soon: Automated SEO Analysis**
+
+**Status:** ${seo.module?.name} - ${seo.module?.estimatedCompletion}
+
+**Manual Analysis Prompt:**
+\`\`\`
+${seo.manualPrompt}
+\`\`\`
+
+**Alternative Action:** ${seo.module?.alternativeAction}
+
+**Current Placeholder Scores:**
+- Technical SEO: ${seo?.technical_seo_score || 0}/100
+- Content Quality: ${seo?.content_quality_score || 0}/100
+- Keyword Optimization: ${seo?.keyword_optimization_score || 0}/100
+
+*Use the manual prompt above with Google Search Console and SEMrush for immediate analysis.*
+` : `
 **SEO Score:** ${seo?.overall_seo_score || 0}/100
 
 **Component Scores:**
@@ -248,6 +313,7 @@ ${this.formatKeywordOpportunities(seo?.opportunities)}
 
 **Content Gaps to Address:**
 ${this.formatContentGaps(seo?.content_gaps)}
+`}
 
 ---
 

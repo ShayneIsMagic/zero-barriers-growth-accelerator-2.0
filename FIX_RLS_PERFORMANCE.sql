@@ -6,31 +6,33 @@ DROP POLICY IF EXISTS "Users can view own data" ON "public"."User";
 
 CREATE POLICY "Users can view own data" ON "public"."User"
 FOR SELECT USING (
-  "id" = (select auth.uid())
+  "id" = (select auth.uid())::text
 );
 
--- Fix Analysis table RLS policy
+-- Fix Analysis table RLS policies
 DROP POLICY IF EXISTS "Users can view own analyses" ON "public"."Analysis";
+DROP POLICY IF EXISTS "Users can insert own analyses" ON "public"."Analysis";
+DROP POLICY IF EXISTS "Users can update own analyses" ON "public"."Analysis";
+DROP POLICY IF EXISTS "Users can delete own analyses" ON "public"."Analysis";
 
 CREATE POLICY "Users can view own analyses" ON "public"."Analysis"
 FOR SELECT USING (
-  "userId" = (select auth.uid())
+  "userId" = (select auth.uid())::text
 );
 
--- Add additional RLS policies for other operations if needed
 CREATE POLICY "Users can insert own analyses" ON "public"."Analysis"
 FOR INSERT WITH CHECK (
-  "userId" = (select auth.uid())
+  "userId" = (select auth.uid())::text
 );
 
 CREATE POLICY "Users can update own analyses" ON "public"."Analysis"
 FOR UPDATE USING (
-  "userId" = (select auth.uid())
+  "userId" = (select auth.uid())::text
 );
 
 CREATE POLICY "Users can delete own analyses" ON "public"."Analysis"
 FOR DELETE USING (
-  "userId" = (select auth.uid())
+  "userId" = (select auth.uid())::text
 );
 
 -- Fix any other tables that might have similar issues
