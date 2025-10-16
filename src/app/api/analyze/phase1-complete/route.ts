@@ -1,4 +1,4 @@
-import { scrapeWebsiteContent } from '@/lib/production-content-extractor';
+import { ProductionContentExtractor } from '@/lib/production-content-extractor';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 300; // 5 minutes for complete Phase 1
@@ -19,7 +19,8 @@ export async function POST(request: NextRequest) {
 
     // Step 1: Content Scraping
     console.log('📊 Step 1: Scraping website content...');
-    const scrapedContent = await scrapeWebsiteContent(url);
+    const extractor = new ProductionContentExtractor();
+    const scrapedContent = await extractor.extractContent(url);
 
     // Step 2: Google SEO Tools Analysis
     console.log('🔍 Step 2: Running Google SEO Tools analysis...');
