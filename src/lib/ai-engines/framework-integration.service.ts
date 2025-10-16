@@ -66,8 +66,8 @@ ${rules.format}`;
   private static getFrameworkName(assessmentType: string): string {
     const frameworkMap: { [key: string]: string } = {
       'golden-circle': 'golden-circle',
-      'elements-value-b2c': 'elements-value',
-      'elements-value-b2b': 'elements-value',
+      'elements-value-b2c': 'elements-value-b2c',
+      'elements-value-b2b': 'elements-value-b2b',
       'clifton-strengths': 'clifton-strengths',
       'content-comparison': 'content-comparison',
       'google-tools': 'google-tools'

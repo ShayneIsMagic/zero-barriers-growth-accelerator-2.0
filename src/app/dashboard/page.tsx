@@ -57,6 +57,24 @@ export default function DashboardPage() {
       prerequisites: 'None - just enter your website URL'
     },
     {
+      id: 'unified-analysis',
+      name: 'Unified Analysis (All Frameworks)',
+      status: 'ready',
+      description: 'Run multiple analyses from a single website scrape - Golden Circle, B2C/B2B Elements of Value, and CliftonStrengths',
+      icon: Zap,
+      route: '/dashboard/unified-analysis',
+      whatYouGet: [
+        'Single scrape for multiple analyses',
+        'Golden Circle, B2C Elements, B2B Elements, CliftonStrengths',
+        'Comprehensive report combining all insights',
+        'Parallel processing for faster results',
+        'Choose which analyses to run'
+      ],
+      estimatedTime: '3-5 minutes',
+      complexity: 'Intermediate',
+      prerequisites: 'None - just enter your website URL'
+    },
+    {
       id: 'google-tools',
       name: 'Google Tools Analysis',
       status: 'ready',

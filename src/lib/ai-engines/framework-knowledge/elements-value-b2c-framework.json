@@ -1,0 +1,230 @@
+{
+  "framework_name": "B2C Elements of Value Framework",
+  "creator": "Bain & Company",
+  "description": "A framework for understanding the 30 fundamental elements that drive consumer value and loyalty",
+  "core_concept": "Value is in the eye of the beholder - different consumers value different elements",
+  "structure": {
+    "functional_elements": {
+      "description": "Practical benefits that help consumers get things done",
+      "elements": [
+        {
+          "name": "Saves Time",
+          "definition": "Reduces the time required to complete tasks",
+          "indicators": ["quick", "fast", "instant", "efficient", "streamlined", "automated"],
+          "revenue_impact": "High - consumers pay premium for time savings",
+          "pricing_potential": "Premium pricing for time-critical solutions"
+        },
+        {
+          "name": "Simplifies",
+          "definition": "Makes complex tasks easier to understand and execute",
+          "indicators": ["easy", "simple", "straightforward", "user-friendly", "one-click"],
+          "revenue_impact": "High - reduces friction and increases adoption",
+          "pricing_potential": "Premium pricing for ease of use"
+        },
+        {
+          "name": "Reduces Cost",
+          "definition": "Helps consumers save money",
+          "indicators": ["affordable", "budget-friendly", "save money", "cost-effective", "value"],
+          "revenue_impact": "Medium - attracts price-sensitive consumers",
+          "pricing_potential": "Volume-based pricing strategies"
+        },
+        {
+          "name": "Reduces Risk",
+          "definition": "Minimizes potential losses or negative outcomes",
+          "indicators": ["guaranteed", "secure", "safe", "protected", "warranty", "insurance"],
+          "revenue_impact": "High - consumers pay for peace of mind",
+          "pricing_potential": "Premium pricing for risk mitigation"
+        },
+        {
+          "name": "Organizes",
+          "definition": "Helps consumers manage information or physical items more effectively",
+          "indicators": ["organized", "structured", "systematic", "categorized", "sorted"],
+          "revenue_impact": "Medium - improves efficiency and satisfaction",
+          "pricing_potential": "Subscription pricing for organization tools"
+        },
+        {
+          "name": "Integrates",
+          "definition": "Connects disparate activities or systems",
+          "indicators": ["connects", "integrates", "compatible", "works with", "seamless"],
+          "revenue_impact": "High - creates switching costs and loyalty",
+          "pricing_potential": "Platform pricing models"
+        },
+        {
+          "name": "Connects",
+          "definition": "Facilitates interaction with others",
+          "indicators": ["community", "network", "social", "connect", "share", "collaborate"],
+          "revenue_impact": "High - network effects drive growth",
+          "pricing_potential": "Freemium with premium social features"
+        },
+        {
+          "name": "Reduces Effort",
+          "definition": "Makes physical or mental tasks less demanding",
+          "indicators": ["effortless", "hands-free", "automatic", "no work required"],
+          "revenue_impact": "High - consumers pay for convenience",
+          "pricing_potential": "Premium pricing for automation"
+        },
+        {
+          "name": "Avoids Hassles",
+          "definition": "Eliminates annoyances or inconveniences",
+          "indicators": ["hassle-free", "convenient", "no hassle", "easy process"],
+          "revenue_impact": "Medium - improves customer satisfaction",
+          "pricing_potential": "Convenience fees and premium services"
+        },
+        {
+          "name": "Makes Money",
+          "definition": "Helps consumers generate income or financial gain",
+          "indicators": ["earn", "profit", "income", "revenue", "monetize", "ROI"],
+          "revenue_impact": "Very High - direct financial benefit",
+          "pricing_potential": "Revenue sharing or commission models"
+        },
+        {
+          "name": "Reduces Anxiety",
+          "definition": "Alleviates worries or concerns",
+          "indicators": ["peace of mind", "worry-free", "confident", "assured"],
+          "revenue_impact": "High - emotional value drives loyalty",
+          "pricing_potential": "Premium pricing for emotional security"
+        },
+        {
+          "name": "Rewards Me",
+          "definition": "Provides tangible or intangible benefits for engagement",
+          "indicators": ["rewards", "points", "cashback", "bonus", "incentive"],
+          "revenue_impact": "Medium - increases engagement and retention",
+          "pricing_potential": "Loyalty program monetization"
+        }
+      ]
+    },
+    "emotional_elements": {
+      "description": "Elements that create emotional connections and satisfaction",
+      "elements": [
+        {
+          "name": "Fun/Entertainment",
+          "definition": "Provides enjoyment or amusement",
+          "indicators": ["fun", "entertaining", "enjoyable", "exciting", "engaging"],
+          "revenue_impact": "High - entertainment value drives engagement",
+          "pricing_potential": "Subscription or pay-per-use entertainment"
+        },
+        {
+          "name": "Attractive Appearance",
+          "definition": "Enhances visual appeal",
+          "indicators": ["beautiful", "stunning", "elegant", "stylish", "design"],
+          "revenue_impact": "Medium - aesthetic appeal influences purchase",
+          "pricing_potential": "Premium pricing for design quality"
+        },
+        {
+          "name": "Provides Access",
+          "definition": "Grants entry to exclusive products, services, or information",
+          "indicators": ["exclusive", "VIP", "members only", "premium access"],
+          "revenue_impact": "High - exclusivity drives premium pricing",
+          "pricing_potential": "Membership and tiered access pricing"
+        },
+        {
+          "name": "Variety",
+          "definition": "Offers a diverse range of choices",
+          "indicators": ["options", "choices", "diverse", "multiple", "range of"],
+          "revenue_impact": "Medium - choice increases satisfaction",
+          "pricing_potential": "Bundling and customization pricing"
+        },
+        {
+          "name": "Therapeutic Value",
+          "definition": "Provides comfort, relief, or healing",
+          "indicators": ["healing", "therapeutic", "wellness", "relaxing", "calming"],
+          "revenue_impact": "High - health and wellness premium",
+          "pricing_potential": "Premium pricing for therapeutic benefits"
+        },
+        {
+          "name": "Nostalgia",
+          "definition": "Evokes positive memories of the past",
+          "indicators": ["memories", "traditional", "classic", "vintage", "retro"],
+          "revenue_impact": "Medium - emotional connection drives loyalty",
+          "pricing_potential": "Premium pricing for heritage brands"
+        },
+        {
+          "name": "Design/Aesthetics",
+          "definition": "Appeals to a sense of beauty and style",
+          "indicators": ["design", "aesthetic", "beautiful", "styling", "look"],
+          "revenue_impact": "Medium - design influences purchase decisions",
+          "pricing_potential": "Design premium pricing"
+        },
+        {
+          "name": "Badge Value",
+          "definition": "Confers status or prestige",
+          "indicators": ["premium", "luxury", "exclusive", "status", "prestigious"],
+          "revenue_impact": "Very High - status drives premium pricing",
+          "pricing_potential": "Luxury pricing strategies"
+        },
+        {
+          "name": "Wellness",
+          "definition": "Supports physical or mental health",
+          "indicators": ["healthy", "wellness", "wellbeing", "fitness", "nutrition"],
+          "revenue_impact": "High - health is a top consumer priority",
+          "pricing_potential": "Health and wellness premium pricing"
+        }
+      ]
+    },
+    "life_changing_elements": {
+      "description": "Elements that create profound personal transformation",
+      "elements": [
+        {
+          "name": "Self-Actualization",
+          "definition": "Helps consumers achieve personal growth or fulfillment",
+          "indicators": ["potential", "growth", "development", "achievement", "success"],
+          "revenue_impact": "Very High - personal transformation is priceless",
+          "pricing_potential": "Premium pricing for life-changing outcomes"
+        },
+        {
+          "name": "Motivation",
+          "definition": "Inspires consumers to take action or pursue goals",
+          "indicators": ["motivate", "inspire", "encourage", "empower", "drive"],
+          "revenue_impact": "High - motivation drives engagement and results",
+          "pricing_potential": "Coaching and motivation premium pricing"
+        },
+        {
+          "name": "Heirloom",
+          "definition": "Creates lasting value that can be passed down",
+          "indicators": ["lasting", "durable", "quality", "investment", "legacy"],
+          "revenue_impact": "High - long-term value justifies premium pricing",
+          "pricing_potential": "Investment-grade pricing for quality"
+        },
+        {
+          "name": "Affiliation/Belonging",
+          "definition": "Fosters a sense of connection to a group or community",
+          "indicators": ["community", "belong", "family", "group", "team"],
+          "revenue_impact": "High - belonging drives loyalty and advocacy",
+          "pricing_potential": "Community membership and social pricing"
+        }
+      ]
+    }
+  },
+  "analysis_criteria": {
+    "identification_keywords": ["value", "benefit", "advantage", "feature", "help", "enable", "provide"],
+    "scoring_factors": ["clarity", "evidence", "uniqueness", "revenue_potential"],
+    "revenue_indicators": ["premium", "pricing", "ROI", "value", "worth", "investment"]
+  },
+  "revenue_opportunities": {
+    "premium_pricing": ["Badge Value", "Self-Actualization", "Makes Money", "Reduces Risk"],
+    "subscription_models": ["Organizes", "Integrates", "Connects", "Provides Access"],
+    "volume_pricing": ["Reduces Cost", "Variety", "Simplifies"],
+    "emotional_premium": ["Fun/Entertainment", "Therapeutic Value", "Nostalgia", "Wellness"]
+  },
+  "analysis_methodology": {
+    "identification_process": [
+      "Scan all content for value element indicators",
+      "Look for explicit mentions and implicit expressions",
+      "Identify synonyms and variations using AI understanding",
+      "Score each element based on evidence strength",
+      "Assess revenue potential for each identified element"
+    ],
+    "scoring_criteria": {
+      "explicit_mention": 40,
+      "strong_evidence": 30,
+      "implicit_expression": 20,
+      "context_clue": 10
+    },
+    "revenue_potential_assessment": {
+      "very_high": "Direct financial benefit or status enhancement",
+      "high": "Significant convenience or emotional value",
+      "medium": "Moderate improvement in experience",
+      "low": "Minor enhancement or basic functionality"
+    }
+  }
+}
