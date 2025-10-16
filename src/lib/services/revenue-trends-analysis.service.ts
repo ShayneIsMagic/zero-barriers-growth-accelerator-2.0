@@ -3,8 +3,8 @@
  * Identifies underserved market demand and emerging revenue opportunities
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { scrapeWebsiteContent } from '@/lib/reliable-content-scraper';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export interface RevenueTrendsResult {
   success: boolean;
@@ -110,7 +110,7 @@ export class RevenueTrendsAnalysisService {
    */
   private static extractCoreKeywords(scrapedData: any): string[] {
     const keywords: string[] = [];
-    
+
     // Extract from title
     if (scrapedData.title) {
       const titleWords = scrapedData.title.toLowerCase()

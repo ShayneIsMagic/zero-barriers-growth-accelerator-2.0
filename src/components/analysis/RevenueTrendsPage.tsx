@@ -5,13 +5,13 @@
 
 'use client';
 
-import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Loader2, Target, TrendingUp, DollarSign, Users, Clock, BarChart3 } from 'lucide-react';
+import { BarChart3, DollarSign, Loader2, Target, TrendingUp, Users } from 'lucide-react';
+import { useState } from 'react';
 
 interface RevenueOpportunity {
   content_title: string;
@@ -172,8 +172,8 @@ export function RevenueTrendsPage() {
                   className="mt-1"
                 />
               </div>
-              <Button 
-                onClick={handleAnalyze} 
+              <Button
+                onClick={handleAnalyze}
                 disabled={isAnalyzing || !url.trim()}
                 className="w-full"
               >
@@ -219,8 +219,8 @@ export function RevenueTrendsPage() {
                     {result.market_opportunity_score}%
                   </div>
                   <p className="text-lg text-gray-600 dark:text-gray-400">
-                    {result.underserved_demand_identified 
-                      ? 'Underserved demand identified!' 
+                    {result.underserved_demand_identified
+                      ? 'Underserved demand identified!'
                       : 'Market analysis complete'
                     }
                   </p>
@@ -247,7 +247,7 @@ export function RevenueTrendsPage() {
                       <strong>Market Size:</strong> {result.revenue_opportunity_brief.market_size_estimate}
                     </p>
                   </div>
-                  
+
                   <div className="flex space-x-4">
                     <Badge className={getCompetitionBadgeColor(result.revenue_opportunity_brief.competition_level)}>
                       Competition: {result.revenue_opportunity_brief.competition_level}
@@ -354,7 +354,7 @@ export function RevenueTrendsPage() {
                     <h4 className="text-lg font-semibold mb-2">Primary Focus</h4>
                     <p className="text-gray-600 dark:text-gray-400">{result.content_strategy.primary_focus}</p>
                   </div>
-                  
+
                   <div>
                     <h4 className="text-lg font-semibold mb-2">Secondary Opportunities</h4>
                     <div className="flex flex-wrap gap-2">
@@ -418,7 +418,7 @@ export function RevenueTrendsPage() {
                       ))}
                     </div>
                   </div>
-                  
+
                   <div>
                     <h4 className="text-lg font-semibold mb-3">Content Gaps</h4>
                     <div className="flex flex-wrap gap-2">
@@ -429,7 +429,7 @@ export function RevenueTrendsPage() {
                       ))}
                     </div>
                   </div>
-                  
+
                   <div>
                     <h4 className="text-lg font-semibold mb-3">Differentiation Opportunities</h4>
                     <div className="flex flex-wrap gap-2">
@@ -440,7 +440,7 @@ export function RevenueTrendsPage() {
                       ))}
                     </div>
                   </div>
-                  
+
                   <div>
                     <h4 className="text-lg font-semibold mb-3">Pricing Opportunities</h4>
                     <div className="flex flex-wrap gap-2">

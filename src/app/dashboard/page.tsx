@@ -91,6 +91,24 @@ export default function DashboardPage() {
       estimatedTime: '2-3 minutes',
       complexity: 'Advanced',
       prerequisites: 'None - just enter your website URL'
+    },
+    {
+      id: 'google-tools',
+      name: 'Google Tools Analysis',
+      status: 'ready',
+      description: 'Access Google Tools directly and analyze data using AI-powered insights - no APIs needed',
+      icon: BarChart3,
+      route: '/dashboard/google-tools',
+      whatYouGet: [
+        'Direct links to Google Trends, Analytics, Search Console, PageSpeed',
+        'PTCF framework prompts for each tool',
+        'Manual data input and AI analysis',
+        'Revenue-focused insights and recommendations',
+        'No API setup required - just paste data'
+      ],
+      estimatedTime: '5-10 minutes',
+      complexity: 'Beginner',
+      prerequisites: 'None - just enter your website URL and paste data'
     }
   ];
 
