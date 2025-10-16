@@ -115,6 +115,36 @@ export class RevenueFocusedElementsOfValueService {
   }
 
   /**
+   * Analyze website using pre-scraped content
+   */
+  static async analyzeWithScrapedContent(url: string, scrapedData: any): Promise<RevenueElementsOfValueResult> {
+    try {
+      console.log(`💰 Starting Revenue-Focused Elements of Value analysis with scraped content for: ${url}`);
+
+      // Run revenue-focused AI analysis with provided scraped data
+      console.log('🤖 Running Revenue-Focused Elements of Value AI analysis...');
+      const analysisResult = await this.runRevenueElementsOfValueAnalysis(scrapedData, url);
+
+      console.log(`✅ Revenue-Focused Elements of Value analysis completed for: ${url}`);
+
+      return {
+        success: true,
+        url,
+        data: analysisResult
+      };
+
+    } catch (error) {
+      console.error('Revenue-Focused Elements of Value analysis failed:', error);
+      return {
+        success: false,
+        url,
+        data: {} as any,
+        error: error instanceof Error ? error.message : 'Analysis failed'
+      };
+    }
+  }
+
+  /**
    * Run revenue-focused Elements of Value analysis using Gemini AI
    */
   private static async runRevenueElementsOfValueAnalysis(scrapedData: any, url: string): Promise<any> {

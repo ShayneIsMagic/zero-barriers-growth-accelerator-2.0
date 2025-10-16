@@ -5,13 +5,13 @@
 
 'use client';
 
-import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Loader2, BarChart3, DollarSign, Target, TrendingUp } from 'lucide-react';
+import { BarChart3, DollarSign, Loader2, Target, TrendingUp } from 'lucide-react';
+import { useState } from 'react';
 
 interface B2BValueElement {
   element: string;
@@ -140,8 +140,8 @@ export function StandaloneElementsOfValueB2BPage() {
                   className="mt-1"
                 />
               </div>
-              <Button 
-                onClick={handleAnalyze} 
+              <Button
+                onClick={handleAnalyze}
                 disabled={isAnalyzing || !url.trim()}
                 className="w-full"
               >

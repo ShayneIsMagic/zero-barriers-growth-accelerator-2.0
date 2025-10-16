@@ -5,13 +5,13 @@
 
 'use client';
 
-import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Loader2, Users, DollarSign, Target, TrendingUp } from 'lucide-react';
+import { DollarSign, Loader2, Target, TrendingUp, Users } from 'lucide-react';
+import { useState } from 'react';
 
 interface B2CValueElement {
   element: string;
@@ -43,13 +43,53 @@ interface B2CAnalysisData {
 
 export function StandaloneElementsOfValueB2CPage() {
   const [url, setUrl] = useState('');
+  const [isScraping, setIsScraping] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [scrapedContent, setScrapedContent] = useState<any>(null);
   const [result, setResult] = useState<B2CAnalysisData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleAnalyze = async () => {
+  const handleScrapeContent = async () => {
     if (!url.trim()) {
       setError('Please enter a website URL');
+      return;
+    }
+
+    setIsScraping(true);
+    setError(null);
+    setScrapedContent(null);
+    setResult(null);
+
+    try {
+      const response = await fetch('/api/scrape-content', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: url.trim() }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Content scraping failed');
+      }
+
+      if (data.success) {
+        setScrapedContent(data.data);
+      } else {
+        throw new Error(data.error || 'Content scraping failed');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Content scraping failed');
+    } finally {
+      setIsScraping(false);
+    }
+  };
+
+  const handleAnalyze = async () => {
+    if (!scrapedContent) {
+      setError('Please scrape content first');
       return;
     }
 
@@ -63,7 +103,10 @@ export function StandaloneElementsOfValueB2CPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ url: url.trim() }),
+        body: JSON.stringify({ 
+          url: url.trim(),
+          scrapedContent: scrapedContent 
+        }),
       });
 
       const data = await response.json();
@@ -139,23 +182,44 @@ export function StandaloneElementsOfValueB2CPage() {
                   className="mt-1"
                 />
               </div>
-              <Button 
-                onClick={handleAnalyze} 
-                disabled={isAnalyzing || !url.trim()}
-                className="w-full"
-              >
-                {isAnalyzing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Analyzing B2C Value Elements...
-                  </>
-                ) : (
-                  <>
-                    <Target className="mr-2 h-4 w-4" />
-                    Analyze B2C Value Elements
-                  </>
-                )}
-              </Button>
+              <div className="space-y-3">
+                <Button
+                  onClick={handleScrapeContent}
+                  disabled={isScraping || !url.trim()}
+                  className="w-full"
+                >
+                  {isScraping ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Scraping Website Content...
+                    </>
+                  ) : (
+                    <>
+                      <Target className="mr-2 h-4 w-4" />
+                      Step 1: Scrape Content
+                    </>
+                  )}
+                </Button>
+                
+                <Button
+                  onClick={handleAnalyze}
+                  disabled={isAnalyzing || !scrapedContent}
+                  className="w-full"
+                  variant="outline"
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Analyzing B2C Value Elements...
+                    </>
+                  ) : (
+                    <>
+                      <Users className="mr-2 h-4 w-4" />
+                      Step 2: Analyze B2C Value Elements
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -165,6 +229,49 @@ export function StandaloneElementsOfValueB2CPage() {
           <Card className="mb-8 border-red-200 bg-red-50 dark:bg-red-900/10">
             <CardContent className="pt-6">
               <p className="text-red-600 dark:text-red-400">{error}</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Scraped Content Preview */}
+        {scrapedContent && (
+          <Card className="mb-8 border-blue-200 bg-blue-50 dark:bg-blue-900/10">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Target className="mr-2 h-6 w-6 text-blue-600" />
+                Scraped Content Preview
+              </CardTitle>
+              <CardDescription>
+                Content successfully scraped from {url}. Review the data before analysis.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-semibold mb-2">Title:</h4>
+                  <p className="text-gray-700 dark:text-gray-300">{scrapedContent.title}</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-2">Meta Description:</h4>
+                  <p className="text-gray-700 dark:text-gray-300">{scrapedContent.metaDescription}</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-2">Content Preview:</h4>
+                  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border max-h-40 overflow-y-auto">
+                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                      {scrapedContent.cleanText.substring(0, 500)}...
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-2">Headings Found:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {scrapedContent.headings?.slice(0, 10).map((heading: string, index: number) => (
+                      <Badge key={index} variant="outline">{heading}</Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         )}
