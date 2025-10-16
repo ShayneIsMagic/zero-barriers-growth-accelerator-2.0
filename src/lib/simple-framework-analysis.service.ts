@@ -20,7 +20,7 @@ export class SimpleFrameworkAnalysisService {
     try {
       const prompt = this.buildGoldenCirclePrompt(scrapedData, url);
       const result = await analyzeWithGemini(prompt, 'golden-circle');
-      
+
       return {
         success: true,
         url,
@@ -43,7 +43,7 @@ export class SimpleFrameworkAnalysisService {
     try {
       const prompt = this.buildB2CElementsPrompt(scrapedData, url);
       const result = await analyzeWithGemini(prompt, 'elements-value-b2c');
-      
+
       return {
         success: true,
         url,
@@ -66,7 +66,7 @@ export class SimpleFrameworkAnalysisService {
     try {
       const prompt = this.buildB2BElementsPrompt(scrapedData, url);
       const result = await analyzeWithGemini(prompt, 'elements-value-b2b');
-      
+
       return {
         success: true,
         url,
@@ -89,7 +89,7 @@ export class SimpleFrameworkAnalysisService {
     try {
       const prompt = this.buildCliftonStrengthsPrompt(scrapedData, url);
       const result = await analyzeWithGemini(prompt, 'clifton-strengths');
-      
+
       return {
         success: true,
         url,

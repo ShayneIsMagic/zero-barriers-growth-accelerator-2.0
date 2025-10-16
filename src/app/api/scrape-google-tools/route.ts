@@ -2,7 +2,6 @@
  * API endpoint to scrape Google Tools data using Puppeteer
  */
 
-import { MockGoogleToolsService } from '@/lib/services/mock-google-tools.service';
 import { PuppeteerGoogleToolsService } from '@/lib/services/puppeteer-google-tools.service';
 import { RealGoogleToolsScraperService } from '@/lib/services/real-google-tools-scraper.service';
 import { NextRequest, NextResponse } from 'next/server';
@@ -42,13 +41,9 @@ export async function POST(request: NextRequest) {
         dataSource = 'real-alternative';
         console.log('✅ Alternative real scraping successful');
       } catch (realError) {
-        console.log('⚠️ All real scraping failed, falling back to mock data...');
+        console.log('❌ All real scraping failed - no fallback to mock data allowed');
         console.log('Real scraping error:', realError);
-
-        // Only fallback to mock data as last resort
-        scrapedData = MockGoogleToolsService.generateAllGoogleToolsData(url, keywords);
-        dataSource = 'mock-fallback';
-        console.log('✅ Mock data fallback successful');
+        throw new Error(`Real Google Tools scraping failed: ${realError instanceof Error ? realError.message : 'Unknown error'}`);
       }
     }
 
@@ -70,7 +65,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : 'Google Tools data extraction failed',
-      details: 'Both Puppeteer and mock data generation failed'
+      details: 'Real scraping failed - no mock data fallback available'
     }, { status: 500 });
   } finally {
     // Clean up browser instance if it was used
