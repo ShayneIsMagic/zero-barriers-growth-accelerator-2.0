@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { GoogleToolsDirectService } from '@/lib/services/google-tools-direct.service';
-import { BarChart3, CheckCircle, Copy, ExternalLink, Search, TrendingUp, Zap } from 'lucide-react';
+import { BarChart3, CheckCircle, Copy, ExternalLink, RefreshCw, Search, TrendingUp, X, Zap } from 'lucide-react';
 import { useState } from 'react';
 
 interface GoogleToolLink {
@@ -30,6 +30,19 @@ export function GoogleToolsPage() {
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [copiedTool, setCopiedTool] = useState<string | null>(null);
 
+  // Clear previous searches when URL changes
+  const handleUrlChange = (newUrl: string) => {
+    setUrl(newUrl);
+    // Clear previous data when URL changes
+    if (newUrl !== url) {
+      setToolLinks([]);
+      setSelectedTool(null);
+      setManualData('');
+      setAnalysisResult(null);
+      setCopiedTool(null);
+    }
+  };
+
   const handleGenerateLinks = () => {
     if (!url.trim()) return;
 
@@ -42,6 +55,16 @@ export function GoogleToolsPage() {
     navigator.clipboard.writeText(url);
     setCopiedTool(toolName);
     setTimeout(() => setCopiedTool(null), 2000);
+  };
+
+  const handleClearAll = () => {
+    setUrl('');
+    setKeywords('');
+    setToolLinks([]);
+    setSelectedTool(null);
+    setManualData('');
+    setAnalysisResult(null);
+    setCopiedTool(null);
   };
 
   const handleAnalyzeData = async () => {
@@ -74,6 +97,8 @@ ${prompt.format}`;
       case 'PageSpeed Insights': return <Zap className="h-6 w-6" />;
       case 'Google Search Console': return <Search className="h-6 w-6" />;
       case 'Google Analytics': return <BarChart3 className="h-6 w-6" />;
+      case 'Lighthouse Audit': return <Zap className="h-6 w-6" />;
+      case 'GTmetrix Analysis': return <BarChart3 className="h-6 w-6" />;
       default: return <ExternalLink className="h-6 w-6" />;
     }
   };
@@ -111,7 +136,7 @@ ${prompt.format}`;
                   type="url"
                   placeholder="https://example.com"
                   value={url}
-                  onChange={(e) => setUrl(e.target.value)}
+                  onChange={(e) => handleUrlChange(e.target.value)}
                   className="mt-1"
                 />
               </div>
@@ -126,13 +151,24 @@ ${prompt.format}`;
                   className="mt-1"
                 />
               </div>
-              <Button
-                onClick={handleGenerateLinks}
-                disabled={!url.trim()}
-                className="w-full"
-              >
-                Generate Google Tools Links
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleGenerateLinks}
+                  disabled={!url.trim()}
+                  className="flex-1"
+                >
+                  <Search className="mr-2 h-4 w-4" />
+                  Generate Google Tools Links
+                </Button>
+                <Button
+                  onClick={handleClearAll}
+                  variant="outline"
+                  disabled={!url.trim() && !keywords.trim() && toolLinks.length === 0}
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  Clear All
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -141,13 +177,25 @@ ${prompt.format}`;
         {toolLinks.length > 0 && (
           <Card className="mb-8">
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <CheckCircle className="mr-2 h-6 w-6 text-green-600" />
-                Google Tools Access
-              </CardTitle>
-              <CardDescription>
-                Click on any tool to open it in a new tab, or copy the link to share
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <CheckCircle className="mr-2 h-6 w-6 text-green-600" />
+                  <div>
+                    <CardTitle>Google Tools Access</CardTitle>
+                    <CardDescription>
+                      Click on any tool to open it in a new tab, or copy the link to share
+                    </CardDescription>
+                  </div>
+                </div>
+                <Button
+                  onClick={handleGenerateLinks}
+                  variant="outline"
+                  size="sm"
+                >
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Refresh Links
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2">

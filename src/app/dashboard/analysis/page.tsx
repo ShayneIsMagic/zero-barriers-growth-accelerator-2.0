@@ -1,22 +1,21 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Target, 
-  BarChart3, 
-  Users, 
-  Building2, 
-  FileText, 
-  Download,
-  Loader2,
-  CheckCircle,
-  AlertCircle
-} from 'lucide-react';
 import GoldenCircleAssessment from '@/components/assessments/GoldenCircleAssessment';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+    AlertCircle,
+    BarChart3,
+    Building2,
+    CheckCircle,
+    Download,
+    FileText,
+    Loader2,
+    Target,
+    Users
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface AnalysisData {
   url: string;
@@ -77,7 +76,7 @@ export default function AnalysisPage() {
           url,
           content: data.data
         }));
-        
+
         // Save to localStorage
         const newData = { url, content: data.data };
         localStorage.setItem('analysisData', JSON.stringify(newData));
@@ -116,7 +115,7 @@ export default function AnalysisPage() {
           ...prev,
           ...data.data
         }));
-        
+
         // Save to localStorage
         localStorage.setItem('analysisData', JSON.stringify(data.data));
       } else {
@@ -158,7 +157,7 @@ export default function AnalysisPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       <div className="container mx-auto py-8 px-4">
-        
+
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -189,8 +188,8 @@ export default function AnalysisPage() {
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 aria-label="Enter website URL for analysis"
               />
-              <Button 
-                onClick={runPhase1} 
+              <Button
+                onClick={runPhase1}
                 disabled={isLoading || !url}
                 className="px-6"
               >
@@ -282,9 +281,9 @@ export default function AnalysisPage() {
             </TabsList>
 
             <TabsContent value="golden-circle" className="mt-6">
-              <GoldenCircleAssessment 
-                url={url} 
-                content={content} 
+              <GoldenCircleAssessment
+                url={url}
+                content={content}
                 onComplete={(data) => {
                   setAnalysisData(prev => ({
                     ...prev,
@@ -354,8 +353,8 @@ export default function AnalysisPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <Button 
-                    onClick={runComprehensiveAnalysis} 
+                  <Button
+                    onClick={runComprehensiveAnalysis}
                     disabled={isLoading}
                     className="w-full"
                   >
@@ -371,7 +370,7 @@ export default function AnalysisPage() {
                       </>
                     )}
                   </Button>
-                  
+
                   {analysisData?.comprehensive && (
                     <div className="space-y-4">
                       <div className="p-4 bg-green-50 border border-green-200 rounded">
@@ -380,7 +379,7 @@ export default function AnalysisPage() {
                           Overall Score: {analysisData.comprehensive.overallScore}/10
                         </p>
                       </div>
-                      
+
                       <Button onClick={downloadReport} className="w-full">
                         <Download className="mr-2 h-4 w-4" />
                         Download Report

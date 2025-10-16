@@ -24,31 +24,44 @@ export class GoogleToolsDirectService {
    */
   static getToolLinks(url: string, keywords: string[] = []): GoogleToolLink[] {
     const domain = this.extractDomain(url);
+    const cleanUrl = this.cleanUrl(url);
     const keywordString = keywords.length > 0 ? keywords.join(',') : this.extractKeywordsFromUrl(url);
 
     return [
       {
         name: 'Google Trends',
-        url: `https://trends.google.com/trends/explore?q=${encodeURIComponent(keywordString)}`,
-        description: 'Analyze search trends and related queries for market opportunities',
+        url: `https://trends.google.com/trends/explore?q=${encodeURIComponent(keywordString)}&geo=US&date=today%2012-m`,
+        description: `Analyze search trends for: ${keywordString}`,
         icon: '📈'
       },
       {
         name: 'PageSpeed Insights',
-        url: `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(url)}`,
-        description: 'Check website performance and Core Web Vitals',
+        url: `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(cleanUrl)}&form_factor=desktop`,
+        description: `Check performance for: ${domain}`,
         icon: '⚡'
       },
       {
         name: 'Google Search Console',
-        url: `https://search.google.com/search-console/performance/search-analytics?resource_id=${encodeURIComponent(`sc-domain:${domain}`)}`,
-        description: 'Analyze search performance and ranking data',
+        url: `https://search.google.com/search-console/performance/search-analytics?resource_id=${encodeURIComponent(`sc-domain:${domain}`)}&start_date=2024-01-01&end_date=2024-12-31`,
+        description: `Analyze search performance for: ${domain}`,
         icon: '🔍'
       },
       {
         name: 'Google Analytics',
-        url: `https://analytics.google.com/analytics/web/`,
-        description: 'View website traffic and conversion data',
+        url: `https://analytics.google.com/analytics/web/#/p${this.generateAnalyticsPropertyId(domain)}/reports/intelligenthome`,
+        description: `View analytics for: ${domain}`,
+        icon: '📊'
+      },
+      {
+        name: 'Lighthouse Audit',
+        url: `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(cleanUrl)}&form_factor=desktop`,
+        description: `Run Lighthouse audit for: ${domain}`,
+        icon: '🔦'
+      },
+      {
+        name: 'GTmetrix Analysis',
+        url: `https://gtmetrix.com/analyze.html?url=${encodeURIComponent(cleanUrl)}`,
+        description: `Detailed performance analysis for: ${domain}`,
         icon: '📊'
       }
     ];
@@ -64,6 +77,34 @@ export class GoogleToolsDirectService {
     } catch {
       return url;
     }
+  }
+
+  /**
+   * Clean URL for better compatibility
+   */
+  private static cleanUrl(url: string): string {
+    try {
+      const urlObj = new URL(url);
+      return urlObj.href;
+    } catch {
+      // If URL is invalid, try to fix it
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        return `https://${url}`;
+      }
+      return url;
+    }
+  }
+
+  /**
+   * Generate a mock Analytics property ID for the domain
+   */
+  private static generateAnalyticsPropertyId(domain: string): string {
+    // Generate a consistent property ID based on domain
+    const hash = domain.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+    return Math.abs(hash).toString().padStart(10, '0');
   }
 
   /**
