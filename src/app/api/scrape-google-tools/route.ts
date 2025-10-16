@@ -2,8 +2,8 @@
  * API endpoint to scrape Google Tools data using Puppeteer
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { PuppeteerGoogleToolsService } from '@/lib/services/puppeteer-google-tools.service';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 120; // 2 minutes for Vercel serverless function
 
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     const scrapedData = await PuppeteerGoogleToolsService.scrapeAllGoogleToolsData(url, keywords);
 
     console.log(`✅ Puppeteer Google Tools scraping completed for: ${url}`);
-    
+
     return NextResponse.json({
       success: true,
       url,
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Puppeteer Google Tools scraping failed:', error);
-    
+
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : 'Google Tools scraping failed',

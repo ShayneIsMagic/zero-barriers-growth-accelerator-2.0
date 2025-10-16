@@ -5,26 +5,26 @@
 
 'use client';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
 import { GoogleToolsDirectService } from '@/lib/services/google-tools-direct.service';
-import { 
-  BarChart3, 
-  CheckCircle, 
-  Copy, 
-  ExternalLink, 
-  Loader2, 
-  RefreshCw, 
-  Search, 
-  TrendingUp, 
-  X, 
-  Zap,
-  Bot,
-  Download
+import {
+    BarChart3,
+    Bot,
+    CheckCircle,
+    Copy,
+    Download,
+    ExternalLink,
+    Loader2,
+    RefreshCw,
+    Search,
+    TrendingUp,
+    X,
+    Zap
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -80,7 +80,7 @@ export function AutomatedGoogleToolsPage() {
     setIsScraping(true);
     try {
       const keywordArray = keywords.split(',').map(k => k.trim()).filter(k => k.length > 0);
-      
+
       const response = await fetch('/api/scrape-google-tools', {
         method: 'POST',
         headers: {
@@ -166,7 +166,7 @@ ${prompt.format}`;
 
   const downloadScrapedData = () => {
     if (!scrapedData) return;
-    
+
     const dataStr = JSON.stringify(scrapedData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);

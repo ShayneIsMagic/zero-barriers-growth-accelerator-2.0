@@ -1,17 +1,17 @@
 /**
  * Standalone CliftonStrengths Analysis API
- * Uses Content-Comparison pattern: No database dependencies, direct AI analysis
+ * Follows Content-Comparison pattern: No database dependencies
  */
 
-import { StandaloneCliftonStrengthsService } from '@/lib/services/standalone-clifton-strengths.service';
 import { NextRequest, NextResponse } from 'next/server';
+import { SimpleCliftonStrengthsService } from '@/lib/services/simple-clifton-strengths.service';
 
-export const maxDuration = 60;
+export const maxDuration = 60; // Set max duration for Vercel serverless function
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url } = body;
+    const { url, scrapedContent } = body;
 
     if (!url) {
       return NextResponse.json({
@@ -20,34 +20,30 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    console.log(`🚀 Starting standalone CliftonStrengths analysis for: ${url}`);
-
-    const result = await StandaloneCliftonStrengthsService.analyzeWebsite(url);
-
-    if (!result.success) {
-      console.error('CliftonStrengths analysis failed:', result.error);
+    if (!scrapedContent) {
       return NextResponse.json({
         success: false,
-        error: 'CliftonStrengths analysis failed',
-        details: result.error
-      }, { status: 500 });
+        error: 'Scraped content is required'
+      }, { status: 400 });
     }
 
-    console.log(`✅ CliftonStrengths analysis completed for: ${url}`);
-
-    return NextResponse.json({
-      success: true,
-      url: result.url,
-      data: result.data,
-      message: 'CliftonStrengths analysis completed successfully'
-    });
-
+    console.log(`🎯 Starting CliftonStrengths analysis for: ${url}`);
+    
+    const result = await SimpleCliftonStrengthsService.analyzeWithScrapedContent(url, scrapedContent);
+    
+    if (result.success) {
+      console.log(`✅ CliftonStrengths analysis completed for: ${url}`);
+      return NextResponse.json(result);
+    } else {
+      console.error(`❌ CliftonStrengths analysis failed for: ${url}`, result.error);
+      return NextResponse.json(result, { status: 500 });
+    }
   } catch (error) {
-    console.error('CliftonStrengths API execution error:', error);
+    console.error('CliftonStrengths analysis API error:', error);
     return NextResponse.json({
       success: false,
-      error: 'CliftonStrengths analysis failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? error.message : 'Analysis failed',
+      details: 'CliftonStrengths analysis encountered an error'
     }, { status: 500 });
   }
 }

@@ -110,6 +110,24 @@ export default function DashboardPage() {
       prerequisites: 'None - just enter your website URL'
     },
     {
+      id: 'clifton-strengths-simple',
+      name: 'CliftonStrengths Analysis',
+      status: 'ready',
+      description: 'Discover your organization\'s dominant strengths and cultural patterns using the proven CliftonStrengths framework',
+      icon: Brain,
+      route: '/dashboard/clifton-strengths-simple',
+      whatYouGet: [
+        'Analysis of all 34 CliftonStrengths themes',
+        'Top 5 dominant themes identification',
+        'Domain scoring (Strategic Thinking, Executing, Influencing, Relationship Building)',
+        'Evidence-based theme manifestations',
+        'Actionable recommendations for leveraging strengths'
+      ],
+      estimatedTime: '2-3 minutes',
+      complexity: 'Beginner',
+      prerequisites: 'None - just enter your website URL'
+    },
+    {
       id: 'revenue-golden-circle',
       name: 'Revenue-Focused Golden Circle',
       status: 'ready',

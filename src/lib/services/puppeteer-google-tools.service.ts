@@ -145,18 +145,18 @@ export class PuppeteerGoogleToolsService {
   static async scrapeTrendsData(keywords: string[]): Promise<GoogleTrendsData> {
     const browser = await this.getBrowser();
     const page = await browser.newPage();
-    
+
     try {
       const keywordString = keywords.join(',');
       const trendsUrl = `https://trends.google.com/trends/explore?q=${encodeURIComponent(keywordString)}&geo=US&date=today%2012-m`;
-      
+
       await page.goto(trendsUrl, { waitUntil: 'networkidle2' });
       await page.waitForTimeout(3000); // Wait for data to load
 
       // Extract related queries
       const relatedQueries = await page.evaluate(() => {
         const queries: Array<{ query: string; value: number; type: 'rising' | 'top' }> = [];
-        
+
         // Try to find related queries in various possible selectors
         const queryElements = document.querySelectorAll('[data-entityname], .related-queries-item, .trends-related-queries-item');
         queryElements.forEach((element) => {
@@ -169,14 +169,14 @@ export class PuppeteerGoogleToolsService {
             });
           }
         });
-        
+
         return queries.slice(0, 10); // Limit to top 10
       });
 
       // Extract related topics
       const relatedTopics = await page.evaluate(() => {
         const topics: Array<{ topic: string; value: number; type: 'rising' | 'top' }> = [];
-        
+
         const topicElements = document.querySelectorAll('[data-entityname], .related-topics-item, .trends-related-topics-item');
         topicElements.forEach((element) => {
           const text = element.textContent?.trim();
@@ -188,7 +188,7 @@ export class PuppeteerGoogleToolsService {
             });
           }
         });
-        
+
         return topics.slice(0, 10);
       });
 
@@ -209,7 +209,7 @@ export class PuppeteerGoogleToolsService {
   static async scrapePageSpeedData(url: string): Promise<PageSpeedData> {
     const browser = await this.getBrowser();
     const page = await browser.newPage();
-    
+
     try {
       const pageSpeedUrl = `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(url)}&form_factor=desktop`;
       await page.goto(pageSpeedUrl, { waitUntil: 'networkidle2' });
@@ -247,7 +247,7 @@ export class PuppeteerGoogleToolsService {
           const description = element.querySelector('p')?.textContent?.trim() || '';
           const impact = element.querySelector('[data-testid="impact"]')?.textContent?.trim() || '';
           const savings = element.querySelector('[data-testid="savings"]')?.textContent?.trim() || '';
-          
+
           if (title) {
             opportunities.push({ title, description, impact, savings });
           }
@@ -260,7 +260,7 @@ export class PuppeteerGoogleToolsService {
           const title = element.querySelector('h3')?.textContent?.trim() || '';
           const description = element.querySelector('p')?.textContent?.trim() || '';
           const impact = element.querySelector('[data-testid="impact"]')?.textContent?.trim() || '';
-          
+
           if (title) {
             diagnostics.push({ title, description, impact });
           }
@@ -289,11 +289,11 @@ export class PuppeteerGoogleToolsService {
   static async scrapeSearchConsoleData(domain: string): Promise<SearchConsoleData> {
     const browser = await this.getBrowser();
     const page = await browser.newPage();
-    
+
     try {
       const searchConsoleUrl = `https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain:${domain}&start_date=2024-01-01&end_date=2024-12-31`;
       await page.goto(searchConsoleUrl, { waitUntil: 'networkidle2' });
-      
+
       // Note: This would require authentication in a real implementation
       // For now, return mock data structure
       return {
@@ -313,11 +313,11 @@ export class PuppeteerGoogleToolsService {
   static async scrapeAnalyticsData(domain: string): Promise<AnalyticsData> {
     const browser = await this.getBrowser();
     const page = await browser.newPage();
-    
+
     try {
       const analyticsUrl = `https://analytics.google.com/analytics/web/#/p${this.generatePropertyId(domain)}/reports/intelligenthome`;
       await page.goto(analyticsUrl, { waitUntil: 'networkidle2' });
-      
+
       // Note: This would require authentication in a real implementation
       // For now, return mock data structure
       return {
