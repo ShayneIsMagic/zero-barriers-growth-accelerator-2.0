@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     BarChart3,
+    Bot,
     Brain,
     CheckCircle,
     Clock,
@@ -72,6 +73,24 @@ export default function DashboardPage() {
       estimatedTime: '5-10 minutes',
       complexity: 'Beginner',
       prerequisites: 'None - just enter your website URL and paste data'
+    },
+    {
+      id: 'automated-google-tools',
+      name: 'Automated Google Tools Analysis',
+      status: 'ready',
+      description: 'Automatically scrape Google Tools data using Puppeteer and get AI analysis - fully automated!',
+      icon: Bot,
+      route: '/dashboard/automated-google-tools',
+      whatYouGet: [
+        'Automated data extraction from Google Trends, PageSpeed, Search Console',
+        'Direct tool links + automated scraping in one place',
+        'AI-powered analysis of scraped data',
+        'Download scraped data as JSON',
+        'No manual data entry required'
+      ],
+      estimatedTime: '3-5 minutes',
+      complexity: 'Intermediate',
+      prerequisites: 'None - just enter your website URL and keywords'
     },
     {
       id: 'content-comparison',
