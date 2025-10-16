@@ -22,6 +22,58 @@ export default function DashboardPage() {
 
   const workingAssessments = [
     {
+      id: 'value-centric-b2c',
+      name: 'Value-Centric Analysis (B2C)',
+      status: 'ready',
+      description: 'Analyze your website using B2C Elements of Value framework - perfect for consumer-focused businesses',
+      icon: Users,
+      route: '/dashboard/elements-value-b2c',
+      whatYouGet: [
+        '30 B2C Elements of Value analysis',
+        'Revenue opportunity identification',
+        'Premium pricing strategy recommendations',
+        'Customer satisfaction optimization insights'
+      ],
+      estimatedTime: '2-3 minutes',
+      complexity: 'Beginner',
+      prerequisites: 'None - just enter your website URL'
+    },
+    {
+      id: 'value-centric-b2b',
+      name: 'Value-Centric Analysis (B2B)',
+      status: 'ready',
+      description: 'Analyze your website using B2B Elements of Value framework - perfect for enterprise and B2B businesses',
+      icon: BarChart3,
+      route: '/dashboard/elements-value-b2b',
+      whatYouGet: [
+        '40 B2B Elements of Value analysis',
+        'Enterprise value proposition optimization',
+        'Sales enablement recommendations',
+        'Customer retention strategy insights'
+      ],
+      estimatedTime: '2-3 minutes',
+      complexity: 'Beginner',
+      prerequisites: 'None - just enter your website URL'
+    },
+    {
+      id: 'google-tools',
+      name: 'Google Tools Analysis',
+      status: 'ready',
+      description: 'Access Google Tools directly and analyze data using AI-powered insights - no APIs needed',
+      icon: TrendingUp,
+      route: '/dashboard/google-tools',
+      whatYouGet: [
+        'Direct links to Google Trends, Analytics, Search Console, PageSpeed',
+        'PTCF framework prompts for each tool',
+        'Manual data input and AI analysis',
+        'Revenue-focused insights and recommendations',
+        'No API setup required - just paste data'
+      ],
+      estimatedTime: '5-10 minutes',
+      complexity: 'Beginner',
+      prerequisites: 'None - just enter your website URL and paste data'
+    },
+    {
       id: 'content-comparison',
       name: 'Content Comparison Analysis',
       status: 'ready',
@@ -33,23 +85,6 @@ export default function DashboardPage() {
         'AI-powered content optimization recommendations',
         'Content gap identification and improvement suggestions',
         'Performance impact analysis for content changes'
-      ],
-      estimatedTime: '2-3 minutes',
-      complexity: 'Beginner',
-      prerequisites: 'None - just enter your website URL'
-    },
-    {
-      id: 'website-analysis',
-      name: 'Website Analysis',
-      status: 'ready',
-      description: 'Complete AI-powered business framework analysis - perfect for understanding your website\'s strategic positioning and value proposition',
-      icon: Brain,
-      route: '/dashboard/website-analysis',
-      whatYouGet: [
-        'Golden Circle Analysis - Your WHY, HOW, WHAT, and WHO',
-        'Elements of Value Assessment - 30 B2C + 40 B2B value elements',
-        'CliftonStrengths Analysis - 34 themes of organizational excellence',
-        'Actionable recommendations with evidence'
       ],
       estimatedTime: '2-3 minutes',
       complexity: 'Beginner',

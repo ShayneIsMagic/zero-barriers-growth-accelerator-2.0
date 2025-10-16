@@ -4,8 +4,8 @@
  * Implements the hybrid approach: Option 1 (direct tools) + Option 2 (scraping)
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { scrapeWebsiteContent } from '@/lib/reliable-content-scraper';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export interface ComprehensiveAnalysisResult {
   success: boolean;
@@ -21,7 +21,7 @@ export interface ComprehensiveAnalysisResult {
       gtmetrix_link: string;
       webpage_test_link: string;
     };
-    
+
     // Scraped Content Analysis (Option 2)
     content_analysis: {
       golden_circle: any;
@@ -29,7 +29,7 @@ export interface ComprehensiveAnalysisResult {
       elements_value_b2b: any;
       clifton_strengths: any;
     };
-    
+
     // Combined Report
     comprehensive_report: {
       quick_wins: Array<{
@@ -163,16 +163,16 @@ export class ComprehensiveAnalysisService {
    */
   private static async runGoldenCircleAnalysis(scrapedData: any, url: string, model: any): Promise<any> {
     const persona = `You are a Senior Business Model Architect and Revenue Growth Strategist. Your expertise is in identifying core business drivers and translating them into specific, high-impact revenue opportunities.`;
-    
+
     const task = `Analyze the provided website content to identify the client's Golden Circle (Why, How, What, Who). For each component, assess current strengths, identify revenue opportunities, and calculate potential ROI.`;
-    
+
     const context = `WEBSITE CONTENT TO ANALYZE:
 URL: ${url}
 Title: ${scrapedData.title}
 Meta Description: ${scrapedData.metaDescription}
 Content: ${scrapedData.cleanText.substring(0, 4000)}
 Headings: ${JSON.stringify(scrapedData.headings)}`;
-    
+
     const format = `Return as JSON with: overall_revenue_potential, market_opportunity_score, revenue_drivers (why, how, what, who), market_opportunities, revenue_recommendations`;
 
     const prompt = `${persona}\n\n${task}\n\n${context}\n\n${format}`;
@@ -192,15 +192,15 @@ Headings: ${JSON.stringify(scrapedData.headings)}`;
    */
   private static async runElementsValueB2CAnalysis(scrapedData: any, url: string, model: any): Promise<any> {
     const persona = `You are a Customer Value Expert specializing in B2C value elements. Your goal is to identify which value elements drive the most revenue and customer satisfaction.`;
-    
+
     const task = `Analyze the website content against the 30 B2C Elements of Value. Identify current strengths, revenue opportunities, and recommendations for each element.`;
-    
+
     const context = `WEBSITE CONTENT TO ANALYZE:
 URL: ${url}
 Title: ${scrapedData.title}
 Content: ${scrapedData.cleanText.substring(0, 4000)}
 Headings: ${JSON.stringify(scrapedData.headings)}`;
-    
+
     const format = `Return as JSON with: overall_score, functional_score, emotional_score, life_changing_score, social_impact_score, revenue_opportunities, recommendations`;
 
     const prompt = `${persona}\n\n${task}\n\n${context}\n\n${format}`;
@@ -220,15 +220,15 @@ Headings: ${JSON.stringify(scrapedData.headings)}`;
    */
   private static async runElementsValueB2BAnalysis(scrapedData: any, url: string, model: any): Promise<any> {
     const persona = `You are a B2B Value Strategy Expert specializing in enterprise value elements. Your goal is to identify which value elements drive the most revenue in B2B contexts.`;
-    
+
     const task = `Analyze the website content against the 40 B2B Elements of Value. Identify current strengths, revenue opportunities, and recommendations for each element.`;
-    
+
     const context = `WEBSITE CONTENT TO ANALYZE:
 URL: ${url}
 Title: ${scrapedData.title}
 Content: ${scrapedData.cleanText.substring(0, 4000)}
 Headings: ${JSON.stringify(scrapedData.headings)}`;
-    
+
     const format = `Return as JSON with: overall_score, table_stakes_score, functional_score, ease_of_doing_business_score, individual_score, inspirational_score, revenue_opportunities, recommendations`;
 
     const prompt = `${persona}\n\n${task}\n\n${context}\n\n${format}`;
@@ -248,15 +248,15 @@ Headings: ${JSON.stringify(scrapedData.headings)}`;
    */
   private static async runCliftonStrengthsAnalysis(scrapedData: any, url: string, model: any): Promise<any> {
     const persona = `You are an Organizational Excellence Expert specializing in CliftonStrengths. Your goal is to identify the organization's core strengths and how they drive business success.`;
-    
+
     const task = `Analyze the website content against the 34 CliftonStrengths themes. Identify the top 5-7 strengths and how they can be leveraged for revenue growth.`;
-    
+
     const context = `WEBSITE CONTENT TO ANALYZE:
 URL: ${url}
 Title: ${scrapedData.title}
 Content: ${scrapedData.cleanText.substring(0, 4000)}
 Headings: ${JSON.stringify(scrapedData.headings)}`;
-    
+
     const format = `Return as JSON with: top_strengths, strength_categories, revenue_opportunities, recommendations`;
 
     const prompt = `${persona}\n\n${task}\n\n${context}\n\n${format}`;
@@ -286,9 +286,9 @@ Headings: ${JSON.stringify(scrapedData.headings)}`;
     const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
 
     const persona = `You are a Senior Growth Strategy Director. Your goal is to synthesize multiple analyses into actionable quick wins and long-term strategies.`;
-    
+
     const task = `Based on the content analysis results, create a comprehensive report with quick wins and long-term wins. Prioritize recommendations by impact and effort.`;
-    
+
     const context = `CONTENT ANALYSIS RESULTS:
 ${JSON.stringify(contentAnalysis, null, 2)}
 
@@ -296,7 +296,7 @@ DIRECT TOOLS AVAILABLE:
 ${JSON.stringify(directTools, null, 2)}
 
 WEBSITE URL: ${url}`;
-    
+
     const format = `Return as JSON with: quick_wins (array of actions with impact, effort, timeline, revenue_potential), long_term_wins (array of strategies with impact, effort, timeline, revenue_potential), overall_score (0-100), priority_recommendations (array of top 3 recommendations)`;
 
     const prompt = `${persona}\n\n${task}\n\n${context}\n\n${format}`;
