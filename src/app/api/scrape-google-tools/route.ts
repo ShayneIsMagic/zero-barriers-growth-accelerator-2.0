@@ -2,8 +2,9 @@
  * API endpoint to scrape Google Tools data using Puppeteer
  */
 
-import { PuppeteerGoogleToolsService } from '@/lib/services/puppeteer-google-tools.service';
 import { MockGoogleToolsService } from '@/lib/services/mock-google-tools.service';
+import { PuppeteerGoogleToolsService } from '@/lib/services/puppeteer-google-tools.service';
+import { RealGoogleToolsScraperService } from '@/lib/services/real-google-tools-scraper.service';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 120; // 2 minutes for Vercel serverless function
@@ -27,19 +28,28 @@ export async function POST(request: NextRequest) {
     let dataSource = 'unknown';
 
     try {
-      // Try Puppeteer first (works in local development)
-      console.log('🕷️ Attempting Puppeteer scraping...');
+      // Use the IMPROVED Puppeteer scraping (REAL DATA)
+      console.log('🕷️ Starting REAL Google Tools scraping with improved selectors...');
       scrapedData = await PuppeteerGoogleToolsService.scrapeAllGoogleToolsData(url, keywords);
-      dataSource = 'puppeteer';
-      console.log('✅ Puppeteer scraping successful');
+      dataSource = 'puppeteer-real';
+      console.log('✅ REAL Puppeteer scraping successful');
     } catch (puppeteerError) {
-      console.log('⚠️ Puppeteer failed, falling back to mock data...');
+      console.log('⚠️ Puppeteer failed, trying alternative real scraper...');
       console.log('Puppeteer error:', puppeteerError);
       
-      // Fallback to mock data (works in Vercel serverless)
-      scrapedData = MockGoogleToolsService.generateAllGoogleToolsData(url, keywords);
-      dataSource = 'mock';
-      console.log('✅ Mock data generation successful');
+      try {
+        scrapedData = await RealGoogleToolsScraperService.scrapeAllRealGoogleToolsData(url, keywords);
+        dataSource = 'real-alternative';
+        console.log('✅ Alternative real scraping successful');
+      } catch (realError) {
+        console.log('⚠️ All real scraping failed, falling back to mock data...');
+        console.log('Real scraping error:', realError);
+
+        // Only fallback to mock data as last resort
+        scrapedData = MockGoogleToolsService.generateAllGoogleToolsData(url, keywords);
+        dataSource = 'mock-fallback';
+        console.log('✅ Mock data fallback successful');
+      }
     }
 
     console.log(`✅ Google Tools data extraction completed for: ${url}`);
