@@ -3,8 +3,8 @@
  * Follows Content-Comparison pattern: Direct AI analysis without database dependencies
  */
 
-import { analyzeWithAI } from '@/lib/free-ai-analysis';
 import { EnhancedAnalysisService } from '@/lib/ai-engines/enhanced-analysis.service';
+import { analyzeWithAI } from '@/lib/free-ai-analysis';
 
 export interface SimpleCliftonStrengthsResult {
   success: boolean;

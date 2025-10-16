@@ -3,8 +3,8 @@
  * Uses enhanced analysis with framework knowledge
  */
 
-import { scrapeWebsiteContent } from '@/lib/reliable-content-scraper';
 import { EnhancedAnalysisService } from '@/lib/ai-engines/enhanced-analysis.service';
+import { scrapeWebsiteContent } from '@/lib/reliable-content-scraper';
 
 export interface B2BAnalysisData {
   overall_value_score: number;
@@ -62,20 +62,20 @@ export class StandaloneElementsValueB2BService {
   static async analyze(url: string): Promise<B2BAnalysisResult> {
     try {
       console.log(`🏢 Starting B2B Elements of Value analysis for: ${url}`);
-      
+
       // Scrape website content
       console.log('🕷️ Scraping website content...');
       const scrapedData = await scrapeWebsiteContent(url);
-      
+
       if (!scrapedData) {
         throw new Error('Failed to scrape website content');
       }
 
       console.log('✅ Content scraped successfully');
-      
+
       // Analyze with scraped content
       return await this.analyzeWithScrapedContent(url, scrapedData);
-      
+
     } catch (error) {
       console.error('B2B Elements of Value analysis failed:', error);
       return {
