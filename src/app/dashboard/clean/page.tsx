@@ -1,3 +1,8 @@
+/**
+ * Clean Dashboard - Only Working Features
+ * Shows only functional assessments with clear status indicators
+ */
+
 'use client';
 
 import React, { useState } from 'react';
@@ -9,14 +14,11 @@ import {
   CheckCircle, 
   Clock,
   ExternalLink,
-  Zap,
-  Target,
-  BarChart3,
-  Users
+  Zap
 } from 'lucide-react';
 import Link from 'next/link';
 
-export default function DashboardPage() {
+export default function CleanDashboard() {
   const [url, setUrl] = useState('');
 
   const workingAssessments = [
@@ -46,7 +48,7 @@ export default function DashboardPage() {
       status: 'testing',
       description: 'Individual Golden Circle analysis for focused strategic clarity',
       eta: 'Next week',
-      icon: Target
+      icon: Brain
     },
     {
       id: 'elements-of-value',
@@ -54,7 +56,7 @@ export default function DashboardPage() {
       status: 'testing', 
       description: 'Individual B2C and B2B value elements analysis',
       eta: 'Next week',
-      icon: BarChart3
+      icon: Brain
     },
     {
       id: 'clifton-strengths',
@@ -62,23 +64,7 @@ export default function DashboardPage() {
       status: 'testing',
       description: 'Individual CliftonStrengths themes analysis',
       eta: 'Next week',
-      icon: Users
-    },
-    {
-      id: 'lighthouse',
-      name: 'Lighthouse Performance',
-      status: 'testing',
-      description: 'Website performance and SEO analysis',
-      eta: 'Next week',
-      icon: Zap
-    },
-    {
-      id: 'seo',
-      name: 'SEO Analysis',
-      status: 'testing',
-      description: 'Comprehensive SEO audit and recommendations',
-      eta: 'Next week',
-      icon: BarChart3
+      icon: Brain
     }
   ];
 
@@ -95,10 +81,10 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Analysis Dashboard
+            Clean Analysis Dashboard
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            AI-powered business framework analysis. Only working, tested features shown.
+            Only working, tested features. No broken or incomplete assessments.
           </p>
         </div>
 
@@ -106,7 +92,7 @@ export default function DashboardPage() {
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
             <CheckCircle className="mr-2 text-green-500" />
-            Ready to Use
+            Working Features
           </h2>
           
           <div className="grid gap-6">
@@ -196,11 +182,6 @@ export default function DashboardPage() {
                     <CardDescription className="text-sm">
                       {assessment.description}
                     </CardDescription>
-                    <div className="mt-3">
-                      <Button variant="outline" disabled className="w-full">
-                        Coming Soon
-                      </Button>
-                    </div>
                   </CardContent>
                 </Card>
               );
