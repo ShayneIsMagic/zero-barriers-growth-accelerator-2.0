@@ -3,7 +3,7 @@
  * A/B tests prompts between Gemini and Claude to determine which performs better
  */
 
-import { analyzeWithAI } from '@/lib/free-ai-analysis';
+import { analyzeWithGemini, analyzeWithClaude } from '@/lib/free-ai-analysis';
 
 export interface PromptTestResult {
   engine: 'gemini' | 'claude';
@@ -114,7 +114,7 @@ export class PromptTestingService {
       let analysis;
 
       if (engine === 'gemini') {
-        const result = await analyzeWithAI(prompt, 'gemini');
+        const result = await analyzeWithGemini(prompt, 'gemini');
         if (!result.success) {
           throw new Error(result.error || 'Gemini analysis failed');
         }

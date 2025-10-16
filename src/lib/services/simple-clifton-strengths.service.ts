@@ -4,7 +4,7 @@
  */
 
 import { EnhancedAnalysisService } from '@/lib/ai-engines/enhanced-analysis.service';
-import { analyzeWithAI } from '@/lib/free-ai-analysis';
+import { analyzeWithGemini } from '@/lib/free-ai-analysis';
 
 export interface SimpleCliftonStrengthsResult {
   success: boolean;
@@ -84,7 +84,7 @@ export class SimpleCliftonStrengthsService {
   private static async runCliftonStrengthsAnalysis(scrapedData: any, url: string): Promise<any> {
     const prompt = this.buildCliftonStrengthsPrompt(scrapedData, url);
 
-    const aiResponse = await analyzeWithAI(prompt, 'gemini');
+    const aiResponse = await analyzeWithGemini(prompt, 'gemini');
 
     if (!aiResponse.success) {
       throw new Error(aiResponse.error || 'AI analysis failed');
