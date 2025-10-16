@@ -5,15 +5,14 @@
 
 'use client';
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { ExternalLink, Copy, CheckCircle, TrendingUp, Zap, Search, BarChart3 } from 'lucide-react';
 import { GoogleToolsDirectService } from '@/lib/services/google-tools-direct.service';
+import { BarChart3, CheckCircle, Copy, ExternalLink, Search, TrendingUp, Zap } from 'lucide-react';
+import { useState } from 'react';
 
 interface GoogleToolLink {
   name: string;
@@ -33,7 +32,7 @@ export function GoogleToolsPage() {
 
   const handleGenerateLinks = () => {
     if (!url.trim()) return;
-    
+
     const keywordArray = keywords.split(',').map(k => k.trim()).filter(k => k.length > 0);
     const links = GoogleToolsDirectService.getToolLinks(url, keywordArray);
     setToolLinks(links);
@@ -51,7 +50,7 @@ export function GoogleToolsPage() {
     try {
       const prompts = GoogleToolsDirectService.getPTCFPrompts();
       const prompt = prompts[selectedTool];
-      
+
       if (!prompt) return;
 
       const fullPrompt = `${prompt.persona}
@@ -127,8 +126,8 @@ ${prompt.format}`;
                   className="mt-1"
                 />
               </div>
-              <Button 
-                onClick={handleGenerateLinks} 
+              <Button
+                onClick={handleGenerateLinks}
                 disabled={!url.trim()}
                 className="w-full"
               >
@@ -222,7 +221,7 @@ ${prompt.format}`;
                   <option value="pageSpeed">PageSpeed Insights</option>
                 </select>
               </div>
-              
+
               {selectedTool && (
                 <div>
                   <Label htmlFor="manual-data">Paste Data from {selectedTool}</Label>
@@ -236,8 +235,8 @@ ${prompt.format}`;
                 </div>
               )}
 
-              <Button 
-                onClick={handleAnalyzeData} 
+              <Button
+                onClick={handleAnalyzeData}
                 disabled={!selectedTool || !manualData.trim()}
                 className="w-full"
               >

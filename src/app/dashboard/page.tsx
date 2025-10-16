@@ -22,6 +22,23 @@ export default function DashboardPage() {
 
   const workingAssessments = [
     {
+      id: 'content-comparison',
+      name: 'Content Comparison Analysis',
+      status: 'ready',
+      description: 'Compare existing website content against proposed new content. Get AI-powered side-by-side analysis.',
+      icon: Brain,
+      route: '/dashboard/content-comparison',
+      whatYouGet: [
+        'Side-by-side content analysis and comparison',
+        'AI-powered content optimization recommendations',
+        'Content gap identification and improvement suggestions',
+        'Performance impact analysis for content changes'
+      ],
+      estimatedTime: '2-3 minutes',
+      complexity: 'Beginner',
+      prerequisites: 'None - just enter your website URL'
+    },
+    {
       id: 'website-analysis',
       name: 'Website Analysis',
       status: 'ready',
