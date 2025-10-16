@@ -37,16 +37,16 @@ export class FrameworkIntegrationService {
   ): Promise<string> {
     // Load the assessment rules
     const rules = await this.loadAssessmentRules(assessmentType);
-    
+
     // Load the framework knowledge
     const frameworkName = this.getFrameworkName(assessmentType);
     const frameworkKnowledge = await this.loadFrameworkKnowledge(frameworkName);
-    
+
     // Build the enhanced prompt
     const context = this.buildContext(scrapedData, url);
     const frameworkGuidance = this.buildFrameworkGuidance(frameworkKnowledge);
     const analysisInstructions = this.buildAnalysisInstructions(frameworkKnowledge);
-    
+
     return `${rules.persona}
 
 ${rules.task}
@@ -72,7 +72,7 @@ ${rules.format}`;
       'content-comparison': 'content-comparison',
       'google-tools': 'google-tools'
     };
-    
+
     return frameworkMap[assessmentType] || assessmentType;
   }
 
@@ -207,7 +207,7 @@ Description: ${frameworkKnowledge.description}\n`;
   static async getFrameworkElements(assessmentType: string): Promise<any> {
     const frameworkName = this.getFrameworkName(assessmentType);
     const frameworkKnowledge = await this.loadFrameworkKnowledge(frameworkName);
-    
+
     return frameworkKnowledge.structure;
   }
 
@@ -226,7 +226,7 @@ Description: ${frameworkKnowledge.description}\n`;
     const frameworkKnowledge = await this.loadFrameworkKnowledge(
       this.getFrameworkName(assessmentType)
     );
-    
+
     // This would contain validation logic specific to each framework
     // For now, return a basic validation structure
     return {

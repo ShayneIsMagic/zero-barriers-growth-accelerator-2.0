@@ -5,6 +5,7 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { scrapeWebsiteContent } from '@/lib/reliable-content-scraper';
+import { EnhancedAnalysisService } from '@/lib/ai-engines/enhanced-analysis.service';
 
 export interface RevenueElementsOfValueResult {
   success: boolean;
@@ -119,18 +120,28 @@ export class RevenueFocusedElementsOfValueService {
    */
   static async analyzeWithScrapedContent(url: string, scrapedData: any): Promise<RevenueElementsOfValueResult> {
     try {
-      console.log(`💰 Starting Revenue-Focused Elements of Value analysis with scraped content for: ${url}`);
+      console.log(`💰 Starting Revenue-Focused Elements of Value analysis with framework knowledge for: ${url}`);
 
-      // Run revenue-focused AI analysis with provided scraped data
-      console.log('🤖 Running Revenue-Focused Elements of Value AI analysis...');
-      const analysisResult = await this.runRevenueElementsOfValueAnalysis(scrapedData, url);
+      // Use enhanced analysis with framework integration
+      console.log('🧠 Running enhanced analysis with B2C Elements of Value framework...');
+      const enhancedResult = await EnhancedAnalysisService.analyzeWithFramework(
+        'elements-value-b2c',
+        scrapedData,
+        url
+      );
+
+      if (!enhancedResult.success) {
+        throw new Error(enhancedResult.error || 'Enhanced analysis failed');
+      }
 
       console.log(`✅ Revenue-Focused Elements of Value analysis completed for: ${url}`);
+      console.log(`🎯 Framework used: ${enhancedResult.frameworkUsed}`);
+      console.log(`📊 Validation score: ${enhancedResult.validation.score}`);
 
       return {
         success: true,
         url,
-        data: analysisResult
+        data: enhancedResult.analysis
       };
 
     } catch (error) {

@@ -5,21 +5,21 @@
 
 'use client';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Bot, 
-  CheckCircle, 
-  Loader2, 
-  Target, 
-  ExternalLink,
-  Brain,
-  BarChart3,
-  Users,
-  Zap
+import {
+    BarChart3,
+    Bot,
+    Brain,
+    CheckCircle,
+    ExternalLink,
+    Loader2,
+    Target,
+    Users,
+    Zap
 } from 'lucide-react';
 import { useState } from 'react';
 import { ContentPreviewBox } from './ContentPreviewBox';
@@ -314,8 +314,8 @@ export function ClaudeProjectTestPage() {
                   <div className="p-4 border rounded-lg bg-white dark:bg-gray-800">
                     <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Assessment</p>
                     <div className="flex items-center">
-                      {React.createElement(getAssessmentIcon(selectedAssessment), { 
-                        className: `h-5 w-5 text-${getAssessmentColor(selectedAssessment)}-600 mr-2` 
+                      {React.createElement(getAssessmentIcon(selectedAssessment), {
+                        className: `h-5 w-5 text-${getAssessmentColor(selectedAssessment)}-600 mr-2`
                       })}
                       <span className="text-lg font-semibold">
                         {assessmentTypes.find(a => a.id === selectedAssessment)?.name}

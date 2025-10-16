@@ -5,6 +5,7 @@
 
 import { scrapeWebsiteContent } from '@/lib/reliable-content-scraper';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { EnhancedAnalysisService } from '@/lib/ai-engines/enhanced-analysis.service';
 
 export interface GoldenCircleResult {
   success: boolean;
@@ -82,22 +83,38 @@ export class StandaloneGoldenCircleService {
    */
   static async analyzeWebsite(url: string): Promise<GoldenCircleResult> {
     try {
-      console.log(`🔄 Starting Golden Circle analysis for: ${url}`);
+      console.log(`🔄 Starting Golden Circle analysis with framework knowledge for: ${url}`);
 
-      // Step 1: Scrape website content (like Content-Comparison)
+      // Step 1: Scrape website content
       console.log('📊 Step 1: Scraping website content...');
       const scrapedData = await scrapeWebsiteContent(url);
 
-      // Step 2: Run AI analysis (like Content-Comparison)
-      console.log('🤖 Step 2: Running Golden Circle AI analysis...');
-      const analysisResult = await this.runGoldenCircleAnalysis(scrapedData, url);
+      if (!scrapedData) {
+        throw new Error('Failed to scrape website content');
+      }
+
+      console.log('✅ Content scraped successfully');
+
+      // Step 2: Use enhanced analysis with framework integration
+      console.log('🧠 Step 2: Running enhanced Golden Circle analysis with framework knowledge...');
+      const enhancedResult = await EnhancedAnalysisService.analyzeWithFramework(
+        'golden-circle',
+        scrapedData,
+        url
+      );
+
+      if (!enhancedResult.success) {
+        throw new Error(enhancedResult.error || 'Enhanced analysis failed');
+      }
 
       console.log(`✅ Golden Circle analysis completed for: ${url}`);
+      console.log(`🎯 Framework used: ${enhancedResult.frameworkUsed}`);
+      console.log(`📊 Validation score: ${enhancedResult.validation.score}`);
 
       return {
         success: true,
         url,
-        data: analysisResult
+        data: enhancedResult.analysis
       };
 
     } catch (error) {

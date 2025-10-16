@@ -45,7 +45,7 @@ export class EnhancedAnalysisService {
 
       // Run AI analysis
       const aiResponse = await analyzeWithAI(enhancedPrompt, 'gemini');
-      
+
       if (!aiResponse.success) {
         throw new Error(aiResponse.error || 'AI analysis failed');
       }
@@ -110,7 +110,7 @@ export class EnhancedAnalysisService {
       'content-comparison': 'Content Comparison Framework',
       'google-tools': 'Google Tools Analysis Framework'
     };
-    
+
     return frameworkMap[assessmentType] || 'Unknown Framework';
   }
 
@@ -126,7 +126,7 @@ export class EnhancedAnalysisService {
     try {
       const frameworkName = this.getFrameworkName(assessmentType);
       const elements = await FrameworkIntegrationService.getFrameworkElements(assessmentType);
-      
+
       let elementsCount = 0;
       if (elements) {
         // Count elements based on framework structure

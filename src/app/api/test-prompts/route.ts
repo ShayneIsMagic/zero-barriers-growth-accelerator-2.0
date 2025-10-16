@@ -2,8 +2,8 @@
  * API endpoint for testing prompts between Gemini and Claude
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { PromptTestingService } from '@/lib/ai-engines/prompt-testing.service';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 120; // 2 minutes for comprehensive testing
 
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Prompt testing failed:', error);
-    
+
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : 'Prompt testing failed',

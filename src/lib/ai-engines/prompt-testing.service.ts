@@ -86,7 +86,7 @@ export class PromptTestingService {
 
     // Test Gemini
     const geminiResult = await this.testWithEngine('gemini', prompt, assessmentType);
-    
+
     // Test Claude (placeholder - would need Claude API integration)
     const claudeResult = await this.testWithEngine('claude', prompt, assessmentType);
 
@@ -112,7 +112,7 @@ export class PromptTestingService {
 
     try {
       let analysis;
-      
+
       if (engine === 'gemini') {
         const result = await analyzeWithAI(prompt, 'gemini');
         if (!result.success) {
@@ -141,7 +141,7 @@ export class PromptTestingService {
       };
     } catch (error) {
       const responseTime = Date.now() - startTime;
-      
+
       return {
         engine,
         assessmentType,
@@ -175,7 +175,7 @@ export class PromptTestingService {
         if (analysis.market_opportunities) score += 20;
         if (analysis.revenue_recommendations) score += 20;
         break;
-      
+
       case 'elements-value-b2c':
         if (analysis.overall_value_score !== undefined) score += 20;
         if (analysis.value_elements) score += 20;
@@ -183,7 +183,7 @@ export class PromptTestingService {
         if (analysis.premium_pricing_strategy) score += 20;
         if (analysis.revenue_recommendations) score += 20;
         break;
-      
+
       case 'clifton-strengths':
         if (analysis.overall_score !== undefined) score += 20;
         if (analysis.top_5_themes) score += 20;
@@ -191,7 +191,7 @@ export class PromptTestingService {
         if (analysis.organizational_culture_insights) score += 20;
         if (analysis.recommendations) score += 20;
         break;
-      
+
       default:
         // Generic scoring
         if (analysis.recommendations) score += 30;

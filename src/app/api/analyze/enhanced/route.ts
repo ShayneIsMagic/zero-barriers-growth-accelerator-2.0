@@ -3,8 +3,8 @@
  * Uses actual framework knowledge for better analysis
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { EnhancedAnalysisService } from '@/lib/ai-engines/enhanced-analysis.service';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 120; // 2 minutes for enhanced analysis
 
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       console.log(`✅ Enhanced analysis completed for: ${url}`);
       console.log(`🎯 Framework used: ${result.frameworkUsed}`);
       console.log(`📈 Validation score: ${result.validation.score}`);
-      
+
       return NextResponse.json({
         success: true,
         url,
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
       });
     } else {
       console.error(`❌ Enhanced analysis failed for: ${url}`, result.error);
-      
+
       return NextResponse.json({
         success: false,
         url,
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Enhanced analysis API error:', error);
-    
+
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : 'Enhanced analysis failed',
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Framework integration test failed:', error);
-    
+
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : 'Framework test failed'

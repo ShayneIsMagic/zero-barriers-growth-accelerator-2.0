@@ -4,6 +4,7 @@
  */
 
 import { analyzeWithAI } from '@/lib/free-ai-analysis';
+import { EnhancedAnalysisService } from '@/lib/ai-engines/enhanced-analysis.service';
 
 export interface SimpleCliftonStrengthsResult {
   success: boolean;
@@ -43,16 +44,28 @@ export class SimpleCliftonStrengthsService {
    */
   static async analyzeWithScrapedContent(url: string, scrapedData: any): Promise<SimpleCliftonStrengthsResult> {
     try {
-      console.log(`🎯 Starting CliftonStrengths analysis for: ${url}`);
+      console.log(`🎯 Starting CliftonStrengths analysis with framework knowledge for: ${url}`);
 
-      const analysisResult = await this.runCliftonStrengthsAnalysis(scrapedData, url);
+      // Use enhanced analysis with framework integration
+      console.log('🧠 Running enhanced analysis with CliftonStrengths framework...');
+      const enhancedResult = await EnhancedAnalysisService.analyzeWithFramework(
+        'clifton-strengths',
+        scrapedData,
+        url
+      );
+
+      if (!enhancedResult.success) {
+        throw new Error(enhancedResult.error || 'Enhanced analysis failed');
+      }
 
       console.log(`✅ CliftonStrengths analysis completed for: ${url}`);
+      console.log(`🎯 Framework used: ${enhancedResult.frameworkUsed}`);
+      console.log(`📊 Validation score: ${enhancedResult.validation.score}`);
 
       return {
         success: true,
         url,
-        data: analysisResult
+        data: enhancedResult.analysis
       };
     } catch (error) {
       console.error('CliftonStrengths analysis failed:', error);

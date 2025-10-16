@@ -52,7 +52,7 @@ export class ClaudeProjectIntegrationService {
     try {
       // Initialize Claude chat with project context
       const claudeResponse = await this.initializeClaudeChat(sessionId, websiteUrl);
-      
+
       const session: ClientSession = {
         clientId,
         websiteUrl,
@@ -84,16 +84,16 @@ export class ClaudeProjectIntegrationService {
     try {
       // Load assessment rules
       const rules = await this.loadAssessmentRules(assessmentType);
-      
+
       // Build prompt for Claude
       const prompt = this.buildClaudePrompt(rules, scrapedData, session.websiteUrl);
-      
+
       // Send to Claude project
       const claudeResponse = await this.sendToClaudeProject(session, prompt, assessmentType);
-      
+
       // Parse and validate response
       const analysis = this.parseClaudeResponse(claudeResponse, assessmentType);
-      
+
       const result: AssessmentResult = {
         clientId: session.clientId,
         assessmentType,
@@ -107,7 +107,7 @@ export class ClaudeProjectIntegrationService {
       return result;
     } catch (error) {
       console.error(`❌ Assessment failed for ${session.clientId}:`, error);
-      
+
       return {
         clientId: session.clientId,
         assessmentType,
@@ -135,7 +135,7 @@ export class ClaudeProjectIntegrationService {
    * Initialize Claude chat with project context
    */
   private static async initializeClaudeChat(sessionId: string, websiteUrl: string): Promise<any> {
-    const initPrompt = `You are working within the Zero Barriers Growth Accelerator project. 
+    const initPrompt = `You are working within the Zero Barriers Growth Accelerator project.
 
 PROJECT CONTEXT:
 - This is a business analysis platform that helps organizations identify revenue opportunities
@@ -214,9 +214,9 @@ Please provide a comprehensive analysis following the exact JSON format specifie
     // 1. Create a new chat in the Claude project
     // 2. Send the prompt to that chat
     // 3. Wait for and return the response
-    
+
     console.log(`📤 Sending ${assessmentType} prompt to Claude project for ${session.clientId}`);
-    
+
     // Mock response for now
     return {
       success: true,

@@ -4,8 +4,8 @@
  * Each client gets a unique session with stored assessment rules
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { ClaudeProjectIntegrationService } from '@/lib/ai-engines/claude-project-integration.service';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 120; // 2 minutes for Claude analysis
 
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 
     if (result.success) {
       console.log(`✅ Claude project analysis completed for: ${url}`);
-      
+
       return NextResponse.json({
         success: true,
         url,
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       });
     } else {
       console.error(`❌ Claude project analysis failed for: ${url}`, result.error);
-      
+
       return NextResponse.json({
         success: false,
         url,
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Claude project analysis API error:', error);
-    
+
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : 'Claude project analysis failed',
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const sessions = await ClaudeProjectIntegrationService.getActiveSessions();
-    
+
     return NextResponse.json({
       success: true,
       sessions,
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Failed to get active sessions:', error);
-    
+
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : 'Failed to get sessions'
