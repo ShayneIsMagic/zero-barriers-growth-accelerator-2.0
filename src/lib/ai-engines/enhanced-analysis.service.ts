@@ -3,7 +3,7 @@
  * Uses actual framework knowledge for better analysis
  */
 
-import { analyzeWithAI } from '@/lib/free-ai-analysis';
+import { analyzeWithGemini } from '@/lib/free-ai-analysis';
 import { FrameworkIntegrationService } from './framework-integration.service';
 
 export interface EnhancedAnalysisResult {
@@ -44,7 +44,7 @@ export class EnhancedAnalysisService {
       console.log(`📝 Enhanced prompt built with framework knowledge`);
 
       // Run AI analysis
-      const aiResponse = await analyzeWithAI(enhancedPrompt, 'gemini');
+      const aiResponse = await analyzeWithGemini(enhancedPrompt, assessmentType);
 
       if (!aiResponse.success) {
         throw new Error(aiResponse.error || 'AI analysis failed');

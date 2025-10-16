@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { RevenueFocusedElementsOfValueService } from '@/lib/services/revenue-focused-elements-value.service';
+import { SimpleFrameworkAnalysisService } from '@/lib/simple-framework-analysis.service';
 
 export const maxDuration = 60;
 
@@ -29,8 +29,8 @@ export async function POST(request: NextRequest) {
 
     console.log(`💰 Starting B2B Elements of Value analysis for: ${url}`);
 
-    // Use the provided scraped content instead of scraping again
-    const result = await RevenueFocusedElementsOfValueService.analyzeWithScrapedContent(url, scrapedContent);
+    // Use simple framework analysis
+    const result = await SimpleFrameworkAnalysisService.analyzeB2BElements(url, scrapedContent);
 
     if (!result.success) {
       console.error('B2B Elements of Value analysis failed:', result.error);
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       url: result.url,
-      data: result.data.b2b, // Return only B2B data
+      data: result.analysis,
       message: 'B2B Elements of Value analysis completed successfully'
     });
 

@@ -3,15 +3,15 @@
  * Uses Content-Comparison pattern: No database dependencies, direct AI analysis
  */
 
-import { StandaloneGoldenCircleService } from '@/lib/services/standalone-golden-circle.service';
 import { NextRequest, NextResponse } from 'next/server';
+import { SimpleFrameworkAnalysisService } from '@/lib/simple-framework-analysis.service';
 
 export const maxDuration = 60;
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url } = body;
+    const { url, scrapedContent } = body;
 
     if (!url) {
       return NextResponse.json({
@@ -20,9 +20,16 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
+    if (!scrapedContent) {
+      return NextResponse.json({
+        success: false,
+        error: 'Scraped content is required'
+      }, { status: 400 });
+    }
+
     console.log(`🚀 Starting standalone Golden Circle analysis for: ${url}`);
 
-    const result = await StandaloneGoldenCircleService.analyzeWebsite(url);
+    const result = await SimpleFrameworkAnalysisService.analyzeGoldenCircle(url, scrapedContent);
 
     if (!result.success) {
       console.error('Golden Circle analysis failed:', result.error);
@@ -38,7 +45,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       url: result.url,
-      data: result.data,
+      data: result.analysis,
       message: 'Golden Circle analysis completed successfully'
     });
 
