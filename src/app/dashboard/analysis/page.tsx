@@ -1,522 +1,395 @@
-/**
- * Unified Analysis Dashboard
- * Consolidates all working analysis systems into one organized interface
- */
-
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  Brain, 
   Target, 
   BarChart3, 
   Users, 
-  TrendingUp, 
+  Building2, 
   FileText, 
-  CheckCircle, 
-  XCircle, 
-  Clock,
   Download,
-  ExternalLink,
-  Zap
+  Loader2,
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react';
-import Link from 'next/link';
+import GoldenCircleAssessment from '@/components/assessments/GoldenCircleAssessment';
 
-export default function UnifiedAnalysisDashboard() {
+interface AnalysisData {
+  url: string;
+  content: any;
+  goldenCircle?: any;
+  elementsOfValue?: any;
+  cliftonStrengths?: any;
+  b2bElements?: any;
+  comprehensive?: any;
+}
+
+export default function AnalysisPage() {
   const [url, setUrl] = useState('');
-  const [selectedAnalysis, setSelectedAnalysis] = useState<string>('website');
+  const [content, setContent] = useState<any>(null);
+  const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const analysisOptions = [
-    {
-      id: 'website',
-      title: 'Website Analysis',
-      subtitle: '🎯 RECOMMENDED FIRST',
-      description: 'Complete AI-powered business framework analysis - perfect for understanding your website\'s strategic positioning and value proposition',
-      icon: Brain,
-      status: 'working',
-      route: '/dashboard/website-analysis',
-      recommendedOrder: 1,
-      bestFor: 'Business owners, marketers, and consultants who want to understand their website\'s strategic value',
-      whatYouGet: [
-        'Golden Circle Analysis - Your WHY, HOW, WHAT, and WHO',
-        'Elements of Value Assessment - 30 B2C + 40 B2B value elements',
-        'CliftonStrengths Analysis - 34 themes of organizational excellence',
-        'Lighthouse Performance Score',
-        'Actionable recommendations with evidence'
-      ],
-      whyChooseThis: 'This analysis reveals how well your website communicates your core business value and attracts your ideal customers.',
-      estimatedTime: '2-3 minutes',
-      complexity: 'Beginner',
-      prerequisites: 'None - just enter your website URL',
-      outcome: 'Strategic business insights and value proposition clarity'
-    },
-    {
-      id: 'comprehensive',
-      title: 'Comprehensive Analysis',
-      subtitle: '🚀 MOST THOROUGH',
-      description: 'Advanced multi-tool analysis combining AI frameworks with technical SEO audits, performance analysis, and market intelligence',
-      icon: Target,
-      status: 'working',
-      route: '/dashboard/comprehensive-analysis',
-      recommendedOrder: 2,
-      bestFor: 'SEO professionals, web developers, and businesses wanting complete technical + strategic analysis',
-      whatYouGet: [
-        'Everything from Website Analysis PLUS:',
-        'PageAudit Technical SEO Audit (40+ technical checks)',
-        'Lighthouse Performance Analysis (Core Web Vitals)',
-        'Google Trends Market Intelligence',
-        'All Pages Performance Analysis',
-        'Comprehensive Technical Report'
-      ],
-      whyChooseThis: 'Most complete analysis available - combines strategic business insights with technical optimization recommendations.',
-      estimatedTime: '5-7 minutes',
-      complexity: 'Advanced',
-      prerequisites: 'Complete Website Analysis first for best results',
-      outcome: 'Complete technical and strategic optimization roadmap'
-    },
-    {
-      id: 'seo',
-      title: 'SEO Analysis',
-      subtitle: '📈 SPECIALIZED',
-      description: 'Focused SEO analysis with Google Trends integration and competitive keyword research framework',
-      icon: TrendingUp,
-      status: 'partial',
-      route: '/dashboard/seo-analysis',
-      recommendedOrder: 3,
-      bestFor: 'SEO specialists and marketers focused on search visibility and keyword strategy',
-      whatYouGet: [
-        'Google Trends Analysis (real-time data)',
-        'Technical SEO Audit Framework',
-        'Keyword Research Structure',
-        'Competitive Analysis Framework',
-        'SEO Optimization Recommendations'
-      ],
-      whyChooseThis: 'Specialized tool for SEO professionals who need focused search engine optimization insights.',
-      estimatedTime: '3-4 minutes',
-      complexity: 'Intermediate',
-      prerequisites: 'Basic understanding of SEO concepts',
-      outcome: 'SEO strategy and technical optimization plan'
+  // Load data from localStorage on mount
+  useEffect(() => {
+    const savedData = localStorage.getItem('analysisData');
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        setAnalysisData(parsed);
+        setUrl(parsed.url || '');
+        setContent(parsed.content || null);
+      } catch (err) {
+        console.error('Failed to parse saved analysis data:', err);
+      }
     }
-  ];
+  }, []);
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'working':
-        return <Badge className="bg-green-100 text-green-800 border-green-200">✅ Working</Badge>;
-      case 'partial':
-        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">⚠️ Partial</Badge>;
-      case 'broken':
-        return <Badge className="bg-red-100 text-red-800 border-red-200">❌ Broken</Badge>;
-      default:
-        return <Badge variant="outline">Unknown</Badge>;
+  const runPhase1 = async () => {
+    if (!url) {
+      setError('Please enter a URL');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/analyze/phase1-simple', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setContent(data.data);
+        setAnalysisData(prev => ({
+          ...prev,
+          url,
+          content: data.data
+        }));
+        
+        // Save to localStorage
+        const newData = { url, content: data.data };
+        localStorage.setItem('analysisData', JSON.stringify(newData));
+      } else {
+        setError(data.error || 'Phase 1 failed');
+      }
+    } catch (err) {
+      setError('Network error occurred');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const getComplexityBadge = (complexity: string) => {
-    const colors = {
-      'Beginner': 'bg-blue-100 text-blue-800',
-      'Intermediate': 'bg-yellow-100 text-yellow-800',
-      'Advanced': 'bg-red-100 text-red-800'
+  const runComprehensiveAnalysis = async () => {
+    if (!content) {
+      setError('Please run Phase 1 first');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/analyze/comprehensive-report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url, content }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setAnalysisData(prev => ({
+          ...prev,
+          ...data.data
+        }));
+        
+        // Save to localStorage
+        localStorage.setItem('analysisData', JSON.stringify(data.data));
+      } else {
+        setError(data.error || 'Comprehensive analysis failed');
+      }
+    } catch (err) {
+      setError('Network error occurred');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const downloadReport = () => {
+    if (!analysisData) return;
+
+    const reportData = {
+      url: analysisData.url,
+      timestamp: new Date().toISOString(),
+      assessments: analysisData
     };
-    return <Badge className={colors[complexity as keyof typeof colors] || 'bg-gray-100'}>{complexity}</Badge>;
+
+    const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `analysis-report-${analysisData.url.replace(/[^a-zA-Z0-9]/g, '-')}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const getAssessmentStatus = (assessment: any) => {
+    if (!assessment) return { status: 'pending', icon: AlertCircle, color: 'text-gray-500' };
+    if (assessment.success) return { status: 'completed', icon: CheckCircle, color: 'text-green-500' };
+    return { status: 'failed', icon: AlertCircle, color: 'text-red-500' };
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          Unified Analysis Dashboard
-        </h1>
-        <p className="text-gray-600 dark:text-gray-300">
-          Choose the right analysis tool for your needs. All systems use real AI analysis with no demo data.
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+      <div className="container mx-auto py-8 px-4">
+        
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            Website Analysis Dashboard
+          </h1>
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Comprehensive business framework analysis with separate assessment views
+          </p>
+        </div>
 
-      {/* Quick URL Input */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Zap className="h-5 w-5" />
-            <span>Quick Analysis</span>
-          </CardTitle>
-          <CardDescription>
-            Enter a URL to start analyzing with the recommended tool
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="quick-url">Website URL</Label>
-            <Input
-              id="quick-url"
-              type="url"
-              placeholder="https://example.com"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              className="w-full"
-            />
-          </div>
-          
-          <div className="flex space-x-2">
-            <Button 
-              asChild
-              disabled={!url.trim()}
-              className="flex-1"
-            >
-              <Link href={`/dashboard/website-analysis?url=${encodeURIComponent(url)}`}>
-                <Brain className="h-4 w-4 mr-2" />
-                Start Website Analysis
-              </Link>
-            </Button>
-            
-            <Button 
-              asChild
-              variant="outline"
-              disabled={!url.trim()}
-              className="flex-1"
-            >
-              <Link href={`/dashboard/comprehensive-analysis?url=${encodeURIComponent(url)}`}>
-                <Target className="h-4 w-4 mr-2" />
-                Advanced Analysis
-              </Link>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        {/* URL Input */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Analysis Setup</CardTitle>
+            <CardDescription>
+              Enter a website URL to begin the analysis process
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-4">
+              <input
+                type="url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://example.com"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <Button 
+                onClick={runPhase1} 
+                disabled={isLoading || !url}
+                className="px-6"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Analyzing...
+                  </>
+                ) : (
+                  'Run Phase 1'
+                )}
+              </Button>
+            </div>
+            {error && (
+              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 text-red-500" />
+                <span className="text-sm text-red-700">{error}</span>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
-      {/* Recommended Order Guide */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Target className="h-5 w-5" />
-            <span>Recommended Analysis Order</span>
-          </CardTitle>
-          <CardDescription>
-            Follow this sequence for the most comprehensive and actionable insights
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {analysisOptions
-              .sort((a, b) => a.recommendedOrder - b.recommendedOrder)
-              .map((option, index) => {
-                const IconComponent = option.icon;
-                return (
-                  <div key={option.id} className="flex items-start space-x-4 p-4 border rounded-lg">
-                    <div className="flex-shrink-0">
-                      <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm">
-                        {option.recommendedOrder}
+        {/* Content Preview */}
+        {content && (
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Content Preview
+              </CardTitle>
+              <CardDescription>
+                Scraped content from {url}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="max-h-64 overflow-y-auto bg-gray-50 p-4 rounded">
+                <pre className="text-sm whitespace-pre-wrap">
+                  {content.cleanText || content.content || 'No content available'}
+                </pre>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Assessment Tabs */}
+        {content && (
+          <Tabs defaultValue="golden-circle" className="w-full">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="golden-circle" className="flex items-center gap-2">
+                <Target className="h-4 w-4" />
+                Golden Circle
+                {(() => {
+                  const status = getAssessmentStatus(analysisData?.goldenCircle);
+                  return <status.icon className={`h-3 w-3 ${status.color}`} />;
+                })()}
+              </TabsTrigger>
+              <TabsTrigger value="elements-of-value" className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4" />
+                Elements of Value
+                {(() => {
+                  const status = getAssessmentStatus(analysisData?.elementsOfValue);
+                  return <status.icon className={`h-3 w-3 ${status.color}`} />;
+                })()}
+              </TabsTrigger>
+              <TabsTrigger value="clifton-strengths" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                CliftonStrengths
+                {(() => {
+                  const status = getAssessmentStatus(analysisData?.cliftonStrengths);
+                  return <status.icon className={`h-3 w-3 ${status.color}`} />;
+                })()}
+              </TabsTrigger>
+              <TabsTrigger value="b2b-elements" className="flex items-center gap-2">
+                <Building2 className="h-4 w-4" />
+                B2B Elements
+                {(() => {
+                  const status = getAssessmentStatus(analysisData?.b2bElements);
+                  return <status.icon className={`h-3 w-3 ${status.color}`} />;
+                })()}
+              </TabsTrigger>
+              <TabsTrigger value="comprehensive" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Comprehensive
+                {(() => {
+                  const status = getAssessmentStatus(analysisData?.comprehensive);
+                  return <status.icon className={`h-3 w-3 ${status.color}`} />;
+                })()}
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="golden-circle" className="mt-6">
+              <GoldenCircleAssessment 
+                url={url} 
+                content={content} 
+                onComplete={(data) => {
+                  setAnalysisData(prev => ({
+                    ...prev,
+                    goldenCircle: { success: true, data, assessment: 'Golden Circle' }
+                  }));
+                }}
+              />
+            </TabsContent>
+
+            <TabsContent value="elements-of-value" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Elements of Value Assessment</CardTitle>
+                  <CardDescription>
+                    Coming Soon - Individual assessment component
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button disabled className="w-full">
+                    <BarChart3 className="mr-2 h-4 w-4" />
+                    Elements of Value Analysis
+                  </Button>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="clifton-strengths" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>CliftonStrengths Assessment</CardTitle>
+                  <CardDescription>
+                    Coming Soon - Individual assessment component
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button disabled className="w-full">
+                    <Users className="mr-2 h-4 w-4" />
+                    CliftonStrengths Analysis
+                  </Button>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="b2b-elements" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>B2B Elements Assessment</CardTitle>
+                  <CardDescription>
+                    Coming Soon - Individual assessment component
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button disabled className="w-full">
+                    <Building2 className="mr-2 h-4 w-4" />
+                    B2B Elements Analysis
+                  </Button>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="comprehensive" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Comprehensive Report</CardTitle>
+                  <CardDescription>
+                    Combined analysis from all frameworks
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Button 
+                    onClick={runComprehensiveAnalysis} 
+                    disabled={isLoading}
+                    className="w-full"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Generating Comprehensive Report...
+                      </>
+                    ) : (
+                      <>
+                        <FileText className="mr-2 h-4 w-4" />
+                        Generate Comprehensive Report
+                      </>
+                    )}
+                  </Button>
+                  
+                  {analysisData?.comprehensive && (
+                    <div className="space-y-4">
+                      <div className="p-4 bg-green-50 border border-green-200 rounded">
+                        <h3 className="font-semibold text-green-800 mb-2">Report Generated Successfully</h3>
+                        <p className="text-sm text-green-700">
+                          Overall Score: {analysisData.comprehensive.overallScore}/10
+                        </p>
                       </div>
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <h3 className="font-semibold">{option.title}</h3>
-                        <Badge variant="outline" className="text-xs">{option.subtitle}</Badge>
-                        {getStatusBadge(option.status)}
-                      </div>
-                      <p className="text-sm text-gray-600 mb-2">{option.whyChooseThis}</p>
-                      <div className="flex items-center space-x-4 text-xs text-gray-500">
-                        <span>⏱️ {option.estimatedTime}</span>
-                        <span>🎯 {option.complexity}</span>
-                        <span>📋 {option.prerequisites}</span>
-                      </div>
-                    </div>
-                    <div className="flex-shrink-0">
-                      <Button asChild size="sm">
-                        <Link href={option.route}>
-                          <IconComponent className="h-4 w-4 mr-1" />
-                          Start
-                        </Link>
+                      
+                      <Button onClick={downloadReport} className="w-full">
+                        <Download className="mr-2 h-4 w-4" />
+                        Download Report
                       </Button>
                     </div>
-                  </div>
-                );
-              })}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Analysis Options */}
-      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-        {analysisOptions.map((option) => {
-          const IconComponent = option.icon;
-          return (
-            <Card key={option.id} className={`relative ${option.recommendedOrder === 1 ? 'ring-2 ring-green-500' : ''}`}>
-              {option.recommendedOrder === 1 && (
-                <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-medium">
-                  RECOMMENDED
-                </div>
-              )}
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="h-12 w-12 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center">
-                      <IconComponent className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">{option.title}</CardTitle>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <Badge variant="outline" className="text-xs">{option.subtitle}</Badge>
-                        {getStatusBadge(option.status)}
-                        {getComplexityBadge(option.complexity)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <CardDescription className="mt-2">
-                  {option.description}
-                </CardDescription>
-              </CardHeader>
-              
-              <CardContent className="space-y-4">
-                {/* Best For */}
-                <div>
-                  <h4 className="font-medium text-sm text-gray-700 mb-1">Best For:</h4>
-                  <p className="text-sm text-gray-600">{option.bestFor}</p>
-                </div>
-
-                {/* What You Get */}
-                <div>
-                  <h4 className="font-medium text-sm text-gray-700 mb-2">What You Get:</h4>
-                  <ul className="space-y-1">
-                    {option.whatYouGet.map((item, index) => (
-                      <li key={index} className="text-sm text-gray-600 flex items-start">
-                        <CheckCircle className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Why Choose This */}
-                <div className="p-3 bg-blue-50 rounded-lg">
-                  <h4 className="font-medium text-sm text-blue-900 mb-1">Why Choose This:</h4>
-                  <p className="text-sm text-blue-800">{option.whyChooseThis}</p>
-                </div>
-
-                {/* Outcome */}
-                <div>
-                  <h4 className="font-medium text-sm text-gray-700 mb-1">Outcome:</h4>
-                  <p className="text-sm text-gray-600 font-medium">{option.outcome}</p>
-                </div>
-
-                {/* Timing and Prerequisites */}
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <div className="flex items-center text-gray-600 mb-1">
-                      <Clock className="h-4 w-4 mr-1" />
-                      <span className="font-medium">Time:</span>
-                    </div>
-                    <span className="text-gray-700">{option.estimatedTime}</span>
-                  </div>
-                  <div>
-                    <div className="flex items-center text-gray-600 mb-1">
-                      <CheckCircle className="h-4 w-4 mr-1" />
-                      <span className="font-medium">Prerequisites:</span>
-                    </div>
-                    <span className="text-gray-700">{option.prerequisites}</span>
-                  </div>
-                </div>
-
-                {/* Action Button */}
-                <Button 
-                  asChild 
-                  className="w-full"
-                  variant={option.status === 'working' ? 'default' : 'outline'}
-                  size="lg"
-                >
-                  <Link href={option.route}>
-                    <IconComponent className="h-4 w-4 mr-2" />
-                    {option.status === 'working' ? 'Start Analysis' : 'View Details'}
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          );
-        })}
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        )}
       </div>
-
-      {/* User Journey Guide */}
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Users className="h-5 w-5" />
-            <span>Choose Your Analysis Journey</span>
-          </CardTitle>
-          <CardDescription>
-            Select the path that best matches your role and goals
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-6 md:grid-cols-3">
-            {/* Business Owner Journey */}
-            <div className="p-4 border rounded-lg">
-              <div className="flex items-center space-x-2 mb-3">
-                <div className="h-8 w-8 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">👔</span>
-                </div>
-                <h3 className="font-semibold">Business Owner</h3>
-              </div>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center">
-                  <span className="w-6 h-6 rounded-full bg-green-500 text-white text-xs flex items-center justify-center mr-2">1</span>
-                  <span>Start with <strong>Website Analysis</strong></span>
-                </div>
-                <div className="flex items-center text-gray-500 ml-8">
-                  <span className="w-4 h-4 rounded-full bg-gray-300 mr-2"></span>
-                  <span>Get strategic business insights</span>
-                </div>
-                <div className="flex items-center text-gray-500 ml-8">
-                  <span className="w-4 h-4 rounded-full bg-gray-300 mr-2"></span>
-                  <span>Understand your value proposition</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="w-6 h-6 rounded-full bg-yellow-500 text-white text-xs flex items-center justify-center mr-2">2</span>
-                  <span>Optional: <strong>Comprehensive Analysis</strong></span>
-                </div>
-                <div className="flex items-center text-gray-500 ml-8">
-                  <span className="w-4 h-4 rounded-full bg-gray-300 mr-2"></span>
-                  <span>For technical optimization needs</span>
-                </div>
-              </div>
-              <Button asChild className="w-full mt-3" size="sm">
-                <Link href="/dashboard/website-analysis">Start Website Analysis</Link>
-              </Button>
-            </div>
-
-            {/* SEO Professional Journey */}
-            <div className="p-4 border rounded-lg">
-              <div className="flex items-center space-x-2 mb-3">
-                <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">🔍</span>
-                </div>
-                <h3 className="font-semibold">SEO Professional</h3>
-              </div>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center">
-                  <span className="w-6 h-6 rounded-full bg-green-500 text-white text-xs flex items-center justify-center mr-2">1</span>
-                  <span>Start with <strong>Website Analysis</strong></span>
-                </div>
-                <div className="flex items-center text-gray-500 ml-8">
-                  <span className="w-4 h-4 rounded-full bg-gray-300 mr-2"></span>
-                  <span>Understand business context</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="w-6 h-6 rounded-full bg-green-500 text-white text-xs flex items-center justify-center mr-2">2</span>
-                  <span>Then <strong>Comprehensive Analysis</strong></span>
-                </div>
-                <div className="flex items-center text-gray-500 ml-8">
-                  <span className="w-4 h-4 rounded-full bg-gray-300 mr-2"></span>
-                  <span>Technical SEO + performance audit</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="w-6 h-6 rounded-full bg-yellow-500 text-white text-xs flex items-center justify-center mr-2">3</span>
-                  <span>Optional: <strong>SEO Analysis</strong></span>
-                </div>
-                <div className="flex items-center text-gray-500 ml-8">
-                  <span className="w-4 h-4 rounded-full bg-gray-300 mr-2"></span>
-                  <span>For specialized keyword research</span>
-                </div>
-              </div>
-              <Button asChild className="w-full mt-3" size="sm" variant="outline">
-                <Link href="/dashboard/comprehensive-analysis">Start Comprehensive Analysis</Link>
-              </Button>
-            </div>
-
-            {/* Web Developer Journey */}
-            <div className="p-4 border rounded-lg">
-              <div className="flex items-center space-x-2 mb-3">
-                <div className="h-8 w-8 rounded-full bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">⚡</span>
-                </div>
-                <h3 className="font-semibold">Web Developer</h3>
-              </div>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center">
-                  <span className="w-6 h-6 rounded-full bg-green-500 text-white text-xs flex items-center justify-center mr-2">1</span>
-                  <span>Start with <strong>Comprehensive Analysis</strong></span>
-                </div>
-                <div className="flex items-center text-gray-500 ml-8">
-                  <span className="w-4 h-4 rounded-full bg-gray-300 mr-2"></span>
-                  <span>Get technical + performance insights</span>
-                </div>
-                <div className="flex items-center text-gray-500 ml-8">
-                  <span className="w-4 h-4 rounded-full bg-gray-300 mr-2"></span>
-                  <span>PageAudit + Lighthouse analysis</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="w-6 h-6 rounded-full bg-yellow-500 text-white text-xs flex items-center justify-center mr-2">2</span>
-                  <span>Optional: <strong>Website Analysis</strong></span>
-                </div>
-                <div className="flex items-center text-gray-500 ml-8">
-                  <span className="w-4 h-4 rounded-full bg-gray-300 mr-2"></span>
-                  <span>For business context understanding</span>
-                </div>
-              </div>
-              <Button asChild className="w-full mt-3" size="sm" variant="outline">
-                <Link href="/dashboard/comprehensive-analysis">Start Comprehensive Analysis</Link>
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Status Information */}
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <FileText className="h-5 w-5" />
-            <span>System Status</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">2</div>
-              <div className="text-sm text-gray-600">Fully Working</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-600">1</div>
-              <div className="text-sm text-gray-600">Partially Working</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-red-600">5</div>
-              <div className="text-sm text-gray-600">Under Development</div>
-            </div>
-          </div>
-          
-          <Alert className="mt-4">
-            <CheckCircle className="h-4 w-4" />
-            <AlertDescription>
-              <strong>Quick Start:</strong> Most users should begin with <strong>Website Analysis</strong> for strategic insights, 
-              then optionally add <strong>Comprehensive Analysis</strong> for technical optimization.
-            </AlertDescription>
-          </Alert>
-        </CardContent>
-      </Card>
-
-      {/* Recent Reports */}
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>Recent Analysis Reports</CardTitle>
-          <CardDescription>
-            View and download your recent analysis reports
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8 text-gray-500">
-            <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-            <p>No recent reports found</p>
-            <p className="text-sm">Start an analysis to see your reports here</p>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
