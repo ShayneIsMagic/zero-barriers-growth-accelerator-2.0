@@ -202,9 +202,12 @@ export function Footer() {
             </div>
             <div className="flex w-full max-w-sm space-x-2">
               <input
+                id="newsletter-email"
+                name="newsletter-email"
                 type="email"
                 placeholder="Enter your email"
                 className="form-input flex-1"
+                aria-label="Enter your email for newsletter subscription"
               />
               <Button size="sm">Subscribe</Button>
             </div>

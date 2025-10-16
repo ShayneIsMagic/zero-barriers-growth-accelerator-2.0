@@ -105,9 +105,9 @@ export function StandaloneElementsOfValueB2BPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           url: url.trim(),
-          scrapedContent: scrapedContent 
+          scrapedContent: scrapedContent
         }),
       });
 
@@ -202,7 +202,7 @@ export function StandaloneElementsOfValueB2BPage() {
                     </>
                   )}
                 </Button>
-                
+
                 <Button
                   onClick={handleAnalyze}
                   disabled={isAnalyzing || !scrapedContent}

@@ -4,9 +4,9 @@
  */
 
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Target, Copy, CheckCircle } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { CheckCircle, Copy, Target } from 'lucide-react';
 import { useState } from 'react';
 
 interface ContentPreviewBoxProps {
@@ -16,11 +16,11 @@ interface ContentPreviewBoxProps {
   description?: string;
 }
 
-export function ContentPreviewBox({ 
-  scrapedContent, 
-  url, 
+export function ContentPreviewBox({
+  scrapedContent,
+  url,
   title = "Scraped Content Preview",
-  description 
+  description
 }: ContentPreviewBoxProps) {
   const [copied, setCopied] = useState(false);
 
