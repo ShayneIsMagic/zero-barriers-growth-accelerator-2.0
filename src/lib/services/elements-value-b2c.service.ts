@@ -6,7 +6,7 @@
  */
 
 import { prisma } from '@/lib/prisma'
-import { PatternMatch, SynonymDetectionService } from './synonym-detection.service'
+import { PatternMatch, SimpleSynonymDetectionService } from './simple-synonym-detection.service'
 
 export interface ElementsOfValueB2CAnalysis {
   id: string
@@ -46,7 +46,7 @@ export class ElementsOfValueB2CService {
   ): Promise<ElementsOfValueB2CAnalysis> {
     // Get patterns if not provided
     if (!patterns) {
-      patterns = await SynonymDetectionService.findValuePatterns(
+      patterns = await SimpleSynonymDetectionService.findValuePatterns(
         content.text || content.content,
         industry
       )
@@ -122,6 +122,49 @@ For each element:
 - Provide evidence with specific citations
 - Note which patterns were detected
 
+SYNONYM GUIDANCE FOR B2C ELEMENTS:
+Look for these terms and concepts that indicate each value element:
+
+FUNCTIONAL ELEMENTS (1-12):
+- saves_time: "fast", "quick", "instant", "automated", "efficient", "time-saving", "speedy"
+- simplifies: "simple", "easy", "straightforward", "streamlined", "user-friendly", "intuitive"
+- reduces_cost: "affordable", "cheap", "budget", "cost-effective", "inexpensive", "value"
+- reduces_risk: "safe", "secure", "guaranteed", "risk-free", "protected", "reliable"
+- organizes: "organized", "structured", "systematic", "orderly", "tidy", "neat"
+- integrates: "connects", "integrates", "unified", "seamless", "compatible", "works with"
+- connects: "connect", "link", "network", "community", "social", "together"
+- reduces_effort: "effortless", "easy", "simple", "no effort", "minimal effort"
+- avoids_hassles: "hassle-free", "convenient", "smooth", "trouble-free", "painless"
+- reduces_anxiety: "peace of mind", "worry-free", "confident", "secure", "reassuring"
+- quality: "quality", "premium", "excellent", "superior", "high-end", "top-notch"
+- variety: "variety", "options", "choices", "selection", "diverse", "multiple"
+
+EMOTIONAL ELEMENTS (13-24):
+- provides_access: "exclusive", "membership", "VIP", "special", "privileged", "insider"
+- fun_entertainment: "fun", "entertaining", "enjoyable", "exciting", "thrilling", "amusing"
+- motivates: "motivating", "inspiring", "encouraging", "empowering", "energizing"
+- reduces_anxiety: "calming", "soothing", "reassuring", "comforting", "peaceful"
+- badge_value: "status", "prestige", "exclusive", "elite", "premium", "luxury"
+- wellness: "healthy", "wellness", "fitness", "well-being", "health", "vitality"
+- therapeutic: "healing", "therapeutic", "relaxing", "stress-relief", "calming"
+- attractiveness: "beautiful", "attractive", "stunning", "gorgeous", "elegant"
+- provides_access: "exclusive", "special", "unique", "rare", "limited", "premium"
+- nostalgia: "nostalgic", "memories", "retro", "classic", "vintage", "throwback"
+- design_aesthetics: "beautiful", "stunning", "elegant", "sleek", "modern", "stylish"
+- rewards_me: "rewards", "incentives", "bonuses", "perks", "benefits", "gifts"
+
+LIFE CHANGING ELEMENTS (25-29):
+- provides_hope: "hope", "future", "potential", "possibility", "dream", "aspiration"
+- self_actualization: "potential", "growth", "development", "achievement", "success"
+- motivation: "motivating", "inspiring", "encouraging", "empowering", "driving"
+- heirloom: "legacy", "lasting", "timeless", "permanent", "enduring", "heritage"
+- affiliation: "belonging", "community", "family", "group", "team", "together"
+
+SOCIAL IMPACT ELEMENTS (30):
+- self_transcendence: "greater good", "impact", "change", "difference", "contribution", "purpose"
+
+IMPORTANT: Look for both explicit statements AND implicit indicators. The content may express these concepts using different words, metaphors, or indirect language. Focus on the underlying meaning and intent, not just exact keyword matches.
+
 Calculate category scores:
 - functional_score = average of elements 1-12
 - emotional_score = average of elements 13-22
@@ -152,14 +195,6 @@ Return as valid JSON:
   ]
 }
 `
-
-    if (industry && patterns) {
-      return await SynonymDetectionService.buildEnhancedPrompt(
-        basePrompt,
-        content.text || content.content,
-        industry
-      )
-    }
 
     return basePrompt
   }

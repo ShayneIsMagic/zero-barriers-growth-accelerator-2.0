@@ -6,7 +6,7 @@
  */
 
 import { prisma } from '@/lib/prisma'
-import { PatternMatch, SynonymDetectionService } from './synonym-detection.service'
+import { PatternMatch, SimpleSynonymDetectionService } from './simple-synonym-detection.service'
 
 export interface GoldenCircleAnalysis {
   id: string
@@ -93,7 +93,7 @@ export class GoldenCircleDetailedService {
   ): Promise<GoldenCircleAnalysis> {
     // Get patterns if not provided
     if (!patterns) {
-      patterns = await SynonymDetectionService.findValuePatterns(
+      patterns = await SimpleSynonymDetectionService.findValuePatterns(
         content.text || content.content,
         industry
       )
@@ -139,6 +139,14 @@ ANALYZE THE FOLLOWING DIMENSIONS:
    - Provide evidence with specific citations from content
    - Give 3-5 recommendations for improvement
 
+   SYNONYM GUIDANCE FOR WHY:
+   Look for these terms and concepts that indicate purpose/belief:
+   - Mission language: "mission", "vision", "purpose", "cause", "passion", "drive"
+   - Problem-solving: "solve", "address", "tackle", "fight against", "overcome"
+   - Change-making: "transform", "revolutionize", "improve", "make better", "enhance"
+   - Values: "integrity", "excellence", "innovation", "service", "care", "quality"
+   - Belief statements: "We believe", "Our mission", "We exist to", "We're passionate about"
+
 2. HOW - Unique Process/Approach
    - How do they deliver on their WHY?
    - What makes their approach unique?
@@ -149,6 +157,14 @@ ANALYZE THE FOLLOWING DIMENSIONS:
    - Provide evidence with citations
    - Give 3-5 recommendations
 
+   SYNONYM GUIDANCE FOR HOW:
+   Look for these terms and concepts that indicate process/approach:
+   - Methodology: "approach", "method", "process", "system", "framework", "strategy"
+   - Values: "principles", "standards", "ethics", "values", "philosophy", "culture"
+   - Uniqueness: "unique", "different", "innovative", "proprietary", "exclusive", "distinctive"
+   - Quality: "rigorous", "thorough", "meticulous", "precise", "expert", "professional"
+   - Experience: "expertise", "experience", "knowledge", "skill", "proven", "tested"
+
 3. WHAT - Products/Services
    - What do they actually offer?
    - Are offerings clearly described?
@@ -158,6 +174,13 @@ ANALYZE THE FOLLOWING DIMENSIONS:
    - Rate CTA clarity (1-10): Clear calls-to-action?
    - Provide evidence with citations
    - Give 3-5 recommendations
+
+   SYNONYM GUIDANCE FOR WHAT:
+   Look for these terms and concepts that indicate offerings:
+   - Products: "product", "solution", "service", "offering", "platform", "tool"
+   - Features: "feature", "capability", "function", "resource", "option", "choice"
+   - Benefits: "benefit", "advantage", "value", "outcome", "result", "impact"
+   - Delivery: "provide", "deliver", "offer", "supply", "give", "enable"
 
 4. WHO - Target Audience
    - Who is their ideal customer?
@@ -170,11 +193,19 @@ ANALYZE THE FOLLOWING DIMENSIONS:
    - Provide evidence with citations
    - Give 3-5 recommendations
 
+   SYNONYM GUIDANCE FOR WHO:
+   Look for these terms and concepts that indicate target audience:
+   - Demographics: "customers", "clients", "users", "audience", "members", "visitors"
+   - Segments: "professionals", "businesses", "individuals", "organizations", "teams"
+   - Industries: specific industry names, "sectors", "markets", "fields", "verticals"
+   - Characteristics: "busy", "growing", "established", "innovative", "quality-focused", "successful"
+
 IMPORTANT:
 - Calculate an overall score (0-100) for Golden Circle alignment
 - Calculate alignment score (how well WHY/HOW/WHAT/WHO align)
 - Calculate clarity score (how clearly communicated)
-- Use detected patterns as evidence
+- Look for both explicit statements AND implicit indicators
+- Focus on underlying meaning and intent, not just exact keyword matches
 - Be specific with citations (which page, which section)
 
 Return response as valid JSON with this structure:
@@ -203,15 +234,6 @@ Return response as valid JSON with this structure:
   }
 }
 `
-
-    // Add industry context if available
-    if (industry && patterns) {
-      return await SynonymDetectionService.buildEnhancedPrompt(
-        basePrompt,
-        content.text || content.content,
-        industry
-      )
-    }
 
     return basePrompt
   }

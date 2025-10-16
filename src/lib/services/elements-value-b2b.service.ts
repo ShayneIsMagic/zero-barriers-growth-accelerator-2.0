@@ -6,7 +6,7 @@
  */
 
 import { prisma } from '@/lib/prisma'
-import { PatternMatch, SynonymDetectionService } from './synonym-detection.service'
+import { PatternMatch, SimpleSynonymDetectionService } from './simple-synonym-detection.service'
 
 export interface ElementsOfValueB2BAnalysis {
   id: string
@@ -47,7 +47,7 @@ export class ElementsOfValueB2BService {
     patterns?: PatternMatch[]
   ): Promise<ElementsOfValueB2BAnalysis> {
     if (!patterns) {
-      patterns = await SynonymDetectionService.findValuePatterns(
+      patterns = await SimpleSynonymDetectionService.findValuePatterns(
         content.text || content.content,
         industry
       )

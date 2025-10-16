@@ -6,7 +6,7 @@
  */
 
 import { prisma } from '@/lib/prisma'
-import { PatternMatch, SynonymDetectionService } from './synonym-detection.service'
+import { PatternMatch, SimpleSynonymDetectionService } from './simple-synonym-detection.service'
 
 export interface CliftonStrengthsAnalysis {
   id: string
@@ -47,7 +47,7 @@ export class CliftonStrengthsService {
     patterns?: PatternMatch[]
   ): Promise<CliftonStrengthsAnalysis> {
     if (!patterns) {
-      patterns = await SynonymDetectionService.findValuePatterns(
+      patterns = await SimpleSynonymDetectionService.findValuePatterns(
         content.text || content.content,
         industry
       )
@@ -136,7 +136,7 @@ For each of the 34 themes:
 
 Calculate domain scores:
 - strategic_thinking_score = average of Strategic Thinking themes
-- executing_score = average of Executing themes  
+- executing_score = average of Executing themes
 - influencing_score = average of Influencing themes
 - relationship_building_score = average of Relationship Building themes
 - overall_score = average of all 34 themes
@@ -161,7 +161,7 @@ Return as JSON:
         "patterns": ["future-focused", "planning", "strategy"],
         "manifestations": [
           "Creates multiple pathways to success",
-          "Anticipates future challenges", 
+          "Anticipates future challenges",
           "Plans for various scenarios"
         ],
         "citations": ["homepage", "about page", "services"]
@@ -172,7 +172,7 @@ Return as JSON:
 `
 
     if (industry && patterns) {
-      return await SynonymDetectionService.buildEnhancedPrompt(
+      return await SimpleSynonymDetectionService.buildEnhancedPrompt(
         basePrompt,
         content.text || content.content,
         industry
