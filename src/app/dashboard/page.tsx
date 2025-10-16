@@ -10,6 +10,7 @@ import {
     CheckCircle,
     Clock,
     ExternalLink,
+    Globe,
     Target,
     TrendingUp,
     Users,
@@ -71,6 +72,24 @@ export default function DashboardPage() {
         'Choose which analyses to run'
       ],
       estimatedTime: '3-5 minutes',
+      complexity: 'Intermediate',
+      prerequisites: 'None - just enter your website URL'
+    },
+    {
+      id: 'multi-page-scraping',
+      name: 'Multi-Page Content Scraping',
+      status: 'ready',
+      description: 'Discover and scrape content from multiple pages across a website for comprehensive analysis',
+      icon: Globe,
+      route: '/dashboard/multi-page-scraping',
+      whatYouGet: [
+        'Automatic page discovery (blog, products, about, services)',
+        'Comprehensive content analysis across all pages',
+        'Content theme identification and categorization',
+        'Enhanced keyword and heading extraction',
+        'Configurable scraping options and depth control'
+      ],
+      estimatedTime: '5-10 minutes',
       complexity: 'Intermediate',
       prerequisites: 'None - just enter your website URL'
     },

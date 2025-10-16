@@ -293,17 +293,12 @@ export class MockGoogleToolsService {
   static generateAllGoogleToolsData(url: string, keywords: string[] = []): {
     trends: GoogleTrendsData;
     pageSpeed: PageSpeedData;
-    searchConsole: SearchConsoleData;
-    analytics: AnalyticsData;
   } {
-    const domain = new URL(url).hostname;
     const keywordArray = keywords.length > 0 ? keywords : this.extractKeywordsFromUrl(url);
 
     return {
       trends: this.generateTrendsData(keywordArray),
-      pageSpeed: this.generatePageSpeedData(url),
-      searchConsole: this.generateSearchConsoleData(domain),
-      analytics: this.generateAnalyticsData(domain)
+      pageSpeed: this.generatePageSpeedData(url)
     };
   }
 

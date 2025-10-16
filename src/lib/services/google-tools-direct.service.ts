@@ -14,8 +14,6 @@ export interface GoogleToolLink {
 export interface GoogleToolsData {
   trends?: any;
   pageSpeed?: any;
-  searchConsole?: any;
-  analytics?: any;
 }
 
 export class GoogleToolsDirectService {
@@ -31,38 +29,20 @@ export class GoogleToolsDirectService {
       {
         name: 'Google Trends',
         url: `https://trends.google.com/trends/explore?q=${encodeURIComponent(keywordString)}&geo=US&date=today%2012-m`,
-        description: `Analyze search trends for: ${keywordString}`,
+        description: `Analyze search trends and market research for: ${keywordString}`,
         icon: '📈'
       },
       {
         name: 'PageSpeed Insights',
         url: `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(cleanUrl)}&form_factor=desktop`,
-        description: `Check performance for: ${domain}`,
+        description: `Check performance, accessibility, SEO, and Core Web Vitals for: ${domain}`,
         icon: '⚡'
       },
       {
-        name: 'Google Search Console',
-        url: `https://search.google.com/search-console/performance/search-analytics?resource_id=${encodeURIComponent(`sc-domain:${domain}`)}&start_date=2024-01-01&end_date=2024-12-31`,
-        description: `Analyze search performance for: ${domain}`,
-        icon: '🔍'
-      },
-      {
-        name: 'Google Analytics',
-        url: `https://analytics.google.com/analytics/web/#/p${this.generateAnalyticsPropertyId(domain)}/reports/intelligenthome`,
-        description: `View analytics for: ${domain}`,
-        icon: '📊'
-      },
-      {
-        name: 'Lighthouse Audit',
-        url: `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(cleanUrl)}&form_factor=desktop`,
-        description: `Run Lighthouse audit for: ${domain}`,
-        icon: '🔦'
-      },
-      {
-        name: 'GTmetrix Analysis',
-        url: `https://gtmetrix.com/analyze.html?url=${encodeURIComponent(cleanUrl)}`,
-        description: `Detailed performance analysis for: ${domain}`,
-        icon: '📊'
+        name: 'PageSpeed Mobile',
+        url: `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(cleanUrl)}&form_factor=mobile`,
+        description: `Check mobile performance for: ${domain}`,
+        icon: '📱'
       }
     ];
   }

@@ -124,7 +124,7 @@ ${prompt.format}`;
               Generate Google Tools Links
             </CardTitle>
             <CardDescription>
-              Enter your website URL and keywords to get direct links to Google Tools
+              Enter your website URL and keywords to get direct links to useful Google Tools (PageSpeed + Trends)
             </CardDescription>
           </CardHeader>
           <CardContent>

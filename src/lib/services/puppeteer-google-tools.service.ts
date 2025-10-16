@@ -177,13 +177,13 @@ export class PuppeteerGoogleToolsService {
         if (queries.length === 0) {
           const allElements = document.querySelectorAll('*');
           const potentialQueries = new Set<string>();
-          
+
           allElements.forEach((element) => {
             const text = element.textContent?.trim();
-            if (text && 
-                text.length > 3 && 
-                text.length < 50 && 
-                !text.includes('Google') && 
+            if (text &&
+                text.length > 3 &&
+                text.length < 50 &&
+                !text.includes('Google') &&
                 !text.includes('Trends') &&
                 !text.includes('Search') &&
                 !text.includes('Explore') &&
@@ -250,7 +250,7 @@ export class PuppeteerGoogleToolsService {
 
       const pageSpeedData = await page.evaluate(() => {
         console.log('🔍 Extracting PageSpeed data from DOM...');
-        
+
         // Extract performance scores with multiple strategies
         let performanceScore = 0;
         let accessibilityScore = 0;
@@ -423,26 +423,37 @@ export class PuppeteerGoogleToolsService {
   static async scrapeAllGoogleToolsData(url: string, keywords: string[] = []): Promise<{
     trends?: GoogleTrendsData;
     pageSpeed?: PageSpeedData;
-    searchConsole?: SearchConsoleData;
-    analytics?: AnalyticsData;
   }> {
-    const domain = new URL(url).hostname;
     const keywordArray = keywords.length > 0 ? keywords : this.extractKeywordsFromUrl(url);
 
     try {
-      const [trends, pageSpeed, searchConsole, analytics] = await Promise.allSettled([
+      console.log(`🌐 Scraping useful Google Tools data for: ${url}`);
+      console.log(`📊 Focus: PageSpeed Insights (performance) + Google Trends (market research)`);
+
+      const [trends, pageSpeed] = await Promise.allSettled([
         this.scrapeTrendsData(keywordArray),
-        this.scrapePageSpeedData(url),
-        this.scrapeSearchConsoleData(domain),
-        this.scrapeAnalyticsData(domain)
+        this.scrapePageSpeedData(url)
       ]);
 
-      return {
-        trends: trends.status === 'fulfilled' ? trends.value : undefined,
-        pageSpeed: pageSpeed.status === 'fulfilled' ? pageSpeed.value : undefined,
-        searchConsole: searchConsole.status === 'fulfilled' ? searchConsole.value : undefined,
-        analytics: analytics.status === 'fulfilled' ? analytics.value : undefined
-      };
+      const result: any = {};
+
+      if (trends.status === 'fulfilled') {
+        result.trends = trends.value;
+        console.log('✅ Google Trends data collected');
+      } else {
+        console.error('❌ Google Trends failed:', trends.reason);
+      }
+
+      if (pageSpeed.status === 'fulfilled') {
+        result.pageSpeed = pageSpeed.value;
+        console.log('✅ PageSpeed Insights data collected');
+      } else {
+        console.error('❌ PageSpeed Insights failed:', pageSpeed.reason);
+      }
+
+      console.log('ℹ️ Note: Search Console, Analytics, and GTmetrix removed - require authentication or provide no additional value');
+
+      return result;
     } catch (error) {
       console.error('Error scraping Google Tools data:', error);
       throw error;

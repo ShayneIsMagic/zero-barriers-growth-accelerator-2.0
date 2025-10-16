@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     } catch (puppeteerError) {
       console.log('⚠️ Puppeteer failed, trying alternative real scraper...');
       console.log('Puppeteer error:', puppeteerError);
-      
+
       try {
         scrapedData = await RealGoogleToolsScraperService.scrapeAllRealGoogleToolsData(url, keywords);
         dataSource = 'real-alternative';

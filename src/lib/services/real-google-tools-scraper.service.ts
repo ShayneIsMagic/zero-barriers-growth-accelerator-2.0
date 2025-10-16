@@ -107,7 +107,7 @@ export class RealGoogleToolsScraperService {
 
       console.log(`🔍 Scraping Google Trends for: ${keywordString}`);
       await page.goto(trendsUrl, { waitUntil: 'networkidle2', timeout: 30000 });
-      
+
       // Wait for the page to fully load
       await page.waitForTimeout(5000);
 
@@ -172,10 +172,10 @@ export class RealGoogleToolsScraperService {
 
         allTextElements.forEach((element) => {
           const text = element.textContent?.trim();
-          if (text && 
-              text.length > 3 && 
-              text.length < 30 && 
-              !text.includes('Google') && 
+          if (text &&
+              text.length > 3 &&
+              text.length < 30 &&
+              !text.includes('Google') &&
               !text.includes('Trends') &&
               !text.includes('Search') &&
               !text.includes('Explore') &&
@@ -246,7 +246,7 @@ export class RealGoogleToolsScraperService {
 
       console.log(`⚡ Scraping PageSpeed Insights for: ${url}`);
       await page.goto(pageSpeedUrl, { waitUntil: 'networkidle2', timeout: 30000 });
-      
+
       // Wait for the page to fully load
       await page.waitForTimeout(8000);
 
@@ -313,7 +313,7 @@ export class RealGoogleToolsScraperService {
           elements.forEach((element) => {
             const title = element.querySelector('h3, .title, [class*="title"]')?.textContent?.trim();
             const description = element.querySelector('p, .description, [class*="description"]')?.textContent?.trim();
-            
+
             if (title && description) {
               data.opportunities.push({
                 title,
@@ -379,8 +379,6 @@ export class RealGoogleToolsScraperService {
   static async scrapeAllRealGoogleToolsData(url: string, keywords: string[] = []): Promise<{
     trends?: RealGoogleTrendsData;
     pageSpeed?: RealPageSpeedData;
-    searchConsole?: any; // Would require authentication
-    analytics?: any; // Would require authentication
   }> {
     const keywordArray = keywords.length > 0 ? keywords : this.extractKeywordsFromUrl(url);
 
@@ -410,8 +408,7 @@ export class RealGoogleToolsScraperService {
         console.error('❌ PageSpeed failed:', pageSpeedResult.reason);
       }
 
-      // Note: Search Console and Analytics would require authentication
-      console.log('ℹ️ Search Console and Analytics require authentication - not implemented');
+      console.log('ℹ️ Focus: Only useful tools (Trends + PageSpeed) - Search Console, Analytics, GTmetrix removed');
 
       return result;
 
