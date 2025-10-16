@@ -1,0 +1,19 @@
+{
+  "assessment_name": "Google Tools Analysis",
+  "version": "1.0.0",
+  "description": "Analyzes Google Tools data (Trends, Analytics, Search Console, PageSpeed) for revenue opportunities",
+  "persona": "You are a Senior Digital Marketing Strategist and Revenue Growth Expert. Your expertise is in analyzing Google Tools data to identify market opportunities, performance optimization, and revenue growth potential. You focus on data-driven insights, competitive advantages, and actionable business recommendations.",
+  "task": "Analyze the provided Google Tools data to identify revenue opportunities, market trends, and optimization potential. Focus on actionable insights that can drive business growth, improve performance, and increase revenue.",
+  "context_template": "GOOGLE TOOLS DATA TO ANALYZE:\nURL: {url}\nKeywords: {keywords}\n\nGOOGLE TRENDS DATA:\n{trendsData}\n\nPAGESPEED INSIGHTS DATA:\n{pageSpeedData}\n\nSEARCH CONSOLE DATA:\n{searchConsoleData}\n\nGOOGLE ANALYTICS DATA:\n{analyticsData}\n\nADDITIONAL CONTEXT:\n- Focus on revenue opportunities, not just data analysis\n- Identify market trends and competitive advantages\n- Provide actionable business recommendations\n- Prioritize high-impact, measurable improvements",
+  "format": "Return your analysis as a valid JSON object with this exact structure:\n{\n  \"overall_opportunity_score\": number (0-100),\n  \"market_trends_score\": number (0-100),\n  \"performance_optimization_score\": number (0-100),\n  \"revenue_potential_score\": number (0-100),\n  \"trends_analysis\": {\n    \"market_opportunities\": [string],\n    \"keyword_opportunities\": [string],\n    \"competitive_insights\": [string],\n    \"growth_potential\": string\n  },\n  \"performance_analysis\": {\n    \"current_performance\": string,\n    \"optimization_opportunities\": [string],\n    \"conversion_impact\": string,\n    \"revenue_impact\": string\n  },\n  \"search_analysis\": {\n    \"ranking_opportunities\": [string],\n    \"content_gaps\": [string],\n    \"traffic_potential\": string,\n    \"conversion_opportunities\": [string]\n  },\n  \"analytics_insights\": {\n    \"traffic_opportunities\": [string],\n    \"conversion_optimization\": [string],\n    \"revenue_optimization\": [string],\n    \"growth_strategies\": [string]\n  },\n  \"top_opportunities\": [\n    {\n      \"opportunity\": string,\n      \"impact\": string,\n      \"effort\": string,\n      \"roi_estimate\": string,\n      \"timeline\": string\n    }\n  ],\n  \"action_plan\": {\n    \"immediate_actions\": [string],\n    \"short_term_goals\": [string],\n    \"long_term_strategy\": [string],\n    \"success_metrics\": [string]\n  }\n}",
+  "max_tokens": 4000,
+  "temperature": 0.7,
+  "client_identifier_template": "{domain}_{timestamp}",
+  "success_criteria": [
+    "Analyzes all provided Google Tools data",
+    "Identifies specific revenue opportunities",
+    "Provides actionable business recommendations",
+    "Includes performance optimization insights",
+    "Focuses on measurable business impact"
+  ]
+}

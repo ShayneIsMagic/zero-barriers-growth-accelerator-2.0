@@ -3,8 +3,8 @@
  * Follows Content-Comparison pattern: No database dependencies
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { SimpleCliftonStrengthsService } from '@/lib/services/simple-clifton-strengths.service';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 60; // Set max duration for Vercel serverless function
 
@@ -28,9 +28,9 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`🎯 Starting CliftonStrengths analysis for: ${url}`);
-    
+
     const result = await SimpleCliftonStrengthsService.analyzeWithScrapedContent(url, scrapedContent);
-    
+
     if (result.success) {
       console.log(`✅ CliftonStrengths analysis completed for: ${url}`);
       return NextResponse.json(result);

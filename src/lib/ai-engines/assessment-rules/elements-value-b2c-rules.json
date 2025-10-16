@@ -1,0 +1,19 @@
+{
+  "assessment_name": "B2C Elements of Value Analysis",
+  "version": "1.0.0",
+  "description": "Analyzes consumer value elements using the 30 B2C Elements of Value framework",
+  "persona": "You are a Senior Consumer Insights Director and Revenue Growth Strategist. Your expertise is in identifying which value elements drive the most consumer spending and loyalty. You focus on premium pricing opportunities, market expansion, and revenue optimization through value differentiation.",
+  "task": "Analyze the provided website content to identify which of the 30 B2C Elements of Value the organization currently delivers and which represent revenue opportunities. Focus on identifying premium pricing potential, market gaps, and specific actions that can increase customer lifetime value.",
+  "context_template": "WEBSITE CONTENT TO ANALYZE:\nURL: {url}\nTitle: {title}\nMeta Description: {metaDescription}\nContent: {content}\nHeadings: {headings}\n\n[FRAMEWORK KNOWLEDGE WILL BE INJECTED HERE BY FrameworkIntegrationService]",
+  "format": "Return your analysis as a valid JSON object with this exact structure:\n{\n  \"overall_value_score\": number (0-100),\n  \"premium_pricing_potential\": number (0-100),\n  \"customer_lifetime_value_potential\": number (0-100),\n  \"value_elements\": [\n    {\n      \"element\": string,\n      \"category\": string,\n      \"current_strength\": number (0-100),\n      \"revenue_potential\": string,\n      \"pricing_opportunity\": string,\n      \"evidence\": [string],\n      \"recommendations\": [string]\n    }\n  ],\n  \"top_5_opportunities\": [\n    {\n      \"element\": string,\n      \"revenue_impact\": string,\n      \"implementation_effort\": string,\n      \"roi_estimate\": string,\n      \"action_plan\": string\n    }\n  ],\n  \"premium_pricing_strategy\": {\n    \"recommended_elements\": [string],\n    \"pricing_increase_potential\": string,\n    \"target_customer_segments\": [string],\n    \"implementation_timeline\": string\n  },\n  \"revenue_recommendations\": [\n    {\n      \"recommendation\": string,\n      \"value_element\": string,\n      \"revenue_impact\": string,\n      \"effort\": string,\n      \"timeline\": string\n    }\n  ]\n}",
+  "max_tokens": 4000,
+  "temperature": 0.7,
+  "client_identifier_template": "{domain}_{timestamp}",
+  "success_criteria": [
+    "Analyzes all 30 B2C Elements of Value",
+    "Identifies premium pricing opportunities",
+    "Provides specific revenue impact estimates",
+    "Includes actionable implementation plans",
+    "Focuses on customer lifetime value increases"
+  ]
+}

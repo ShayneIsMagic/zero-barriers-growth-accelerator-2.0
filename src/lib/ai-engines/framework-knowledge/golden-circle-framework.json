@@ -1,0 +1,140 @@
+{
+  "framework_name": "Golden Circle Framework",
+  "creator": "Simon Sinek",
+  "description": "A framework for understanding why organizations exist and how they inspire action",
+  "core_concept": "People don't buy what you do, they buy why you do it",
+  "structure": {
+    "why": {
+      "definition": "The purpose, cause, or belief that drives the organization",
+      "questions": [
+        "Why does your organization exist?",
+        "What is your cause or belief?",
+        "Why should anyone care?",
+        "What is your purpose beyond making money?"
+      ],
+      "characteristics": [
+        "Emotional and inspirational",
+        "Drives decision-making",
+        "Creates loyalty and trust",
+        "Differentiates from competitors"
+      ],
+      "examples": [
+        "Apple: 'Think Different' - challenging the status quo",
+        "Tesla: 'Accelerate the world's transition to sustainable transport'",
+        "Patagonia: 'We're in business to save our home planet'"
+      ]
+    },
+    "how": {
+      "definition": "The specific actions taken to realize the why",
+      "questions": [
+        "How do you fulfill your why?",
+        "What is your unique approach?",
+        "What makes you different?",
+        "How do you deliver on your promise?"
+      ],
+      "characteristics": [
+        "Unique processes or methods",
+        "Differentiating capabilities",
+        "Proprietary systems",
+        "Competitive advantages"
+      ],
+      "examples": [
+        "Apple: Beautiful, intuitive design and user experience",
+        "Tesla: Direct-to-consumer sales and over-the-air updates",
+        "Patagonia: Sustainable materials and environmental activism"
+      ]
+    },
+    "what": {
+      "definition": "The products or services offered",
+      "questions": [
+        "What do you sell?",
+        "What products or services do you offer?",
+        "What do customers buy from you?",
+        "What is your offering?"
+      ],
+      "characteristics": [
+        "Tangible products or services",
+        "Features and benefits",
+        "What customers actually buy",
+        "The result of why and how"
+      ],
+      "examples": [
+        "Apple: iPhones, Macs, iPads, services",
+        "Tesla: Electric vehicles, energy products, software",
+        "Patagonia: Outdoor clothing and gear"
+      ]
+    },
+    "who": {
+      "definition": "The target audience who believes what you believe",
+      "questions": [
+        "Who are your customers?",
+        "Who believes what you believe?",
+        "Who shares your values?",
+        "Who is your ideal customer?"
+      ],
+      "characteristics": [
+        "Demographics and psychographics",
+        "Pain points and needs",
+        "Values and beliefs",
+        "Behavioral patterns"
+      ],
+      "examples": [
+        "Apple: Creative professionals, early adopters, design enthusiasts",
+        "Tesla: Environmentally conscious, tech-savvy, luxury buyers",
+        "Patagonia: Outdoor enthusiasts, environmental activists, quality seekers"
+      ]
+    }
+  },
+  "analysis_criteria": {
+    "why_strength": [
+      "Clear and compelling purpose statement",
+      "Emotional resonance and inspiration",
+      "Differentiation from competitors",
+      "Consistent messaging across content"
+    ],
+    "how_strength": [
+      "Unique and proprietary processes",
+      "Clear differentiation from competitors",
+      "Scalable and sustainable approach",
+      "Evidence of capability and expertise"
+    ],
+    "what_strength": [
+      "Clear product/service offering",
+      "Strong value proposition",
+      "Customer-focused benefits",
+      "Market fit and demand"
+    ],
+    "who_strength": [
+      "Well-defined target audience",
+      "Clear customer personas",
+      "Understanding of pain points",
+      "Evidence of customer focus"
+    ]
+  },
+  "revenue_opportunities": {
+    "why_opportunities": [
+      "Strengthen purpose messaging for higher prices",
+      "Target customers who share beliefs",
+      "Create premium positioning",
+      "Build brand loyalty and advocacy"
+    ],
+    "how_opportunities": [
+      "Develop proprietary processes",
+      "Create competitive moats",
+      "Scale unique capabilities",
+      "License or franchise methods"
+    ],
+    "what_opportunities": [
+      "Expand product/service portfolio",
+      "Create premium tiers",
+      "Develop complementary offerings",
+      "Improve value proposition"
+    ],
+    "who_opportunities": [
+      "Expand to new customer segments",
+      "Deepen existing relationships",
+      "Identify underserved markets",
+      "Create customer communities"
+    ]
+  }
+}

@@ -6,22 +6,21 @@
 
 'use client';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { 
-  BarChart3, 
-  CheckCircle, 
-  Loader2, 
-  Search, 
-  TrendingUp, 
-  Zap,
-  Bot,
-  Download,
-  ExternalLink
+import {
+    BarChart3,
+    Bot,
+    CheckCircle,
+    Download,
+    ExternalLink,
+    Loader2,
+    Search,
+    TrendingUp,
+    Zap
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -61,7 +60,7 @@ export function SimpleGoogleToolsPage() {
 
     try {
       const keywordArray = keywords.split(',').map(k => k.trim()).filter(k => k.length > 0);
-      
+
       const response = await fetch('/api/scrape-google-tools', {
         method: 'POST',
         headers: {
@@ -129,7 +128,7 @@ export function SimpleGoogleToolsPage() {
 
   const downloadData = () => {
     if (!scrapedData) return;
-    
+
     const dataStr = JSON.stringify(scrapedData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
@@ -142,10 +141,10 @@ export function SimpleGoogleToolsPage() {
 
   const getToolLinks = () => {
     if (!url.trim()) return [];
-    
+
     const domain = new URL(url).hostname;
     const keywordString = keywords || domain.replace(/\.(com|org|net|co|io)$/, '');
-    
+
     return [
       {
         name: 'Google Trends',

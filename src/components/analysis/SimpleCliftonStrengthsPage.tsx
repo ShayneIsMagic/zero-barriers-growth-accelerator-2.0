@@ -6,21 +6,21 @@
 
 'use client';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Brain, 
-  CheckCircle, 
-  Loader2, 
-  Target, 
-  TrendingUp,
-  Users,
-  Zap,
-  BarChart3,
-  Lightbulb
+import {
+    BarChart3,
+    Brain,
+    CheckCircle,
+    Lightbulb,
+    Loader2,
+    Target,
+    TrendingUp,
+    Users,
+    Zap
 } from 'lucide-react';
 import { useState } from 'react';
 import { ContentPreviewBox } from './ContentPreviewBox';
@@ -331,11 +331,11 @@ export function SimpleCliftonStrengthsPage() {
                             <p className="text-xs text-gray-600 dark:text-gray-400">Score</p>
                           </div>
                         </div>
-                        
+
                         <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
                           {theme.manifestation}
                         </p>
-                        
+
                         <div>
                           <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                             Evidence from content:

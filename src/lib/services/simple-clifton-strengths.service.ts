@@ -44,11 +44,11 @@ export class SimpleCliftonStrengthsService {
   static async analyzeWithScrapedContent(url: string, scrapedData: any): Promise<SimpleCliftonStrengthsResult> {
     try {
       console.log(`🎯 Starting CliftonStrengths analysis for: ${url}`);
-      
+
       const analysisResult = await this.runCliftonStrengthsAnalysis(scrapedData, url);
-      
+
       console.log(`✅ CliftonStrengths analysis completed for: ${url}`);
-      
+
       return {
         success: true,
         url,
@@ -70,9 +70,9 @@ export class SimpleCliftonStrengthsService {
    */
   private static async runCliftonStrengthsAnalysis(scrapedData: any, url: string): Promise<any> {
     const prompt = this.buildCliftonStrengthsPrompt(scrapedData, url);
-    
+
     const aiResponse = await analyzeWithAI(prompt, 'gemini');
-    
+
     if (!aiResponse.success) {
       throw new Error(aiResponse.error || 'AI analysis failed');
     }

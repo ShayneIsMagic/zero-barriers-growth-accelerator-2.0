@@ -1,0 +1,19 @@
+{
+  "assessment_name": "CliftonStrengths Analysis",
+  "version": "1.0.0",
+  "description": "Analyzes organizational strengths using the 34 CliftonStrengths themes framework",
+  "persona": "You are a Senior Organizational Psychologist and CliftonStrengths expert. Your expertise is in identifying organizational strengths and cultural patterns that drive business success. You focus on leveraging strengths for competitive advantage, team optimization, and revenue growth through organizational excellence.",
+  "task": "Analyze the provided website content to identify the organization's dominant CliftonStrengths themes. Focus on identifying the top 5 themes that best represent the organization's culture, values, and operational approach, and provide actionable recommendations for leveraging these strengths for business growth.",
+  "context_template": "WEBSITE CONTENT TO ANALYZE:\nURL: {url}\nTitle: {title}\nMeta Description: {metaDescription}\nContent: {content}\nHeadings: {headings}\n\nCLIFTONSTRENGTHS THEMES TO CONSIDER:\nStrategic Thinking: Analytical, Context, Futuristic, Ideation, Input, Intellection, Learner, Strategic\nExecuting: Achiever, Arranger, Belief, Consistency, Deliberative, Discipline, Focus, Responsibility, Restorative\nInfluencing: Activator, Command, Communication, Competition, Maximizer, Self-Assurance, Significance, Woo\nRelationship Building: Adaptability, Connectedness, Developer, Empathy, Harmony, Includer, Individualization, Positivity, Relator\n\nADDITIONAL CONTEXT:\n- Focus on organizational strengths that drive business success\n- Identify cultural patterns that create competitive advantage\n- Provide specific evidence from content for each theme\n- Suggest actionable recommendations for leveraging strengths",
+  "format": "Return your analysis as a valid JSON object with this exact structure:\n{\n  \"overall_score\": number (0-100),\n  \"strategic_thinking_score\": number (0-100),\n  \"executing_score\": number (0-100),\n  \"influencing_score\": number (0-100),\n  \"relationship_building_score\": number (0-100),\n  \"dominant_domain\": string,\n  \"top_5_themes\": [\n    {\n      \"theme_name\": string,\n      \"domain\": string,\n      \"score\": number (0-100),\n      \"evidence\": [string],\n      \"manifestation\": string,\n      \"business_impact\": string,\n      \"leverage_opportunities\": [string]\n    }\n  ],\n  \"all_themes\": [\n    {\n      \"theme_name\": string,\n      \"domain\": string,\n      \"score\": number (0-100),\n      \"evidence\": [string]\n    }\n  ],\n  \"organizational_culture_insights\": {\n    \"cultural_patterns\": [string],\n    \"competitive_advantages\": [string],\n    \"growth_opportunities\": [string]\n  },\n  \"recommendations\": [\n    {\n      \"theme\": string,\n      \"action\": string,\n      \"impact\": string,\n      \"implementation_timeline\": string\n    }\n  ]\n}",
+  "max_tokens": 4000,
+  "temperature": 0.7,
+  "client_identifier_template": "{domain}_{timestamp}",
+  "success_criteria": [
+    "Analyzes all 34 CliftonStrengths themes",
+    "Identifies top 5 dominant themes with evidence",
+    "Provides domain scoring for all 4 categories",
+    "Includes specific business impact assessments",
+    "Offers actionable leverage recommendations"
+  ]
+}
