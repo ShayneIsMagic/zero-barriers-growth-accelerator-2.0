@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { scrapeWebsiteContent } from '@/lib/production-content-extractor';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 300; // 5 minutes for complete Phase 1
 
@@ -88,19 +88,19 @@ async function runGoogleSEOTools(url: string, content: any) {
   try {
     // Extract keywords from content
     const keywords = extractKeywords(content);
-    
+
     // Analyze meta tags
     const metaAnalysis = analyzeMetaTags(content);
-    
+
     // Check for structured data
     const structuredData = analyzeStructuredData(content);
-    
+
     // Analyze headings structure
     const headingAnalysis = analyzeHeadings(content);
-    
+
     // Check for internal/external links
     const linkAnalysis = analyzeLinks(content);
-    
+
     // Calculate overall SEO score
     const overallScore = calculateSEOScore(metaAnalysis, headingAnalysis, linkAnalysis, structuredData);
 
@@ -124,13 +124,13 @@ async function runLighthouseAnalysis(url: string) {
   try {
     // Use Google PageSpeed Insights API
     const response = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${process.env.GOOGLE_API_KEY}`);
-    
+
     if (!response.ok) {
       throw new Error('Lighthouse API failed');
     }
-    
+
     const data = await response.json();
-    
+
     return {
       scores: {
         performance: data.lighthouseResult.categories.performance.score * 100,
@@ -171,24 +171,24 @@ async function runLighthouseAnalysis(url: string) {
 async function runQAAnalysis(url: string, content: any) {
   try {
     const issues = [];
-    
+
     // Check for common issues
     if (!content.title) issues.push({ type: 'critical', message: 'Missing page title' });
     if (!content.metaDescription) issues.push({ type: 'warning', message: 'Missing meta description' });
     if (content.wordCount < 300) issues.push({ type: 'warning', message: 'Content too short (less than 300 words)' });
     if (content.imageCount === 0) issues.push({ type: 'info', message: 'No images found' });
     if (content.linkCount === 0) issues.push({ type: 'warning', message: 'No internal links found' });
-    
+
     // Check for broken elements
     if (content.brokenLinks && content.brokenLinks.length > 0) {
       issues.push({ type: 'error', message: `Found ${content.brokenLinks.length} broken links` });
     }
-    
+
     // Check for accessibility issues
     if (!content.headings?.h1 || content.headings.h1.length === 0) {
       issues.push({ type: 'error', message: 'Missing H1 heading' });
     }
-    
+
     return {
       issues,
       score: Math.max(0, 100 - (issues.filter(i => i.type === 'error').length * 20) - (issues.filter(i => i.type === 'warning').length * 10)),
@@ -205,7 +205,7 @@ async function runGoogleTrendsAnalysis(content: any) {
   try {
     const keywords = extractKeywords(content);
     const trendingTopics = [];
-    
+
     // Analyze trending topics for each keyword
     for (const keyword of keywords.slice(0, 5)) { // Limit to top 5 keywords
       try {
@@ -220,7 +220,7 @@ async function runGoogleTrendsAnalysis(content: any) {
         console.error(`Trends analysis failed for keyword: ${keyword}`, err);
       }
     }
-    
+
     return {
       trendingTopics,
       overallTrend: calculateOverallTrend(trendingTopics),
@@ -237,7 +237,7 @@ async function runCompetitionAnalysis(url: string, content: any) {
   try {
     const domain = new URL(url).hostname;
     const competitors = await findCompetitors(domain, content);
-    
+
     return {
       competitors,
       competitiveAnalysis: await analyzeCompetitors(competitors),
@@ -256,12 +256,12 @@ function extractKeywords(content: any): string[] {
     .replace(/[^\w\s]/g, '')
     .split(/\s+/)
     .filter(word => word.length > 3);
-  
+
   const wordCount: { [key: string]: number } = {};
   words.forEach(word => {
     wordCount[word] = (wordCount[word] || 0) + 1;
   });
-  
+
   return Object.entries(wordCount)
     .sort(([,a], [,b]) => b - a)
     .slice(0, 20)
@@ -338,20 +338,20 @@ function calculateSEOScore(meta: any, headings: any, links: any, structured: any
     links.score,
     structured.score
   ];
-  
+
   return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
 }
 
 function generateSEORecommendations(meta: any, headings: any, links: any, structured: any) {
   const recommendations = [];
-  
+
   if (meta.title.score < 5) recommendations.push('Improve page title length and relevance');
   if (meta.description.score < 5) recommendations.push('Add or improve meta description');
   if (headings.h1.score === 0) recommendations.push('Add H1 heading');
   if (headings.h2.score < 3) recommendations.push('Add more H2 headings for structure');
   if (links.score < 5) recommendations.push('Fix broken links');
   if (structured.score === 0) recommendations.push('Add structured data markup');
-  
+
   return recommendations;
 }
 
@@ -378,7 +378,7 @@ function calculateOverallTrend(trendingTopics: any[]) {
   const stable = trends.filter(t => t === 'stable').length;
   const rising = trends.filter(t => t === 'rising').length;
   const falling = trends.filter(t => t === 'falling').length;
-  
+
   if (rising > stable && rising > falling) return 'rising';
   if (falling > stable && falling > rising) return 'falling';
   return 'stable';
