@@ -1,54 +1,36 @@
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    // Test 1: Check if DATABASE_URL is configured
-    const hasDbUrl = !!process.env.DATABASE_URL;
-
-    // Test 2: Try to connect
-    await prisma.$connect();
-
-    // Test 3: Count users
+    // Test basic database connection
     const userCount = await prisma.user.count();
-
-    // Test 4: Get sample user (without password)
-    const users = await prisma.user.findMany({
-      select: { id: true, email: true, name: true, role: true },
-      take: 3
+    
+    // Test if we can find the specific user
+    const testUser = await prisma.user.findUnique({
+      where: { email: 'shayne+1@devpipeline.com' }
     });
-
-    // Test 5: Check if specific user exists
-    const adminUser = await prisma.user.findUnique({
-      where: { email: 'shayne+1@devpipeline.com' },
-      select: { email: true, role: true, createdAt: true }
-    });
-
-    await prisma.$disconnect();
 
     return NextResponse.json({
-      status: 'SUCCESS',
-      tests: {
-        databaseUrlConfigured: hasDbUrl,
-        connectionSuccessful: true,
-        userCount,
-        adminUserExists: !!adminUser,
-        adminUser: adminUser || null,
-        allUsers: users
-      },
-      message: 'Database connection working!'
+      success: true,
+      database: 'connected',
+      userCount,
+      testUser: testUser ? {
+        id: testUser.id,
+        email: testUser.email,
+        name: testUser.name,
+        role: testUser.role,
+        hasPassword: !!testUser.password
+      } : null,
+      message: 'Database connection successful'
     });
+
   } catch (error) {
+    console.error('Database test error:', error);
     return NextResponse.json({
-      status: 'ERROR',
-      tests: {
-        databaseUrlConfigured: !!process.env.DATABASE_URL,
-        connectionSuccessful: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      },
-      message: 'Database connection failed',
-      help: 'Check DATABASE_URL in Vercel environment variables'
+      success: false,
+      error: 'Database connection failed',
+      details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }
-
