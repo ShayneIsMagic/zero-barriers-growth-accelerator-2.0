@@ -98,7 +98,12 @@ export function ContentComparisonPage() {
               onChange={(e) => setUrl(e.target.value)}
               disabled={isAnalyzing}
               aria-label="Enter website URL to analyze"
+              aria-describedby="url-help"
+              required
             />
+            <p id="url-help" className="text-xs text-muted-foreground mt-1">
+              Enter the URL of the website you want to analyze
+            </p>
           </div>
 
           {/* Proposed Content */}
@@ -127,8 +132,9 @@ New compelling description that highlights our unique value proposition.
               disabled={isAnalyzing}
               className="min-h-[200px] font-mono text-sm"
               aria-label="Enter proposed new content for comparison"
+              aria-describedby="content-help"
             />
-            <p className="text-xs text-muted-foreground mt-2">
+            <p id="content-help" className="text-xs text-muted-foreground mt-2">
               💡 Leave empty to just analyze existing content. Add proposed content to see side-by-side comparison.
             </p>
           </div>
@@ -293,9 +299,14 @@ New compelling description that highlights our unique value proposition.
 
                   <div className="p-3 border rounded-lg">
                     <h4 className="font-semibold mb-2">Content Preview</h4>
-                    <pre className="text-xs whitespace-pre-wrap bg-gray-50 dark:bg-gray-900 p-3 rounded">
-                      {result.existing.cleanText.substring(0, 1000)}...
-                    </pre>
+                    <div className="max-h-96 overflow-y-auto">
+                      <pre className="text-xs whitespace-pre-wrap bg-gray-50 dark:bg-gray-900 p-3 rounded">
+                        {result.existing.cleanText}
+                      </pre>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      📊 Total content length: {result.existing.cleanText.length.toLocaleString()} characters
+                    </p>
                   </div>
                 </div>
               </CardContent>

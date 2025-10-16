@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { BarChart3, DollarSign, Loader2, Target, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
+import { ContentPreviewBox } from './ContentPreviewBox';
 
 interface B2BValueElement {
   element: string;
@@ -44,13 +45,53 @@ interface B2BAnalysisData {
 
 export function StandaloneElementsOfValueB2BPage() {
   const [url, setUrl] = useState('');
+  const [isScraping, setIsScraping] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [scrapedContent, setScrapedContent] = useState<any>(null);
   const [result, setResult] = useState<B2BAnalysisData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleAnalyze = async () => {
+  const handleScrapeContent = async () => {
     if (!url.trim()) {
       setError('Please enter a website URL');
+      return;
+    }
+
+    setIsScraping(true);
+    setError(null);
+    setScrapedContent(null);
+    setResult(null);
+
+    try {
+      const response = await fetch('/api/scrape-content', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: url.trim() }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Content scraping failed');
+      }
+
+      if (data.success) {
+        setScrapedContent(data.data);
+      } else {
+        throw new Error(data.error || 'Content scraping failed');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Content scraping failed');
+    } finally {
+      setIsScraping(false);
+    }
+  };
+
+  const handleAnalyze = async () => {
+    if (!scrapedContent) {
+      setError('Please scrape content first');
       return;
     }
 
@@ -64,7 +105,10 @@ export function StandaloneElementsOfValueB2BPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ url: url.trim() }),
+        body: JSON.stringify({ 
+          url: url.trim(),
+          scrapedContent: scrapedContent 
+        }),
       });
 
       const data = await response.json();
@@ -140,23 +184,44 @@ export function StandaloneElementsOfValueB2BPage() {
                   className="mt-1"
                 />
               </div>
-              <Button
-                onClick={handleAnalyze}
-                disabled={isAnalyzing || !url.trim()}
-                className="w-full"
-              >
-                {isAnalyzing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Analyzing B2B Value Elements...
-                  </>
-                ) : (
-                  <>
-                    <Target className="mr-2 h-4 w-4" />
-                    Analyze B2B Value Elements
-                  </>
-                )}
-              </Button>
+              <div className="space-y-3">
+                <Button
+                  onClick={handleScrapeContent}
+                  disabled={isScraping || !url.trim()}
+                  className="w-full"
+                >
+                  {isScraping ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Scraping Website Content...
+                    </>
+                  ) : (
+                    <>
+                      <Target className="mr-2 h-4 w-4" />
+                      Step 1: Scrape Content
+                    </>
+                  )}
+                </Button>
+                
+                <Button
+                  onClick={handleAnalyze}
+                  disabled={isAnalyzing || !scrapedContent}
+                  className="w-full"
+                  variant="outline"
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Analyzing B2B Value Elements...
+                    </>
+                  ) : (
+                    <>
+                      <BarChart3 className="mr-2 h-4 w-4" />
+                      Step 2: Analyze B2B Value Elements
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -168,6 +233,16 @@ export function StandaloneElementsOfValueB2BPage() {
               <p className="text-red-600 dark:text-red-400">{error}</p>
             </CardContent>
           </Card>
+        )}
+
+        {/* Scraped Content Preview */}
+        {scrapedContent && (
+          <ContentPreviewBox
+            scrapedContent={scrapedContent}
+            url={url}
+            title="B2B Analysis - Scraped Content Preview"
+            description="Content successfully scraped from the website. Review the data before running B2B Elements of Value analysis."
+          />
         )}
 
         {/* Results */}

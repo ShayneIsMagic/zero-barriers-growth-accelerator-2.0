@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { DollarSign, Loader2, Target, TrendingUp, Users } from 'lucide-react';
 import { useState } from 'react';
+import { ContentPreviewBox } from './ContentPreviewBox';
 
 interface B2CValueElement {
   element: string;
@@ -103,9 +104,9 @@ export function StandaloneElementsOfValueB2CPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           url: url.trim(),
-          scrapedContent: scrapedContent 
+          scrapedContent: scrapedContent
         }),
       });
 
@@ -200,7 +201,7 @@ export function StandaloneElementsOfValueB2CPage() {
                     </>
                   )}
                 </Button>
-                
+
                 <Button
                   onClick={handleAnalyze}
                   disabled={isAnalyzing || !scrapedContent}
@@ -235,45 +236,12 @@ export function StandaloneElementsOfValueB2CPage() {
 
         {/* Scraped Content Preview */}
         {scrapedContent && (
-          <Card className="mb-8 border-blue-200 bg-blue-50 dark:bg-blue-900/10">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Target className="mr-2 h-6 w-6 text-blue-600" />
-                Scraped Content Preview
-              </CardTitle>
-              <CardDescription>
-                Content successfully scraped from {url}. Review the data before analysis.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-semibold mb-2">Title:</h4>
-                  <p className="text-gray-700 dark:text-gray-300">{scrapedContent.title}</p>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2">Meta Description:</h4>
-                  <p className="text-gray-700 dark:text-gray-300">{scrapedContent.metaDescription}</p>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2">Content Preview:</h4>
-                  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border max-h-40 overflow-y-auto">
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
-                      {scrapedContent.cleanText.substring(0, 500)}...
-                    </p>
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2">Headings Found:</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {scrapedContent.headings?.slice(0, 10).map((heading: string, index: number) => (
-                      <Badge key={index} variant="outline">{heading}</Badge>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <ContentPreviewBox
+            scrapedContent={scrapedContent}
+            url={url}
+            title="B2C Analysis - Scraped Content Preview"
+            description="Content successfully scraped from the website. Review the data before running B2C Elements of Value analysis."
+          />
         )}
 
         {/* Results */}

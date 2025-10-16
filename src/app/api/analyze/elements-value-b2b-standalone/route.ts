@@ -11,7 +11,7 @@ export const maxDuration = 60;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url } = body;
+    const { url, scrapedContent } = body;
 
     if (!url) {
       return NextResponse.json({
@@ -20,9 +20,17 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
+    if (!scrapedContent) {
+      return NextResponse.json({
+        success: false,
+        error: 'Scraped content is required'
+      }, { status: 400 });
+    }
+
     console.log(`💰 Starting B2B Elements of Value analysis for: ${url}`);
 
-    const result = await RevenueFocusedElementsOfValueService.analyzeWebsite(url);
+    // Use the provided scraped content instead of scraping again
+    const result = await RevenueFocusedElementsOfValueService.analyzeWithScrapedContent(url, scrapedContent);
 
     if (!result.success) {
       console.error('B2B Elements of Value analysis failed:', result.error);
