@@ -1,4 +1,4 @@
-import { ComingSoonService } from '@/lib/services/coming-soon.service';
+// ComingSoonService archived - using simple response
 import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 60;
@@ -17,12 +17,20 @@ export async function POST(request: NextRequest) {
 
     console.log(`🚧 SEO opportunities analysis requested for: ${url} (Coming Soon)`);
 
-    // Return coming soon response with manual prompt
-    const response = ComingSoonService.createComingSoonResponse('seo_opportunities', {
-      url,
-      content: content?.substring(0, 1000), // Truncate for prompt
-      industry
-    });
+    // Simple coming soon response
+    const response = {
+      success: true,
+      status: 'coming_soon',
+      message: 'SEO Opportunities analysis is coming soon',
+      module: {
+        id: 'seo_opportunities',
+        name: 'SEO Opportunities',
+        description: 'Advanced SEO opportunity analysis',
+        status: 'coming_soon',
+        estimatedRelease: 'Q2 2025'
+      },
+      manualPrompt: `Analyze SEO opportunities for ${url}. Industry: ${industry || 'General'}. Content: ${content?.substring(0, 1000)}...`
+    };
 
     return NextResponse.json(response);
 

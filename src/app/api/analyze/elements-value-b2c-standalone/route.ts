@@ -3,8 +3,8 @@
  * Focuses on consumer value elements and revenue opportunities
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { SimpleFrameworkAnalysisService } from '@/lib/simple-framework-analysis.service';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 60;
 
@@ -27,10 +27,21 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
+    // Normalize scraped content format
+    let normalizedContent;
+    if (typeof scrapedContent === 'string') {
+      normalizedContent = {
+        title: url.split('/')[2] || 'Website',
+        cleanText: scrapedContent
+      };
+    } else {
+      normalizedContent = scrapedContent;
+    }
+
     console.log(`💰 Starting B2C Elements of Value analysis for: ${url}`);
 
     // Use simple framework analysis
-    const result = await SimpleFrameworkAnalysisService.analyzeB2CElements(url, scrapedContent);
+    const result = await SimpleFrameworkAnalysisService.analyzeB2CElements(url, normalizedContent);
 
     if (!result.success) {
       console.error('B2C Elements of Value analysis failed:', result.error);

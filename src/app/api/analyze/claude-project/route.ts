@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
 /**
  * Get active client sessions
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const sessions = await ClaudeProjectIntegrationService.getActiveSessions();
 

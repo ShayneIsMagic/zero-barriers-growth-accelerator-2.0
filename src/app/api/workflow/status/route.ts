@@ -1,4 +1,3 @@
-import { ComingSoonService } from '@/lib/services/coming-soon.service';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -6,57 +5,36 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const analysisId = searchParams.get('analysisId');
 
-    // Get all modules and their status
-    const allModules = ComingSoonService.getAllModules();
-    const availableModules = ComingSoonService.getModulesByStatus('available');
-    const comingSoonModules = ComingSoonService.getModulesByStatus('coming_soon');
-    const partialModules = ComingSoonService.getModulesByStatus('partial');
-
-    // Create workflow response
-    const workflowResponse = ComingSoonService.createWorkflowResponse(
-      analysisId ? ['phase1', 'golden-circle', 'elements-of-value', 'clifton-strengths'] : [],
-      'phase2'
-    );
+    // Simple workflow status without ComingSoonService
+    const workflowResponse = {
+      analysisId: analysisId || null,
+      currentPhase: analysisId ? 'phase2' : 'phase1',
+      availableModules: [
+        'phase1',
+        'golden-circle', 
+        'elements-of-value', 
+        'clifton-strengths',
+        'seo-analysis',
+        'google-tools'
+      ],
+      nextSteps: analysisId ? ['Run Phase 2 analysis'] : ['Complete Phase 1 data collection']
+    };
 
     return NextResponse.json({
       success: true,
       data: {
-        workflow: workflowResponse.workflow,
+        workflow: workflowResponse,
         modules: {
-          available: availableModules.map(m => ({
-            id: m.id,
-            name: m.name,
-            description: m.description,
-            status: m.status
+          available: workflowResponse.availableModules.map(id => ({
+            id,
+            name: id.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()),
+            description: `Available ${id} analysis`,
+            status: 'available'
           })),
-          comingSoon: comingSoonModules.map(m => ({
-            id: m.id,
-            name: m.name,
-            description: m.description,
-            status: m.status,
-            estimatedCompletion: m.estimatedCompletion,
-            alternativeAction: m.alternativeAction
-          })),
-          partial: partialModules.map(m => ({
-            id: m.id,
-            name: m.name,
-            description: m.description,
-            status: m.status,
-            estimatedCompletion: m.estimatedCompletion
-          }))
-        },
-        nextSteps: [
-          'Complete available assessments first',
-          'Use manual prompts for coming soon features',
-          'Check back for updates on automated features'
-        ],
-        manualPrompts: comingSoonModules.map(m => ({
-          id: m.id,
-          name: m.name,
-          prompt: ComingSoonService.generateManualPrompt(m.id, { url: 'your-website-url' })
-        }))
-      },
-      message: 'Workflow status retrieved successfully'
+          comingSoon: [],
+          partial: []
+        }
+      }
     });
 
   } catch (error) {

@@ -28,7 +28,9 @@
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "jsx-a11y/alt-text": "warn",
-    "jsx-a11y/anchor-is-valid": "warn"
+    "jsx-a11y/anchor-is-valid": "warn",
+    "react/no-unescaped-entities": "warn",
+    "react/display-name": "warn"
   },
   "overrides": [
     {
@@ -38,7 +40,8 @@
       },
       "rules": {
         "no-console": "off",
-        "@typescript-eslint/no-explicit-any": "off"
+        "@typescript-eslint/no-explicit-any": "off",
+        "react/display-name": "off"
       }
     }
   ],

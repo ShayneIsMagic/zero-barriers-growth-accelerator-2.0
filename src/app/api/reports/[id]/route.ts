@@ -2,16 +2,16 @@
  * Individual Report API - Get, update, or delete specific reports
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { reportStorage } from '@/lib/report-storage';
+import { NextRequest, NextResponse } from 'next/server';
 
 // GET /api/reports/[id] - Get specific report
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const report = await reportStorage.getReport(id);
 
@@ -40,10 +40,10 @@ export async function GET(
 // DELETE /api/reports/[id] - Delete specific report
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const success = await reportStorage.deleteReport(id);
 

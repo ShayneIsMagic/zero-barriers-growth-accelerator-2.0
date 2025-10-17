@@ -120,7 +120,7 @@ Provide specific recommendations for content improvement.`
       <div className="text-center space-y-4">
         <h1 className="text-3xl font-bold">Coming Soon Features</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          We're working hard to bring you more automated analysis features.
+          We&apos;re working hard to bring you more automated analysis features.
           In the meantime, use the manual prompts below to get immediate AI-powered insights.
         </p>
       </div>

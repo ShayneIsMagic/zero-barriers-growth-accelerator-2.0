@@ -203,7 +203,7 @@ export default function CliftonStrengthsPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">CliftonStrengths Analysis</h1>
         <p className="text-gray-600">
-          Analyze your website's organizational strengths using Gallup's 34-theme framework
+          Analyze your website&apos;s organizational strengths using Gallup&apos;s 34-theme framework
         </p>
       </div>
 

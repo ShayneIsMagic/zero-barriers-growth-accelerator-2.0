@@ -211,7 +211,7 @@ export default function ElementsOfValuePage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Elements of Value Analysis</h1>
         <p className="text-gray-600">
-          Analyze your website's value proposition using Bain & Company's 30 B2C and 40 B2B value elements
+          Analyze your website&apos;s value proposition using Bain & Company&apos;s 30 B2C and 40 B2B value elements
         </p>
       </div>
 

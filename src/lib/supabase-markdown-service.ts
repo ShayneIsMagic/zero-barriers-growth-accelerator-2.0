@@ -198,7 +198,7 @@ export async function getMarkdownExport(analysisId: string): Promise<MarkdownExp
  */
 export async function getCompleteAnalysisMarkdown(analysisId: string): Promise<any> {
   try {
-    const [export, reports] = await Promise.all([
+    const [exportData, reports] = await Promise.all([
       prisma.markdown_exports.findFirst({
         where: { analysis_id: analysisId }
       }),
@@ -210,16 +210,16 @@ export async function getCompleteAnalysisMarkdown(analysisId: string): Promise<a
 
     return {
       analysisId,
-      export: export ? {
-        id: export.id,
-        analysis_id: export.analysis_id,
-        url: export.url,
-        markdown: export.markdown,
-        overall_score: export.overall_score,
-        rating: export.rating,
-        exported_at: export.exported_at,
-        created_at: export.created_at,
-        updated_at: export.updated_at
+      export: exportData ? {
+        id: exportData.id,
+        analysis_id: exportData.analysis_id,
+        url: exportData.url,
+        markdown: exportData.markdown,
+        overall_score: exportData.overall_score,
+        rating: exportData.rating,
+        exported_at: exportData.exported_at,
+        created_at: exportData.created_at,
+        updated_at: exportData.updated_at
       } : null,
       individualReports: reports.map(r => ({
         id: r.id,

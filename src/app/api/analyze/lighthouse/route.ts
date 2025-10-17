@@ -1,4 +1,4 @@
-import { ComingSoonService } from '@/lib/services/coming-soon.service';
+// ComingSoonService archived - using simple response
 import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 60;
@@ -18,10 +18,19 @@ export async function POST(request: NextRequest) {
     console.log(`🚧 Lighthouse analysis requested for: ${url} (Coming Soon)`);
 
     // Return coming soon response with manual prompt
-    const response = ComingSoonService.createComingSoonResponse('lighthouse', {
-      url,
-      content: content?.substring(0, 1000) // Truncate for prompt
-    });
+    const response = {
+      success: true,
+      status: 'coming_soon',
+      message: 'Lighthouse analysis is coming soon',
+      module: {
+        id: 'lighthouse',
+        name: 'Lighthouse Performance',
+        description: 'Advanced performance analysis',
+        status: 'coming_soon',
+        estimatedRelease: 'Q2 2025'
+      },
+      manualPrompt: `Analyze Lighthouse performance for ${url}. Content: ${content?.substring(0, 1000)}...`
+    };
 
     return NextResponse.json(response);
 

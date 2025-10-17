@@ -64,7 +64,21 @@ export async function analyzeWithGemini(content: string, analysisType: string): 
       jsonText = jsonText.replace(/^```\s*/, '').replace(/\s*```$/, '');
     }
     
-    return JSON.parse(jsonText);
+    // Check if response looks like an error message
+    if (jsonText.toLowerCase().startsWith('an error') || 
+        jsonText.toLowerCase().startsWith('error') ||
+        jsonText.toLowerCase().startsWith('failed') ||
+        !jsonText.startsWith('{')) {
+      throw new Error(`AI analysis failed: ${jsonText.substring(0, 100)}`);
+    }
+    
+    try {
+      return JSON.parse(jsonText);
+    } catch (parseError) {
+      console.error('JSON parsing error:', parseError);
+      console.error('Raw AI response:', jsonText);
+      throw new Error(`Invalid JSON response from AI: ${jsonText.substring(0, 100)}`);
+    }
   } catch (error) {
     console.error('Gemini analysis error:', error);
     throw new Error('Gemini analysis failed');

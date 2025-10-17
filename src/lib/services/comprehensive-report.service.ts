@@ -7,7 +7,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { CliftonStrengthsService } from './clifton-strengths-detailed.service'
-import { ComingSoonService } from './coming-soon.service'
+// ComingSoonService archived
 import { ElementsOfValueB2BService } from './elements-value-b2b.service'
 import { ElementsOfValueB2CService } from './elements-value-b2c.service'
 import { GoldenCircleDetailedService } from './golden-circle-detailed.service'
@@ -48,8 +48,9 @@ export class ComprehensiveReportService {
       ])
 
     // Get coming soon modules for missing functionality
-    const lighthouseModule = ComingSoonService.getModule('lighthouse')
-    const seoModule = ComingSoonService.getModule('seo_opportunities')
+    // ComingSoonService archived - using simple placeholders
+    const lighthouseModule = null
+    const seoModule = null
 
     // Create placeholder data with coming soon information
     const lighthouse = {
@@ -60,7 +61,7 @@ export class ComprehensiveReportService {
       core_web_vitals: null,
       status: 'coming_soon',
       module: lighthouseModule,
-      manualPrompt: lighthouseModule ? ComingSoonService.generateManualPrompt('lighthouse', { url: 'your-website-url' }) : null
+      manualPrompt: 'Lighthouse analysis coming soon - use Google PageSpeed Insights for now'
     }
 
     const seo = {
@@ -72,7 +73,7 @@ export class ComprehensiveReportService {
       content_gaps: [],
       status: 'coming_soon',
       module: seoModule,
-      manualPrompt: seoModule ? ComingSoonService.generateManualPrompt('seo_opportunities', { url: 'your-website-url' }) : null
+      manualPrompt: 'SEO opportunities analysis coming soon - use Google Search Console for now'
     }
 
     // Build comprehensive markdown

@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { url, proposedContent, analysisType } = await request.json();
+    const { url, proposedContent, analysisType: _analysisType } = await request.json();
 
     if (!url) {
       return NextResponse.json({

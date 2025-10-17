@@ -171,11 +171,13 @@ export function initializeDevTools() {
 }
 
 // Export individual setup functions for granular control
-export default {
+const devToolsSetup = {
   initializeDevTools,
   setupEnhancedLogging,
   setupReactDevToolsHelpers,
   setupPerformanceMonitoring,
   setupErrorBoundaryLogging,
 };
+
+export default devToolsSetup;
 

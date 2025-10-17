@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { ControlledAnalyzer, ControlledAnalysisConfig, ANALYSIS_STEPS } from '@/lib/controlled-analysis';
-import { extractWithProduction } from '@/lib/production-content-extractor';
+import { extractWithProduction as _extractWithProduction } from '@/lib/production-content-extractor';
 import { reportStorage } from '@/lib/report-storage';
 
 export interface ControlledAnalysisRequest {

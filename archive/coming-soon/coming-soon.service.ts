@@ -98,10 +98,10 @@ Provide specific recommendations for content improvement.`,
    * Generate manual prompt for a module
    */
   static generateManualPrompt(moduleId: string, context: { url?: string; content?: string; industry?: string }): string {
-    const module = this.getModule(moduleId)
-    if (!module) return 'Module not found'
+    const moduleData = this.getModule(moduleId)
+    if (!moduleData) return 'Module not found'
 
-    let prompt = module.manualPrompt
+    let prompt = moduleData.manualPrompt
 
     // Replace placeholders with actual context
     if (context.url) {
@@ -121,7 +121,7 @@ Provide specific recommendations for content improvement.`,
    * Create a coming soon response for API endpoints
    */
   static createComingSoonResponse(moduleId: string, context: any = {}) {
-    const module = this.getModule(moduleId)
+    const moduleData = this.getModule(moduleId)
 
     if (!module) {
       return {
@@ -156,7 +156,7 @@ Provide specific recommendations for content improvement.`,
    * Create a partial functionality response
    */
   static createPartialResponse(moduleId: string, partialData: any, context: any = {}) {
-    const module = this.getModule(moduleId)
+    const moduleData = this.getModule(moduleId)
 
     return {
       success: true,
@@ -181,7 +181,7 @@ Provide specific recommendations for content improvement.`,
    * Check if a module is available
    */
   static isModuleAvailable(moduleId: string): boolean {
-    const module = this.getModule(moduleId)
+    const moduleData = this.getModule(moduleId)
     return module?.status === 'available'
   }
 
@@ -189,7 +189,7 @@ Provide specific recommendations for content improvement.`,
    * Get modules by status
    */
   static getModulesByStatus(status: 'coming_soon' | 'partial' | 'available'): ComingSoonModule[] {
-    return Object.values(this.modules).filter(module => module.status === status)
+    return Object.values(this.modules).filter(mod => mod.status === status)
   }
 
   /**

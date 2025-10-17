@@ -16,7 +16,8 @@ import {
   CheckCircle,
   ArrowRight,
   Star,
-  RotateCcw
+  RotateCcw,
+  Brain
 } from 'lucide-react';
 import { WebsiteAnalysisResult } from '@/types/analysis';
 

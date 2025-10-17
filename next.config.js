@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Disable TypeScript and ESLint checks during build (for quick fix)
+  // ENABLE ALL QUALITY CHECKS - NO SHORTCUTS!
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   
   // Performance optimizations
