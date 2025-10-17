@@ -3,10 +3,9 @@
  * Provides precise control over analysis timing, prompts, and deliverables
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { ControlledAnalyzer, ControlledAnalysisConfig, ANALYSIS_STEPS } from '@/lib/controlled-analysis';
-import { extractWithProduction as _extractWithProduction } from '@/lib/production-content-extractor';
+import { ANALYSIS_STEPS, ControlledAnalysisConfig, ControlledAnalyzer } from '@/lib/controlled-analysis';
 import { reportStorage } from '@/lib/report-storage';
+import { NextRequest, NextResponse } from 'next/server';
 
 export interface ControlledAnalysisRequest {
   url: string;
@@ -16,7 +15,17 @@ export interface ControlledAnalysisRequest {
 
 export interface ControlledAnalysisResponse {
   success: boolean;
-  data?: any;
+  data?: {
+    url: string;
+    timestamp: string;
+    steps: Array<{
+      name: string;
+      status: 'completed' | 'failed' | 'skipped';
+      duration: number;
+      result?: unknown;
+    }>;
+    totalDuration: number;
+  };
   error?: string;
   message?: string;
   progress?: {
@@ -53,8 +62,8 @@ export async function POST(request: NextRequest) {
     console.log(`🚀 Starting controlled analysis for: ${url}`);
 
     // Filter steps if specified
-    const selectedSteps = steps ? 
-      ANALYSIS_STEPS.filter(step => steps.includes(step.id)) : 
+    const selectedSteps = steps ?
+      ANALYSIS_STEPS.filter(step => steps.includes(step.id)) :
       ANALYSIS_STEPS;
 
     if (selectedSteps.length === 0) {
@@ -88,7 +97,6 @@ export async function POST(request: NextRequest) {
       success: true,
       data: result,
       reportId: storedReport.id,
-      reportPath: storedReport.filePath,
       message: 'Controlled analysis completed successfully',
       metadata: {
         totalSteps: selectedSteps.length,
@@ -99,7 +107,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Controlled analysis error:', error);
-    
+
     return NextResponse.json({
       success: false,
       error: 'Analysis failed',
@@ -157,7 +165,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Controlled analysis GET error:', error);
-    
+
     return NextResponse.json({
       success: false,
       error: 'Request failed',

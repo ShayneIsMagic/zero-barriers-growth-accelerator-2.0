@@ -169,6 +169,7 @@ export function CTASection() {
                   <Input
                     type="text"
                     placeholder="Company Name"
+                    autoComplete="organization"
                     className="border-white/30 bg-white/20 text-white placeholder:text-gray-400 focus:border-yellow-400"
                   />
                 </div>
@@ -176,6 +177,7 @@ export function CTASection() {
                   <Input
                     type="email"
                     placeholder="Work Email"
+                    autoComplete="email"
                     className="border-white/30 bg-white/20 text-white placeholder:text-gray-400 focus:border-yellow-400"
                   />
                 </div>
@@ -183,6 +185,7 @@ export function CTASection() {
                   <Input
                     type="text"
                     placeholder="Website URL"
+                    autoComplete="url"
                     className="border-white/30 bg-white/20 text-white placeholder:text-gray-400 focus:border-yellow-400"
                   />
                 </div>

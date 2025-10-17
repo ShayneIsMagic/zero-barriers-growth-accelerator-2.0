@@ -1,25 +1,25 @@
 'use client';
 
-import { useState } from 'react';
-import { WebsiteAnalysisForm } from './WebsiteAnalysisForm';
-import { WebsiteAnalysisResults } from './WebsiteAnalysisResults';
-import { Phase2Button } from './Phase2Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  Globe, 
-  Target, 
-  TrendingUp, 
-  Users, 
-  Lightbulb,
-  CheckCircle,
-  ArrowRight,
-  Star,
-  RotateCcw,
-  Brain
-} from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { WebsiteAnalysisResult } from '@/types/analysis';
+import {
+    ArrowRight,
+    Brain,
+    CheckCircle,
+    Globe,
+    Lightbulb,
+    RotateCcw,
+    Star,
+    Target,
+    TrendingUp,
+    Users
+} from 'lucide-react';
+import { useState } from 'react';
+import { Phase2Button } from './Phase2Button';
+import { WebsiteAnalysisForm } from './WebsiteAnalysisForm';
+import { WebsiteAnalysisResults } from './WebsiteAnalysisResults';
 
 export function WebsiteAnalysisPage() {
   const [analysisResult, setAnalysisResult] = useState<WebsiteAnalysisResult | null>(null);
@@ -58,9 +58,9 @@ export function WebsiteAnalysisPage() {
         </div>
 
         <WebsiteAnalysisResults result={analysisResult} />
-        
+
         {/* Phase 2 Button - Show if Phase 1 is complete but Phase 2 is not */}
-        {analysisResult?.phase === 1 && analysisResult?.scrapedContent && (
+        {(analysisResult as any)?.phase === 1 && (analysisResult as any)?.scrapedContent && (
           <div className="mt-8">
             <Card>
               <CardHeader>
@@ -74,7 +74,7 @@ export function WebsiteAnalysisPage() {
               </CardHeader>
               <CardContent>
                 <Phase2Button
-                  scrapedContent={analysisResult.scrapedContent}
+                  scrapedContent={(analysisResult as any).scrapedContent}
                   url={analysisResult.url}
                   industry="general"
                   onPhase2Complete={handlePhase2Complete}
@@ -95,7 +95,7 @@ export function WebsiteAnalysisPage() {
           Website Analysis
         </h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          Analyze any website using the Zero Barriers Growth Accelerator framework. 
+          Analyze any website using the Zero Barriers Growth Accelerator framework.
           Get comprehensive insights and transformation recommendations.
         </p>
       </div>
@@ -255,7 +255,7 @@ export function WebsiteAnalysisPage() {
                   <ArrowRight className="h-4 w-4 text-gray-400" />
                 </div>
               </div>
-              
+
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div>
                   <h4 className="font-medium">zerobarriers.io</h4>
@@ -303,7 +303,7 @@ export function WebsiteAnalysisPage() {
                   </li>
                 </ul>
               </div>
-              
+
               <div className="space-y-4">
                 <h4 className="font-medium text-blue-600">Deliverables:</h4>
                 <ul className="space-y-2 text-sm">

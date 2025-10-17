@@ -118,7 +118,7 @@ export class ThreePhaseAnalyzer {
    * Phase 1: Content Collection ONLY
    * Fast and reliable - just collects website content for Phase 2
    */
-  private async executePhase1(): Promise<Phase1Report> {
+  public async executePhase1(): Promise<Phase1Report> {
     console.log('📊 Phase 1: Content Collection (35 seconds)');
     this.onProgressUpdate?.('Phase 1', 'Starting content collection', 0);
 
@@ -159,7 +159,7 @@ export class ThreePhaseAnalyzer {
   /**
    * Phase 2: Framework Analysis
    */
-  private async executePhase2(phase1Report: Phase1Report): Promise<Phase2Report> {
+  public async executePhase2(phase1Report: Phase1Report): Promise<Phase2Report> {
     console.log('🎯 Phase 2: Framework Analysis');
     this.onProgressUpdate?.('Phase 2', 'Starting framework analysis', 0);
 
@@ -212,7 +212,7 @@ export class ThreePhaseAnalyzer {
    * Phase 3: Strategic Analysis + Optional Performance & SEO Data
    * Tries to get Lighthouse and Google Trends via APIs (graceful failure)
    */
-  private async executePhase3(phase1Report: Phase1Report, phase2Report: Phase2Report): Promise<Phase3Report> {
+  public async executePhase3(phase1Report: Phase1Report, phase2Report: Phase2Report): Promise<Phase3Report> {
     console.log('🎯 Phase 3: Strategic Analysis with optional Lighthouse & Google Tools');
     this.onProgressUpdate?.('Phase 3', 'Starting strategic analysis', 0);
 

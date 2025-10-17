@@ -54,7 +54,13 @@ export async function GET(request: NextRequest) {
         success: true,
         data: {
           status: 'coming_soon',
-          module: ComingSoonService.getModule('seo_opportunities'),
+          module: {
+            id: 'seo_opportunities',
+            name: 'SEO Opportunities',
+            description: 'Advanced SEO opportunity analysis',
+            status: 'coming_soon',
+            estimatedRelease: 'Q2 2025'
+          },
           message: 'SEO opportunities analysis is coming soon! Use manual prompt for immediate results.'
         }
       });

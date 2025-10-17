@@ -75,6 +75,7 @@ export default function SignInPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
+                autoComplete="email"
                 required
                 className="border-growth-200 focus:border-growth-500"
               />
@@ -93,6 +94,7 @@ export default function SignInPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
+                autoComplete="current-password"
                 required
                 className="border-growth-200 focus:border-growth-500"
               />

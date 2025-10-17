@@ -185,7 +185,7 @@ Return as JSON:
 `
 
     if (industry && patterns) {
-      return await SynonymDetectionService.buildEnhancedPrompt(
+      return await SimpleSynonymDetectionService.buildEnhancedPrompt(
         basePrompt,
         content.text || content.content,
         industry
@@ -280,7 +280,21 @@ Return as JSON:
         }
       })
 
-      elements.push(stored)
+      const evidence = stored.evidence as { patterns?: unknown[]; citations?: unknown[]; confidence?: number } | null;
+      const recommendations = stored.recommendations as unknown[] | null;
+      
+      elements.push({
+        ...stored,
+        score: stored.score ? Number(stored.score) : 0,
+        weight: stored.weight ? Number(stored.weight) : 0,
+        weighted_score: stored.weighted_score ? Number(stored.weighted_score) : 0,
+        evidence: {
+          patterns: Array.isArray(evidence?.patterns) ? evidence.patterns as string[] : [],
+          citations: Array.isArray(evidence?.citations) ? evidence.citations as string[] : [],
+          confidence: evidence?.confidence || 0
+        },
+        recommendations: Array.isArray(recommendations) ? recommendations as string[] : []
+      })
     }
 
     return {
@@ -313,13 +327,24 @@ Return as JSON:
       return {
         id: eov.id,
         analysis_id: eov.analysis_id,
-        overall_score: eov.overall_score,
-        table_stakes_score: eov.table_stakes_score,
-        functional_score: eov.functional_score,
-        ease_of_business_score: eov.ease_of_business_score,
-        individual_score: eov.individual_score,
-        inspirational_score: eov.inspirational_score,
-        elements: eov.b2b_element_scores
+        overall_score: eov.overall_score ? Number(eov.overall_score) : 0,
+        table_stakes_score: eov.table_stakes_score ? Number(eov.table_stakes_score) : 0,
+        functional_score: eov.functional_score ? Number(eov.functional_score) : 0,
+        ease_of_business_score: eov.ease_of_business_score ? Number(eov.ease_of_business_score) : 0,
+        individual_score: eov.individual_score ? Number(eov.individual_score) : 0,
+        inspirational_score: eov.inspirational_score ? Number(eov.inspirational_score) : 0,
+        elements: eov.b2b_element_scores.map(score => ({
+          ...score,
+          score: score.score ? Number(score.score) : 0,
+          weight: score.weight ? Number(score.weight) : 0,
+          weighted_score: score.weighted_score ? Number(score.weighted_score) : 0,
+          evidence: {
+            patterns: Array.isArray((score.evidence as any)?.patterns) ? (score.evidence as any).patterns : [],
+            citations: Array.isArray((score.evidence as any)?.citations) ? (score.evidence as any).citations : [],
+            confidence: (score.evidence as any)?.confidence || 0
+          },
+          recommendations: Array.isArray(score.recommendations) ? score.recommendations as string[] : []
+        }))
       }
     } catch (error) {
       console.error('Failed to fetch B2B Elements:', error)

@@ -206,6 +206,7 @@ export function Footer() {
                 name="newsletter-email"
                 type="email"
                 placeholder="Enter your email"
+                autoComplete="email"
                 className="form-input flex-1"
                 aria-label="Enter your email for newsletter subscription"
               />

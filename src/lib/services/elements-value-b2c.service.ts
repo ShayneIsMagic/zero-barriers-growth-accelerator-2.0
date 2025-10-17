@@ -282,7 +282,19 @@ Return as valid JSON:
         }
       })
 
-      elements.push(stored)
+      const evidence = stored.evidence as { patterns?: unknown[]; citations?: unknown[]; confidence?: number } | null;
+      
+      elements.push({
+        ...stored,
+        score: stored.score ? Number(stored.score) : 0,
+        weight: stored.weight ? Number(stored.weight) : 0,
+        weighted_score: stored.weighted_score ? Number(stored.weighted_score) : 0,
+        evidence: {
+          patterns: Array.isArray(evidence?.patterns) ? evidence.patterns as string[] : [],
+          citations: Array.isArray(evidence?.citations) ? evidence.citations as string[] : [],
+          confidence: evidence?.confidence || 0
+        }
+      })
     }
 
     return {
@@ -314,12 +326,25 @@ Return as valid JSON:
       return {
         id: eov.id,
         analysis_id: eov.analysis_id,
-        overall_score: eov.overall_score,
-        functional_score: eov.functional_score,
-        emotional_score: eov.emotional_score,
-        life_changing_score: eov.life_changing_score,
-        social_impact_score: eov.social_impact_score,
-        elements: eov.b2c_element_scores
+        overall_score: eov.overall_score ? Number(eov.overall_score) : 0,
+        functional_score: eov.functional_score ? Number(eov.functional_score) : 0,
+        emotional_score: eov.emotional_score ? Number(eov.emotional_score) : 0,
+        life_changing_score: eov.life_changing_score ? Number(eov.life_changing_score) : 0,
+        social_impact_score: eov.social_impact_score ? Number(eov.social_impact_score) : 0,
+        elements: eov.b2c_element_scores.map(score => {
+          const evidence = score.evidence as { patterns?: unknown[]; citations?: unknown[]; confidence?: number } | null;
+          return {
+            ...score,
+            score: score.score ? Number(score.score) : 0,
+            weight: score.weight ? Number(score.weight) : 0,
+            weighted_score: score.weighted_score ? Number(score.weighted_score) : 0,
+            evidence: {
+              patterns: Array.isArray(evidence?.patterns) ? evidence.patterns as string[] : [],
+              citations: Array.isArray(evidence?.citations) ? evidence.citations as string[] : [],
+              confidence: evidence?.confidence || 0
+            }
+          };
+        })
       }
     } catch (error) {
       console.error('Failed to fetch Elements of Value B2C:', error)

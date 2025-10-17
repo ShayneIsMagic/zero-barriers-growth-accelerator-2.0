@@ -22,7 +22,8 @@ import {
     generateContentCollectionReport,
     generateElementsB2CReport,
     generateGoldenCircleReport,
-    generateLighthouseReport
+    generateLighthouseReport,
+    IndividualReport
 } from '@/lib/individual-report-generator';
 import { prisma } from '@/lib/prisma';
 import { ThreePhaseAnalyzer } from '@/lib/three-phase-analyzer';
@@ -58,11 +59,11 @@ export async function POST(request: NextRequest) {
     }
 
     const analyzer = new ThreePhaseAnalyzer(url);
-    const individualReports: any[] = analysis ? JSON.parse(analysis.content || '{}').individualReports || [] : [];
+    const individualReports: IndividualReport[] = analysis ? JSON.parse(analysis.content || '{}').individualReports || [] : [];
 
     if (phase === 1) {
       // Execute Phase 1: Data Collection
-      const phase1Result = await (analyzer as any).executePhase1();
+      const phase1Result = await analyzer.executePhase1();
 
       // Generate individual reports for Phase 1
       const contentReport = generateContentCollectionReport(phase1Result.scrapedContent, url);
@@ -218,10 +219,10 @@ Provide:
 
         // Create minimal Phase 1 data by scraping directly
         const analyzer = new ThreePhaseAnalyzer(url);
-        phase1Data = await (analyzer as any).executePhase1();
+        phase1Data = await analyzer.executePhase1();
       }
 
-      const phase2Result = await (analyzer as any).executePhase2(phase1Data);
+      const phase2Result = await analyzer.executePhase2(phase1Data);
 
       // Generate Phase 2 individual reports with prompts
       if (phase2Result.goldenCircle) {
@@ -440,8 +441,8 @@ Return structured analysis with top 5 themes and scores.`;
 
         // Create minimal data
         const analyzer = new ThreePhaseAnalyzer(url);
-        phase1Data = await (analyzer as any).executePhase1();
-        phase2Data = await (analyzer as any).executePhase2(phase1Data);
+        phase1Data = await analyzer.executePhase1();
+        phase2Data = await analyzer.executePhase2(phase1Data);
 
       } else if (!phase1Data) {
         recommendations.push(
@@ -452,7 +453,7 @@ Return structured analysis with top 5 themes and scores.`;
 
         // Create minimal Phase 1 data
         const analyzer = new ThreePhaseAnalyzer(url);
-        phase1Data = await (analyzer as any).executePhase1();
+        phase1Data = await analyzer.executePhase1();
 
       } else if (!phase2Data) {
         recommendations.push(
@@ -463,10 +464,10 @@ Return structured analysis with top 5 themes and scores.`;
 
         // Create minimal Phase 2 data
         const analyzer = new ThreePhaseAnalyzer(url);
-        phase2Data = await (analyzer as any).executePhase2(phase1Data);
+        phase2Data = await analyzer.executePhase2(phase1Data);
       }
 
-      const phase3Result = await (analyzer as any).executePhase3(phase1Data, phase2Data);
+      const phase3Result = await analyzer.executePhase3(phase1Data, phase2Data);
 
       // Generate Phase 3 comprehensive report
       if (phase3Result.comprehensiveAnalysis) {

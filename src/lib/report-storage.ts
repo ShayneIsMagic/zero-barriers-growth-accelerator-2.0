@@ -46,7 +46,6 @@ export class ReportStorage {
       await prisma.analysis.create({
         data: {
           id: reportId,
-          url: url,
           content: JSON.stringify(storedReport),
           contentType: reportType,
           score: summary.overallScore,
@@ -88,7 +87,11 @@ export class ReportStorage {
   async getReportsByUrl(url: string): Promise<StoredReport[]> {
     try {
       const analyses = await prisma.analysis.findMany({
-        where: { url: url },
+        where: { 
+          content: {
+            contains: url
+          }
+        },
         orderBy: { createdAt: 'desc' }
       });
 
@@ -196,10 +199,8 @@ export class ReportStorage {
         const type = analysis.contentType || 'comprehensive';
         reportsByType[type] = (reportsByType[type] || 0) + 1;
 
-        // Count by URL
-        if (analysis.url) {
-          reportsByUrl[analysis.url] = (reportsByUrl[analysis.url] || 0) + 1;
-        }
+        // Note: URL counting removed as Analysis model doesn't have url field
+        // URLs are stored within the content JSON
 
         // Score distribution
         const score = analysis.score || 0;

@@ -99,6 +99,7 @@ export function ContentComparisonPage() {
               disabled={isAnalyzing}
               aria-label="Enter website URL to analyze"
               aria-describedby="url-help"
+              autoComplete="url"
               required
             />
             <p id="url-help" className="text-xs text-muted-foreground mt-1">

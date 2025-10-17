@@ -92,6 +92,7 @@ export default function SignUpPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
+                autoComplete="name"
                 required
                 disabled={isLoading}
               />
@@ -107,6 +108,7 @@ export default function SignUpPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
+                autoComplete="email"
                 required
                 disabled={isLoading}
               />
@@ -122,6 +124,7 @@ export default function SignUpPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
                 }
+                autoComplete="new-password"
                 required
                 disabled={isLoading}
               />
@@ -137,6 +140,7 @@ export default function SignUpPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, confirmPassword: e.target.value })
                 }
+                autoComplete="new-password"
                 required
                 disabled={isLoading}
               />

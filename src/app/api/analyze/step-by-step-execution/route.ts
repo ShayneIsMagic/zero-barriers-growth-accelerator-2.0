@@ -69,7 +69,6 @@ export async function POST(request: NextRequest) {
       success: true,
       data: result,
       reportId: storedReport.id,
-      reportPath: storedReport.filePath,
       message: 'Step-by-step analysis completed successfully',
       finalProgress: progressData
     });

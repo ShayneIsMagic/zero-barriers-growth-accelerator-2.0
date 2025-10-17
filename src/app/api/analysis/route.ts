@@ -15,7 +15,11 @@ export async function GET(request: NextRequest) {
     const offset = parseInt(searchParams.get('offset') || '0');
 
     // Build where clause for filtering using proper Prisma methods
-    const where: any = {};
+    const where: {
+      contentType?: string;
+      status?: string;
+      userId?: string;
+    } = {};
     if (contentType) {
       where.contentType = contentType;
     }
@@ -41,7 +45,17 @@ export async function GET(request: NextRequest) {
     });
 
     // Parse content to extract URL and other metadata
-    const processedAnalyses = (analyses as any[]).map(analysis => {
+    interface AnalysisWithContent {
+      id: string;
+      contentType: string | null;
+      status: string | null;
+      score: number | null;
+      createdAt: Date | null;
+      updatedAt: Date | null;
+      content: string | null;
+    }
+    
+    const processedAnalyses = (analyses as AnalysisWithContent[]).map(analysis => {
       let url = 'Unknown URL';
       let data = null;
       

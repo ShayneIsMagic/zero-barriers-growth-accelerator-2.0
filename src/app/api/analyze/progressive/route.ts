@@ -37,9 +37,9 @@ export async function POST(request: NextRequest) {
     await prisma.analysis.create({
       data: {
         id: analysisId,
-        url: url,
         status: 'PENDING',
         content: JSON.stringify({
+          url: url,
           currentStep: 0,
           totalSteps: 9,
           steps: [
@@ -238,10 +238,10 @@ async function runProgressiveAnalysis(analysisId: string, url: string) {
     }
 
     // Comprehensive Report
-    if (result.phase3Data) {
+    if (result.comprehensiveAnalysis) {
       const prompt = `Comprehensive Strategic Analysis:\n\nPhase 1 Data:\n- SEO Score: ${result.phase1Data?.summary.seoScore}/100\n- Performance Score: ${result.phase1Data?.summary.performanceScore}/100\n\nPhase 2 Data:\n- Golden Circle Score: ${result.phase2Data?.summary.goldenCircleScore}/100\n- Elements of Value Score: ${result.phase2Data?.summary.elementsOfValueScore}/100\n\nProvide comprehensive recommendations for:\n1. Performance optimization\n2. SEO improvements\n3. Lead generation improvements\n4. Sales optimization\n5. Overall business growth\n\nReturn structured recommendations with quick wins and long-term strategy.`;
-      const comprehensiveReport = generateComprehensiveReport(result.phase3Data.comprehensiveAnalysis, url, prompt);
-      await updateStep('gemini_insights', 'completed', result.phase3Data, comprehensiveReport);
+      const comprehensiveReport = generateComprehensiveReport(result.comprehensiveAnalysis, url, prompt);
+      await updateStep('gemini_insights', 'completed', result, comprehensiveReport);
     }
 
     await updateStep('generate_report', 'completed', result);

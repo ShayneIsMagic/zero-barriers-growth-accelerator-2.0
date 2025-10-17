@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { WebsiteAnalysisResult } from '@/types/analysis';
+import { WebsiteAnalysisResult, LighthouseAnalysis } from '@/types/analysis';
 import { performRealAnalysis } from '@/lib/free-ai-analysis';
 import { runLighthouseAnalysis } from '@/lib/lighthouse-service';
 import { exec } from 'child_process';
@@ -19,10 +19,20 @@ const comprehensiveAnalysisSchema = z.object({
 });
 
 // Enhanced analysis result interface
+interface PageAuditAnalysis {
+  performance: number;
+  accessibility: number;
+  bestPractices: number;
+  seo: number;
+  [key: string]: unknown;
+}
+
+// Using imported LighthouseAnalysis from types/analysis
+
 interface ComprehensiveAnalysisResult extends WebsiteAnalysisResult {
-  pageAuditAnalysis?: any;
-  lighthouseAnalysis?: any;
-  allPagesLighthouse?: any[];
+  pageAuditAnalysis?: PageAuditAnalysis;
+  lighthouseAnalysis?: LighthouseAnalysis;
+  allPagesLighthouse?: LighthouseAnalysis[];
   geminiInsights?: {
     executiveSummary: string;
     keyStrengths: string[];
@@ -45,7 +55,7 @@ interface ComprehensiveAnalysisResult extends WebsiteAnalysisResult {
 /**
  * Run PageAudit analysis using our script
  */
-async function runPageAuditAnalysis(url: string, keyword?: string): Promise<any> {
+async function runPageAuditAnalysis(url: string, keyword?: string): Promise<PageAuditAnalysis | null> {
   try {
     const scriptPath = path.join(process.cwd(), 'scripts', 'pageaudit-analysis.js');
     const keywordArg = keyword ? `"${keyword}"` : '';
@@ -77,7 +87,7 @@ async function runPageAuditAnalysis(url: string, keyword?: string): Promise<any>
 /**
  * Run Lighthouse analysis on all pages
  */
-async function runLighthouseAllPages(url: string): Promise<any[]> {
+async function runLighthouseAllPages(url: string): Promise<LighthouseAnalysis[]> {
   try {
     const scriptPath = path.join(process.cwd(), 'scripts', 'lighthouse-per-page.js');
     const command = `node "${scriptPath}" "${url}" --discover`;
@@ -111,10 +121,10 @@ async function runLighthouseAllPages(url: string): Promise<any[]> {
  */
 async function generateGeminiInsights(
   baseAnalysis: WebsiteAnalysisResult,
-  pageAuditData: any,
-  lighthouseData: any,
-  allPagesLighthouse: any[]
-): Promise<any> {
+  pageAuditData: PageAuditAnalysis | null,
+  lighthouseData: LighthouseAnalysis | null,
+  allPagesLighthouse: LighthouseAnalysis[]
+): Promise<ComprehensiveAnalysisResult['geminiInsights']> {
   try {
     const { GoogleGenerativeAI } = await import('@google/generative-ai');
     
@@ -264,7 +274,15 @@ Provide a comprehensive strategic analysis in this EXACT JSON format:
 /**
  * Main comprehensive analysis function
  */
-async function performComprehensiveAnalysis(request: any): Promise<ComprehensiveAnalysisResult> {
+interface ComprehensiveAnalysisRequest {
+  url: string;
+  keyword?: string;
+  includePageAudit: boolean;
+  includeLighthouse: boolean;
+  includeAllPages: boolean;
+}
+
+async function performComprehensiveAnalysis(request: ComprehensiveAnalysisRequest): Promise<ComprehensiveAnalysisResult> {
   const { url, keyword, includePageAudit, includeLighthouse, includeAllPages } = request;
   
   console.log(`Starting comprehensive analysis for: ${url}`);
@@ -325,7 +343,7 @@ export async function POST(request: NextRequest) {
     console.log(`Received comprehensive analysis request for URL: ${validatedData.url}`);
 
     // Perform comprehensive analysis
-    const analysisResult = await performComprehensiveAnalysis(validatedData);
+    const analysisResult = await performComprehensiveAnalysis(validatedData as ComprehensiveAnalysisRequest);
 
     return NextResponse.json({
       success: true,

@@ -11,8 +11,8 @@ export async function GET(request: NextRequest) {
       currentPhase: analysisId ? 'phase2' : 'phase1',
       availableModules: [
         'phase1',
-        'golden-circle', 
-        'elements-of-value', 
+        'golden-circle',
+        'elements-of-value',
         'clifton-strengths',
         'seo-analysis',
         'google-tools'

@@ -113,7 +113,7 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
           url: result.url,
           overallScore: 0, // Placeholder, actual score comes from Phase 2
           summary: result.message || 'Phase 1 data collection completed',
-          status: 'phase1_complete' as const,
+          status: 'completed' as const,
           timestamp: new Date().toISOString(),
           goldenCircle: null,
           elementsOfValue: null,

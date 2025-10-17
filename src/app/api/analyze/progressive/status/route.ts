@@ -21,7 +21,6 @@ export async function GET(request: NextRequest) {
       where: { id },
       select: {
         id: true,
-        url: true,
         status: true,
         content: true,
         score: true,
@@ -42,7 +41,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       analysisId: analysis.id,
-      url: analysis.url,
+      url: content?.url || null,
       status: analysis.status,
       score: analysis.score,
       currentStep: content?.currentStep || 0,

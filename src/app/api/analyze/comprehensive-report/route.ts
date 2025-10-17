@@ -97,7 +97,55 @@ export async function POST(request: NextRequest) {
   }
 }
 
-function generateComprehensiveInsights(assessments: any, overallScore: number) {
+interface AssessmentData {
+  goldenCircle?: { 
+    success?: boolean;
+    data?: {
+      strengths?: string[];
+      weaknesses?: string[];
+      priorityActions?: string[];
+      [key: string]: unknown;
+    };
+    overallScore?: number;
+    [key: string]: unknown;
+  };
+  elementsOfValue?: { 
+    success?: boolean;
+    data?: {
+      strengths?: string[];
+      weaknesses?: string[];
+      priorityActions?: string[];
+      [key: string]: unknown;
+    };
+    overallScore?: number;
+    [key: string]: unknown;
+  };
+  cliftonStrengths?: { 
+    success?: boolean;
+    data?: {
+      strengths?: string[];
+      weaknesses?: string[];
+      priorityActions?: string[];
+      [key: string]: unknown;
+    };
+    overallScore?: number;
+    [key: string]: unknown;
+  };
+  b2bElements?: { 
+    success?: boolean;
+    data?: {
+      strengths?: string[];
+      weaknesses?: string[];
+      priorityActions?: string[];
+      [key: string]: unknown;
+    };
+    overallScore?: number;
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
+}
+
+function generateComprehensiveInsights(assessments: AssessmentData, overallScore: number) {
   const insights = {
     strengths: [],
     weaknesses: [],

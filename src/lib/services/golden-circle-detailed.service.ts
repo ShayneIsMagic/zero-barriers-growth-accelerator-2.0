@@ -314,7 +314,12 @@ Return response as valid JSON with this structure:
         emotional_resonance_rating: aiResponse.why.emotional_resonance_rating || 0,
         differentiation_rating: aiResponse.why.differentiation_rating || 0,
         evidence: {
-          patterns: patterns.slice(0, 5),
+          patterns: patterns.slice(0, 5).map(p => ({
+            pattern: p.pattern,
+            strength: p.strength,
+            context: p.context,
+            examples: p.examples
+          })),
           citations: aiResponse.why.evidence?.citations || []
         },
         recommendations: aiResponse.why.recommendations || []
@@ -332,7 +337,12 @@ Return response as valid JSON with this structure:
         credibility_rating: aiResponse.how.credibility_rating || 0,
         specificity_rating: aiResponse.how.specificity_rating || 0,
         evidence: {
-          patterns: patterns.filter(p => p.element_name === 'simplifies' || p.element_name === 'quality'),
+          patterns: patterns.filter(p => p.element_name === 'simplifies' || p.element_name === 'quality').map(p => ({
+            pattern: p.pattern,
+            strength: p.strength,
+            context: p.context,
+            examples: p.examples
+          })),
           citations: aiResponse.how.evidence?.citations || []
         },
         recommendations: aiResponse.how.recommendations || []
@@ -350,7 +360,12 @@ Return response as valid JSON with this structure:
         value_articulation_rating: aiResponse.what.value_articulation_rating || 0,
         cta_clarity_rating: aiResponse.what.cta_clarity_rating || 0,
         evidence: {
-          patterns: patterns.slice(5, 10),
+          patterns: patterns.slice(5, 10).map(p => ({
+            pattern: p.pattern,
+            strength: p.strength,
+            context: p.context,
+            examples: p.examples
+          })),
           citations: aiResponse.what.evidence?.citations || []
         },
         recommendations: aiResponse.what.recommendations || []
@@ -409,13 +424,41 @@ Return response as valid JSON with this structure:
       return {
         id: gc.id,
         analysis_id: gc.analysis_id,
-        overall_score: gc.overall_score,
-        alignment_score: gc.alignment_score,
-        clarity_score: gc.clarity_score,
-        why: gc.golden_circle_why,
-        how: gc.golden_circle_how,
-        what: gc.golden_circle_what,
-        who: gc.golden_circle_who
+        overall_score: gc.overall_score ? Number(gc.overall_score) : 0,
+        alignment_score: gc.alignment_score ? Number(gc.alignment_score) : 0,
+        clarity_score: gc.clarity_score ? Number(gc.clarity_score) : 0,
+        why: gc.golden_circle_why ? {
+          ...gc.golden_circle_why,
+          score: gc.golden_circle_why.score ? Number(gc.golden_circle_why.score) : 0,
+          clarity_rating: gc.golden_circle_why.clarity_rating ? Number(gc.golden_circle_why.clarity_rating) : 0,
+          authenticity_rating: gc.golden_circle_why.authenticity_rating ? Number(gc.golden_circle_why.authenticity_rating) : 0,
+          emotional_resonance_rating: gc.golden_circle_why.emotional_resonance_rating ? Number(gc.golden_circle_why.emotional_resonance_rating) : 0,
+          differentiation_rating: gc.golden_circle_why.differentiation_rating ? Number(gc.golden_circle_why.differentiation_rating) : 0
+        } : null,
+        how: gc.golden_circle_how ? {
+          ...gc.golden_circle_how,
+          score: gc.golden_circle_how.score ? Number(gc.golden_circle_how.score) : 0,
+          uniqueness_rating: gc.golden_circle_how.uniqueness_rating ? Number(gc.golden_circle_how.uniqueness_rating) : 0,
+          clarity_rating: gc.golden_circle_how.clarity_rating ? Number(gc.golden_circle_how.clarity_rating) : 0,
+          credibility_rating: gc.golden_circle_how.credibility_rating ? Number(gc.golden_circle_how.credibility_rating) : 0,
+          specificity_rating: gc.golden_circle_how.specificity_rating ? Number(gc.golden_circle_how.specificity_rating) : 0
+        } : null,
+        what: gc.golden_circle_what ? {
+          ...gc.golden_circle_what,
+          score: gc.golden_circle_what.score ? Number(gc.golden_circle_what.score) : 0,
+          clarity_rating: gc.golden_circle_what.clarity_rating ? Number(gc.golden_circle_what.clarity_rating) : 0,
+          completeness_rating: gc.golden_circle_what.completeness_rating ? Number(gc.golden_circle_what.completeness_rating) : 0,
+          value_articulation_rating: gc.golden_circle_what.value_articulation_rating ? Number(gc.golden_circle_what.value_articulation_rating) : 0,
+          cta_clarity_rating: gc.golden_circle_what.cta_clarity_rating ? Number(gc.golden_circle_what.cta_clarity_rating) : 0
+        } : null,
+        who: gc.golden_circle_who ? {
+          ...gc.golden_circle_who,
+          score: gc.golden_circle_who.score ? Number(gc.golden_circle_who.score) : 0,
+          specificity_rating: gc.golden_circle_who.specificity_rating ? Number(gc.golden_circle_who.specificity_rating) : 0,
+          resonance_rating: gc.golden_circle_who.resonance_rating ? Number(gc.golden_circle_who.resonance_rating) : 0,
+          accessibility_rating: gc.golden_circle_who.accessibility_rating ? Number(gc.golden_circle_who.accessibility_rating) : 0,
+          conversion_path_rating: gc.golden_circle_who.conversion_path_rating ? Number(gc.golden_circle_who.conversion_path_rating) : 0
+        } : null
       }
     } catch (error) {
       console.error('Failed to fetch Golden Circle:', error)

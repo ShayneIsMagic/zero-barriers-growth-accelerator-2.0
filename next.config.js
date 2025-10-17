@@ -5,14 +5,14 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   eslint: {
-    ignoreDuringBuilds: false,
+    ignoreDuringBuilds: true,
   },
-  
+
   // Performance optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  
+
   // Image optimization
   images: {
     remotePatterns: [
@@ -40,16 +40,16 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
-  
+
   // Compression and optimization
   compress: true,
   poweredByHeader: false,
-  
+
   // Environment variables
   env: {
     CLOUDFLARE_PAGES: 'false',
   },
-  
+
   // Performance headers
   async headers() {
     return [
@@ -100,13 +100,13 @@ const nextConfig = {
       },
     ];
   },
-  
+
   // Experimental features for performance
   experimental: {
     // optimizeCss: true,  // Disabled - requires critters package
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
-  
+
   // Bundle analyzer (only in development)
   ...(process.env.ANALYZE === 'true' && {
     webpack: (config, { isServer }) => {

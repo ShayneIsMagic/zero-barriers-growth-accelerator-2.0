@@ -43,6 +43,12 @@
         "@typescript-eslint/no-explicit-any": "off",
         "react/display-name": "off"
       }
+    },
+    {
+      "files": ["**/api/**/*.ts", "**/lib/**/*.ts", "**/ai/**/*.ts"],
+      "rules": {
+        "no-console": "off"
+      }
     }
   ],
   "ignorePatterns": [

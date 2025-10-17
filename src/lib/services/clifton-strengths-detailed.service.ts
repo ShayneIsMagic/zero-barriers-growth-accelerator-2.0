@@ -267,7 +267,15 @@ Return as JSON:
         }
       })
 
-      themes.push(stored)
+      const evidence = stored.evidence as { patterns?: unknown[]; manifestations?: unknown[] } | null;
+      themes.push({
+        ...stored,
+        score: Number(stored.score),
+        evidence: {
+          patterns: Array.isArray(evidence?.patterns) ? evidence.patterns as string[] : [],
+          manifestations: Array.isArray(evidence?.manifestations) ? evidence.manifestations as string[] : []
+        }
+      })
     }
 
     return {
@@ -303,14 +311,34 @@ Return as JSON:
       return {
         id: cs.id,
         analysis_id: cs.analysis_id,
-        overall_score: cs.overall_score,
-        strategic_thinking_score: cs.strategic_thinking_score,
-        executing_score: cs.executing_score,
-        influencing_score: cs.influencing_score,
-        relationship_building_score: cs.relationship_building_score,
+        overall_score: cs.overall_score ? Number(cs.overall_score) : 0,
+        strategic_thinking_score: cs.strategic_thinking_score ? Number(cs.strategic_thinking_score) : 0,
+        executing_score: cs.executing_score ? Number(cs.executing_score) : 0,
+        influencing_score: cs.influencing_score ? Number(cs.influencing_score) : 0,
+        relationship_building_score: cs.relationship_building_score ? Number(cs.relationship_building_score) : 0,
         dominant_domain: cs.dominant_domain,
-        top_5: cs.clifton_theme_scores.filter(t => t.rank <= 5),
-        all_themes: cs.clifton_theme_scores
+        top_5: cs.clifton_theme_scores.filter(t => t.rank && t.rank <= 5).map(t => {
+          const evidence = t.evidence as { patterns?: unknown[]; manifestations?: unknown[] } | null;
+          return {
+            ...t,
+            score: t.score ? Number(t.score) : 0,
+            evidence: {
+              patterns: Array.isArray(evidence?.patterns) ? evidence.patterns as string[] : [],
+              manifestations: Array.isArray(evidence?.manifestations) ? evidence.manifestations as string[] : []
+            }
+          };
+        }),
+        all_themes: cs.clifton_theme_scores.map(t => {
+          const evidence = t.evidence as { patterns?: unknown[]; manifestations?: unknown[] } | null;
+          return {
+            ...t,
+            score: t.score ? Number(t.score) : 0,
+            evidence: {
+              patterns: Array.isArray(evidence?.patterns) ? evidence.patterns as string[] : [],
+              manifestations: Array.isArray(evidence?.manifestations) ? evidence.manifestations as string[] : []
+            }
+          };
+        })
       }
     } catch (error) {
       console.error('Failed to fetch CliftonStrengths:', error)

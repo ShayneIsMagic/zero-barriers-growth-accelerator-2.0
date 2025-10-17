@@ -54,7 +54,13 @@ export async function GET(request: NextRequest) {
         success: true,
         data: {
           status: 'coming_soon',
-          module: ComingSoonService.getModule('lighthouse'),
+          module: {
+            id: 'lighthouse',
+            name: 'Lighthouse Performance',
+            description: 'Advanced performance analysis',
+            status: 'coming_soon',
+            estimatedRelease: 'Q2 2025'
+          },
           message: 'Lighthouse analysis is coming soon! Use manual prompt for immediate results.'
         }
       });

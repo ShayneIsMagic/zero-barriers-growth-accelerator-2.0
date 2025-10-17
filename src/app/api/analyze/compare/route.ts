@@ -4,7 +4,7 @@
  * Side-by-side analysis showing improvements
  */
 
-import { scrapeWebsiteContent } from '@/lib/reliable-content-scraper';
+import { scrapeWebsiteContent, ScrapedData } from '@/lib/reliable-content-scraper';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       existingData,
       proposedData,
       url,
-      analysisType || 'full'
+      _analysisType || 'full'
     );
 
     return NextResponse.json({
@@ -101,7 +101,19 @@ function extractHeadings(content: string): { h1: string[]; h2: string[]; h3: str
   };
 }
 
-async function generateComparisonReport(existing: any, proposed: any, url: string, analysisType: string) {
+interface AnalysisData {
+  content?: string;
+  headings?: {
+    h1: string[];
+    h2: string[];
+    h3: string[];
+  };
+  [key: string]: unknown;
+}
+
+// Using imported ScrapedData interface from reliable-content-scraper
+
+async function generateComparisonReport(existing: ScrapedData, proposed: ScrapedData, url: string, _analysisType: string) {
   const { analyzeWithGemini } = await import('@/lib/free-ai-analysis');
 
   const prompt = `Compare existing website content vs. proposed new content:

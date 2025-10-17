@@ -445,7 +445,7 @@ export class PuppeteerComprehensiveCollector {
     
     try {
       this.browser = await puppeteer.launch({
-        headless: 'new',
+        headless: true,
         args: [
           '--no-sandbox',
           '--disable-setuid-sandbox',
@@ -655,9 +655,9 @@ export class PuppeteerComprehensiveCollector {
             return {
               href: url.href,
               text: link.textContent?.trim() || '',
-              title: link.title || '',
-              target: link.target || '',
-              rel: link.rel || '',
+              title: (link as HTMLAnchorElement).title || '',
+              target: (link as HTMLAnchorElement).target || '',
+              rel: (link as HTMLAnchorElement).rel || '',
               isInternal: url.origin === window.location.origin,
               isBroken: false // Would need to check
             };
@@ -673,11 +673,11 @@ export class PuppeteerComprehensiveCollector {
           action: form.action || '',
           method: form.method || 'get',
           inputs: Array.from(form.querySelectorAll('input, select, textarea')).map(input => ({
-            type: input.type || 'text',
-            name: input.name || '',
-            placeholder: input.placeholder || '',
-            required: input.required || false,
-            label: input.labels?.[0]?.textContent?.trim() || ''
+            type: (input as HTMLInputElement).type || 'text',
+            name: (input as HTMLInputElement).name || '',
+            placeholder: (input as HTMLInputElement).placeholder || '',
+            required: (input as HTMLInputElement).required || false,
+            label: (input as HTMLInputElement).labels?.[0]?.textContent?.trim() || ''
           })),
           submitButton: form.querySelector('button[type="submit"], input[type="submit"]')?.textContent?.trim() || ''
         }));
@@ -686,10 +686,10 @@ export class PuppeteerComprehensiveCollector {
       const getButtons = () => {
         const buttons = document.querySelectorAll('button, input[type="button"], input[type="submit"]');
         return Array.from(buttons).map(button => ({
-          text: button.textContent?.trim() || button.value || '',
-          type: button.type || 'button',
+          text: button.textContent?.trim() || (button as HTMLInputElement).value || '',
+          type: (button as HTMLInputElement).type || 'button',
           class: button.className || '',
-          onclick: button.onclick?.toString() || '',
+          onclick: (button as HTMLElement).onclick?.toString() || '',
           ariaLabel: button.getAttribute('aria-label') || ''
         }));
       };
@@ -705,11 +705,12 @@ export class PuppeteerComprehensiveCollector {
         };
       };
 
+      const getMetaContent = (name: string) => {
+        const meta = document.querySelector(`meta[name="${name}"], meta[property="${name}"]`);
+        return meta?.getAttribute('content') || '';
+      };
+
       const getMetaTags = () => {
-        const getMetaContent = (name: string) => {
-          const meta = document.querySelector(`meta[name="${name}"], meta[property="${name}"]`);
-          return meta?.getAttribute('content') || '';
-        };
 
         return {
           title: document.title,
@@ -767,8 +768,8 @@ export class PuppeteerComprehensiveCollector {
           viewport: document.querySelector('meta[name="viewport"]')?.getAttribute('content') || '',
           language: document.documentElement.lang || '',
           charset: document.characterSet || '',
-          cssFiles: Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(link => link.href),
-          jsFiles: Array.from(document.querySelectorAll('script[src]')).map(script => script.src),
+          cssFiles: Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(link => (link as HTMLLinkElement).href),
+          jsFiles: Array.from(document.querySelectorAll('script[src]')).map(script => (script as HTMLScriptElement).src),
           errors: [] // Would need to capture console errors
         };
       };

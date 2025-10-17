@@ -292,11 +292,11 @@ Provide a comprehensive analysis in JSON format with the following structure:
 
     // Check for reasonable score distributions
     const scores = [
-      (analysis.goldenCircle as any)?.overallScore,
-      (analysis.consumerValue as any)?.overallScore,
-      (analysis.b2bValue as any)?.overallScore,
-      (analysis.cliftonStrengths as any)?.overallScore,
-    ].filter((score) => typeof score === 'number');
+      (analysis.goldenCircle as { overallScore?: number })?.overallScore,
+      (analysis.consumerValue as { overallScore?: number })?.overallScore,
+      (analysis.b2bValue as { overallScore?: number })?.overallScore,
+      (analysis.cliftonStrengths as { overallScore?: number })?.overallScore,
+    ].filter((score): score is number => typeof score === 'number');
 
     if (scores.length > 0) {
       const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
@@ -312,8 +312,8 @@ Provide a comprehensive analysis in JSON format with the following structure:
 
     // Check for presence of detailed feedback
     if (
-      (analysis.barriers as any)?.barriers?.length > 0 &&
-      (analysis.recommendations as any)?.recommendations?.length > 0
+      (analysis.barriers as { barriers?: unknown[] })?.barriers?.length > 0 &&
+      (analysis.recommendations as { recommendations?: unknown[] })?.recommendations?.length > 0
     ) {
       confidence *= 1.1;
     }

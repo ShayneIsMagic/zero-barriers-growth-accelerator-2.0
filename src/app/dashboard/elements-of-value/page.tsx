@@ -5,27 +5,23 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  BarChart3, 
-  CheckCircle, 
-  XCircle, 
-  Clock,
-  Download,
-  ExternalLink,
-  Target,
-  TrendingUp,
-  Users,
-  Zap
+import {
+    BarChart3,
+    Clock,
+    Download,
+    ExternalLink,
+    Target,
+    XCircle
 } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 interface ElementScore {
   element_name: string;
@@ -59,10 +55,10 @@ export default function ElementsOfValuePage() {
 
   const runAnalysis = async () => {
     if (!url) return;
-    
+
     setIsAnalyzing(true);
     setError(null);
-    
+
     try {
       // Run Phase 1: Data Collection
       const phase1Response = await fetch('/api/analyze/phase-new', {
@@ -70,40 +66,40 @@ export default function ElementsOfValuePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url, phase: 1 })
       });
-      
+
       if (!phase1Response.ok) {
         throw new Error('Phase 1 failed');
       }
-      
+
       const phase1Data = await phase1Response.json();
       const newAnalysisId = phase1Data.analysisId;
       setAnalysisId(newAnalysisId);
-      
+
       // Run Phase 2: Framework Analysis (includes Elements of Value)
       const phase2Response = await fetch('/api/analyze/phase-new', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url, phase: 2, analysisId: newAnalysisId })
       });
-      
+
       if (!phase2Response.ok) {
         throw new Error('Phase 2 failed');
       }
-      
+
       // Fetch B2C Elements of Value analysis
       const b2cResponse = await fetch(`/api/analysis/elements-value-b2c/${newAnalysisId}`);
       if (b2cResponse.ok) {
         const b2cData = await b2cResponse.json();
         setB2cAnalysis(b2cData);
       }
-      
+
       // Fetch B2B Elements of Value analysis
       const b2bResponse = await fetch(`/api/analysis/elements-value-b2b/${newAnalysisId}`);
       if (b2bResponse.ok) {
         const b2bData = await b2bResponse.json();
         setB2bAnalysis(b2bData);
       }
-      
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Analysis failed');
     } finally {
@@ -168,11 +164,11 @@ export default function ElementsOfValuePage() {
                         {getScoreBadge(element.score)}
                       </div>
                     </div>
-                    
+
                     <div className="text-sm text-gray-600 mb-2">
                       Pyramid Level {element.pyramid_level} • Confidence: {(element.evidence.confidence * 100).toFixed(0)}%
                     </div>
-                    
+
                     {element.evidence.patterns.length > 0 && (
                       <div className="mb-2">
                         <div className="text-sm font-medium mb-1">Detected Patterns:</div>
@@ -185,7 +181,7 @@ export default function ElementsOfValuePage() {
                         </div>
                       </div>
                     )}
-                    
+
                     {element.evidence.citations.length > 0 && (
                       <div>
                         <div className="text-sm font-medium mb-1">Evidence:</div>
@@ -237,16 +233,16 @@ export default function ElementsOfValuePage() {
                 onChange={(e) => setUrl(e.target.value)}
               />
             </div>
-            
+
             {error && (
               <Alert variant="destructive">
                 <XCircle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            
-            <Button 
-              onClick={runAnalysis} 
+
+            <Button
+              onClick={runAnalysis}
               disabled={!url || isAnalyzing}
               className="w-full"
             >

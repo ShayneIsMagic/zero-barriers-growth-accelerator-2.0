@@ -4,10 +4,10 @@
  * for real content analysis with trustworthy scoring
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import Anthropic from '@anthropic-ai/sdk';
-import { WebsiteAnalysisResult } from '@/types/analysis';
 import { runLighthouseAnalysis } from '@/lib/lighthouse-service';
+import { WebsiteAnalysisResult } from '@/types/analysis';
+import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Free API configurations
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'your-gemini-api-key';
@@ -26,7 +26,7 @@ async function scrapeWebsiteContent(url: string): Promise<string> {
   try {
     const response = await fetch(url);
     const html = await response.text();
-    
+
     // Basic HTML parsing to extract text content
     const textContent = html
       .replace(/<script[^>]*>.*?<\/script>/gi, '')
@@ -34,7 +34,7 @@ async function scrapeWebsiteContent(url: string): Promise<string> {
       .replace(/<[^>]*>/g, ' ')
       .replace(/\s+/g, ' ')
       .trim();
-    
+
     return textContent.substring(0, 8000); // Limit content length
   } catch (error) {
     console.error('Error scraping website:', error);
@@ -49,13 +49,13 @@ async function scrapeWebsiteContent(url: string): Promise<string> {
 export async function analyzeWithGemini(content: string, analysisType: string): Promise<any> {
   try {
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-    
+
     const prompt = createAnalysisPrompt(content, analysisType);
-    
+
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
-    
+
     // Handle JSON wrapped in markdown code blocks
     let jsonText = text.trim();
     if (jsonText.startsWith('```json')) {
@@ -63,15 +63,15 @@ export async function analyzeWithGemini(content: string, analysisType: string): 
     } else if (jsonText.startsWith('```')) {
       jsonText = jsonText.replace(/^```\s*/, '').replace(/\s*```$/, '');
     }
-    
+
     // Check if response looks like an error message
-    if (jsonText.toLowerCase().startsWith('an error') || 
+    if (jsonText.toLowerCase().startsWith('an error') ||
         jsonText.toLowerCase().startsWith('error') ||
         jsonText.toLowerCase().startsWith('failed') ||
         !jsonText.startsWith('{')) {
       throw new Error(`AI analysis failed: ${jsonText.substring(0, 100)}`);
     }
-    
+
     try {
       return JSON.parse(jsonText);
     } catch (parseError) {
@@ -92,7 +92,7 @@ export async function analyzeWithGemini(content: string, analysisType: string): 
 export async function analyzeWithClaude(content: string, analysisType: string): Promise<any> {
   try {
     const prompt = createAnalysisPrompt(content, analysisType);
-    
+
     const message = await claude.messages.create({
       model: 'claude-3-haiku-20240307',
       max_tokens: 4000,
@@ -103,7 +103,7 @@ export async function analyzeWithClaude(content: string, analysisType: string): 
         }
       ]
     });
-    
+
     const text = message.content?.[0]?.type === 'text' ? message.content[0].text || '' : '';
     return JSON.parse(text);
   } catch (error) {
@@ -126,7 +126,7 @@ ANALYSIS FRAMEWORKS:
 
 1. SIMON SINEK'S GOLDEN CIRCLE (INCLUDING WHO):
    - WHY: What is the purpose, cause, or belief? (Score 1-10)
-   - HOW: What is the unique methodology or approach? (Score 1-10)  
+   - HOW: What is the unique methodology or approach? (Score 1-10)
    - WHAT: What are the specific products/services offered? (Score 1-10)
    - WHO: Who is the target audience and how does the brand connect emotionally? (Score 1-10)
 
@@ -251,7 +251,7 @@ REQUIRED OUTPUT FORMAT (JSON):
 
 SCORING CRITERIA:
 - 1-3: Poor/Weak - Major improvements needed
-- 4-6: Fair/Average - Some strengths, room for improvement  
+- 4-6: Fair/Average - Some strengths, room for improvement
 - 7-8: Good/Strong - Well-executed with minor gaps
 - 9-10: Excellent/Outstanding - Best practice, highly effective
 
@@ -265,11 +265,11 @@ Provide specific, actionable insights and recommendations for each area.
 export async function performRealAnalysis(url: string, analysisType: string = 'full'): Promise<WebsiteAnalysisResult> {
   try {
     console.log(`Starting real analysis for: ${url}`);
-    
+
     // Step 1: Scrape website content
     const content = await scrapeWebsiteContent(url);
     console.log(`Scraped ${content.length} characters of content`);
-    
+
     // Step 2: Try Gemini first (more generous free tier)
     let analysisResult;
     try {
@@ -284,11 +284,11 @@ export async function performRealAnalysis(url: string, analysisType: string = 'f
         throw new Error('Gemini analysis failed and Claude API key not configured');
       }
     }
-    
+
     // Step 3: Run Lighthouse analysis
     console.log('Running Lighthouse performance analysis...');
     const lighthouseAnalysis = await runLighthouseAnalysis(url);
-    
+
     // Step 4: Format result
     const result: WebsiteAnalysisResult = {
       id: generateId(),
@@ -307,10 +307,10 @@ export async function performRealAnalysis(url: string, analysisType: string = 'f
       lighthouseAnalysis: lighthouseAnalysis,
       createdAt: new Date().toISOString()
     };
-    
+
     console.log(`Analysis completed with overall score: ${result.overallScore}`);
     return result;
-    
+
   } catch (error) {
     console.error('Real analysis failed:', error);
     throw new Error(`Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -329,7 +329,7 @@ function generateId(): string {
  */
 export async function testAPIConnectivity(): Promise<{gemini: boolean, claude: boolean}> {
   const results = { gemini: false, claude: false };
-  
+
   try {
     // Test Gemini
     const geminiModel = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
@@ -338,7 +338,7 @@ export async function testAPIConnectivity(): Promise<{gemini: boolean, claude: b
   } catch (error) {
     console.log('Gemini API not available:', error);
   }
-  
+
   // Skip Claude test if key is placeholder
   if (process.env.CLAUDE_API_KEY && process.env.CLAUDE_API_KEY !== 'your-real-key-here') {
     try {
@@ -353,6 +353,6 @@ export async function testAPIConnectivity(): Promise<{gemini: boolean, claude: b
       console.log('Claude API not available:', error);
     }
   }
-  
+
   return results;
 }

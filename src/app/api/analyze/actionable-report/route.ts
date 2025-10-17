@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     const result = await ActionableReportService.generateComprehensiveReport(
       url,
       scrapedContent,
-      analysisType as any
+      analysisType as 'golden-circle' | 'clifton-strengths' | 'seo-analysis' | 'elements-value-b2c' | 'elements-value-b2b'
     );
 
     if (!result.success) {
