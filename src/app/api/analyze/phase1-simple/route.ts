@@ -6,7 +6,7 @@ export const maxDuration = 60;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url, industry } = body;
+    const { url, industry: _industry } = body;
 
     if (!url) {
       return NextResponse.json({

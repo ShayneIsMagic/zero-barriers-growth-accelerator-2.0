@@ -101,7 +101,7 @@ function extractHeadings(content: string): { h1: string[]; h2: string[]; h3: str
   };
 }
 
-interface AnalysisData {
+interface _AnalysisData {
   content?: string;
   headings?: {
     h1: string[];

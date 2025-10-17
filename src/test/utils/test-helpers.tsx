@@ -97,7 +97,7 @@ export const waitForAsync = () =>
 /**
  * Mock fetch response helper
  */
-export function mockFetch(data: any, ok = true, status = 200) {
+export function mockFetch(data: unknown, ok = true, status = 200) {
   global.fetch = vi.fn(() =>
     Promise.resolve({
       ok,
@@ -118,8 +118,8 @@ export function mockFetchError(message = 'Network error') {
 /**
  * Setup localStorage mock data
  */
-export function setupLocalStorage(data: Record<string, any>) {
-  (global.localStorage.getItem as any).mockImplementation((key: string) =>
+export function setupLocalStorage(data: Record<string, unknown>) {
+  (global.localStorage.getItem as unknown).mockImplementation((key: string) =>
     data[key] ? JSON.stringify(data[key]) : null
   );
 }
@@ -129,6 +129,5 @@ export function setupLocalStorage(data: Record<string, any>) {
  */
 export function clearAllMocks() {
   vi.clearAllMocks();
-  (global.localStorage.clear as any)();
+  (global.localStorage.clear as unknown)();
 }
-

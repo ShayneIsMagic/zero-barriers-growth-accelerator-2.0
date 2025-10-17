@@ -458,7 +458,7 @@ function generateTrendsRecommendations(trendingTopics: any[]) {
   }));
 }
 
-async function findCompetitors(domain: string, content: any) {
+async function findCompetitors(_domain: string, _content: any) {
   // This would use Google Search API or similar
   // For now, return mock data
   return [
