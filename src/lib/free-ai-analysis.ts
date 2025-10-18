@@ -6,6 +6,7 @@
 
 import { runLighthouseAnalysis } from '@/lib/lighthouse-service';
 import { _WebsiteAnalysisResult } from '@/types/analysis';
+import { scrapeWebsiteContent as scrapeFullContent } from '@/lib/reliable-content-scraper';
 import Anthropic from '@anthropic-ai/sdk';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
@@ -266,9 +267,12 @@ export async function performRealAnalysis(url: string, analysisType: string = 'f
   try {
     console.log(`Starting real analysis for: ${url}`);
 
-    // Step 1: Scrape website content
-    const content = await scrapeWebsiteContent(url);
-    console.log(`Scraped ${content.length} characters of content`);
+    // Step 1: Scrape website content with full metadata
+    const scrapedData = await scrapeFullContent(url);
+    console.log(`Scraped ${scrapedData.wordCount} words, title: "${scrapedData.title}"`);
+    
+    // Use cleanText for AI analysis
+    const content = scrapedData.cleanText;
 
     // Step 2: Try Gemini first (more generous free tier)
     let analysisResult;
@@ -289,7 +293,7 @@ export async function performRealAnalysis(url: string, analysisType: string = 'f
     console.log('Running Lighthouse performance analysis...');
     const lighthouseAnalysis = await runLighthouseAnalysis(url);
 
-    // Step 4: Format result
+    // Step 4: Format result with scraped metadata
     const result: WebsiteAnalysisResult = {
       id: generateId(),
       url: url,
@@ -305,6 +309,17 @@ export async function performRealAnalysis(url: string, analysisType: string = 'f
       socialMediaStrategy: analysisResult.socialMediaStrategy || { postTypes: [], contentCalendar: {} },
       successMetrics: analysisResult.successMetrics || { currentKPIs: [], targetImprovements: [], abTestingOpportunities: [] },
       lighthouseAnalysis: lighthouseAnalysis,
+      // Include scraped metadata
+      content: {
+        title: scrapedData.title,
+        metaDescription: scrapedData.metaDescription,
+        headings: scrapedData.headings,
+        wordCount: scrapedData.wordCount,
+        imageCount: scrapedData.imageCount,
+        linkCount: scrapedData.linkCount,
+        extractedKeywords: scrapedData.extractedKeywords,
+        schemaTypes: scrapedData.schemaTypes
+      },
       createdAt: new Date().toISOString()
     };
 
