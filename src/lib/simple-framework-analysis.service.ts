@@ -23,13 +23,13 @@ export class SimpleFrameworkAnalysisService {
 
       return {
         success: true,
-        _url,
+        url,
         analysis: result
       };
     } catch (error) {
       return {
         success: false,
-        _url,
+        url,
         analysis: {},
         error: error instanceof Error ? error.message : 'Analysis failed'
       };
@@ -46,13 +46,13 @@ export class SimpleFrameworkAnalysisService {
 
       return {
         success: true,
-        _url,
+        url,
         analysis: result
       };
     } catch (error) {
       return {
         success: false,
-        _url,
+        url,
         analysis: {},
         error: error instanceof Error ? error.message : 'Analysis failed'
       };
@@ -69,13 +69,13 @@ export class SimpleFrameworkAnalysisService {
 
       return {
         success: true,
-        _url,
+        url,
         analysis: result
       };
     } catch (error) {
       return {
         success: false,
-        _url,
+        url,
         analysis: {},
         error: error instanceof Error ? error.message : 'Analysis failed'
       };
@@ -92,13 +92,13 @@ export class SimpleFrameworkAnalysisService {
 
       return {
         success: true,
-        _url,
+        url,
         analysis: result
       };
     } catch (error) {
       return {
         success: false,
-        _url,
+        url,
         analysis: {},
         error: error instanceof Error ? error.message : 'Analysis failed'
       };
@@ -109,11 +109,14 @@ export class SimpleFrameworkAnalysisService {
    * Build Golden Circle prompt
    */
   private static buildGoldenCirclePrompt(scrapedData: any, url: string): string {
+    const content = scrapedData.cleanText || scrapedData.content || 'No content available';
+    const title = scrapedData.title || 'No title available';
+    
     return `Analyze this website using Simon Sinek's Golden Circle framework:
 
 URL: ${url}
-Title: ${scrapedData.title}
-Content: ${scrapedData.cleanText.substring(0, 3000)}
+Title: ${title}
+Content: ${content.substring(0, 3000)}
 
 Please analyze and identify:
 
@@ -135,11 +138,14 @@ Return your analysis as a structured JSON response.`;
    * Build B2C Elements of Value prompt
    */
   private static buildB2CElementsPrompt(scrapedData: any, url: string): string {
+    const content = scrapedData.cleanText || scrapedData.content || 'No content available';
+    const title = scrapedData.title || 'No title available';
+    
     return `Analyze this website using the 30 B2C Elements of Value framework:
 
 URL: ${url}
-Title: ${scrapedData.title}
-Content: ${scrapedData.cleanText.substring(0, 3000)}
+Title: ${title}
+Content: ${content.substring(0, 3000)}
 
 The 30 B2C Elements of Value are:
 FUNCTIONAL: Saves Time, Simplifies, Reduces Cost, Reduces Risk, Organizes, Integrates, Connects, Reduces Effort, Avoids Hassles, Makes Money, Reduces Anxiety, Rewards Me
