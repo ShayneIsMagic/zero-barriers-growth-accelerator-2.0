@@ -77,7 +77,7 @@ function transformB2CAnalysisResult(aiResult: any) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { _url, scrapedContent } = body;
+    const { url, scrapedContent } = body;
 
     if (!url) {
       return NextResponse.json({
@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
       // Create a fallback result when AI analysis fails
       result = {
         success: true,
-        _url,
+        url,
         analysis: {
           overallScore: 65,
           functional_score: 60,
