@@ -165,11 +165,14 @@ Return your analysis as a structured JSON response.`;
    * Build B2B Elements of Value prompt
    */
   private static buildB2BElementsPrompt(scrapedData: any, url: string): string {
+    const content = scrapedData.cleanText || scrapedData.content || 'No content available';
+    const title = scrapedData.title || 'No title available';
+    
     return `Analyze this website using the 40 B2B Elements of Value framework:
 
 URL: ${url}
-Title: ${scrapedData.title}
-Content: ${scrapedData.cleanText.substring(0, 3000)}
+Title: ${title}
+Content: ${content.substring(0, 3000)}
 
 The 40 B2B Elements of Value include:
 TABLE STAKES: Meeting Specifications, Acceptable Price, Regulatory Compliance, Ethical Standards
@@ -191,11 +194,14 @@ Return your analysis as a structured JSON response.`;
    * Build CliftonStrengths prompt
    */
   private static buildCliftonStrengthsPrompt(scrapedData: any, url: string): string {
+    const content = scrapedData.cleanText || scrapedData.content || 'No content available';
+    const title = scrapedData.title || 'No title available';
+    
     return `Analyze this website using the CliftonStrengths framework:
 
 URL: ${url}
-Title: ${scrapedData.title}
-Content: ${scrapedData.cleanText.substring(0, 3000)}
+Title: ${title}
+Content: ${content.substring(0, 3000)}
 
 The 34 CliftonStrengths themes are organized into 4 domains:
 
