@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
 
       return {
         id: analysis.id,
-        _url,
+        url: url,
         contentType: analysis.contentType,
         status: analysis.status,
         score: analysis.score,
