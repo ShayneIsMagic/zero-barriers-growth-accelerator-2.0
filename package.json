@@ -71,6 +71,7 @@
     "@types/cheerio": "^0.22.35",
     "@types/jsonwebtoken": "^9.0.10",
     "bcryptjs": "^2.4.3",
+    "browserless": "^10.9.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "dotenv": "^17.2.3",

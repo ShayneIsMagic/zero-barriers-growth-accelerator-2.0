@@ -121,7 +121,7 @@ const nextConfig = {
         '@puppeteer/browsers': false,
       };
     }
-    
+
     // Bundle analyzer (only in development)
     if (process.env.ANALYZE === 'true' && !isServer) {
       const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -133,7 +133,7 @@ const nextConfig = {
         })
       );
     }
-    
+
     return config;
   },
 };

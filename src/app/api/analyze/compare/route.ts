@@ -4,12 +4,14 @@
  * Side-by-side analysis showing improvements
  */
 
-// import { scrapeWebsiteContent, ScrapedData } from '@/lib/reliable-content-scraper';
+import { UniversalPuppeteerScraper } from '@/lib/universal-puppeteer-scraper';
 import { NextRequest, NextResponse } from 'next/server';
+
+export const maxDuration = 30;
 
 export async function POST(request: NextRequest) {
   try {
-    const { _url, proposedContent, analysisType: _analysisType } = await request.json();
+    const { url, proposedContent, analysisType: _analysisType } = await request.json();
 
     if (!url) {
       return NextResponse.json({
@@ -20,16 +22,9 @@ export async function POST(request: NextRequest) {
 
     console.log(`🔄 Starting comparison analysis for: ${url}`);
 
-    // Step 1: Create placeholder data (serverless compatible)
-    console.log('📊 Step 1: Creating placeholder content data...');
-    const existingData = {
-      cleanText: `Website content for ${url} - placeholder for analysis`,
-      wordCount: 100,
-      title: `Analysis of ${url}`,
-      metaDescription: 'Website analysis placeholder',
-      extractedKeywords: ['website', 'analysis', 'content'],
-      headings: { h1: [], h2: [], h3: [] }
-    };
+    // Step 1: Scrape real website data using universal scraper
+    console.log('📊 Step 1: Scraping website content...');
+    const existingData = await UniversalPuppeteerScraper.scrapeWebsite(url);
 
     // Step 2: Process proposed content (if provided)
     let proposedData = null;
@@ -41,7 +36,13 @@ export async function POST(request: NextRequest) {
         title: extractTitle(proposedContent),
         metaDescription: extractMetaDescription(proposedContent),
         extractedKeywords: extractKeywordsFromText(proposedContent),
-        headings: extractHeadings(proposedContent)
+        headings: extractHeadings(proposedContent),
+        seo: {
+          metaTitle: extractTitle(proposedContent),
+          metaDescription: extractMetaDescription(proposedContent),
+          extractedKeywords: extractKeywordsFromText(proposedContent),
+          headings: extractHeadings(proposedContent)
+        }
       };
     }
 
@@ -50,13 +51,21 @@ export async function POST(request: NextRequest) {
     const comparisonReport = await generateComparisonReport(
       existingData,
       proposedData,
-      _url,
+      url,
       _analysisType || 'full'
     );
 
     return NextResponse.json({
       success: true,
-      existing: existingData,
+      existing: {
+        title: existingData.title,
+        metaDescription: existingData.seo.metaDescription,
+        wordCount: existingData.wordCount,
+        extractedKeywords: existingData.seo.extractedKeywords,
+        headings: existingData.seo.headings,
+        cleanText: existingData.cleanText,
+        url: existingData.url
+      },
       proposed: proposedData,
       comparison: comparisonReport,
       message: 'Comparison analysis completed'

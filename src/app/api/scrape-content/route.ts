@@ -1,17 +1,16 @@
 /**
- * Content Scraping API
- * Uses Puppeteer to scrape website content for analysis
+ * Universal Content Scraping API
+ * Uses the universal Puppeteer scraper for all assessment types
  */
 
+import { UniversalPuppeteerScraper } from '@/lib/universal-puppeteer-scraper';
 import { NextRequest, NextResponse } from 'next/server';
-import { scrapeWebsiteContent } from '@/lib/reliable-content-scraper';
 
-export const maxDuration = 60;
+export const maxDuration = 30;
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { url } = body;
+    const { url } = await request.json();
 
     if (!url) {
       return NextResponse.json({
@@ -20,34 +19,40 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    console.log(`🕷️ Starting content scraping for: ${url}`);
+    console.log(`🔍 Starting universal scraping for: ${url}`);
 
-    const scrapedData = await scrapeWebsiteContent(url);
-
-    if (!scrapedData) {
-      console.error('Content scraping failed for:', url);
-      return NextResponse.json({
-        success: false,
-        error: 'Content scraping failed',
-        details: 'Unable to extract content from the website'
-      }, { status: 500 });
-    }
-
-    console.log(`✅ Content scraping completed for: ${url}`);
+    // Use the universal scraper
+    const scrapedData = await UniversalPuppeteerScraper.scrapeWebsite(url);
 
     return NextResponse.json({
       success: true,
-      _url,
       data: scrapedData,
-      message: 'Content successfully scraped'
+      message: 'Content scraped successfully'
     });
 
   } catch (error) {
-    console.error('Content scraping API execution error:', error);
+    console.error('Universal scraping error:', error);
     return NextResponse.json({
       success: false,
-      error: 'Content scraping failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? error.message : 'Scraping failed'
+    }, { status: 500 });
+  }
+}
+
+export async function GET() {
+  try {
+    const healthCheck = await UniversalPuppeteerScraper.healthCheck();
+
+    return NextResponse.json({
+      success: true,
+      status: healthCheck.status,
+      message: healthCheck.message,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    return NextResponse.json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Health check failed'
     }, { status: 500 });
   }
 }
