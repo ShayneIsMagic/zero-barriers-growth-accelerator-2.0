@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { reportStorage } from '@/lib/report-storage';
 
 // GET /api/reports/stats - Get report statistics
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const stats = await reportStorage.getReportStats();
 

@@ -132,7 +132,7 @@ ${format}`;
 
         return {
           success: true,
-          url,
+          _url,
           data: analysisResult
         };
 
@@ -145,7 +145,7 @@ ${format}`;
       console.error('Value headlines extraction failed:', error);
       return {
         success: false,
-        url,
+        _url,
         data: {
           why_statements: [],
           how_statements: [],

@@ -144,7 +144,7 @@ export class SEOAnalysisService {
   private async performCompetitiveAnalysis() {
     console.log('🏆 Step 4: Performing competitive analysis against reference sites...');
     
-    const competitors = await this.analyzeCompetitors();
+    const _competitors = await this.analyzeCompetitors();
     const keywordComparison = await this.compareKeywordsWithCompetitors();
     
     return {

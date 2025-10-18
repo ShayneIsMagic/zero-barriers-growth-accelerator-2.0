@@ -114,7 +114,7 @@ interface SiteIdentificationProps {
   isAnalyzing?: boolean;
 }
 
-export function SiteIdentification({ url, isAnalyzing = false }: SiteIdentificationProps) {
+export function SiteIdentification({ _url, isAnalyzing = false }: SiteIdentificationProps) {
   const [siteInfo, setSiteInfo] = useState<{
     title: string;
     favicon: string;
@@ -134,7 +134,7 @@ export function SiteIdentification({ url, isAnalyzing = false }: SiteIdentificat
         });
       } catch (error) {
         setSiteInfo({
-          title: url,
+          title: _url,
           favicon: '',
           domain: url
         });

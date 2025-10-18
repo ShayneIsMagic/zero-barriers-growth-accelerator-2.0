@@ -40,7 +40,7 @@ export default function SEOAnalysisForm() {
         .filter(k => k.length > 0);
 
       // Parse competitor URLs
-      const competitors = competitorUrls
+      const _competitors = competitorUrls
         .split(',')
         .map(c => c.trim())
         .filter(c => c.length > 0);
@@ -51,7 +51,7 @@ export default function SEOAnalysisForm() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          url,
+          _url,
           targetKeywords: keywords.length > 0 ? keywords : undefined,
           competitorUrls: competitors.length > 0 ? competitors : undefined,
           includeSearchConsole,
@@ -70,7 +70,7 @@ export default function SEOAnalysisForm() {
       try {
         const analysisForStorage = {
           id: Date.now().toString(),
-          url: url,
+          url: _url,
           overallScore: 75, // SEO analyses don't have overall scores, using default
           summary: 'SEO analysis completed',
           status: 'completed' as const,
@@ -115,7 +115,7 @@ export default function SEOAnalysisForm() {
       try {
         const analysisForStorage = {
           id: Date.now().toString(),
-          url: url,
+          url: _url,
           overallScore: 75,
           summary: 'Quick SEO analysis completed',
           status: 'completed' as const,

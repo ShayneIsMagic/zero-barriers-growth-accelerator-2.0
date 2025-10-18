@@ -76,7 +76,7 @@ export class ProductionContentExtractor {
         'Authorization': `Bearer ${this.browserlessApiKey}`,
       },
       body: JSON.stringify({
-        url,
+        _url,
         options: {
           waitUntil: 'networkidle2',
           timeout: 30000,

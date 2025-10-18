@@ -1,4 +1,5 @@
-import { screen } from '@testing-library/react';
+import { screen } from '@testing-library/react'
+import { vi } from 'vitest';;
 import { beforeEach, describe, expect, it } from 'vitest';
 import { clearAllMocks, mockUser, renderWithProviders } from './utils/test-helpers';
 

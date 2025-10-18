@@ -113,7 +113,7 @@ export class StandaloneGoldenCircleService {
 
       return {
         success: true,
-        url,
+        _url,
         data: enhancedResult.analysis
       };
 
@@ -121,7 +121,7 @@ export class StandaloneGoldenCircleService {
       console.error('Golden Circle analysis failed:', error);
       return {
         success: false,
-        url,
+        _url,
         data: {} as any,
         error: error instanceof Error ? error.message : 'Analysis failed'
       };

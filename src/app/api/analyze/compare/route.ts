@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { url, proposedContent, analysisType: _analysisType } = await request.json();
+    const { _url, proposedContent, analysisType: _analysisType } = await request.json();
 
     if (!url) {
       return NextResponse.json({
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     const comparisonReport = await generateComparisonReport(
       existingData,
       proposedData,
-      url,
+      _url,
       _analysisType || 'full'
     );
 

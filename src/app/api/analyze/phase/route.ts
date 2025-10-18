@@ -35,7 +35,7 @@ export const maxDuration = 60;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url, phase, analysisId } = body;
+    const { _url, phase, analysisId } = body;
 
     if (!url || !phase) {
       return NextResponse.json({
@@ -239,7 +239,7 @@ Extract:
 4. WHO (target audience) - exact quotes about their market
 
 Return structured analysis with scores and evidence.`;
-        const goldenReport = generateGoldenCircleReport(phase2Result.goldenCircle, url, prompt);
+        const goldenReport = generateGoldenCircleReport(phase2Result.goldenCircle, _url, prompt);
         individualReports.push(goldenReport);
       } else {
         // Golden Circle failed - add manual fallback
@@ -291,7 +291,7 @@ Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
 
 Evaluate each of the 30 B2C Elements of Value and provide specific evidence from the content.
 Return structured analysis with scores for each element.`;
-        const elementsReport = generateElementsB2CReport(phase2Result.elementsOfValue, url, prompt);
+        const elementsReport = generateElementsB2CReport(phase2Result.elementsOfValue, _url, prompt);
         individualReports.push(elementsReport);
       } else {
         const fallbackPrompt = `Analyze the website content for B2C Elements of Value (30 elements):
@@ -320,7 +320,7 @@ Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
 
 Evaluate each of the 40 B2B Elements of Value and provide specific evidence from the content.
 Return structured analysis with scores for each element.`;
-        const b2bReport = generateB2BElementsReport(phase2Result.b2bElements, url, prompt);
+        const b2bReport = generateB2BElementsReport(phase2Result.b2bElements, _url, prompt);
         individualReports.push(b2bReport);
       } else {
         const fallbackPrompt = `Analyze the website content for B2B Elements of Value (40 elements):
@@ -349,7 +349,7 @@ Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
 
 Evaluate each of the 34 CliftonStrengths themes and provide specific evidence from the content.
 Return structured analysis with top 5 themes and scores.`;
-        const strengthsReport = generateCliftonStrengthsReport(phase2Result.cliftonStrengths, url, prompt);
+        const strengthsReport = generateCliftonStrengthsReport(phase2Result.cliftonStrengths, _url, prompt);
         individualReports.push(strengthsReport);
       } else {
         const fallbackPrompt = `Analyze the website content for CliftonStrengths (34 themes):
@@ -492,7 +492,7 @@ Provide comprehensive recommendations for:
 5. Overall business growth
 
 Return structured recommendations with quick wins and long-term strategy.`;
-        const comprehensiveReport = generateComprehensiveReport(phase3Result.comprehensiveAnalysis, url, prompt);
+        const comprehensiveReport = generateComprehensiveReport(phase3Result.comprehensiveAnalysis, _url, prompt);
         individualReports.push(comprehensiveReport);
       } else {
         const fallbackPrompt = `Comprehensive Strategic Analysis:

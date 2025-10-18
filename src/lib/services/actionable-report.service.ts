@@ -98,7 +98,7 @@ export class ActionableReportService {
 
       return {
         success: true,
-        url,
+        _url,
         report: aiResponse.analysis
       };
 
@@ -106,7 +106,7 @@ export class ActionableReportService {
       console.error('Actionable report generation failed:', error);
       return {
         success: false,
-        url,
+        _url,
         report: {} as any,
         error: error instanceof Error ? error.message : 'Report generation failed'
       };

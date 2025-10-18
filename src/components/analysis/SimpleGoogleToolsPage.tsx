@@ -67,7 +67,7 @@ export function SimpleGoogleToolsPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          url,
+          _url,
           keywords: keywordArray
         }),
       });
@@ -104,7 +104,7 @@ export function SimpleGoogleToolsPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          url,
+          _url,
           keywords: keywords.split(',').map(k => k.trim()).filter(k => k.length > 0),
           scrapedData
         }),

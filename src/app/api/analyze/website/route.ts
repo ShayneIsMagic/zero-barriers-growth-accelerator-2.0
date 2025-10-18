@@ -1,8 +1,6 @@
+import { performRealAnalysis, testAPIConnectivity } from '@/lib/free-ai-analysis';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { WebsiteAnalysisRequest, WebsiteAnalysisResult } from '@/types/analysis';
-import { testAPIConnectivity } from '@/lib/free-ai-analysis';
-import { performRealAnalysis } from '@/lib/free-ai-analysis';
 
 // Request validation schema
 const analyzeWebsiteSchema = z.object({
@@ -44,7 +42,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Website analysis error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json({
         success: false,
@@ -67,7 +65,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action');
-    
+
     switch (action) {
       case 'connectivity':
         const connectivity = await testAPIConnectivity();
@@ -75,7 +73,7 @@ export async function GET(request: NextRequest) {
           success: true,
           connectivity
         });
-        
+
       case 'info':
         return NextResponse.json({
           success: true,
@@ -91,7 +89,7 @@ export async function GET(request: NextRequest) {
             features: 'Real AI analysis only, no demo data, comprehensive content analysis, actionable recommendations'
           }
         });
-        
+
       default:
         return NextResponse.json({
           success: true,
@@ -108,7 +106,7 @@ export async function GET(request: NextRequest) {
     }
   } catch (error) {
     console.error('Website analysis GET error:', error);
-    
+
     return NextResponse.json({
       success: false,
       error: 'Request failed',

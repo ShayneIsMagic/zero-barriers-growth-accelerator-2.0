@@ -51,7 +51,7 @@ export function useSimpleProgress() {
     const id = `analysis_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const newAnalysis: SimpleAnalysis = {
       id,
-      url,
+      _url,
       status: 'running',
       progress: 0,
       steps: {

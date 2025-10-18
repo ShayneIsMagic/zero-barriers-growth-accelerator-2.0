@@ -111,7 +111,7 @@ export default function ComprehensiveAnalysisPage() {
       try {
         const analysisForStorage = {
           id: data.data.id || Date.now().toString(),
-          url: url,
+          url: _url,
           overallScore: data.data.overallScore || 0,
           summary: data.data.geminiInsights?.executiveSummary || 'Comprehensive analysis completed',
           status: 'completed' as const,

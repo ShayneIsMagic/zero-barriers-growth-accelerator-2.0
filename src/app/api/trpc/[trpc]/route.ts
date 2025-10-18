@@ -6,14 +6,14 @@ export async function generateStaticParams() {
   return [{ trpc: 'analysis' }, { trpc: 'auth' }];
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   return NextResponse.json({
     error: 'tRPC not available on static hosting',
     message: 'This feature requires a server environment. Please run locally for full functionality.'
   });
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   return NextResponse.json({
     error: 'tRPC not available on static hosting',
     message: 'This feature requires a server environment. Please run locally for full functionality.'

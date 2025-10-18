@@ -12,7 +12,7 @@ import Link from 'next/link';
 
 export default function AnalyzePage() {
   const [analysisResult, setAnalysisResult] = useState<WebsiteAnalysisResult | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [_isAnalyzing, setIsAnalyzing] = useState(false);
 
   const handleAnalysisComplete = (result: WebsiteAnalysisResult) => {
     setAnalysisResult(result);

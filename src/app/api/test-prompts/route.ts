@@ -10,7 +10,7 @@ export const maxDuration = 120; // 2 minutes for comprehensive testing
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url, scrapedData, assessmentType } = body;
+    const { _url, scrapedData, assessmentType } = body;
 
     if (!url) {
       return NextResponse.json({
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      url,
+      _url,
       assessmentType: assessmentType || 'all',
       results,
       timestamp: new Date().toISOString()

@@ -27,12 +27,12 @@ interface SEOAnalysisResultsProps {
   timestamp: string;
 }
 
-export default function SEOAnalysisResults({ analysis, url, timestamp }: SEOAnalysisResultsProps) {
+export default function SEOAnalysisResults({ analysis, _url, timestamp }: SEOAnalysisResultsProps) {
   const [activeTab, setActiveTab] = useState('overview');
 
   const downloadReport = () => {
     const reportData = {
-      url,
+      _url,
       timestamp,
       analysis,
       generatedBy: 'Zero Barriers Growth Accelerator SEO Analysis'

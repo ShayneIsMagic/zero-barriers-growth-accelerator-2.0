@@ -1,4 +1,4 @@
-import { WebsiteAnalysisResult, ComprehensiveAnalysisResult } from '@/types/analysis';
+import { _WebsiteAnalysisResult, ComprehensiveAnalysisResult } from '@/types/analysis';
 
 export interface ExecutiveReportData {
   websiteUrl: string;

@@ -33,7 +33,7 @@ export class ProgressManager {
     
     this.progress = {
       id: `analysis_${Date.now()}`,
-      url,
+      _url,
       overallProgress: 0,
       currentPhase: phases[0]?.name || 'Initializing',
       status: 'pending',

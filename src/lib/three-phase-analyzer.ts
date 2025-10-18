@@ -23,6 +23,9 @@
 
 import { ProductionExtractionResult } from './production-content-extractor';
 import { WebsiteEvaluationFramework } from './website-evaluation-framework';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import * as path from 'path';
 
 export interface Phase1Report {
   phase: 'Phase 1: Data Collection Foundation';
@@ -152,7 +155,7 @@ export class ThreePhaseAnalyzer {
       }
     };
 
-    console.log(`✅ Phase 1 completed - Collected ${scrapedContent.wordCount} words, ${scrapedContent.extractedKeywords?.length || 0} keywords`);
+    console.log(`✅ Phase 1 completed - Collected ${scrapedContent.wordCount} words`);
     return phase1Report;
   }
 
@@ -243,10 +246,15 @@ export class ThreePhaseAnalyzer {
     this.onProgressUpdate?.('Phase 3', 'Collecting Google Trends SEO data (optional)', 30);
     let trendsData = null;
     try {
-      if (phase1Report.scrapedContent.extractedKeywords && phase1Report.scrapedContent.extractedKeywords.length > 0) {
+      // Extract keywords from content for trends analysis
+      const contentWords = phase1Report.scrapedContent.content.toLowerCase().split(/\s+/);
+      const commonWords = ['the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'can', 'this', 'that', 'these', 'those', 'a', 'an'];
+      const keywords = contentWords.filter(word => word.length > 3 && !commonWords.includes(word)).slice(0, 5);
+      
+      if (keywords.length > 0) {
         console.log('🔍 Trying Google Trends API...');
         const googleTrends = require('google-trends-api');
-        const keyword = phase1Report.scrapedContent.extractedKeywords[0];
+        const keyword = keywords[0];
 
         // Get related queries
         const relatedQueriesResult = await googleTrends.relatedQueries({
@@ -376,8 +384,7 @@ export class ThreePhaseAnalyzer {
       return {
         keywords: keywords,
         overallScore: 0,
-        note: 'Use manual Google Tools prompts for full data',
-        extractedKeywords: keywords
+        note: 'Use manual Google Tools prompts for full data'
       };
     } catch (error) {
       console.error('Google Tools data collection failed:', error);
@@ -412,8 +419,6 @@ export class ThreePhaseAnalyzer {
   }
 
   private async execAsync(command: string, options: any): Promise<any> {
-    const { exec } = require('child_process');
-    const { promisify } = require('util');
     const execAsync = promisify(exec);
     return execAsync(command, options);
   }

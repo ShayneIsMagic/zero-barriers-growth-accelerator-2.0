@@ -6,7 +6,7 @@ export const maxDuration = 60;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url, analysisType, analysisId, industry } = body;
+    const { _url, analysisType, analysisId, industry } = body;
 
     if (!url || !analysisType) {
       return NextResponse.json({
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     // First, get the content (simplified for now)
     const content = {
       text: `Website content for ${url}`,
-      url: url,
+      url: _url,
       title: `Analysis of ${url}`,
       description: `Focused analysis of ${url}`
     };

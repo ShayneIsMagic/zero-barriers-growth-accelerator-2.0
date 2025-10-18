@@ -138,7 +138,7 @@ export function EnhancedAnalysisPage({ onAnalysisComplete }: EnhancedAnalysisPag
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          url,
+          _url,
           enableDetailedLogging: true,
           timeoutPerStep: 45000
         }),
@@ -151,7 +151,7 @@ export function EnhancedAnalysisPage({ onAnalysisComplete }: EnhancedAnalysisPag
         try {
           const analysisForStorage = {
             id: Date.now().toString(),
-            url: url,
+            url: _url,
             overallScore: data.data.overallScore || 80,
             summary: data.data.executiveSummary || 'Enhanced analysis completed',
             status: 'completed' as const,

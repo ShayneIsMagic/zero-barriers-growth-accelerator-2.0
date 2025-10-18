@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 'use client';
 
 import { useState } from 'react';
@@ -56,7 +57,7 @@ export default function Phase2Page() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          url, 
+          _url, 
           content: phase1Data?.scrapedContent,
           phase1Data 
         }),

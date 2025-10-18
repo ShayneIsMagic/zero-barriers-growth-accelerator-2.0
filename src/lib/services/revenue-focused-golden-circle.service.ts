@@ -113,7 +113,7 @@ export class RevenueFocusedGoldenCircleService {
 
       return {
         success: true,
-        url,
+        _url,
         data: analysisResult
       };
 
@@ -121,7 +121,7 @@ export class RevenueFocusedGoldenCircleService {
       console.error('Revenue-Focused Golden Circle analysis failed:', error);
       return {
         success: false,
-        url,
+        _url,
         data: {} as any,
         error: error instanceof Error ? error.message : 'Analysis failed'
       };

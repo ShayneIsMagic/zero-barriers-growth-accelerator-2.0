@@ -107,7 +107,7 @@ export function ClaudeProjectTestPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          url,
+          _url,
           scrapedData: scrapedContent,
           assessmentType: selectedAssessment
         }),

@@ -11,7 +11,7 @@ interface Phase2ButtonProps {
   onPhase2Complete: (result: any) => void;
 }
 
-export function Phase2Button({ scrapedContent, url, industry, onPhase2Complete }: Phase2ButtonProps) {
+export function Phase2Button({ scrapedContent, _url, industry, onPhase2Complete }: Phase2ButtonProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,7 +26,7 @@ export function Phase2Button({ scrapedContent, url, industry, onPhase2Complete }
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          url,
+          _url,
           content: scrapedContent,
           industry: industry || 'general'
         }),

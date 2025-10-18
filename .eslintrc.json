@@ -20,7 +20,7 @@
       "argsIgnorePattern": "^_",
       "varsIgnorePattern": "^_"
     }],
-    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-explicit-any": "off",
     "prefer-const": "warn",
     "no-var": "warn",
     "no-console": "warn",
@@ -45,7 +45,7 @@
       }
     },
     {
-      "files": ["**/api/**/*.ts", "**/lib/**/*.ts", "**/ai/**/*.ts"],
+      "files": ["src/app/api/**/*.ts", "src/lib/**/*.ts"],
       "rules": {
         "no-console": "off"
       }

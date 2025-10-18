@@ -23,13 +23,13 @@ export class SimpleFrameworkAnalysisService {
 
       return {
         success: true,
-        url,
+        _url,
         analysis: result
       };
     } catch (error) {
       return {
         success: false,
-        url,
+        _url,
         analysis: {},
         error: error instanceof Error ? error.message : 'Analysis failed'
       };
@@ -46,13 +46,13 @@ export class SimpleFrameworkAnalysisService {
 
       return {
         success: true,
-        url,
+        _url,
         analysis: result
       };
     } catch (error) {
       return {
         success: false,
-        url,
+        _url,
         analysis: {},
         error: error instanceof Error ? error.message : 'Analysis failed'
       };
@@ -69,13 +69,13 @@ export class SimpleFrameworkAnalysisService {
 
       return {
         success: true,
-        url,
+        _url,
         analysis: result
       };
     } catch (error) {
       return {
         success: false,
-        url,
+        _url,
         analysis: {},
         error: error instanceof Error ? error.message : 'Analysis failed'
       };
@@ -92,13 +92,13 @@ export class SimpleFrameworkAnalysisService {
 
       return {
         success: true,
-        url,
+        _url,
         analysis: result
       };
     } catch (error) {
       return {
         success: false,
-        url,
+        _url,
         analysis: {},
         error: error instanceof Error ? error.message : 'Analysis failed'
       };

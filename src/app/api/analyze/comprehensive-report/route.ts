@@ -5,7 +5,7 @@ export const maxDuration = 300; // 5 minutes for comprehensive analysis
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url, content } = body;
+    const { _url, content } = body;
 
     if (!url || !content) {
       return NextResponse.json({
@@ -21,25 +21,25 @@ export async function POST(request: NextRequest) {
       fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/analyze/golden-circle`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, content })
+        body: JSON.stringify({ _url, content })
       }).then(res => res.json()),
       
       fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/analyze/elements-of-value`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, content })
+        body: JSON.stringify({ _url, content })
       }).then(res => res.json()),
       
       fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/analyze/clifton-strengths`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, content })
+        body: JSON.stringify({ _url, content })
       }).then(res => res.json()),
       
       fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/analyze/b2b-elements`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, content })
+        body: JSON.stringify({ _url, content })
       }).then(res => res.json())
     ]);
 
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     const comprehensiveInsights = generateComprehensiveInsights(assessments, overallScore);
 
     const comprehensiveReport = {
-      url,
+      _url,
       timestamp: new Date().toISOString(),
       overallScore,
       assessments,
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      url,
+      _url,
       data: comprehensiveReport,
       message: 'Comprehensive analysis completed successfully'
     });

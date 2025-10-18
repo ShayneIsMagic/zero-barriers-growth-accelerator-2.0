@@ -6,7 +6,7 @@ export const maxDuration = 300; // 5 minutes for complete Phase 3
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url, phase1Data, phase2Data } = body;
+    const { _url, phase1Data, phase2Data } = body;
 
     if (!url || !phase1Data || !phase2Data) {
       return NextResponse.json({
@@ -28,10 +28,10 @@ export async function POST(request: NextRequest) {
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
 
     // Generate comprehensive research and recommendations
-    const comprehensiveAnalysis = await generateComprehensiveAnalysis(model, url, phase1Data, phase2Data);
+    const comprehensiveAnalysis = await generateComprehensiveAnalysis(model, _url, phase1Data, phase2Data);
 
     const phase3Result = {
-      url,
+      _url,
       timestamp: new Date().toISOString(),
       comprehensiveAnalysis,
       summary: {
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      url,
+      _url,
       phase: 3,
       data: phase3Result,
       message: 'Complete Phase 3 analysis completed successfully'

@@ -5,8 +5,8 @@ import { afterEach, beforeAll, vi } from 'vitest';
 // Setup global test environment
 beforeAll(() => {
   // Set test environment variables
-  process.env.NODE_ENV = 'test';
-  process.env.TEST_MODE = 'true';
+  (process.env as any).NODE_ENV = 'test';
+  (process.env as any).TEST_MODE = 'true';
 
   // Mock console methods to reduce noise in tests
   global.console = {

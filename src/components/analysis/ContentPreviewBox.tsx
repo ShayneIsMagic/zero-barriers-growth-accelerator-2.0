@@ -18,7 +18,7 @@ interface ContentPreviewBoxProps {
 
 export function ContentPreviewBox({
   scrapedContent,
-  url,
+  _url,
   title = "Scraped Content Preview",
   description
 }: ContentPreviewBoxProps) {

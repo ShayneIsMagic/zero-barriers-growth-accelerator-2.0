@@ -278,7 +278,7 @@ export class OptimizedContentCollector {
         if (text && (text.toLowerCase().includes('click') || text.toLowerCase().includes('get') || text.toLowerCase().includes('start'))) {
           ctas.push({
             text,
-            url,
+            _url,
             type: 'button'
           });
         }

@@ -4,7 +4,7 @@
  * No APIs needed - direct browser automation
  */
 
-import puppeteer from 'puppeteer';
+import puppeteer, { Browser } from 'puppeteer';
 
 export interface GoogleTrendsData {
   relatedQueries: Array<{
@@ -106,12 +106,12 @@ export interface AnalyticsData {
 }
 
 export class PuppeteerGoogleToolsService {
-  private static browser: puppeteer.Browser | null = null;
+  private static browser: Browser | null = null;
 
   /**
    * Initialize Puppeteer browser
    */
-  private static async getBrowser(): Promise<puppeteer.Browser> {
+  private static async getBrowser(): Promise<Browser> {
     if (!this.browser) {
       this.browser = await puppeteer.launch({
         headless: true,
@@ -151,7 +151,7 @@ export class PuppeteerGoogleToolsService {
       const trendsUrl = `https://trends.google.com/trends/explore?q=${encodeURIComponent(keywordString)}&geo=US&date=today%2012-m`;
 
       await page.goto(trendsUrl, { waitUntil: 'networkidle2' });
-      await page.waitForTimeout(3000); // Wait for data to load
+      await new Promise(resolve => setTimeout(resolve, 3000)); // Wait for data to load
 
       // Extract related queries - ACTUALLY SCRAPE REAL DATA
       const relatedQueries = await page.evaluate(() => {
@@ -246,7 +246,7 @@ export class PuppeteerGoogleToolsService {
     try {
       const pageSpeedUrl = `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(url)}&form_factor=desktop`;
       await page.goto(pageSpeedUrl, { waitUntil: 'networkidle2' });
-      await page.waitForTimeout(5000); // Wait for analysis to complete
+      await new Promise(resolve => setTimeout(resolve, 5000)); // Wait for analysis to complete
 
       const pageSpeedData = await page.evaluate(() => {
         console.log('🔍 Extracting PageSpeed data from DOM...');

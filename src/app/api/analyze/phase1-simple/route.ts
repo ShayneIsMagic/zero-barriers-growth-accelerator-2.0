@@ -6,7 +6,7 @@ export const maxDuration = 60;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url, industry: _industry } = body;
+    const { _url, industry: _industry } = body;
 
     if (!url) {
       return NextResponse.json({
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     // Return scraped content without storing in complex tables
     return NextResponse.json({
       success: true,
-      url,
+      _url,
       data: scrapedContent,
       message: 'Simple Phase 1 data collection completed.'
     });

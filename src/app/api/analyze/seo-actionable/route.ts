@@ -6,7 +6,7 @@ export const maxDuration = 120; // 2 minutes for comprehensive SEO analysis
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url, scrapedContent, focusArea = 'general' } = body;
+    const { _url, scrapedContent, focusArea = 'general' } = body;
 
     if (!url) {
       return NextResponse.json({
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     console.log(`🎯 Focus area: ${focusArea}`);
 
     const result = await SEOActionableAnalysisService.generateSEOReport(
-      url,
+      _url,
       scrapedContent,
       focusArea as any
     );

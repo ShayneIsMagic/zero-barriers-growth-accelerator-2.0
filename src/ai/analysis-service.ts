@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { OpenAIProvider } from './providers/openai';
 import { FallbackProvider } from './providers/fallback';
 import { AnalysisOptions, CompleteAnalysis } from './providers/base';

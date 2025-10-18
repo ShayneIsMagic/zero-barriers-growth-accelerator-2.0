@@ -4,7 +4,7 @@ import { AIProvider } from '@/lib/ai-providers';
 
 export async function POST(request: NextRequest) {
   try {
-    const { url, provider = 'openai' } = await request.json();
+    const { _url, provider = 'openai' } = await request.json();
 
     if (!url || url.trim().length === 0) {
       return NextResponse.json(

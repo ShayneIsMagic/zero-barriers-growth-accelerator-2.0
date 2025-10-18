@@ -6,7 +6,7 @@ export const maxDuration = 120; // 2 minutes for comprehensive analysis
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url, scrapedContent, analysisType = 'golden-circle' } = body;
+    const { _url, scrapedContent, analysisType = 'golden-circle' } = body;
 
     if (!url) {
       return NextResponse.json({
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     console.log(`🔍 Analysis type: ${analysisType}`);
 
     const result = await ActionableReportService.generateComprehensiveReport(
-      url,
+      _url,
       scrapedContent,
       analysisType as 'golden-circle' | 'clifton-strengths' | 'seo-analysis' | 'elements-value-b2c' | 'elements-value-b2b'
     );

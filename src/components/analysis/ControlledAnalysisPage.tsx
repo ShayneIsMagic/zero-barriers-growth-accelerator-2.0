@@ -110,7 +110,7 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          url,
+          _url,
           steps: selectedSteps,
           timeoutPerStep: 30000
         }),

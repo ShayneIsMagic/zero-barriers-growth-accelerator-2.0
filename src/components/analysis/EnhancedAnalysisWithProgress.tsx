@@ -523,7 +523,7 @@ async function executeEnhancedAnalysisWithProgress(
     
     return {
       id: `analysis_${Date.now()}`,
-      url,
+      _url,
       status: 'completed',
       report: cohesiveReport,
       timestamp: new Date().toISOString()

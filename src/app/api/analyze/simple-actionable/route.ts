@@ -6,7 +6,7 @@ export const maxDuration = 60; // 1 minute for simple analysis
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url, scrapedContent, analysisType = 'seo' } = body;
+    const { _url, scrapedContent, analysisType = 'seo' } = body;
 
     if (!url) {
       return NextResponse.json({
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     console.log(`🔍 Analysis type: ${analysisType}`);
 
     const result = await SimpleActionableReportService.generateReport(
-      url,
+      _url,
       scrapedContent,
       analysisType as any
     );

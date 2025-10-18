@@ -11,7 +11,7 @@ interface GoogleToolsButtonsProps {
   onToolComplete?: (tool: string, data: any) => void;
 }
 
-export function GoogleToolsButtons({ url, onToolComplete }: GoogleToolsButtonsProps) {
+export function GoogleToolsButtons({ _url, onToolComplete }: GoogleToolsButtonsProps) {
   const [lighthouseRunning, setLighthouseRunning] = useState(false);
   const [lighthouseData, setLighthouseData] = useState<any>(null);
   const [lighthouseError, setLighthouseError] = useState<string | null>(null);

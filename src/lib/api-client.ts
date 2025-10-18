@@ -144,7 +144,7 @@ export const apiClient = new ApiClient({
 export const analysisApi = {
   async analyzeWebsite(url: string, analysisType: string = 'full') {
     return apiClient.post('/api/analyze/website', {
-      url,
+      _url,
       analysisType,
     });
   },

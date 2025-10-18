@@ -14,7 +14,8 @@ import {
     IndividualReport
 } from './src/lib/individual-report-generator';
 
-import * as fs from 'fs';
+import * as fs from 'fs'
+import { MarkdownReportGenerator } from './src/lib/markdown-report-generator';;
 import * as path from 'path';
 import { generateMarkdownReport } from './src/lib/markdown-report-generator';
 
@@ -448,7 +449,7 @@ async function main() {
   // Test 8: Combined Markdown Report
   console.log('\n📝 Test 8: Combined Markdown Report');
   try {
-    const combinedReport = generateMarkdownReport(completeAnalysisData, TEST_URL);
+    const combinedReport = MarkdownReportGenerator.generateComprehensiveReport(TEST_URL, completeAnalysisData);
     fs.writeFileSync(
       path.join(outputDir, '8-combined-full-report.md'),
       combinedReport

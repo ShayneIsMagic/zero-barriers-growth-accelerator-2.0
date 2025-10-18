@@ -40,7 +40,7 @@ export interface ControlledAnalysisResponse {
 export async function POST(request: NextRequest) {
   try {
     const body: ControlledAnalysisRequest = await request.json();
-    const { url, steps, timeoutPerStep = 30000 } = body;
+    const { _url, steps, timeoutPerStep = 30000 } = body;
 
     if (!url) {
       return NextResponse.json({
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
 
     // Create controlled analysis configuration
     const config: ControlledAnalysisConfig = {
-      url,
+      _url,
       steps: selectedSteps,
       timeoutPerStep,
       retryAttempts: 2,
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
     const result = await analyzer.execute();
 
     // Store the report
-    const storedReport = await reportStorage.storeReport(result, url, 'controlled-analysis');
+    const storedReport = await reportStorage.storeReport(result, _url, 'controlled-analysis');
 
     return NextResponse.json({
       success: true,

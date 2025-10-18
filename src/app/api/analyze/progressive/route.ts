@@ -32,14 +32,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Create analysis record with PENDING status
-    const analysisId = `analysis-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const _analysisId = `analysis-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
     await prisma.analysis.create({
       data: {
         id: analysisId,
         status: 'PENDING',
         content: JSON.stringify({
-          url: url,
+          url: _url,
           currentStep: 0,
           totalSteps: 9,
           steps: [
@@ -212,35 +212,35 @@ async function runProgressiveAnalysis(analysisId: string, url: string) {
     // Golden Circle Report (with prompt)
     if (result.phase2Data?.goldenCircle) {
       const prompt = `Analyze the website content for Golden Circle framework (Why, How, What, Who):\n\nURL: ${url}\nContent: ${result.phase1Data?.scrapedContent?.content?.substring(0, 2000)}...\n\nExtract:\n1. WHY (dominant purpose) - exact quotes from website\n2. HOW (unique methodology) - exact quotes about their approach\n3. WHAT (products/services) - exact list of offerings\n4. WHO (target audience) - exact quotes about their market\n\nReturn structured analysis with scores and evidence.`;
-      const goldenReport = generateGoldenCircleReport(result.phase2Data.goldenCircle, url, prompt);
+      const goldenReport = generateGoldenCircleReport(result.phase2Data.goldenCircle, _url, prompt);
       await updateStep('golden_circle', 'completed', result.phase2Data.goldenCircle, goldenReport);
     }
 
     // Elements of Value (B2C) Report
     if (result.phase2Data?.elementsOfValue) {
       const prompt = `Analyze the website content for B2C Elements of Value (30 elements):\n\nURL: ${url}\nContent: ${result.phase1Data?.scrapedContent?.content?.substring(0, 2000)}...\n\nEvaluate each of the 30 B2C Elements of Value and provide specific evidence from the content.\n\nReturn structured analysis with scores for each element.`;
-      const elementsReport = generateElementsB2CReport(result.phase2Data.elementsOfValue, url, prompt);
+      const elementsReport = generateElementsB2CReport(result.phase2Data.elementsOfValue, _url, prompt);
       await updateStep('elements_of_value', 'completed', result.phase2Data.elementsOfValue, elementsReport);
     }
 
     // B2B Elements Report
     if (result.phase2Data?.b2bElements) {
       const prompt = `Analyze the website content for B2B Elements of Value (40 elements):\n\nURL: ${url}\nContent: ${result.phase1Data?.scrapedContent?.content?.substring(0, 2000)}...\n\nEvaluate each of the 40 B2B Elements of Value and provide specific evidence from the content.\n\nReturn structured analysis with scores for each element.`;
-      const b2bReport = generateB2BElementsReport(result.phase2Data.b2bElements, url, prompt);
+      const b2bReport = generateB2BElementsReport(result.phase2Data.b2bElements, _url, prompt);
       await updateStep('b2b_elements', 'completed', result.phase2Data.b2bElements, b2bReport);
     }
 
     // CliftonStrengths Report
     if (result.phase2Data?.cliftonStrengths) {
       const prompt = `Analyze the website content for CliftonStrengths (34 themes):\n\nURL: ${url}\nContent: ${result.phase1Data?.scrapedContent?.content?.substring(0, 2000)}...\n\nEvaluate each of the 34 CliftonStrengths themes and provide specific evidence from the content.\n\nReturn structured analysis with top 5 themes and scores.`;
-      const strengthsReport = generateCliftonStrengthsReport(result.phase2Data.cliftonStrengths, url, prompt);
+      const strengthsReport = generateCliftonStrengthsReport(result.phase2Data.cliftonStrengths, _url, prompt);
       await updateStep('clifton_strengths', 'completed', result.phase2Data.cliftonStrengths, strengthsReport);
     }
 
     // Comprehensive Report
     if (result.comprehensiveAnalysis) {
       const prompt = `Comprehensive Strategic Analysis:\n\nPhase 1 Data:\n- SEO Score: ${result.phase1Data?.summary.seoScore}/100\n- Performance Score: ${result.phase1Data?.summary.performanceScore}/100\n\nPhase 2 Data:\n- Golden Circle Score: ${result.phase2Data?.summary.goldenCircleScore}/100\n- Elements of Value Score: ${result.phase2Data?.summary.elementsOfValueScore}/100\n\nProvide comprehensive recommendations for:\n1. Performance optimization\n2. SEO improvements\n3. Lead generation improvements\n4. Sales optimization\n5. Overall business growth\n\nReturn structured recommendations with quick wins and long-term strategy.`;
-      const comprehensiveReport = generateComprehensiveReport(result.comprehensiveAnalysis, url, prompt);
+      const comprehensiveReport = generateComprehensiveReport(result.comprehensiveAnalysis, _url, prompt);
       await updateStep('gemini_insights', 'completed', result, comprehensiveReport);
     }
 

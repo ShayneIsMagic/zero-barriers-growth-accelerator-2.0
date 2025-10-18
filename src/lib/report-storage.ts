@@ -34,7 +34,7 @@ export class ReportStorage {
 
     const storedReport: StoredReport = {
       id: reportId,
-      url,
+      _url,
       timestamp,
       reportType,
       data: reportData,

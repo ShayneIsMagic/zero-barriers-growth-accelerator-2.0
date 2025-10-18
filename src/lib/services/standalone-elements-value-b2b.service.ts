@@ -80,7 +80,7 @@ export class StandaloneElementsValueB2BService {
       console.error('B2B Elements of Value analysis failed:', error);
       return {
         success: false,
-        url,
+        _url,
         data: {} as B2BAnalysisData,
         error: error instanceof Error ? error.message : 'Analysis failed'
       };
@@ -112,7 +112,7 @@ export class StandaloneElementsValueB2BService {
 
       return {
         success: true,
-        url,
+        _url,
         data: enhancedResult.analysis
       };
 
@@ -120,7 +120,7 @@ export class StandaloneElementsValueB2BService {
       console.error('B2B Elements of Value analysis failed:', error);
       return {
         success: false,
-        url,
+        _url,
         data: {} as B2BAnalysisData,
         error: error instanceof Error ? error.message : 'Analysis failed'
       };

@@ -5,10 +5,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { generateMarkdownReport } from '@/lib/markdown-report-generator';
 import { CheckCircle, Clock, Download, FileText, Loader2, Play, XCircle } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { IndividualReportsView } from './IndividualReportsView';
+import { MarkdownReportGenerator } from '@/lib/markdown-report-generator';
 
 interface StepStatus {
   id: string;
@@ -111,7 +111,7 @@ export function ProgressiveAnalysisPage() {
   const downloadMarkdown = () => {
     if (!status?.result) return;
 
-    const markdown = generateMarkdownReport(status.result, status.url);
+    const markdown = MarkdownReportGenerator.generateComprehensiveReport(status.url, status.result);
     const blob = new Blob([markdown], {
       type: 'text/markdown'
     });

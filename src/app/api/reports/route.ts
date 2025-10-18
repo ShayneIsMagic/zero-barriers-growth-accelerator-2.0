@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { reportData, url, reportType } = body;
+    const { reportData, _url, reportType } = body;
 
     if (!reportData || !url) {
       return NextResponse.json({
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    const storedReport = await reportStorage.storeReport(reportData, url, reportType);
+    const storedReport = await reportStorage.storeReport(reportData, _url, reportType);
 
     return NextResponse.json({
       success: true,

@@ -72,7 +72,7 @@ export class SimpleActionableReportService {
 
       return {
         success: true,
-        url,
+        _url,
         report: aiResponse
       };
 
@@ -80,7 +80,7 @@ export class SimpleActionableReportService {
       console.error('Simple actionable report generation failed:', error);
       return {
         success: false,
-        url,
+        _url,
         report: {} as any,
         error: error instanceof Error ? error.message : 'Report generation failed'
       };

@@ -504,7 +504,7 @@ export class PuppeteerComprehensiveCollector {
       const summary = this.generateSummary(pages, performance, seo, content, technical, userExperience);
 
       return {
-        url,
+        _url,
         timestamp: new Date().toISOString(),
         pages,
         siteMap,
@@ -536,7 +536,7 @@ export class PuppeteerComprehensiveCollector {
     const redirects: RedirectData[] = [];
 
     while (toVisit.length > 0 && visited.size < this.maxPages) {
-      const { url, depth } = toVisit.shift()!;
+      const { _url, depth } = toVisit.shift()!;
       
       if (visited.has(url) || depth > this.maxDepth) continue;
       visited.add(url);
@@ -557,7 +557,7 @@ export class PuppeteerComprehensiveCollector {
           const location = response.headers().location;
           if (location) {
             redirects.push({
-              from: url,
+              from: _url,
               to: location,
               status,
               type: status === 301 ? 'permanent' : 'temporary'
@@ -571,7 +571,7 @@ export class PuppeteerComprehensiveCollector {
         }
 
         sitemap.push({
-          url,
+          _url,
           lastModified: response.headers().date || new Date().toISOString(),
           changeFrequency: 'weekly',
           priority: depth === 0 ? 1.0 : Math.max(0.1, 1.0 - (depth * 0.2)),
@@ -820,7 +820,7 @@ export class PuppeteerComprehensiveCollector {
     });
 
     return {
-      url,
+      _url,
       ...pageData,
       performance: performanceMetrics
     };

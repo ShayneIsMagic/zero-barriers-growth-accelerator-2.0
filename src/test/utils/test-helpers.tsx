@@ -1,6 +1,7 @@
 import { render, RenderOptions } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { AuthProvider } from '@/contexts/auth-context';
+import { vi } from 'vitest';
 
 /**
  * Custom render function that includes all providers
@@ -119,7 +120,7 @@ export function mockFetchError(message = 'Network error') {
  * Setup localStorage mock data
  */
 export function setupLocalStorage(data: Record<string, unknown>) {
-  (global.localStorage.getItem as unknown).mockImplementation((key: string) =>
+  (global.localStorage.getItem as any).mockImplementation((key: string) =>
     data[key] ? JSON.stringify(data[key]) : null
   );
 }
@@ -129,5 +130,5 @@ export function setupLocalStorage(data: Record<string, unknown>) {
  */
 export function clearAllMocks() {
   vi.clearAllMocks();
-  (global.localStorage.clear as unknown)();
+  (global.localStorage.clear as any)();
 }

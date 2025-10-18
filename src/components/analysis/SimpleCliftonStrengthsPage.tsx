@@ -112,7 +112,7 @@ export function SimpleCliftonStrengthsPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          url,
+          _url,
           scrapedContent
         }),
       });

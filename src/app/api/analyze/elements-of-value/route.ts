@@ -6,7 +6,7 @@ export const maxDuration = 60;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url, content } = body;
+    const { _url, content } = body;
 
     if (!url || !content) {
       return NextResponse.json({
@@ -182,7 +182,7 @@ Return a JSON object with this exact structure:
 
     return NextResponse.json({
       success: true,
-      url,
+      _url,
       assessment: 'Elements of Value',
       data: analysisResult,
       message: 'Elements of Value analysis completed successfully'

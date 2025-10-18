@@ -87,7 +87,7 @@ export function AutomatedGoogleToolsPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          url,
+          _url,
           keywords: keywordArray
         }),
       });

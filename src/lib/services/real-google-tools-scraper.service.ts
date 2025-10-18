@@ -3,7 +3,7 @@
  * Actually scrapes real data from Google Tools using Puppeteer
  */
 
-import puppeteer from 'puppeteer';
+import puppeteer, { Browser } from 'puppeteer';
 
 export interface RealGoogleTrendsData {
   relatedQueries: Array<{
@@ -61,12 +61,12 @@ export interface RealPageSpeedData {
 }
 
 export class RealGoogleToolsScraperService {
-  private static browser: puppeteer.Browser | null = null;
+  private static browser: Browser | null = null;
 
   /**
    * Get or create browser instance
    */
-  private static async getBrowser(): Promise<puppeteer.Browser> {
+  private static async getBrowser(): Promise<Browser> {
     if (!this.browser) {
       this.browser = await puppeteer.launch({
         headless: true,
@@ -109,7 +109,7 @@ export class RealGoogleToolsScraperService {
       await page.goto(trendsUrl, { waitUntil: 'networkidle2', timeout: 30000 });
 
       // Wait for the page to fully load
-      await page.waitForTimeout(5000);
+      await new Promise(resolve => setTimeout(resolve, 5000));
 
       // Extract data using multiple strategies
       const trendsData = await page.evaluate(() => {
@@ -248,7 +248,7 @@ export class RealGoogleToolsScraperService {
       await page.goto(pageSpeedUrl, { waitUntil: 'networkidle2', timeout: 30000 });
 
       // Wait for the page to fully load
-      await page.waitForTimeout(8000);
+      await new Promise(resolve => setTimeout(resolve, 8000));
 
       const pageSpeedData = await page.evaluate(() => {
         const data: any = {

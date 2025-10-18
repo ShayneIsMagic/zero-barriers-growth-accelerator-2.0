@@ -65,7 +65,7 @@ class AnalysisTracker {
     const id = this.generateId();
     const analysis: AnalysisProgress = {
       id,
-      url,
+      _url,
       startedAt: new Date().toISOString(),
       status: 'running',
       steps: {

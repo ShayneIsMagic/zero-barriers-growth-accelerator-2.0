@@ -27,7 +27,7 @@ export interface StepByStepExecutionResponse {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url, stepId } = body;
+    const { _url, stepId } = body;
 
     if (!url) {
       return NextResponse.json({
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     const result = await analyzer.execute();
 
     // Store the report automatically
-    const storedReport = await reportStorage.storeReport(result, url, 'comprehensive');
+    const storedReport = await reportStorage.storeReport(result, _url, 'comprehensive');
 
     return NextResponse.json({
       success: true,

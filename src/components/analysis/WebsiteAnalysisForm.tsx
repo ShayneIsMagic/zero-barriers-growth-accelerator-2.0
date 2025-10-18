@@ -44,7 +44,7 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          url,
+          _url,
           industry: 'general'
         }),
       });

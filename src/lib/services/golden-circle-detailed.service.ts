@@ -315,10 +315,10 @@ Return response as valid JSON with this structure:
         differentiation_rating: aiResponse.why.differentiation_rating || 0,
         evidence: {
           patterns: patterns.slice(0, 5).map(p => ({
-            pattern: p.pattern,
-            strength: p.strength,
-            context: p.context,
-            examples: p.examples
+            element_name: p.element_name,
+            pattern_text: p.pattern_text,
+            match_count: p.match_count,
+            confidence: p.confidence
           })),
           citations: aiResponse.why.evidence?.citations || []
         },
@@ -338,10 +338,10 @@ Return response as valid JSON with this structure:
         specificity_rating: aiResponse.how.specificity_rating || 0,
         evidence: {
           patterns: patterns.filter(p => p.element_name === 'simplifies' || p.element_name === 'quality').map(p => ({
-            pattern: p.pattern,
-            strength: p.strength,
-            context: p.context,
-            examples: p.examples
+            element_name: p.element_name,
+            pattern_text: p.pattern_text,
+            match_count: p.match_count,
+            confidence: p.confidence
           })),
           citations: aiResponse.how.evidence?.citations || []
         },
@@ -361,10 +361,10 @@ Return response as valid JSON with this structure:
         cta_clarity_rating: aiResponse.what.cta_clarity_rating || 0,
         evidence: {
           patterns: patterns.slice(5, 10).map(p => ({
-            pattern: p.pattern,
-            strength: p.strength,
-            context: p.context,
-            examples: p.examples
+            element_name: p.element_name,
+            pattern_text: p.pattern_text,
+            match_count: p.match_count,
+            confidence: p.confidence
           })),
           citations: aiResponse.what.evidence?.citations || []
         },
@@ -394,13 +394,62 @@ Return response as valid JSON with this structure:
     return {
       id: gc.id,
       analysis_id: analysisId,
-      overall_score: aiResponse.overall_score,
-      alignment_score: aiResponse.alignment_score,
-      clarity_score: aiResponse.clarity_score,
-      why,
-      how,
-      what,
-      who
+      overall_score: aiResponse.overall_score || 0,
+      alignment_score: aiResponse.alignment_score || 0,
+      clarity_score: aiResponse.clarity_score || 0,
+      why: {
+        ...why,
+        score: why.score ? Number(why.score) : 0,
+        clarity_rating: why.clarity_rating ? Number(why.clarity_rating) : 0,
+        authenticity_rating: why.authenticity_rating ? Number(why.authenticity_rating) : 0,
+        emotional_resonance_rating: why.emotional_resonance_rating ? Number(why.emotional_resonance_rating) : 0,
+        differentiation_rating: why.differentiation_rating ? Number(why.differentiation_rating) : 0,
+        evidence: {
+          patterns: Array.isArray((why.evidence as any)?.patterns) ? (why.evidence as any).patterns : [],
+          citations: Array.isArray((why.evidence as any)?.citations) ? (why.evidence as any).citations : []
+        },
+        recommendations: Array.isArray(why.recommendations) ? why.recommendations as string[] : []
+      },
+      how: {
+        ...how,
+        score: how.score ? Number(how.score) : 0,
+        uniqueness_rating: how.uniqueness_rating ? Number(how.uniqueness_rating) : 0,
+        clarity_rating: how.clarity_rating ? Number(how.clarity_rating) : 0,
+        credibility_rating: how.credibility_rating ? Number(how.credibility_rating) : 0,
+        specificity_rating: how.specificity_rating ? Number(how.specificity_rating) : 0,
+        evidence: {
+          patterns: Array.isArray((how.evidence as any)?.patterns) ? (how.evidence as any).patterns : [],
+          citations: Array.isArray((how.evidence as any)?.citations) ? (how.evidence as any).citations : []
+        },
+        recommendations: Array.isArray(how.recommendations) ? how.recommendations as string[] : []
+      },
+      what: {
+        ...what,
+        score: what.score ? Number(what.score) : 0,
+        clarity_rating: what.clarity_rating ? Number(what.clarity_rating) : 0,
+        completeness_rating: what.completeness_rating ? Number(what.completeness_rating) : 0,
+        value_articulation_rating: what.value_articulation_rating ? Number(what.value_articulation_rating) : 0,
+        cta_clarity_rating: what.cta_clarity_rating ? Number(what.cta_clarity_rating) : 0,
+        evidence: {
+          patterns: Array.isArray((what.evidence as any)?.patterns) ? (what.evidence as any).patterns : [],
+          citations: Array.isArray((what.evidence as any)?.citations) ? (what.evidence as any).citations : []
+        },
+        recommendations: Array.isArray(what.recommendations) ? what.recommendations as string[] : []
+      },
+      who: {
+        ...who,
+        score: who.score ? Number(who.score) : 0,
+        specificity_rating: who.specificity_rating ? Number(who.specificity_rating) : 0,
+        resonance_rating: who.resonance_rating ? Number(who.resonance_rating) : 0,
+        accessibility_rating: who.accessibility_rating ? Number(who.accessibility_rating) : 0,
+        conversion_path_rating: who.conversion_path_rating ? Number(who.conversion_path_rating) : 0,
+        evidence: {
+          patterns: Array.isArray((who.evidence as any)?.patterns) ? (who.evidence as any).patterns : [],
+          citations: Array.isArray((who.evidence as any)?.citations) ? (who.evidence as any).citations : []
+        },
+        recommendations: Array.isArray(who.recommendations) ? who.recommendations as string[] : [],
+        target_personas: Array.isArray(who.target_personas) ? who.target_personas as string[] : []
+      }
     }
   }
 
@@ -433,7 +482,12 @@ Return response as valid JSON with this structure:
           clarity_rating: gc.golden_circle_why.clarity_rating ? Number(gc.golden_circle_why.clarity_rating) : 0,
           authenticity_rating: gc.golden_circle_why.authenticity_rating ? Number(gc.golden_circle_why.authenticity_rating) : 0,
           emotional_resonance_rating: gc.golden_circle_why.emotional_resonance_rating ? Number(gc.golden_circle_why.emotional_resonance_rating) : 0,
-          differentiation_rating: gc.golden_circle_why.differentiation_rating ? Number(gc.golden_circle_why.differentiation_rating) : 0
+          differentiation_rating: gc.golden_circle_why.differentiation_rating ? Number(gc.golden_circle_why.differentiation_rating) : 0,
+          evidence: {
+            patterns: Array.isArray((gc.golden_circle_why.evidence as any)?.patterns) ? (gc.golden_circle_why.evidence as any).patterns : [],
+            citations: Array.isArray((gc.golden_circle_why.evidence as any)?.citations) ? (gc.golden_circle_why.evidence as any).citations : []
+          },
+          recommendations: Array.isArray(gc.golden_circle_why.recommendations) ? gc.golden_circle_why.recommendations as string[] : []
         } : null,
         how: gc.golden_circle_how ? {
           ...gc.golden_circle_how,
@@ -441,7 +495,12 @@ Return response as valid JSON with this structure:
           uniqueness_rating: gc.golden_circle_how.uniqueness_rating ? Number(gc.golden_circle_how.uniqueness_rating) : 0,
           clarity_rating: gc.golden_circle_how.clarity_rating ? Number(gc.golden_circle_how.clarity_rating) : 0,
           credibility_rating: gc.golden_circle_how.credibility_rating ? Number(gc.golden_circle_how.credibility_rating) : 0,
-          specificity_rating: gc.golden_circle_how.specificity_rating ? Number(gc.golden_circle_how.specificity_rating) : 0
+          specificity_rating: gc.golden_circle_how.specificity_rating ? Number(gc.golden_circle_how.specificity_rating) : 0,
+          evidence: {
+            patterns: Array.isArray((gc.golden_circle_how.evidence as any)?.patterns) ? (gc.golden_circle_how.evidence as any).patterns : [],
+            citations: Array.isArray((gc.golden_circle_how.evidence as any)?.citations) ? (gc.golden_circle_how.evidence as any).citations : []
+          },
+          recommendations: Array.isArray(gc.golden_circle_how.recommendations) ? gc.golden_circle_how.recommendations as string[] : []
         } : null,
         what: gc.golden_circle_what ? {
           ...gc.golden_circle_what,
@@ -449,7 +508,12 @@ Return response as valid JSON with this structure:
           clarity_rating: gc.golden_circle_what.clarity_rating ? Number(gc.golden_circle_what.clarity_rating) : 0,
           completeness_rating: gc.golden_circle_what.completeness_rating ? Number(gc.golden_circle_what.completeness_rating) : 0,
           value_articulation_rating: gc.golden_circle_what.value_articulation_rating ? Number(gc.golden_circle_what.value_articulation_rating) : 0,
-          cta_clarity_rating: gc.golden_circle_what.cta_clarity_rating ? Number(gc.golden_circle_what.cta_clarity_rating) : 0
+          cta_clarity_rating: gc.golden_circle_what.cta_clarity_rating ? Number(gc.golden_circle_what.cta_clarity_rating) : 0,
+          evidence: {
+            patterns: Array.isArray((gc.golden_circle_what.evidence as any)?.patterns) ? (gc.golden_circle_what.evidence as any).patterns : [],
+            citations: Array.isArray((gc.golden_circle_what.evidence as any)?.citations) ? (gc.golden_circle_what.evidence as any).citations : []
+          },
+          recommendations: Array.isArray(gc.golden_circle_what.recommendations) ? gc.golden_circle_what.recommendations as string[] : []
         } : null,
         who: gc.golden_circle_who ? {
           ...gc.golden_circle_who,
@@ -457,7 +521,13 @@ Return response as valid JSON with this structure:
           specificity_rating: gc.golden_circle_who.specificity_rating ? Number(gc.golden_circle_who.specificity_rating) : 0,
           resonance_rating: gc.golden_circle_who.resonance_rating ? Number(gc.golden_circle_who.resonance_rating) : 0,
           accessibility_rating: gc.golden_circle_who.accessibility_rating ? Number(gc.golden_circle_who.accessibility_rating) : 0,
-          conversion_path_rating: gc.golden_circle_who.conversion_path_rating ? Number(gc.golden_circle_who.conversion_path_rating) : 0
+          conversion_path_rating: gc.golden_circle_who.conversion_path_rating ? Number(gc.golden_circle_who.conversion_path_rating) : 0,
+          evidence: {
+            patterns: Array.isArray((gc.golden_circle_who.evidence as any)?.patterns) ? (gc.golden_circle_who.evidence as any).patterns : [],
+            citations: Array.isArray((gc.golden_circle_who.evidence as any)?.citations) ? (gc.golden_circle_who.evidence as any).citations : []
+          },
+          recommendations: Array.isArray(gc.golden_circle_who.recommendations) ? gc.golden_circle_who.recommendations as string[] : [],
+          target_personas: Array.isArray(gc.golden_circle_who.target_personas) ? gc.golden_circle_who.target_personas as string[] : []
         } : null
       }
     } catch (error) {

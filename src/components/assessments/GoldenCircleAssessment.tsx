@@ -63,7 +63,7 @@ interface GoldenCircleAssessmentProps {
   onComplete?: (data: GoldenCircleData) => void;
 }
 
-export default function GoldenCircleAssessment({ url, content, onComplete }: GoldenCircleAssessmentProps) {
+export default function GoldenCircleAssessment({ _url, content, onComplete }: GoldenCircleAssessmentProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<GoldenCircleData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -78,7 +78,7 @@ export default function GoldenCircleAssessment({ url, content, onComplete }: Gol
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ url, content }),
+        body: JSON.stringify({ _url, content }),
       });
 
       const data = await response.json();

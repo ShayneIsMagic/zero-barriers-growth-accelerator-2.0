@@ -1,226 +1,404 @@
 /**
- * Generate Markdown Reports from Analysis Results
+ * Markdown Report Generator
+ * Creates professional markdown reports for all analysis types
  */
 
-export function generateMarkdownReport(result: any, url: string): string {
+export interface B2CAnalysisData {
+  overall_score: number;
+  functional_score: number;
+  emotional_score: number;
+  life_changing_score: number;
+  social_impact_score: number;
+  revenue_opportunities: Array<{
+    element: string;
+    current_strength: number;
+    revenue_potential: string;
+    implementation_effort: string;
+    estimated_roi: string;
+    target_audience: string;
+  }>;
+  recommendations: Array<{
+    priority: 'High' | 'Medium' | 'Low';
+    action: string;
+    expected_revenue_impact: string;
+    implementation_cost: string;
+    timeline: string;
+    roi_estimate: string;
+  }>;
+}
+
+export interface B2BAnalysisData {
+  overall_score: number;
+  table_stakes_score: number;
+  functional_score: number;
+  ease_of_doing_business_score: number;
+  individual_score: number;
+  inspirational_score: number;
+  revenue_opportunities: Array<{
+    element: string;
+    current_strength: number;
+    revenue_potential: string;
+    implementation_effort: string;
+    estimated_roi: string;
+    target_audience: string;
+  }>;
+  recommendations: Array<{
+    priority: 'High' | 'Medium' | 'Low';
+    action: string;
+    expected_revenue_impact: string;
+    implementation_cost: string;
+    timeline: string;
+    roi_estimate: string;
+  }>;
+}
+
+export interface GoldenCircleData {
+  overall_score: number;
+  why: {
+    score: number;
+    statement: string;
+    clarity_rating: number;
+  };
+  how: {
+    score: number;
+    statement: string;
+    uniqueness_rating: number;
+  };
+  what: {
+    score: number;
+    statement: string;
+    clarity_rating: number;
+  };
+  who: {
+    score: number;
+    statement: string;
+    target_audience: string[];
+    emotional_connection: string;
+    specificity_rating: number;
+  };
+  recommendations: string[];
+}
+
+export class MarkdownReportGenerator {
+  /**
+   * Generate B2C Elements of Value markdown report
+   */
+  static generateB2CReport(analysisResult: B2CAnalysisData, websiteUrl: string): string {
   const timestamp = new Date().toISOString();
-  const score = result.finalReport?.evaluationFramework?.overallScore || 0;
-  const rating = result.finalReport?.evaluationFramework?.rating || 'Not Rated';
+    const domain = new URL(websiteUrl).hostname;
+    
+    return `# B2C Elements of Value Analysis Report
 
-  let markdown = `# Website Analysis Report
-
-**URL:** ${url}
-**Date:** ${new Date(timestamp).toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit'
-})}
-**Overall Score:** ${score}/100
-**Rating:** ${rating}
+**Website:** ${websiteUrl}  
+**Domain:** ${domain}  
+**Analysis Date:** ${new Date(timestamp).toLocaleDateString()}  
+**Analysis Type:** B2C Elements of Value Framework  
 
 ---
 
-`;
+## Executive Summary
 
-  // Phase 1: Data Collection
-  if (result.phase1Data) {
-    markdown += `## Phase 1: Data Collection Foundation
+This analysis evaluates the website's performance across the 30 B2C Elements of Value framework, identifying revenue opportunities and optimization strategies.
 
-### Summary
-- **Total Words:** ${result.phase1Data.summary.totalWords}
-- **Total Images:** ${result.phase1Data.summary.totalImages}
-- **Total Links:** ${result.phase1Data.summary.totalLinks}
-- **SEO Score:** ${result.phase1Data.summary.seoScore}/100
-- **Performance Score:** ${result.phase1Data.summary.performanceScore}/100
-- **Accessibility Score:** ${result.phase1Data.summary.accessibilityScore}/100
+**Overall B2C Value Score: ${analysisResult.overall_score}%**
 
-### Technical Issues
-${result.phase1Data.summary.technicalIssues.length > 0
-  ? result.phase1Data.summary.technicalIssues.map((issue: string) => `- ${issue}`).join('\n')
-  : 'No critical technical issues found.'}
-
-### Content Issues
-${result.phase1Data.summary.contentIssues.length > 0
-  ? result.phase1Data.summary.contentIssues.map((issue: string) => `- ${issue}`).join('\n')
-  : 'No critical content issues found.'}
+### Score Breakdown
+- **Functional Elements:** ${analysisResult.functional_score}%
+- **Emotional Elements:** ${analysisResult.emotional_score}%
+- **Life-Changing Elements:** ${analysisResult.life_changing_score}%
+- **Social Impact Elements:** ${analysisResult.social_impact_score}%
 
 ---
 
-`;
-  }
+## Revenue Opportunities
 
-  // Phase 2: Framework Analysis
-  if (result.phase2Data) {
-    markdown += `## Phase 2: Framework Analysis
+${analysisResult.revenue_opportunities.map((opportunity, index) => `
+### ${index + 1}. ${opportunity.element}
 
-### Overall Framework Score: ${result.phase2Data.summary.overallFrameworkScore}/100
-
-#### Individual Framework Scores
-- **Golden Circle:** ${result.phase2Data.summary.goldenCircleScore}/100
-- **Elements of Value (B2C):** ${result.phase2Data.summary.elementsOfValueScore}/100
-- **B2B Elements:** ${result.phase2Data.summary.b2bElementsScore}/100
-- **CliftonStrengths:** ${result.phase2Data.summary.cliftonStrengthsScore}/100
-
-### Key Strengths
-${result.phase2Data.summary.keyStrengths.length > 0
-  ? result.phase2Data.summary.keyStrengths.map((strength: string) => `- ✅ ${strength}`).join('\n')
-  : 'Analysis in progress...'}
-
-### Key Weaknesses
-${result.phase2Data.summary.keyWeaknesses.length > 0
-  ? result.phase2Data.summary.keyWeaknesses.map((weakness: string) => `- ⚠️ ${weakness}`).join('\n')
-  : 'No significant weaknesses identified.'}
-
-### Language Analysis
-**Value-Centric Language:** ${result.phase2Data.summary.valueCentricLanguage.join(', ') || 'None identified'}
-
-**Functional Language:** ${result.phase2Data.summary.functionalLanguage.join(', ') || 'None identified'}
+- **Current Strength:** ${opportunity.current_strength}/10
+- **Revenue Potential:** ${opportunity.revenue_potential}
+- **Implementation Effort:** ${opportunity.implementation_effort}
+- **Estimated ROI:** ${opportunity.estimated_roi}
+- **Target Audience:** ${opportunity.target_audience}
+`).join('')}
 
 ---
 
+## Strategic Recommendations
+
+${analysisResult.recommendations.map((recommendation, index) => `
+### ${index + 1}. ${recommendation.action} (${recommendation.priority} Priority)
+
+- **Expected Revenue Impact:** ${recommendation.expected_revenue_impact}
+- **Implementation Cost:** ${recommendation.implementation_cost}
+- **Timeline:** ${recommendation.timeline}
+- **ROI Estimate:** ${recommendation.roi_estimate}
+`).join('')}
+
+---
+
+## Next Steps
+
+1. **Immediate Actions (0-3 months):** Focus on high-priority recommendations with low implementation effort
+2. **Medium-term Goals (3-6 months):** Implement medium-priority recommendations with significant revenue potential
+3. **Long-term Strategy (6+ months):** Develop comprehensive value proposition enhancements
+
+---
+
+## Framework Details
+
+This analysis is based on the Harvard Business Review's 30 B2C Elements of Value framework:
+
+- **Functional (14 elements):** Saves time, Simplifies, Makes money, Reduces risk, Organizes, Integrates, Connects, Reduces effort, Avoids hassles, Reduces cost, Quality, Variety, Sensory appeal, Informs
+- **Emotional (10 elements):** Reduces anxiety, Rewards me, Nostalgia, Design/aesthetics, Badge value, Wellness, Therapeutic value, Fun/entertainment, Attractiveness, Provides access
+- **Life-Changing (5 elements):** Provides hope, Self-actualization, Motivation, Heirloom, Affiliation and belonging
+- **Social Impact (1 element):** Self-transcendence
+
+---
+
+*Report generated by Zero Barriers Growth Accelerator*  
+*For questions or support, contact: hello@zerobarriers.com*
 `;
   }
 
-  // Golden Circle Analysis
-  if (result.goldenCircleAnalysis || result.phase2Data?.goldenCircle) {
-    const goldenCircle = result.goldenCircleAnalysis || result.phase2Data.goldenCircle;
-    markdown += `## Golden Circle Analysis
+  /**
+   * Generate B2B Elements of Value markdown report
+   */
+  static generateB2BReport(analysisResult: B2BAnalysisData, websiteUrl: string): string {
+    const timestamp = new Date().toISOString();
+    const domain = new URL(websiteUrl).hostname;
+    
+    return `# B2B Elements of Value Analysis Report
 
-### Why (Purpose)
-${goldenCircle.why || 'Not clearly communicated'}
-
-### How (Process)
-${goldenCircle.how || 'Not clearly communicated'}
-
-### What (Products/Services)
-${goldenCircle.what || 'Not clearly communicated'}
-
-### Who (Target Audience)
-${goldenCircle.who || 'Not clearly defined'}
-
-**Golden Circle Score:** ${goldenCircle.overallScore || 0}/100
+**Website:** ${websiteUrl}  
+**Domain:** ${domain}  
+**Analysis Date:** ${new Date(timestamp).toLocaleDateString()}  
+**Analysis Type:** B2B Elements of Value Framework  
 
 ---
 
+## Executive Summary
+
+This analysis evaluates the website's performance across the 40 B2B Elements of Value framework, identifying enterprise revenue opportunities and optimization strategies.
+
+**Overall B2B Value Score: ${analysisResult.overall_score}%**
+
+### Score Breakdown
+- **Table Stakes Elements:** ${analysisResult.table_stakes_score}%
+- **Functional Elements:** ${analysisResult.functional_score}%
+- **Ease of Doing Business:** ${analysisResult.ease_of_doing_business_score}%
+- **Individual Elements:** ${analysisResult.individual_score}%
+- **Inspirational Elements:** ${analysisResult.inspirational_score}%
+
+---
+
+## Revenue Opportunities
+
+${analysisResult.revenue_opportunities.map((opportunity, index) => `
+### ${index + 1}. ${opportunity.element}
+
+- **Current Strength:** ${opportunity.current_strength}/10
+- **Revenue Potential:** ${opportunity.revenue_potential}
+- **Implementation Effort:** ${opportunity.implementation_effort}
+- **Estimated ROI:** ${opportunity.estimated_roi}
+- **Target Audience:** ${opportunity.target_audience}
+`).join('')}
+
+---
+
+## Strategic Recommendations
+
+${analysisResult.recommendations.map((recommendation, index) => `
+### ${index + 1}. ${recommendation.action} (${recommendation.priority} Priority)
+
+- **Expected Revenue Impact:** ${recommendation.expected_revenue_impact}
+- **Implementation Cost:** ${recommendation.implementation_cost}
+- **Timeline:** ${recommendation.timeline}
+- **ROI Estimate:** ${recommendation.roi_estimate}
+`).join('')}
+
+---
+
+## Next Steps
+
+1. **Immediate Actions (0-3 months):** Focus on high-priority recommendations with low implementation effort
+2. **Medium-term Goals (3-6 months):** Implement medium-priority recommendations with significant revenue potential
+3. **Long-term Strategy (6+ months):** Develop comprehensive enterprise value proposition enhancements
+
+---
+
+## Framework Details
+
+This analysis is based on the Harvard Business Review's 40 B2B Elements of Value framework:
+
+- **Table Stakes (4 elements):** Meeting specifications, Acceptable price, Regulatory compliance, Ethical standards
+- **Functional (5 elements):** Economic (Improved top line, Cost reduction), Performance (Product quality, Scalability, Innovation)
+- **Ease of Doing Business (19 elements):** Productivity, Operational, Access, Relationship, Strategic elements
+- **Individual (7 elements):** Career and Personal development elements
+- **Inspirational (4 elements):** Purpose, Vision, Hope, Social responsibility
+
+---
+
+*Report generated by Zero Barriers Growth Accelerator*  
+*For questions or support, contact: hello@zerobarriers.com*
 `;
   }
 
-  // Phase 3: Strategic Analysis
-  if (result.phase3Data) {
-    markdown += `## Phase 3: Strategic Analysis
+  /**
+   * Generate Golden Circle markdown report
+   */
+  static generateGoldenCircleReport(analysisResult: GoldenCircleData, websiteUrl: string): string {
+    const timestamp = new Date().toISOString();
+    const domain = new URL(websiteUrl).hostname;
+    
+    return `# Golden Circle Analysis Report
 
-### Primary Recommendations
-${result.phase3Data.summary.primaryRecommendations.length > 0
-  ? result.phase3Data.summary.primaryRecommendations.map((rec: string, i: number) => `${i + 1}. ${rec}`).join('\n')
-  : 'Analysis in progress...'}
-
-### Quick Wins
-${result.phase3Data.summary.quickWins.length > 0
-  ? result.phase3Data.summary.quickWins.map((win: string) => `- 🎯 ${win}`).join('\n')
-  : 'No quick wins identified yet.'}
-
-### Long-Term Improvements
-${result.phase3Data.summary.longTermImprovements.length > 0
-  ? result.phase3Data.summary.longTermImprovements.map((imp: string) => `- 📈 ${imp}`).join('\n')
-  : 'Long-term strategy in development.'}
-
-### Performance Optimizations
-${result.phase3Data.summary.performanceOptimizations.length > 0
-  ? result.phase3Data.summary.performanceOptimizations.map((opt: string) => `- ⚡ ${opt}`).join('\n')
-  : 'Performance analysis pending.'}
-
-### SEO Improvements
-${result.phase3Data.summary.seoImprovements.length > 0
-  ? result.phase3Data.summary.seoImprovements.map((seo: string) => `- 🔍 ${seo}`).join('\n')
-  : 'SEO analysis pending.'}
+**Website:** ${websiteUrl}  
+**Domain:** ${domain}  
+**Analysis Date:** ${new Date(timestamp).toLocaleDateString()}  
+**Analysis Type:** Simon Sinek's Golden Circle Framework  
 
 ---
 
+## Executive Summary
+
+This analysis evaluates the website's messaging and positioning using Simon Sinek's Golden Circle framework, focusing on the Why, How, What, and Who of the organization.
+
+**Overall Golden Circle Score: ${analysisResult.overall_score}%**
+
+### Score Breakdown
+- **WHY (Purpose & Belief):** ${analysisResult.why.score}/10
+- **HOW (Unique Process):** ${analysisResult.how.score}/10
+- **WHAT (Products/Services):** ${analysisResult.what.score}/10
+- **WHO (Target Audience):** ${analysisResult.who.score}/10
+
+---
+
+## Golden Circle Analysis
+
+### WHY - Purpose & Belief (${analysisResult.why.score}/10)
+
+**Statement:** ${analysisResult.why.statement}
+
+**Clarity Rating:** ${analysisResult.why.clarity_rating}/10
+
+*This represents the organization's core purpose, cause, or belief that inspires people to act.*
+
+### HOW - Unique Process (${analysisResult.how.score}/10)
+
+**Statement:** ${analysisResult.how.statement}
+
+**Uniqueness Rating:** ${analysisResult.how.uniqueness_rating}/10
+
+*This represents the unique methodology or approach that differentiates the organization from competitors.*
+
+### WHAT - Products/Services (${analysisResult.what.score}/10)
+
+**Statement:** ${analysisResult.what.statement}
+
+**Clarity Rating:** ${analysisResult.what.clarity_rating}/10
+
+*This represents the specific products or services the organization offers.*
+
+### WHO - Target Audience (${analysisResult.who.score}/10)
+
+**Statement:** ${analysisResult.who.statement}
+
+**Target Audience:** ${analysisResult.who.target_audience.join(', ')}
+
+**Emotional Connection:** ${analysisResult.who.emotional_connection}
+
+**Specificity Rating:** ${analysisResult.who.specificity_rating}/10
+
+*This represents who the organization serves and how it connects emotionally with its audience.*
+
+---
+
+## Strategic Recommendations
+
+${analysisResult.recommendations.map((recommendation, index) => `
+### ${index + 1}. ${recommendation}
+`).join('')}
+
+---
+
+## Next Steps
+
+1. **Strengthen WHY:** Develop a more compelling and clear purpose statement
+2. **Refine HOW:** Articulate the unique process or methodology more effectively
+3. **Clarify WHAT:** Simplify and focus the product/service offering
+4. **Define WHO:** Better identify and connect with the target audience
+
+---
+
+## Framework Details
+
+This analysis is based on Simon Sinek's Golden Circle framework:
+
+- **WHY:** The purpose, cause, or belief that inspires people to act
+- **HOW:** The unique methodology or approach that differentiates the organization
+- **WHAT:** The specific products or services the organization offers
+- **WHO:** The target audience and how the brand connects emotionally with them
+
+---
+
+*Report generated by Zero Barriers Growth Accelerator*  
+*For questions or support, contact: hello@zerobarriers.com*
 `;
   }
 
-  // Evaluation Framework
-  if (result.finalReport?.evaluationFramework) {
-    const framework = result.finalReport.evaluationFramework;
-    markdown += `## Comprehensive Evaluation
+  /**
+   * Generate comprehensive analysis report
+   */
+  static generateComprehensiveReport(
+    websiteUrl: string,
+    goldenCircle?: GoldenCircleData,
+    b2cElements?: B2CAnalysisData,
+    additionalData?: any
+  ): string {
+    const timestamp = new Date().toISOString();
+    const domain = new URL(websiteUrl).hostname;
+    
+    return `# Comprehensive Website Analysis Report
 
-### Category Scores
-
-| Category | Score | Status |
-|----------|-------|--------|
-| First Impression | ${framework.categoryScores?.firstImpression?.score || 0}/100 | ${getScoreStatus(framework.categoryScores?.firstImpression?.score)} |
-| Core Messaging | ${framework.categoryScores?.coreMessaging?.score || 0}/100 | ${getScoreStatus(framework.categoryScores?.coreMessaging?.score)} |
-| Technical Performance | ${framework.categoryScores?.technicalPerformance?.score || 0}/100 | ${getScoreStatus(framework.categoryScores?.technicalPerformance?.score)} |
-| Accessibility | ${framework.categoryScores?.accessibility?.score || 0}/100 | ${getScoreStatus(framework.categoryScores?.accessibility?.score)} |
-| Conversion Optimization | ${framework.categoryScores?.conversionOptimization?.score || 0}/100 | ${getScoreStatus(framework.categoryScores?.conversionOptimization?.score)} |
-| Content Quality | ${framework.categoryScores?.contentQuality?.score || 0}/100 | ${getScoreStatus(framework.categoryScores?.contentQuality?.score)} |
-| User Experience | ${framework.categoryScores?.userExperience?.score || 0}/100 | ${getScoreStatus(framework.categoryScores?.userExperience?.score)} |
-| Social Presence | ${framework.categoryScores?.socialPresence?.score || 0}/100 | ${getScoreStatus(framework.categoryScores?.socialPresence?.score)} |
-| Analytics Tracking | ${framework.categoryScores?.analyticsTracking?.score || 0}/100 | ${getScoreStatus(framework.categoryScores?.analyticsTracking?.score)} |
-| Security & Compliance | ${framework.categoryScores?.securityCompliance?.score || 0}/100 | ${getScoreStatus(framework.categoryScores?.securityCompliance?.score)} |
-
-### Priority Recommendations
-${framework.priorityRecommendations?.length > 0
-  ? framework.priorityRecommendations.map((rec: string, i: number) => `${i + 1}. **${rec}**`).join('\n')
-  : 'Generating recommendations...'}
+**Website:** ${websiteUrl}  
+**Domain:** ${domain}  
+**Analysis Date:** ${new Date(timestamp).toLocaleDateString()}  
+**Analysis Type:** Comprehensive Multi-Framework Analysis  
 
 ---
 
+## Executive Summary
+
+This comprehensive analysis evaluates the website using multiple proven marketing frameworks to provide actionable insights for growth optimization.
+
+${goldenCircle ? `**Golden Circle Score:** ${goldenCircle.overall_score}%` : ''}
+${b2cElements ? `**B2C Elements Score:** ${b2cElements.overall_score}%` : ''}
+
+---
+
+${goldenCircle ? this.generateGoldenCircleReport(goldenCircle, websiteUrl).split('---')[1] : ''}
+
+${b2cElements ? this.generateB2CReport(b2cElements, websiteUrl).split('---')[1] : ''}
+
+---
+
+## Overall Recommendations
+
+Based on the comprehensive analysis, here are the key strategic recommendations:
+
+1. **Immediate Actions (0-3 months):** Focus on high-impact, low-effort improvements
+2. **Medium-term Goals (3-6 months):** Implement strategic framework enhancements
+3. **Long-term Strategy (6+ months):** Develop comprehensive brand positioning
+
+---
+
+*Report generated by Zero Barriers Growth Accelerator*  
+*For questions or support, contact: hello@zerobarriers.com*
 `;
   }
-
-  // Executive Summary
-  if (result.finalReport?.executiveSummary) {
-    markdown += `## Executive Summary
-
-${result.finalReport.executiveSummary}
-
----
-
-`;
-  }
-
-  // Footer
-  markdown += `
----
-
-## About This Report
-
-This comprehensive website analysis was generated by the **Zero Barriers Growth Accelerator**.
-
-**Analysis Framework:**
-- Golden Circle Analysis (Why, How, What, Who)
-- Elements of Value (B2C & B2B)
-- CliftonStrengths Alignment
-- Technical Performance (Lighthouse)
-- SEO & Content Analysis (PageAudit)
-- Comprehensive Evaluation Framework
-
-**Data Sources:**
-- Website content scraping
-- Lighthouse performance audit
-- PageAudit technical analysis
-- Google Gemini AI analysis
-- Industry best practices
-
----
-
-**Report Generated:** ${new Date(timestamp).toLocaleString('en-US')}
-**Zero Barriers Growth Accelerator** - Accelerating Growth Through Clarity
-
-`;
-
-  return markdown;
 }
-
-function getScoreStatus(score?: number): string {
-  if (!score) return '⚪ Pending';
-  if (score >= 90) return '🟢 Excellent';
-  if (score >= 80) return '🟡 Good';
-  if (score >= 70) return '🟠 Fair';
-  if (score >= 60) return '🟠 Needs Work';
-  return '🔴 Critical';
+// Legacy export for backward compatibility
+export function generateMarkdownReport(data: any, url: string): string {
+  return MarkdownReportGenerator.generateComprehensiveReport(url, data);
 }
-

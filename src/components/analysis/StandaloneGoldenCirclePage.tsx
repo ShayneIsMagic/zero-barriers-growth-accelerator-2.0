@@ -6,14 +6,19 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Download, Loader2, Target } from 'lucide-react';
+import { MarkdownReportGenerator } from '@/lib/markdown-report-generator';
+import { Check, Copy, Download, Loader2, Target } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 export function StandaloneGoldenCirclePage() {
   const [url, setUrl] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isCopying, setIsCopying] = useState(false);
+  const [copiedItem, setCopiedItem] = useState<string | null>(null);
 
   const runAnalysis = async () => {
     if (!url.trim()) {
@@ -48,8 +53,54 @@ export function StandaloneGoldenCirclePage() {
     }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
+  const copyToClipboard = async (text: string, itemName: string) => {
+    setIsCopying(true);
+    setCopiedItem(itemName);
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success('Copied to clipboard!', {
+        description: `${itemName} has been copied to your clipboard.`,
+        duration: 2000,
+      });
+    } catch (error) {
+      toast.error('Copy failed', {
+        description: 'Unable to copy to clipboard. Please try again.',
+        duration: 3000,
+      });
+    } finally {
+      setIsCopying(false);
+      setTimeout(() => setCopiedItem(null), 2000);
+    }
+  };
+
+  const downloadMarkdown = async () => {
+    if (!result) return;
+
+    setIsDownloading(true);
+    try {
+      const markdown = MarkdownReportGenerator.generateGoldenCircleReport(result.data, url);
+      const blob = new Blob([markdown], { type: 'text/markdown' });
+      const downloadUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = `golden-circle-analysis-${url.replace(/[^a-zA-Z0-9]/g, '-')}-${Date.now()}.md`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(downloadUrl);
+
+      toast.success('Report downloaded successfully!', {
+        description: 'Your Golden Circle analysis report has been saved.',
+        duration: 3000,
+      });
+    } catch (error) {
+      toast.error('Download failed', {
+        description: 'There was an error downloading the report. Please try again.',
+        duration: 3000,
+      });
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const downloadReport = () => {
@@ -146,10 +197,34 @@ export function StandaloneGoldenCirclePage() {
                     <CardTitle>Golden Circle Analysis Results</CardTitle>
                     <CardDescription>Overall assessment of your website's Golden Circle alignment</CardDescription>
                   </div>
-                  <Button onClick={downloadReport} variant="outline">
-                    <Download className="mr-2 h-4 w-4" />
-                    Download Report
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => copyToClipboard(JSON.stringify(result.data, null, 2), 'Analysis Results')}
+                      variant="outline"
+                      size="sm"
+                      disabled={isCopying}
+                    >
+                      {copiedItem === 'Analysis Results' ? (
+                        <Check className="mr-2 h-4 w-4" />
+                      ) : (
+                        <Copy className="mr-2 h-4 w-4" />
+                      )}
+                      {copiedItem === 'Analysis Results' ? 'Copied!' : 'Copy Data'}
+                    </Button>
+                    <Button
+                      onClick={downloadMarkdown}
+                      variant="outline"
+                      size="sm"
+                      disabled={isDownloading}
+                    >
+                      {isDownloading ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <Download className="mr-2 h-4 w-4" />
+                      )}
+                      {isDownloading ? 'Downloading...' : 'Download Report'}
+                    </Button>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">

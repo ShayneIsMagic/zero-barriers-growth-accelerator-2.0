@@ -14,7 +14,8 @@ import {
     IndividualReport
 } from './src/lib/individual-report-generator';
 
-import { generateMarkdownReport } from './src/lib/markdown-report-generator';
+import { generateMarkdownReport } from './src/lib/markdown-report-generator'
+import { MarkdownReportGenerator } from './src/lib/markdown-report-generator';;
 
 import {
     checkMarkdownTablesExist,
@@ -296,7 +297,7 @@ async function main() {
       }
     };
 
-    const combinedMarkdown = generateMarkdownReport(completeAnalysisData, TEST_URL);
+    const combinedMarkdown = MarkdownReportGenerator.generateComprehensiveReport(TEST_URL, completeAnalysisData);
     console.log(`✅ Generated combined markdown (${combinedMarkdown.length} chars)`);
 
     testResults.push({ step: 'Generate Combined', status: 'PASS', size: combinedMarkdown.length });
@@ -316,11 +317,11 @@ async function main() {
   console.log('\n💾 Step 8: Save Combined Export to Supabase');
   console.log('-'.repeat(80));
   try {
-    const combinedMarkdown = generateMarkdownReport({
-      finalReport: {
-        evaluationFramework: { overallScore: 82, rating: 'Very Good' }
+    const combinedMarkdown = MarkdownReportGenerator.generateComprehensiveReport(rating: 'Very Good' }
       }
-    }, TEST_URL);
+    }, TEST_URL, {
+      finalReport: {
+        evaluationFramework: { overallScore: 82);
 
     const exportId = await saveMarkdownExport(
       TEST_ANALYSIS_ID,

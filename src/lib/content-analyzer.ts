@@ -56,7 +56,7 @@ export class ContentAnalyzer {
     
     return {
       id: `content_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      url,
+      _url,
       createdAt: new Date().toISOString(),
       goldenCircle,
       elementsOfValue,

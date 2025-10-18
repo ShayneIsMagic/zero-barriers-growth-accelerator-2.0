@@ -59,7 +59,7 @@ export class GoogleToolsAnalysisService {
 
       return {
         success: true,
-        url,
+        _url,
         data: {
           trends_analysis: trendsAnalysis,
           analytics_analysis: analyticsAnalysis,
@@ -72,7 +72,7 @@ export class GoogleToolsAnalysisService {
       console.error('Google Tools analysis failed:', error);
       return {
         success: false,
-        url,
+        _url,
         data: {},
         error: error instanceof Error ? error.message : 'Analysis failed'
       };

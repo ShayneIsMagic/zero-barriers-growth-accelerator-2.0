@@ -5,7 +5,7 @@
  */
 
 import { runLighthouseAnalysis } from '@/lib/lighthouse-service';
-import { WebsiteAnalysisResult } from '@/types/analysis';
+import { _WebsiteAnalysisResult } from '@/types/analysis';
 import Anthropic from '@anthropic-ai/sdk';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 

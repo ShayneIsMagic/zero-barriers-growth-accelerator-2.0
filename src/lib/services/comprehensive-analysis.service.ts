@@ -95,7 +95,7 @@ export class ComprehensiveAnalysisService {
 
       return {
         success: true,
-        url,
+        _url,
         data: {
           direct_tools: directTools,
           content_analysis: contentAnalysis,
@@ -107,7 +107,7 @@ export class ComprehensiveAnalysisService {
       console.error('Comprehensive analysis failed:', error);
       return {
         success: false,
-        url,
+        _url,
         data: {} as any,
         error: error instanceof Error ? error.message : 'Analysis failed'
       };
@@ -144,10 +144,10 @@ export class ComprehensiveAnalysisService {
 
     // Run all analyses in parallel
     const [goldenCircle, elementsB2C, elementsB2B, cliftonStrengths] = await Promise.all([
-      this.runGoldenCircleAnalysis(scrapedData, url, model),
-      this.runElementsValueB2CAnalysis(scrapedData, url, model),
-      this.runElementsValueB2BAnalysis(scrapedData, url, model),
-      this.runCliftonStrengthsAnalysis(scrapedData, url, model)
+      this.runGoldenCircleAnalysis(scrapedData, _url, model),
+      this.runElementsValueB2CAnalysis(scrapedData, _url, model),
+      this.runElementsValueB2BAnalysis(scrapedData, _url, model),
+      this.runCliftonStrengthsAnalysis(scrapedData, _url, model)
     ]);
 
     return {

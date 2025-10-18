@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 300; // 5 minutes for complete Phase 1
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const body = await request.json();
     const { url } = body;
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     const competitionAnalysis = await runCompetitionAnalysis(url, scrapedContent);
 
     const phase1Result = {
-      url,
+      _url,
       timestamp: new Date().toISOString(),
       scrapedContent,
       seoAnalysis,
@@ -68,8 +68,7 @@ export async function POST(request: NextRequest) {
     console.log(`✅ Complete Phase 1 analysis completed for: ${url}`);
 
     // Store Phase 1 results in database
-    const analysisId = `phase1-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
+    
     try {
       // Store in main Analysis table
       await prisma.analysis.create({
@@ -104,7 +103,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      url,
+      _url,
       phase: 1,
       analysisId,
       data: phase1Result,
@@ -302,12 +301,12 @@ async function runGoogleTrendsAnalysis(content: any) {
 async function runCompetitionAnalysis(url: string, content: any) {
   try {
     const domain = new URL(url).hostname;
-    const competitors = await findCompetitors(domain, content);
+    const _competitors = await findCompetitors(domain, content);
 
     return {
-      competitors,
-      competitiveAnalysis: await analyzeCompetitors(competitors),
-      recommendations: generateCompetitionRecommendations(competitors)
+      competitors: _competitors,
+      competitiveAnalysis: await analyzeCompetitors(_competitors),
+      recommendations: generateCompetitionRecommendations(_competitors)
     };
   } catch (error) {
     console.error('Competition analysis failed:', error);

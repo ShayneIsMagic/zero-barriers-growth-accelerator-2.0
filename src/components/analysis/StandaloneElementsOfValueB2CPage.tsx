@@ -10,8 +10,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { DollarSign, Loader2, Target, TrendingUp, Users } from 'lucide-react';
+import { Check, Copy, DollarSign, Download, Loader2, Target, TrendingUp, Users } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { ContentPreviewBox } from './ContentPreviewBox';
 
 interface B2CValueElement {
@@ -49,6 +50,9 @@ export function StandaloneElementsOfValueB2CPage() {
   const [scrapedContent, setScrapedContent] = useState<any>(null);
   const [result, setResult] = useState<B2CAnalysisData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isCopying, setIsCopying] = useState(false);
+  const [copiedItem, setCopiedItem] = useState<string | null>(null);
 
   const handleScrapeContent = async () => {
     if (!url.trim()) {
@@ -144,6 +148,134 @@ export function StandaloneElementsOfValueB2CPage() {
       case 'low': return 'bg-green-500';
       default: return 'bg-gray-500';
     }
+  };
+
+  const downloadReport = async () => {
+    if (!result) return;
+
+    setIsDownloading(true);
+    try {
+      const markdownReport = generateMarkdownReport(result, url);
+      const blob = new Blob([markdownReport], { type: 'text/markdown' });
+      const downloadUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = `b2c-elements-analysis-${url.replace(/[^a-zA-Z0-9]/g, '-')}-${Date.now()}.md`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(downloadUrl);
+
+      toast.success('Report downloaded successfully!', {
+        description: 'Your B2C Elements of Value analysis report has been saved.',
+        duration: 3000,
+      });
+    } catch (error) {
+      toast.error('Download failed', {
+        description: 'There was an error downloading the report. Please try again.',
+        duration: 3000,
+      });
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const copyToClipboard = async (text: string, itemName: string) => {
+    setIsCopying(true);
+    setCopiedItem(itemName);
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success('Copied to clipboard!', {
+        description: `${itemName} has been copied to your clipboard.`,
+        duration: 2000,
+      });
+    } catch (error) {
+      toast.error('Copy failed', {
+        description: 'Unable to copy to clipboard. Please try again.',
+        duration: 3000,
+      });
+    } finally {
+      setIsCopying(false);
+      setTimeout(() => setCopiedItem(null), 2000);
+    }
+  };
+
+  const generateMarkdownReport = (analysisResult: B2CAnalysisData, websiteUrl: string) => {
+    const timestamp = new Date().toISOString();
+    const domain = new URL(websiteUrl).hostname;
+
+    return `# B2C Elements of Value Analysis Report
+
+**Website:** ${websiteUrl}
+**Domain:** ${domain}
+**Analysis Date:** ${new Date(timestamp).toLocaleDateString()}
+**Analysis Type:** B2C Elements of Value Framework
+
+---
+
+## Executive Summary
+
+This analysis evaluates the website's performance across the 30 B2C Elements of Value framework, identifying revenue opportunities and optimization strategies.
+
+**Overall B2C Value Score: ${analysisResult.overall_score}%**
+
+### Score Breakdown
+- **Functional Elements:** ${analysisResult.functional_score}%
+- **Emotional Elements:** ${analysisResult.emotional_score}%
+- **Life-Changing Elements:** ${analysisResult.life_changing_score}%
+- **Social Impact Elements:** ${analysisResult.social_impact_score}%
+
+---
+
+## Revenue Opportunities
+
+${analysisResult.revenue_opportunities.map((opportunity, index) => `
+### ${index + 1}. ${opportunity.element}
+
+- **Current Strength:** ${opportunity.current_strength}/10
+- **Revenue Potential:** ${opportunity.revenue_potential}
+- **Implementation Effort:** ${opportunity.implementation_effort}
+- **Estimated ROI:** ${opportunity.estimated_roi}
+- **Target Audience:** ${opportunity.target_audience}
+`).join('')}
+
+---
+
+## Strategic Recommendations
+
+${analysisResult.recommendations.map((recommendation, index) => `
+### ${index + 1}. ${recommendation.action} (${recommendation.priority} Priority)
+
+- **Expected Revenue Impact:** ${recommendation.expected_revenue_impact}
+- **Implementation Cost:** ${recommendation.implementation_cost}
+- **Timeline:** ${recommendation.timeline}
+- **ROI Estimate:** ${recommendation.roi_estimate}
+`).join('')}
+
+---
+
+## Next Steps
+
+1. **Immediate Actions (0-3 months):** Focus on high-priority recommendations with low implementation effort
+2. **Medium-term Goals (3-6 months):** Implement medium-priority recommendations with significant revenue potential
+3. **Long-term Strategy (6+ months):** Develop comprehensive value proposition enhancements
+
+---
+
+## Framework Details
+
+This analysis is based on the Harvard Business Review's 30 B2C Elements of Value framework:
+
+- **Functional (14 elements):** Saves time, Simplifies, Makes money, Reduces risk, Organizes, Integrates, Connects, Reduces effort, Avoids hassles, Reduces cost, Quality, Variety, Sensory appeal, Informs
+- **Emotional (10 elements):** Reduces anxiety, Rewards me, Nostalgia, Design/aesthetics, Badge value, Wellness, Therapeutic value, Fun/entertainment, Attractiveness, Provides access
+- **Life-Changing (5 elements):** Provides hope, Self-actualization, Motivation, Heirloom, Affiliation and belonging
+- **Social Impact (1 element):** Self-transcendence
+
+---
+
+*Report generated by Zero Barriers Growth Accelerator*
+*For questions or support, contact: hello@zerobarriers.com*
+`;
   };
 
   return (
@@ -247,6 +379,51 @@ export function StandaloneElementsOfValueB2CPage() {
         {/* Results */}
         {result && (
           <div className="space-y-8">
+            {/* Analysis Report Header */}
+            <Card className="border-l-4 border-l-blue-500">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center">
+                      <DollarSign className="mr-2 h-6 w-6 text-green-600" />
+                      B2C Elements of Value Analysis Report
+                    </CardTitle>
+                    <CardDescription>
+                      Analysis completed for: {url}
+                    </CardDescription>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => copyToClipboard(JSON.stringify(result, null, 2), 'Analysis Results')}
+                      variant="outline"
+                      size="sm"
+                      disabled={isCopying}
+                    >
+                      {copiedItem === 'Analysis Results' ? (
+                        <Check className="mr-2 h-4 w-4" />
+                      ) : (
+                        <Copy className="mr-2 h-4 w-4" />
+                      )}
+                      {copiedItem === 'Analysis Results' ? 'Copied!' : 'Copy Data'}
+                    </Button>
+                    <Button
+                      onClick={downloadReport}
+                      variant="outline"
+                      size="sm"
+                      disabled={isDownloading}
+                    >
+                      {isDownloading ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <Download className="mr-2 h-4 w-4" />
+                      )}
+                      {isDownloading ? 'Downloading...' : 'Download Report'}
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
+
             {/* Overall Score */}
             <Card>
               <CardHeader>
@@ -310,7 +487,24 @@ export function StandaloneElementsOfValueB2CPage() {
                   {result.revenue_opportunities.map((opportunity, index) => (
                     <Card key={index} className="border-l-4 border-l-purple-500">
                       <CardContent className="pt-4">
-                        <h5 className="font-semibold text-lg mb-2">{opportunity.element}</h5>
+                        <div className="flex items-center justify-between mb-2">
+                          <h5 className="font-semibold text-lg">{opportunity.element}</h5>
+                          <Button
+                            onClick={() => copyToClipboard(
+                              `${opportunity.element}\nStrength: ${opportunity.current_strength}/10\nRevenue: ${opportunity.revenue_potential}\nEffort: ${opportunity.implementation_effort}\nROI: ${opportunity.estimated_roi}\nTarget: ${opportunity.target_audience}`,
+                              opportunity.element
+                            )}
+                            variant="ghost"
+                            size="sm"
+                            disabled={isCopying}
+                          >
+                            {copiedItem === opportunity.element ? (
+                              <Check className="h-4 w-4" />
+                            ) : (
+                              <Copy className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                           <div>
                             <span className="font-medium">Strength:</span>
@@ -356,9 +550,26 @@ export function StandaloneElementsOfValueB2CPage() {
                       <CardContent className="pt-4">
                         <div className="flex items-center justify-between mb-2">
                           <h5 className="font-semibold text-lg">{recommendation.action}</h5>
-                          <Badge className={getPriorityBadgeColor(recommendation.priority)}>
-                            {recommendation.priority} Priority
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge className={getPriorityBadgeColor(recommendation.priority)}>
+                              {recommendation.priority} Priority
+                            </Badge>
+                            <Button
+                              onClick={() => copyToClipboard(
+                                `${recommendation.action} (${recommendation.priority} Priority)\nRevenue Impact: ${recommendation.expected_revenue_impact}\nCost: ${recommendation.implementation_cost}\nTimeline: ${recommendation.timeline}\nROI: ${recommendation.roi_estimate}`,
+                                recommendation.action
+                              )}
+                              variant="ghost"
+                              size="sm"
+                              disabled={isCopying}
+                            >
+                              {copiedItem === recommendation.action ? (
+                                <Check className="h-4 w-4" />
+                              ) : (
+                                <Copy className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </div>
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                           <div>

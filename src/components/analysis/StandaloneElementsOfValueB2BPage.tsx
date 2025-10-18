@@ -10,9 +10,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { BarChart3, DollarSign, Loader2, Target, TrendingUp } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { BarChart3, DollarSign, Download, Loader2, Target, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 import { ContentPreviewBox } from './ContentPreviewBox';
+import { MarkdownReportGenerator } from '@/lib/markdown-report-generator';
 
 interface B2BValueElement {
   element: string;
@@ -147,6 +149,21 @@ export function StandaloneElementsOfValueB2BPage() {
     }
   };
 
+  const downloadMarkdown = () => {
+    if (!result) return;
+
+    const markdown = MarkdownReportGenerator.generateB2BReport(result, url);
+    const blob = new Blob([markdown], { type: 'text/markdown' });
+    const downloadUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = downloadUrl;
+    a.download = `b2b-elements-analysis-${url.replace(/[^a-zA-Z0-9]/g, '-')}-${Date.now()}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(downloadUrl);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       <div className="container mx-auto py-8 px-4">
@@ -248,6 +265,27 @@ export function StandaloneElementsOfValueB2BPage() {
         {/* Results */}
         {result && (
           <div className="space-y-8">
+            {/* Analysis Report Header */}
+            <Card className="border-l-4 border-l-blue-500">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center">
+                      <DollarSign className="mr-2 h-6 w-6 text-green-600" />
+                      B2B Elements of Value Analysis Report
+                    </CardTitle>
+                    <CardDescription>
+                      Analysis completed for: {url}
+                    </CardDescription>
+                  </div>
+                  <Button onClick={downloadMarkdown} variant="outline" size="sm">
+                    <Download className="mr-2 h-4 w-4" />
+                    Download Markdown Report
+                  </Button>
+                </div>
+              </CardHeader>
+            </Card>
+
             {/* Overall Score */}
             <Card>
               <CardHeader>

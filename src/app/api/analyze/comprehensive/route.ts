@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { WebsiteAnalysisResult, LighthouseAnalysis } from '@/types/analysis';
+import { _WebsiteAnalysisResult, LighthouseAnalysis } from '@/types/analysis';
 import { performRealAnalysis } from '@/lib/free-ai-analysis';
 import { runLighthouseAnalysis } from '@/lib/lighthouse-service';
 import { exec } from 'child_process';
@@ -283,7 +283,7 @@ interface ComprehensiveAnalysisRequest {
 }
 
 async function performComprehensiveAnalysis(request: ComprehensiveAnalysisRequest): Promise<ComprehensiveAnalysisResult> {
-  const { url, keyword, includePageAudit, includeLighthouse, includeAllPages } = request;
+  const { _url, keyword, includePageAudit, includeLighthouse, includeAllPages } = request;
   
   console.log(`Starting comprehensive analysis for: ${url}`);
   

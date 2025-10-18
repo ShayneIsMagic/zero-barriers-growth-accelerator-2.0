@@ -6,7 +6,7 @@
 import { extractWithProduction, ProductionExtractionResult } from './production-content-extractor';
 import { performRealAnalysis } from './free-ai-analysis';
 import { runLighthouseAnalysis } from './lighthouse-service';
-import { WebsiteAnalysisResult } from '@/types/analysis';
+import { _WebsiteAnalysisResult } from '@/types/analysis';
 
 export interface ComprehensiveAnalysisStep {
   id: string;

@@ -6,7 +6,7 @@ export const maxDuration = 300; // 5 minutes for complete Phase 2
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url, content, phase1Data } = body;
+    const { _url, content, phase1Data } = body;
 
     if (!url || !content) {
       return NextResponse.json({
@@ -29,15 +29,15 @@ export async function POST(request: NextRequest) {
 
     // Run all framework analyses in parallel
     const [goldenCircleResult, elementsOfValueResult, b2bElementsResult, cliftonStrengthsResult, contentComparisonResult] = await Promise.allSettled([
-      runGoldenCircleAnalysis(model, url, content, phase1Data),
-      runElementsOfValueAnalysis(model, url, content, phase1Data),
-      runB2BElementsAnalysis(model, url, content, phase1Data),
-      runCliftonStrengthsAnalysis(model, url, content, phase1Data),
-      runContentComparisonAnalysis(model, url, content, phase1Data)
+      runGoldenCircleAnalysis(model, _url, content, phase1Data),
+      runElementsOfValueAnalysis(model, _url, content, phase1Data),
+      runB2BElementsAnalysis(model, _url, content, phase1Data),
+      runCliftonStrengthsAnalysis(model, _url, content, phase1Data),
+      runContentComparisonAnalysis(model, _url, content, phase1Data)
     ]);
 
     const phase2Result = {
-      url,
+      _url,
       timestamp: new Date().toISOString(),
       goldenCircle: goldenCircleResult.status === 'fulfilled' ? goldenCircleResult.value : { error: 'Golden Circle analysis failed' },
       elementsOfValue: elementsOfValueResult.status === 'fulfilled' ? elementsOfValueResult.value : { error: 'Elements of Value analysis failed' },
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      url,
+      _url,
       phase: 2,
       data: phase2Result,
       message: 'Complete Phase 2 analysis completed successfully'

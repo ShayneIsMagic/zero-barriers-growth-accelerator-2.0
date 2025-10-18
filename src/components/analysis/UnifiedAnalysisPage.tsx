@@ -67,7 +67,7 @@ export function UnifiedAnalysisPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ url, options }),
+        body: JSON.stringify({ _url, options }),
       });
 
       const data = await response.json();

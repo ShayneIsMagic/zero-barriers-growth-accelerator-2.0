@@ -124,7 +124,7 @@ export class UnifiedAnalysisService {
 
       return {
         success: completedAnalyses.length > 0,
-        url,
+        _url,
         scrapedData,
         analyses,
         errors,
@@ -136,7 +136,7 @@ export class UnifiedAnalysisService {
       console.error('Unified analysis failed:', error);
       return {
         success: false,
-        url,
+        _url,
         scrapedData: null,
         analyses: {},
         errors: { general: error instanceof Error ? error.message : 'Analysis failed' },

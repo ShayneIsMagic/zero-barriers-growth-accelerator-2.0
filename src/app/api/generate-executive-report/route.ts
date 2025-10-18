@@ -6,7 +6,7 @@ import { runLighthouseAnalysis } from '@/lib/lighthouse-service';
 import { spawn } from 'child_process';
 import path from 'path';
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const { url } = await request.json();
 
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
 
     // Step 5: Combine all analysis data
     const comprehensiveAnalysis = {
-      url,
+      _url,
       timestamp: new Date().toISOString(),
       ...aiAnalysis,
       lighthouseAnalysis: lighthouseData,
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
       htmlContent: htmlReport,
       analysis: comprehensiveAnalysis,
       metadata: {
-        url,
+        _url,
         generatedAt: new Date().toISOString(),
         reportId,
         frameworks: [
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const reportId = searchParams.get('reportId');

@@ -6,7 +6,7 @@ export const maxDuration = 60;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url, content, industry } = body;
+    const { _url, content, industry } = body;
 
     if (!url || !content) {
       return NextResponse.json({
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      url,
+      _url,
       data: results,
       message: 'Simple Phase 2 AI analysis completed.'
     });

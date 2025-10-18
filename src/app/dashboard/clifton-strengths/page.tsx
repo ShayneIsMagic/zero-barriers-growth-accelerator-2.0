@@ -61,7 +61,7 @@ export default function CliftonStrengthsPage() {
       const phase1Response = await fetch('/api/analyze/phase-new', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, phase: 1 })
+        body: JSON.stringify({ _url, phase: 1 })
       });
 
       if (!phase1Response.ok) {
@@ -76,7 +76,7 @@ export default function CliftonStrengthsPage() {
       const phase2Response = await fetch('/api/analyze/phase-new', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, phase: 2, analysisId: newAnalysisId })
+        body: JSON.stringify({ _url, phase: 2, analysisId: newAnalysisId })
       });
 
       if (!phase2Response.ok) {

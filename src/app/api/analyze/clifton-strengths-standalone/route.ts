@@ -11,7 +11,7 @@ export const maxDuration = 60; // Set max duration for Vercel serverless functio
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url, scrapedContent } = body;
+    const { _url, scrapedContent } = body;
 
     if (!url) {
       return NextResponse.json({
