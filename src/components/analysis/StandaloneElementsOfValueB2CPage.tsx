@@ -81,7 +81,7 @@ export function StandaloneElementsOfValueB2CPage() {
       }
 
       if (data.success) {
-        setScrapedContent(data.data);
+        setScrapedContent(data.scrapedData || data.data);
       } else {
         throw new Error(data.error || 'Content scraping failed');
       }
@@ -366,17 +366,154 @@ This analysis is based on the Harvard Business Review's 30 B2C Elements of Value
           </Card>
         )}
 
-        {/* Scraped Content Preview */}
-        {scrapedContent && (
-          <ContentPreviewBox
-            scrapedContent={scrapedContent}
-            url={url}
-            title="B2C Analysis - Scraped Content Preview"
-            description="Content successfully scraped from the website. Review the data before running B2C Elements of Value analysis."
-          />
+        {/* Two-Column Layout: Collected Data + Analysis Results */}
+        {(scrapedContent || result) && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {/* Left Column: Collected Data */}
+            <Card className="h-fit">
+              <CardHeader>
+                <CardTitle className="flex items-center text-blue-600">
+                  <Target className="mr-2 h-5 w-5" />
+                  Collected Data
+                </CardTitle>
+                <CardDescription>
+                  Raw data collected from {url}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {scrapedContent ? (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="p-3 bg-blue-50 rounded-lg">
+                        <div className="font-semibold text-blue-900">Title</div>
+                        <div className="text-blue-700 truncate">{scrapedContent.title || 'N/A'}</div>
+                      </div>
+                      <div className="p-3 bg-blue-50 rounded-lg">
+                        <div className="font-semibold text-blue-900">Word Count</div>
+                        <div className="text-blue-700">{scrapedContent.wordCount || 0}</div>
+                      </div>
+                      <div className="p-3 bg-blue-50 rounded-lg">
+                        <div className="font-semibold text-blue-900">Keywords</div>
+                        <div className="text-blue-700">{scrapedContent.seo?.extractedKeywords?.length || 0}</div>
+                      </div>
+                      <div className="p-3 bg-blue-50 rounded-lg">
+                        <div className="font-semibold text-blue-900">Images</div>
+                        <div className="text-blue-700">{scrapedContent.seo?.images?.length || 0}</div>
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      <strong>Content Preview:</strong> {scrapedContent.cleanText?.substring(0, 200) || 'No content available'}...
+                    </div>
+                    <Button
+                      onClick={() => copyToClipboard(JSON.stringify(scrapedContent, null, 2), 'Scraped Data')}
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                      disabled={isCopying}
+                    >
+                      {copiedItem === 'Scraped Data' ? (
+                        <Check className="mr-2 h-4 w-4" />
+                      ) : (
+                        <Copy className="mr-2 h-4 w-4" />
+                      )}
+                      {copiedItem === 'Scraped Data' ? 'Copied!' : 'Copy Raw Data'}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="text-center text-gray-500 py-8">
+                    <Target className="mx-auto h-12 w-12 text-gray-300 mb-4" />
+                    <p>No data collected yet</p>
+                    <p className="text-sm">Click "Scrape Content" to collect website data</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Right Column: Analysis Results */}
+            <Card className="h-fit">
+              <CardHeader>
+                <CardTitle className="flex items-center text-green-600">
+                  <DollarSign className="mr-2 h-5 w-5" />
+                  B2C Analysis Results
+                </CardTitle>
+                <CardDescription>
+                  AI-powered B2C Elements of Value analysis
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {result ? (
+                  <div className="space-y-4">
+                    <div className="text-center">
+                      <div className="text-4xl font-bold text-green-600 mb-2">
+                        {result.overall_score}%
+                      </div>
+                      <p className="text-sm text-gray-600">Overall B2C Value Score</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div className="p-2 bg-green-50 rounded">
+                        <div className="font-semibold text-green-900">Functional</div>
+                        <div className="text-green-700">{result.functional_score}%</div>
+                      </div>
+                      <div className="p-2 bg-green-50 rounded">
+                        <div className="font-semibold text-green-900">Emotional</div>
+                        <div className="text-green-700">{result.emotional_score}%</div>
+                      </div>
+                      <div className="p-2 bg-green-50 rounded">
+                        <div className="font-semibold text-green-900">Life-Changing</div>
+                        <div className="text-green-700">{result.life_changing_score}%</div>
+                      </div>
+                      <div className="p-2 bg-green-50 rounded">
+                        <div className="font-semibold text-green-900">Social Impact</div>
+                        <div className="text-green-700">{result.social_impact_score}%</div>
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      <strong>Revenue Opportunities:</strong> {result.revenue_opportunities?.length || 0} identified
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => copyToClipboard(JSON.stringify(result, null, 2), 'Analysis Results')}
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        disabled={isCopying}
+                      >
+                        {copiedItem === 'Analysis Results' ? (
+                          <Check className="mr-2 h-4 w-4" />
+                        ) : (
+                          <Copy className="mr-2 h-4 w-4" />
+                        )}
+                        Copy
+                      </Button>
+                      <Button
+                        onClick={downloadReport}
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        disabled={isDownloading}
+                      >
+                        {isDownloading ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <Download className="mr-2 h-4 w-4" />
+                        )}
+                        Download
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center text-gray-500 py-8">
+                    <DollarSign className="mx-auto h-12 w-12 text-gray-300 mb-4" />
+                    <p>No analysis completed yet</p>
+                    <p className="text-sm">Click "Analyze B2C Value Elements" to run analysis</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         )}
 
-        {/* Results */}
+        {/* Detailed Results */}
         {result && (
           <div className="space-y-8">
             {/* Analysis Report Header */}

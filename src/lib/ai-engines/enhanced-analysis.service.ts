@@ -73,7 +73,7 @@ export class EnhancedAnalysisService {
 
       return {
         success: true,
-        _url,
+        url,
         assessmentType,
         analysis,
         frameworkUsed: this.getFrameworkName(assessmentType),
@@ -83,7 +83,7 @@ export class EnhancedAnalysisService {
       console.error('Enhanced analysis failed:', error);
       return {
         success: false,
-        _url,
+        url,
         assessmentType,
         analysis: null,
         frameworkUsed: this.getFrameworkName(assessmentType),
