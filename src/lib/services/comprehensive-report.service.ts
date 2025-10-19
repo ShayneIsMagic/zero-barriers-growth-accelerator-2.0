@@ -126,6 +126,8 @@ This comprehensive analysis evaluates your website across multiple strategic fra
 
 ---
 
+# ASSESSMENT FRAMEWORKS
+
 ## 1. Golden Circle Analysis
 
 ### WHY - Your Purpose & Belief
@@ -197,7 +199,7 @@ ${this.formatPersonas(goldenCircle?.who?.target_personas)}
 
 ---
 
-## 2. Elements of Value - B2C (Individual Users)
+## 2. B2C Elements of Value Analysis
 
 **Overall Score:** ${eovB2C?.overall_score || 0}/100
 
@@ -212,7 +214,7 @@ ${this.formatTopElements(eovB2C?.elements)}
 
 ---
 
-## 3. Elements of Value - B2B (Organizations)
+## 3. B2B Elements of Value Analysis
 
 **Overall Score:** ${eovB2B?.overall_score || 0}/100
 
@@ -281,7 +283,7 @@ ${this.formatCoreWebVitals(lighthouse?.core_web_vitals)}
 
 ---
 
-## 6. SEO Opportunities
+## 6. SEO Analysis
 
 ${seo?.status === 'coming_soon' ? `
 🚧 **Coming Soon: Automated SEO Analysis**
@@ -318,7 +320,29 @@ ${this.formatContentGaps(seo?.content_gaps)}
 
 ---
 
-## 7. Strategic Recommendations
+## 7. Content Comparison Analysis
+
+**Status:** Available for manual analysis
+
+**Purpose:** Compare existing content against proposed content to identify gaps and opportunities.
+
+**Manual Analysis Process:**
+1. Use the Content Comparison tool in the dashboard
+2. Upload or paste existing content
+3. Upload or paste proposed content
+4. Review AI-generated comparison analysis
+5. Implement recommendations based on findings
+
+**Key Areas to Compare:**
+- Value proposition clarity
+- Call-to-action effectiveness
+- Target audience alignment
+- Content structure and flow
+- SEO optimization opportunities
+
+---
+
+## 8. Strategic Recommendations
 
 ### Quick Wins (0-30 days)
 ${this.generateQuickWins(data)}

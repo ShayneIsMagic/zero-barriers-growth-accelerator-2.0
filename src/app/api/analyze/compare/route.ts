@@ -148,7 +148,7 @@ PROPOSED CONTENT:
 - Word Count: ${proposed.wordCount}
 - Title: ${proposed.title}
 - Meta Description: ${proposed.metaDescription}
-- Keywords: ${proposed.extractedKeywords.slice(0, 10).join(', ')}
+- Keywords: ${proposed.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
 - Content: ${proposed.cleanText.substring(0, 2000)}
 ` : 'No proposed content provided - analyze existing only'}
 

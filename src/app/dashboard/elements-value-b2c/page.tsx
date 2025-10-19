@@ -1,10 +1,10 @@
 /**
  * B2C Elements of Value Analysis Page
- * Focuses on consumer value elements and revenue opportunities
+ * Uses content-comparison pattern with side-by-side analysis
  */
 
-import { StandaloneElementsOfValueB2CPage } from '@/components/analysis/StandaloneElementsOfValueB2CPage';
+import { B2CElementsPage } from '@/components/analysis/B2CElementsPage';
 
 export default function ElementsValueB2CRoute() {
-  return <StandaloneElementsOfValueB2CPage />;
+  return <B2CElementsPage />;
 }

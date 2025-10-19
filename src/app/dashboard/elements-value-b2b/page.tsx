@@ -1,10 +1,10 @@
 /**
  * B2B Elements of Value Analysis Page
- * Focuses on enterprise value elements and revenue opportunities
+ * Uses content-comparison pattern with side-by-side analysis
  */
 
-import { StandaloneElementsOfValueB2BPage } from '@/components/analysis/StandaloneElementsOfValueB2BPage';
+import { B2BElementsPage } from '@/components/analysis/B2BElementsPage';
 
 export default function ElementsValueB2BRoute() {
-  return <StandaloneElementsOfValueB2BPage />;
+  return <B2BElementsPage />;
 }

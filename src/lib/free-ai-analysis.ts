@@ -44,6 +44,52 @@ async function scrapeWebsiteContent(url: string): Promise<string> {
 }
 
 /**
+ * Extract title from HTML content
+ */
+function extractTitleFromContent(html: string): string {
+  const titleMatch = html.match(/<title[^>]*>(.*?)<\/title>/i);
+  return titleMatch ? titleMatch[1].trim() : 'Untitled';
+}
+
+/**
+ * Extract meta description from HTML content
+ */
+function extractMetaDescriptionFromContent(html: string): string {
+  const metaMatch = html.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']*)["']/i);
+  return metaMatch ? metaMatch[1].trim() : '';
+}
+
+/**
+ * Extract headings from HTML content
+ */
+function extractHeadingsFromContent(html: string): string[] {
+  const headingMatches = html.match(/<h[1-6][^>]*>(.*?)<\/h[1-6]>/gi) || [];
+  return headingMatches.map(heading => 
+    heading.replace(/<[^>]*>/g, '').trim()
+  ).filter(heading => heading.length > 0);
+}
+
+/**
+ * Extract keywords from content
+ */
+function extractKeywordsFromContent(content: string): string[] {
+  const words = content.toLowerCase()
+    .replace(/[^\w\s]/g, ' ')
+    .split(/\s+/)
+    .filter(word => word.length > 4);
+
+  const wordFreq: Record<string, number> = {};
+  words.forEach(word => {
+    wordFreq[word] = (wordFreq[word] || 0) + 1;
+  });
+
+  return Object.entries(wordFreq)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 20)
+    .map(([word]) => word);
+}
+
+/**
  * Analyze content using Google Gemini (Free Tier)
  * 15 requests/minute, 1 million tokens/day
  */
@@ -267,19 +313,26 @@ export async function performRealAnalysis(url: string, analysisType: string = 'f
   try {
     console.log(`Starting real analysis for: ${url}`);
 
-    // Step 1: Use simple content scraping (serverless compatible)
-    const content = `Website: ${url}\n\nThis is a placeholder for website content analysis. The full scraping functionality requires server-side processing.`;
+    // Step 1: Use real content scraping
+    console.log('🕷️ Scraping real website content...');
+    const scrapedContent = await scrapeWebsiteContent(url);
+    
+    if (!scrapedContent || scrapedContent.length < 100) {
+      throw new Error('Failed to scrape sufficient content from website');
+    }
+
+    console.log(`✅ Scraped ${scrapedContent.length} characters of content`);
 
     // Step 2: Try Gemini first (more generous free tier)
     let analysisResult;
     try {
-      console.log('Analyzing with Google Gemini...');
-      analysisResult = await analyzeWithGemini(content, analysisType);
+      console.log('🤖 Analyzing with Google Gemini...');
+      analysisResult = await analyzeWithGemini(scrapedContent, analysisType);
     } catch (geminiError) {
       console.log('Gemini failed, trying Claude...');
       // Fallback to Claude if Gemini fails and Claude key is available
       if (process.env.CLAUDE_API_KEY && process.env.CLAUDE_API_KEY !== 'your-real-key-here') {
-        analysisResult = await analyzeWithClaude(content, analysisType);
+        analysisResult = await analyzeWithClaude(scrapedContent, analysisType);
       } else {
         throw new Error('Gemini analysis failed and Claude API key not configured');
       }
@@ -289,31 +342,31 @@ export async function performRealAnalysis(url: string, analysisType: string = 'f
     console.log('Running Lighthouse performance analysis...');
     const lighthouseAnalysis = await runLighthouseAnalysis(url);
 
-    // Step 4: Format result with scraped metadata
+    // Step 4: Format result with real AI analysis data
     const result: WebsiteAnalysisResult = {
       id: generateId(),
       url: url,
       timestamp: new Date(),
-      overallScore: analysisResult.overallScore || 75,
-      executiveSummary: analysisResult.executiveSummary || 'Analysis completed successfully',
+      overallScore: analysisResult.overallScore,
+      executiveSummary: analysisResult.executiveSummary,
       goldenCircle: analysisResult.goldenCircle,
       elementsOfValue: analysisResult.elementsOfValue,
       b2bElements: analysisResult.b2bElements,
       cliftonStrengths: analysisResult.cliftonStrengths,
       transformation: analysisResult.transformation,
-      recommendations: analysisResult.recommendations || { immediate: [], shortTerm: [], longTerm: [] },
-      socialMediaStrategy: analysisResult.socialMediaStrategy || { postTypes: [], contentCalendar: {} },
-      successMetrics: analysisResult.successMetrics || { currentKPIs: [], targetImprovements: [], abTestingOpportunities: [] },
+      recommendations: analysisResult.recommendations,
+      socialMediaStrategy: analysisResult.socialMediaStrategy,
+      successMetrics: analysisResult.successMetrics,
       lighthouseAnalysis: lighthouseAnalysis,
-          // Include basic metadata
+          // Include real scraped metadata
           content: {
-            title: `Analysis of ${url}`,
-            metaDescription: 'Website analysis placeholder',
-            headings: [],
-            wordCount: 0,
-            imageCount: 0,
-            linkCount: 0,
-            extractedKeywords: [],
+            title: extractTitleFromContent(scrapedContent),
+            metaDescription: extractMetaDescriptionFromContent(scrapedContent),
+            headings: extractHeadingsFromContent(scrapedContent),
+            wordCount: scrapedContent.split(/\s+/).length,
+            imageCount: (scrapedContent.match(/<img/g) || []).length,
+            linkCount: (scrapedContent.match(/<a/g) || []).length,
+            extractedKeywords: extractKeywordsFromContent(scrapedContent),
             schemaTypes: []
           },
       createdAt: new Date().toISOString()
