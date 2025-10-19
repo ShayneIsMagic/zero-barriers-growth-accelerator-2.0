@@ -9,6 +9,74 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const maxDuration = 60; // Increased for real AI analysis
 
+// Helper function to generate revenue opportunities from analysis
+function generateRevenueOpportunities(analysis: any): string[] {
+  const opportunities: string[] = [];
+
+  // Find high-scoring elements that could drive revenue
+  const highScoringElements = analysis.elements
+    .filter((e: any) => e.score >= 70)
+    .sort((a: any, b: any) => b.score - a.score);
+
+  if (highScoringElements.length > 0) {
+    opportunities.push(`Leverage high-performing "${highScoringElements[0].element_name}" element (${highScoringElements[0].score}/100) for premium pricing`);
+  }
+
+  // Find low-scoring elements that represent opportunities
+  const lowScoringElements = analysis.elements
+    .filter((e: any) => e.score < 30)
+    .sort((a: any, b: any) => a.score - b.score);
+
+  if (lowScoringElements.length > 0) {
+    opportunities.push(`Improve "${lowScoringElements[0].element_name}" element (${lowScoringElements[0].score}/100) to unlock new revenue streams`);
+  }
+
+  // Category-based opportunities
+  if (analysis.functional_score < 50) {
+    opportunities.push('Enhance functional value elements to justify higher prices');
+  }
+
+  if (analysis.emotional_score < 50) {
+    opportunities.push('Develop emotional connections to increase customer loyalty and lifetime value');
+  }
+
+  return opportunities.length > 0 ? opportunities : ['Focus on improving overall value proposition to increase revenue potential'];
+}
+
+// Helper function to generate recommendations from analysis
+function generateRecommendations(analysis: any): string[] {
+  const recommendations: string[] = [];
+
+  // Overall score recommendations
+  if (analysis.overall_score < 50) {
+    recommendations.push('Focus on fundamental value elements before advanced features');
+  } else if (analysis.overall_score < 75) {
+    recommendations.push('Build on existing strengths while addressing key gaps');
+  } else {
+    recommendations.push('Maintain high performance while exploring new value opportunities');
+  }
+
+  // Category-specific recommendations
+  if (analysis.functional_score < analysis.emotional_score) {
+    recommendations.push('Strengthen functional value elements to match emotional appeal');
+  }
+
+  if (analysis.emotional_score < analysis.functional_score) {
+    recommendations.push('Develop emotional connections to complement functional benefits');
+  }
+
+  // Element-specific recommendations
+  const lowScoringElements = analysis.elements
+    .filter((e: any) => e.score < 40)
+    .slice(0, 3);
+
+  lowScoringElements.forEach((element: any) => {
+    recommendations.push(`Improve "${element.element_name}" element through targeted content and features`);
+  });
+
+  return recommendations.length > 0 ? recommendations : ['Continue monitoring and optimizing value elements'];
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -103,9 +171,9 @@ export async function POST(request: NextRequest) {
             }))
         }
       },
-      // Use ONLY the real AI analysis data - no hardcoded calculations
-      revenue_opportunities: analysis.revenue_opportunities || [],
-      recommendations: analysis.recommendations || []
+      // Generate revenue opportunities and recommendations from analysis
+      revenue_opportunities: generateRevenueOpportunities(analysis),
+      recommendations: generateRecommendations(analysis)
     };
 
     return NextResponse.json({

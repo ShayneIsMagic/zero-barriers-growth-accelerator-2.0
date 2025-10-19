@@ -19,7 +19,7 @@ import {
 import Link from 'next/link';
 
 export default function CleanDashboard() {
-  const [url, setUrl] = useState('');
+  const [_url, _setUrl] = useState('');
 
   const workingAssessments = [
     {

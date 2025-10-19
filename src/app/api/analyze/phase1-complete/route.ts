@@ -61,7 +61,7 @@ export async function POST(_request: NextRequest) {
         accessibilityScore: lighthouseData?.scores?.accessibility || 0,
         qaIssues: qaAnalysis.issues?.length || 0,
         trendsData: trendsAnalysis.trendingTopics?.length || 0,
-        competitors: competitionAnalysis.competitors?.length || 0
+        _competitors: competitionAnalysis.competitors?.length || 0
       }
     };
 
@@ -304,7 +304,7 @@ async function runCompetitionAnalysis(url: string, content: any) {
     const _competitors = await findCompetitors(domain, content);
 
     return {
-      competitors: _competitors,
+      _competitors: _competitors,
       competitiveAnalysis: await analyzeCompetitors(_competitors),
       recommendations: generateCompetitionRecommendations(_competitors)
     };

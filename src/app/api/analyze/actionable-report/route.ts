@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { _url, scrapedContent, analysisType = 'golden-circle' } = body;
 
-    if (!url) {
+    if (!_url) {
       return NextResponse.json({
         success: false,
         error: 'URL is required'

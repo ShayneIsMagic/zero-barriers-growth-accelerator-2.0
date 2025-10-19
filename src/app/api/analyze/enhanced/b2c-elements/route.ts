@@ -12,7 +12,7 @@ export const maxDuration = 60;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url, scrapedContent, comparisonData } = body;
+    const { url, scrapedContent, comparisonData: _comparisonData } = body;
 
     if (!url) {
       return NextResponse.json({
@@ -52,8 +52,8 @@ export async function POST(request: NextRequest) {
     );
 
     // Enhance with comparison data if provided
-    const enhancedAnalysis = comparisonData ? 
-      enhanceWithComparisonData(analysis, comparisonData) : 
+    const enhancedAnalysis = _comparisonData ? 
+      enhanceWithComparisonData(analysis, _comparisonData) : 
       analysis;
 
     console.log(`✅ ENHANCED B2C Elements of Value analysis completed for: ${url}`);
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
               name: e.element_name,
               score: e.score,
               evidence: e.evidence?.patterns?.join(', ') || 'No evidence found',
-              comparison_insight: getComparisonInsight(e.element_name, comparisonData)
+              comparison_insight: getComparisonInsight(e.element_name, _comparisonData)
             }))
         },
         emotional: {
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
               name: e.element_name,
               score: e.score,
               evidence: e.evidence?.patterns?.join(', ') || 'No evidence found',
-              comparison_insight: getComparisonInsight(e.element_name, comparisonData)
+              comparison_insight: getComparisonInsight(e.element_name, _comparisonData)
             }))
         },
         life_changing: {
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
               name: e.element_name,
               score: e.score,
               evidence: e.evidence?.patterns?.join(', ') || 'No evidence found',
-              comparison_insight: getComparisonInsight(e.element_name, comparisonData)
+              comparison_insight: getComparisonInsight(e.element_name, _comparisonData)
             }))
         },
         social_impact: {
@@ -106,13 +106,13 @@ export async function POST(request: NextRequest) {
               name: e.element_name,
               score: e.score,
               evidence: e.evidence?.patterns?.join(', ') || 'No evidence found',
-              comparison_insight: getComparisonInsight(e.element_name, comparisonData)
+              comparison_insight: getComparisonInsight(e.element_name, _comparisonData)
             }))
         }
       },
       revenue_opportunities: enhancedAnalysis.revenue_opportunities || [],
       recommendations: enhancedAnalysis.recommendations || [],
-      comparison_insights: comparisonData ? generateComparisonInsights(enhancedAnalysis, comparisonData) : null
+      comparison_insights: _comparisonData ? generateComparisonInsights(enhancedAnalysis, _comparisonData) : null
     };
 
     return NextResponse.json({
@@ -136,14 +136,14 @@ export async function POST(request: NextRequest) {
 /**
  * Enhance analysis with comparison data
  */
-function enhanceWithComparisonData(analysis: any, comparisonData: any): any {
+function enhanceWithComparisonData(analysis: any, _comparisonData: any): any {
   // Apply comparison-based scoring adjustments
   const enhanced = { ...analysis };
   
   // Boost scores for elements that perform well in comparison
-  if (comparisonData.competitive_advantages) {
+  if (_comparisonData.competitive_advantages) {
     enhanced.elements = enhanced.elements.map((element: any) => {
-      const isCompetitive = comparisonData.competitive_advantages.some((advantage: string) => 
+      const isCompetitive = _comparisonData.competitive_advantages.some((advantage: string) => 
         advantage.toLowerCase().includes(element.element_name.toLowerCase())
       );
       
@@ -167,11 +167,11 @@ function enhanceWithComparisonData(analysis: any, comparisonData: any): any {
 /**
  * Get comparison insight for specific element
  */
-function getComparisonInsight(elementName: string, comparisonData: any): string | null {
-  if (!comparisonData) return null;
+function getComparisonInsight(elementName: string, _comparisonData: any): string | null {
+  if (!_comparisonData) return null;
   
   // Look for specific insights about this element
-  const insights = comparisonData.element_insights || [];
+  const insights = _comparisonData.element_insights || [];
   const insight = insights.find((i: any) => i.element === elementName);
   
   return insight ? insight.insight : null;
@@ -180,12 +180,12 @@ function getComparisonInsight(elementName: string, comparisonData: any): string 
 /**
  * Generate comprehensive comparison insights
  */
-function generateComparisonInsights(analysis: any, comparisonData: any): any {
+function generateComparisonInsights(analysis: any, _comparisonData: any): any {
   return {
     competitive_position: analysis.overall_score > 80 ? 'Strong' : analysis.overall_score > 60 ? 'Moderate' : 'Weak',
     improvement_potential: calculateImprovementPotential(analysis),
-    market_opportunities: identifyMarketOpportunities(analysis, comparisonData),
-    strategic_recommendations: generateStrategicRecommendations(analysis, comparisonData)
+    market_opportunities: identifyMarketOpportunities(analysis, _comparisonData),
+    strategic_recommendations: generateStrategicRecommendations(analysis, _comparisonData)
   };
 }
 
@@ -205,7 +205,7 @@ function calculateImprovementPotential(analysis: any): string[] {
   return opportunities;
 }
 
-function identifyMarketOpportunities(analysis: any, comparisonData: any): string[] {
+function identifyMarketOpportunities(analysis: any, _comparisonData: any): string[] {
   const opportunities = [];
   
   // Identify gaps in current analysis
@@ -217,7 +217,7 @@ function identifyMarketOpportunities(analysis: any, comparisonData: any): string
   return opportunities;
 }
 
-function generateStrategicRecommendations(analysis: any, comparisonData: any): string[] {
+function generateStrategicRecommendations(analysis: any, _comparisonData: any): string[] {
   const recommendations = [];
   
   // High-level strategic recommendations based on scores

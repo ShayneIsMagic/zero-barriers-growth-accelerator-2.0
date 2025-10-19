@@ -20,7 +20,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 export default function DashboardPage() {
-  const [url, setUrl] = useState('');
+  const [_url, _setUrl] = useState('');
 
   const workingAssessments = [
     {

@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { _url, scrapedContent } = body;
 
-    if (!url) {
+    if (!_url) {
       return NextResponse.json({
         success: false,
         error: 'URL is required'
@@ -27,20 +27,20 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    console.log(`🎯 Starting CliftonStrengths analysis for: ${url}`);
+    console.log(`🎯 Starting CliftonStrengths analysis for: ${_url}`);
 
-    const result = await SimpleFrameworkAnalysisService.analyzeCliftonStrengths(url, scrapedContent);
+    const result = await SimpleFrameworkAnalysisService.analyzeCliftonStrengths(_url, scrapedContent);
 
     if (result.success) {
-      console.log(`✅ CliftonStrengths analysis completed for: ${url}`);
+      console.log(`✅ CliftonStrengths analysis completed for: ${_url}`);
       return NextResponse.json({
         success: true,
-        url: result.url,
+        url: _url,
         data: result.analysis,
         message: 'CliftonStrengths analysis completed successfully'
       });
     } else {
-      console.error(`❌ CliftonStrengths analysis failed for: ${url}`, result.error);
+      console.error(`❌ CliftonStrengths analysis failed for: ${_url}`, result.error);
       return NextResponse.json({
         success: false,
         error: result.error

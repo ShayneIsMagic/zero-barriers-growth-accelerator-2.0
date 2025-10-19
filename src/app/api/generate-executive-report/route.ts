@@ -29,7 +29,7 @@ export async function POST(_request: NextRequest) {
 
     // Step 3: Run PageAudit analysis
     console.log('Step 3: Running PageAudit analysis...');
-    const pageAuditData = await new Promise((resolve, reject) => {
+    const pageAuditData = await new Promise((resolve, _reject) => {
       const scriptPath = path.join(process.cwd(), 'scripts', 'pageaudit-analysis.js');
       const child = spawn('node', [scriptPath, url]);
       

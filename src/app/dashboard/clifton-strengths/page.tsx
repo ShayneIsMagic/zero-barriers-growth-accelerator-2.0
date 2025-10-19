@@ -47,7 +47,7 @@ export default function CliftonStrengthsPage() {
   const [url, setUrl] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<CliftonStrengthsAnalysis | null>(null);
-  const [analysisId, setAnalysisId] = useState<string | null>(null);
+  const [_analysisId, _setAnalysisId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const runAnalysis = async () => {

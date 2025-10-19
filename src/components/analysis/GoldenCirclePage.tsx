@@ -7,10 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { Copy, Download, Loader2, TrendingUp } from 'lucide-react';
+import { Copy, Download, Loader2, Target } from 'lucide-react';
 import { useState } from 'react';
 
-export function RevenueTrendsPage() {
+export function GoldenCirclePage() {
   const [url, setUrl] = useState('');
   const [proposedContent, setProposedContent] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -28,7 +28,7 @@ export function RevenueTrendsPage() {
     setResult(null);
 
     try {
-      const response = await fetch('/api/analyze/revenue-trends', {
+      const response = await fetch('/api/analyze/golden-circle-standalone', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -43,7 +43,7 @@ export function RevenueTrendsPage() {
       if (data.success) {
         setResult(data);
       } else {
-        setError(data.error || 'Revenue trends analysis failed');
+        setError(data.error || 'Golden Circle analysis failed');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to analyze');
@@ -59,12 +59,12 @@ export function RevenueTrendsPage() {
   const downloadMarkdown = () => {
     if (!result) return;
 
-    const markdown = generateRevenueTrendsMarkdown(result);
+    const markdown = generateGoldenCircleMarkdown(result);
     const blob = new Blob([markdown], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `revenue-trends-analysis-${new Date().toISOString().split('T')[0]}.md`;
+    a.download = `golden-circle-analysis-${new Date().toISOString().split('T')[0]}.md`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -76,11 +76,11 @@ export function RevenueTrendsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl flex items-center gap-2">
-            <TrendingUp className="h-6 w-6" />
-            Revenue-Focused Market Analysis
+            <Target className="h-6 w-6" />
+            Golden Circle Analysis
           </CardTitle>
           <CardDescription>
-            Identify underserved market demand and emerging revenue opportunities through AI-powered content strategy analysis
+            Analyze your website using Simon Sinek's Golden Circle framework - discover your WHY, HOW, and WHAT
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -103,7 +103,7 @@ export function RevenueTrendsPage() {
               required
             />
             <p id="url-help" className="text-xs text-muted-foreground mt-1">
-              We'll analyze your website to identify market gaps and revenue opportunities
+              Enter the URL of the website you want to analyze
             </p>
           </div>
 
@@ -115,27 +115,28 @@ export function RevenueTrendsPage() {
             <Textarea
               id="proposed-content"
               name="proposed-content"
-              placeholder="Paste your proposed new content here for revenue analysis...
+              placeholder="Paste your proposed new content here for Golden Circle analysis...
 
 Example:
-# Revenue Growth Strategy
+# Our Mission
 
-## Market Opportunities
-- Underserved segments in the B2B space
-- Emerging trends in digital transformation
-- New pricing models and value propositions
+We believe in empowering businesses to reach their full potential.
 
-## Revenue Streams
-- Subscription-based services
-- Consulting and implementation
-- Training and certification programs
+## Why We Exist
+To break down barriers and accelerate growth for every organization.
+
+## How We Do It
+Through AI-powered analysis and strategic frameworks.
+
+## What We Offer
+Comprehensive marketing optimization tools and insights.
 
 [Your content here...]"
               value={proposedContent}
               onChange={(e) => setProposedContent(e.target.value)}
               disabled={isAnalyzing}
               className="min-h-[200px] font-mono text-sm"
-              aria-label="Enter proposed new content for revenue analysis"
+              aria-label="Enter proposed new content for Golden Circle analysis"
               aria-describedby="content-help"
             />
             <p id="content-help" className="text-xs text-muted-foreground mt-2">
@@ -144,29 +145,29 @@ Example:
           </div>
 
           {/* What You Get */}
-          <div className="p-4 bg-green-50 dark:bg-green-950 rounded-lg">
-            <h4 className="font-semibold mb-2 text-green-900 dark:text-green-100">What You Get:</h4>
-            <ul className="text-sm text-green-800 dark:text-green-200 space-y-1">
+          <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
+            <h4 className="font-semibold mb-2 text-blue-900 dark:text-blue-100">What You Get:</h4>
+            <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
               <li className="flex items-start gap-2">
-                <span className="text-green-600 dark:text-green-400 mt-1">•</span>
-                <span>Market gap identification and revenue opportunities</span>
+                <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
+                <span>WHY analysis - your core purpose and beliefs</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-green-600 dark:text-green-400 mt-1">•</span>
-                <span>Underserved customer segments analysis</span>
+                <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
+                <span>HOW analysis - your unique processes and methods</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-green-600 dark:text-green-400 mt-1">•</span>
-                <span>Pricing strategy recommendations</span>
+                <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
+                <span>WHAT analysis - your products and services</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-green-600 dark:text-green-400 mt-1">•</span>
-                <span>Competitive positioning insights</span>
+                <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
+                <span>WHO analysis - your target audience identification</span>
               </li>
             </ul>
-            <div className="flex gap-4 mt-3 text-xs text-green-700 dark:text-green-300">
+            <div className="flex gap-4 mt-3 text-xs text-blue-700 dark:text-blue-300">
               <span>⏱️ 2-3 minutes</span>
-              <span>📊 Intermediate</span>
+              <span>📊 Beginner</span>
               <span>✅ None - just enter your website URL</span>
             </div>
           </div>
@@ -192,8 +193,8 @@ Example:
               </>
             ) : (
               <>
-                <TrendingUp className="mr-2 h-4 w-4" />
-                {proposedContent ? 'Compare Existing vs. Proposed' : 'Find Revenue Opportunities'}
+                <Target className="mr-2 h-4 w-4" />
+                {proposedContent ? 'Compare Existing vs. Proposed' : 'Analyze Existing Content'}
               </>
             )}
           </Button>
@@ -215,8 +216,8 @@ Example:
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle>Revenue Trends Analysis</CardTitle>
-                    <CardDescription>Market opportunities and revenue potential analysis</CardDescription>
+                    <CardTitle>Golden Circle Analysis</CardTitle>
+                    <CardDescription>Simon Sinek's Golden Circle framework analysis</CardDescription>
                   </div>
                   <Button onClick={downloadMarkdown} variant="outline">
                     <Download className="mr-2 h-4 w-4" />
@@ -288,10 +289,10 @@ Example:
 
                     {/* Analysis Results */}
                     <div className="space-y-4">
-                      <h3 className="text-xl font-semibold">Revenue Trends Analysis Results</h3>
+                      <h3 className="text-xl font-semibold">Golden Circle Analysis Results</h3>
 
                       {/* Show analysis data */}
-                      <div className="p-4 border rounded-lg bg-green-50 dark:bg-green-950">
+                      <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-950">
                         <h4 className="font-semibold mb-2">Assessment Results</h4>
                         <div className="text-sm whitespace-pre-wrap">
                           {JSON.stringify(result.data, null, 2)}
@@ -378,12 +379,12 @@ Example:
   );
 }
 
-function generateRevenueTrendsMarkdown(result: any): string {
-  return `# Revenue Trends Analysis
+function generateGoldenCircleMarkdown(result: any): string {
+  return `# Golden Circle Analysis
 
 **URL:** ${result.url || 'N/A'}
 **Date:** ${new Date().toLocaleString()}
-**Analysis Type:** Revenue-Focused Market Analysis
+**Analysis Type:** Golden Circle
 
 ---
 
@@ -404,7 +405,7 @@ ${result.proposed ? `
 
 ---
 
-## Revenue Trends Analysis Results
+## Golden Circle Analysis Results
 
 ${JSON.stringify(result.data, null, 2)}
 ` : ''}

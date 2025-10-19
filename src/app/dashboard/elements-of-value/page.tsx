@@ -49,7 +49,7 @@ export default function ElementsOfValuePage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [b2cAnalysis, setB2cAnalysis] = useState<ElementsAnalysis | null>(null);
   const [b2bAnalysis, setB2bAnalysis] = useState<ElementsAnalysis | null>(null);
-  const [analysisId, setAnalysisId] = useState<string | null>(null);
+  const [_analysisId, _setAnalysisId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'b2c' | 'b2b'>('b2c');
 

@@ -6,7 +6,7 @@ import { WebsiteAnalysisResults } from '@/components/analysis/WebsiteAnalysisRes
 import { WebsiteAnalysisResult } from '@/types/analysis';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+// import { Badge } from '@/components/ui/badge';
 import { History, Target, Globe, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 

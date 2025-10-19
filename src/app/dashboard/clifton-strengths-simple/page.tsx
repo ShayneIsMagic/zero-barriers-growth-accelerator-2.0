@@ -1,10 +1,10 @@
 /**
- * Simple CliftonStrengths Page
- * Follows Content-Comparison pattern: No database dependencies
+ * CliftonStrengths Analysis Page
+ * Uses content-comparison pattern with side-by-side analysis
  */
 
-import { SimpleCliftonStrengthsPage } from '@/components/analysis/SimpleCliftonStrengthsPage';
+import { CliftonStrengthsPage } from '@/components/analysis/CliftonStrengthsPage';
 
-export default function Page() {
-  return <SimpleCliftonStrengthsPage />;
+export default function CliftonStrengthsRoute() {
+  return <CliftonStrengthsPage />;
 }

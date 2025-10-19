@@ -1,10 +1,10 @@
 /**
- * Standalone Golden Circle Analysis Page
- * Uses Content-Comparison pattern: No database dependencies, direct AI analysis
+ * Golden Circle Analysis Page
+ * Uses content-comparison pattern with side-by-side analysis
  */
 
-import { StandaloneGoldenCirclePage } from '@/components/analysis/StandaloneGoldenCirclePage';
+import { GoldenCirclePage } from '@/components/analysis/GoldenCirclePage';
 
-export default function GoldenCircleStandaloneRoute() {
-  return <StandaloneGoldenCirclePage />;
+export default function GoldenCircleRoute() {
+  return <GoldenCirclePage />;
 }

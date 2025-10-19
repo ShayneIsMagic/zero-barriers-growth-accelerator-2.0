@@ -167,7 +167,7 @@ export default function Phase2Page() {
                   {phase2Data.goldenCircle?.overallScore && renderScore(phase2Data.goldenCircle.overallScore)}
                 </CardTitle>
                 <CardDescription>
-                  Simon Sinek's framework: Why, How, What, Who
+                  Simon Sinek&apos;s framework: Why, How, What, Who
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -212,7 +212,7 @@ export default function Phase2Page() {
                   {phase2Data.elementsOfValue?.overallScore && renderScore(phase2Data.elementsOfValue.overallScore)}
                 </CardTitle>
                 <CardDescription>
-                  Harvard Business Review's 30 B2C value elements
+                  Harvard Business Review&apos;s 30 B2C value elements
                 </CardDescription>
               </CardHeader>
               <CardContent>
