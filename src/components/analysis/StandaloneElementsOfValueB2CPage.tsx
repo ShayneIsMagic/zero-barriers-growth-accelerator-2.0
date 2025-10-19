@@ -33,12 +33,29 @@ interface B2CRecommendation {
   roi_estimate: string;
 }
 
+interface B2CValueElementScore {
+  name: string;
+  score: number;
+  evidence: string;
+}
+
+interface B2CCategory {
+  score: number;
+  elements: B2CValueElementScore[];
+}
+
 interface B2CAnalysisData {
   overall_score: number;
   functional_score: number;
   emotional_score: number;
   life_changing_score: number;
   social_impact_score: number;
+  categories: {
+    functional: B2CCategory;
+    emotional: B2CCategory;
+    life_changing: B2CCategory;
+    social_impact: B2CCategory;
+  };
   revenue_opportunities: B2CValueElement[];
   recommendations: B2CRecommendation[];
 }
@@ -81,7 +98,9 @@ export function StandaloneElementsOfValueB2CPage() {
       }
 
       if (data.success) {
-        setScrapedContent(data.scrapedData || data.data);
+        // Handle both old and new scraper formats
+        const scrapedData = data.scrapedData || data.data;
+        setScrapedContent(scrapedData);
       } else {
         throw new Error(data.error || 'Content scraping failed');
       }
@@ -610,6 +629,108 @@ This analysis is based on the Harvard Business Review's 30 B2C Elements of Value
                 </div>
               </CardContent>
             </Card>
+
+            {/* Detailed Category Breakdown */}
+            {result.categories && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center text-blue-600">
+                    <Target className="mr-2 h-5 w-5" />
+                    Detailed B2C Elements Scores
+                  </CardTitle>
+                  <CardDescription>
+                    Individual scores for all 30 B2C Elements of Value
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    {/* Functional Elements */}
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-blue-600">Functional Elements (Score: {result.categories.functional.score}%)</h3>
+                        <Badge variant="outline" className="text-blue-600">{result.categories.functional.elements.length} elements</Badge>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {result.categories.functional.elements.map((element, index) => (
+                          <div key={index} className="p-3 border rounded-lg bg-blue-50">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-medium text-sm">{element.name}</span>
+                              <Badge variant={element.score >= 7 ? "default" : element.score >= 5 ? "secondary" : "destructive"}>
+                                {element.score}/10
+                              </Badge>
+                            </div>
+                            <p className="text-xs text-gray-600">{element.evidence}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Emotional Elements */}
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-purple-600">Emotional Elements (Score: {result.categories.emotional.score}%)</h3>
+                        <Badge variant="outline" className="text-purple-600">{result.categories.emotional.elements.length} elements</Badge>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {result.categories.emotional.elements.map((element, index) => (
+                          <div key={index} className="p-3 border rounded-lg bg-purple-50">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-medium text-sm">{element.name}</span>
+                              <Badge variant={element.score >= 7 ? "default" : element.score >= 5 ? "secondary" : "destructive"}>
+                                {element.score}/10
+                              </Badge>
+                            </div>
+                            <p className="text-xs text-gray-600">{element.evidence}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Life-Changing Elements */}
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-orange-600">Life-Changing Elements (Score: {result.categories.life_changing.score}%)</h3>
+                        <Badge variant="outline" className="text-orange-600">{result.categories.life_changing.elements.length} elements</Badge>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {result.categories.life_changing.elements.map((element, index) => (
+                          <div key={index} className="p-3 border rounded-lg bg-orange-50">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-medium text-sm">{element.name}</span>
+                              <Badge variant={element.score >= 7 ? "default" : element.score >= 5 ? "secondary" : "destructive"}>
+                                {element.score}/10
+                              </Badge>
+                            </div>
+                            <p className="text-xs text-gray-600">{element.evidence}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Social Impact Elements */}
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-green-600">Social Impact Elements (Score: {result.categories.social_impact.score}%)</h3>
+                        <Badge variant="outline" className="text-green-600">{result.categories.social_impact.elements.length} elements</Badge>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {result.categories.social_impact.elements.map((element, index) => (
+                          <div key={index} className="p-3 border rounded-lg bg-green-50">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-medium text-sm">{element.name}</span>
+                              <Badge variant={element.score >= 7 ? "default" : element.score >= 5 ? "secondary" : "destructive"}>
+                                {element.score}/10
+                              </Badge>
+                            </div>
+                            <p className="text-xs text-gray-600">{element.evidence}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Revenue Opportunities */}
             <Card>
