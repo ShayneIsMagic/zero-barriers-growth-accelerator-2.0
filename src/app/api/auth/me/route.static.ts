@@ -2,13 +2,9 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  // For static deployment, return a demo user
   return NextResponse.json({
-    user: {
-      id: 'demo-user',
-      email: 'demo@example.com',
-      name: 'Demo User',
-      role: 'USER'
-    }
-  });
+    success: false,
+    error: 'Authentication not available in static deployment',
+    message: 'This is a static deployment - authentication requires server-side functionality'
+  }, { status: 501 });
 }

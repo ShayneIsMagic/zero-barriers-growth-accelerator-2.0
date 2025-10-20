@@ -73,84 +73,13 @@ export async function POST(request: NextRequest) {
         const lighthouseReport = generateLighthouseReport(phase1Result.lighthouseData, url);
         individualReports.push(lighthouseReport);
       } else {
-        // Lighthouse failed - add manual fallback report
-        const fallbackReport = {
-          id: 'lighthouse-fallback',
-          name: 'Lighthouse Performance (Manual Fallback)',
-          phase: 'Phase 1',
-          prompt: `⚠️ Automated Lighthouse failed. Use manual option:
-
-1. Go to https://pagespeed.web.dev/
-2. Enter: ${url}
-3. Click "Analyze"
-4. Copy scores and paste into Gemini with this prompt:
-
-Analyze these Lighthouse scores for ${url}:
-- Performance: [YOUR_SCORE]/100
-- Accessibility: [YOUR_SCORE]/100
-- Best Practices: [YOUR_SCORE]/100
-- SEO: [YOUR_SCORE]/100
-
-Key Issues:
-[PASTE TOP 3-5 ISSUES FROM REPORT]
-
-Provide:
-1. What these scores mean
-2. Priority fixes
-3. Quick wins (< 1 hour)
-4. Impact on user experience`,
-          markdown: `# Lighthouse Performance - Manual Fallback Required
-
-**URL:** ${url}
-**Date:** ${new Date().toLocaleString()}
-**Status:** ⚠️ Automated analysis failed
-
----
-
-## Manual Steps Required
-
-The automated Lighthouse analysis failed. Please run it manually:
-
-### Step 1: Run Lighthouse
-1. Go to: **https://pagespeed.web.dev/**
-2. Enter your URL: \`${url}\`
-3. Click "Analyze"
-4. Wait 30 seconds for results
-
-### Step 2: Copy Scores
-Note these scores:
-- Performance: ___/100
-- Accessibility: ___/100
-- Best Practices: ___/100
-- SEO: ___/100
-
-### Step 3: Get AI Analysis
-Copy this prompt and paste into Gemini (https://gemini.google.com/):
-
-\`\`\`
-Analyze these Lighthouse scores for ${url}:
-- Performance: [YOUR_SCORE]/100
-- Accessibility: [YOUR_SCORE]/100
-- Best Practices: [YOUR_SCORE]/100
-- SEO: [YOUR_SCORE]/100
-
-Key Issues:
-[PASTE TOP 3-5 ISSUES FROM REPORT]
-
-Provide:
-1. What these scores mean
-2. Priority fixes
-3. Quick wins (< 1 hour)
-4. Impact on user experience
-\`\`\`
-
----
-
-**Why did automated fail?** The Lighthouse script may be missing or the API timed out. Manual analysis provides the same quality results.
-`,
-          timestamp: new Date().toISOString()
-        };
-        individualReports.push(fallbackReport);
+        // Lighthouse failed - return error instead of fallback
+        console.error('Lighthouse analysis failed - no fallback data allowed');
+        return NextResponse.json({
+          success: false,
+          error: 'Lighthouse analysis failed. Configure GOOGLE_API_KEY for automated analysis.',
+          details: 'No fallback data allowed - real analysis required'
+        }, { status: 500 });
       }
 
       // Store Phase 1 results
@@ -242,45 +171,13 @@ Return structured analysis with scores and evidence.`;
         const goldenReport = generateGoldenCircleReport(phase2Result.goldenCircle, _url, prompt);
         individualReports.push(goldenReport);
       } else {
-        // Golden Circle failed - add manual fallback
-        const fallbackPrompt = `Analyze the website content for Golden Circle framework (Why, How, What, Who):
-
-URL: ${url}
-Title: ${phase1Data.scrapedContent?.title}
-Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
-
-Extract:
-1. WHY (dominant purpose) - exact quotes from website
-2. HOW (unique methodology) - exact quotes about their approach
-3. WHAT (products/services) - exact list of offerings
-4. WHO (target audience) - exact quotes about their market
-
-Return structured analysis with scores and evidence.`;
-
-        individualReports.push({
-          id: 'golden-circle-fallback',
-          name: 'Golden Circle Analysis (Manual Fallback)',
-          phase: 'Phase 2',
-          prompt: fallbackPrompt,
-          markdown: `# Golden Circle Analysis - Manual Required
-
-⚠️ Automated Gemini AI analysis failed.
-
-## Run This Manually
-
-1. Go to: **https://gemini.google.com/**
-2. Copy and paste this prompt:
-
-\`\`\`
-${fallbackPrompt}
-\`\`\`
-
-3. Review the AI response
-4. Save the results
-
-**Why did it fail?** API rate limit or network issue. Manual execution provides same quality.`,
-          timestamp: new Date().toISOString()
-        });
+        // Golden Circle failed - return error instead of fallback
+        console.error('Golden Circle analysis failed - no fallback data allowed');
+        return NextResponse.json({
+          success: false,
+          error: 'Golden Circle analysis failed. Check Gemini API configuration.',
+          details: 'No fallback data allowed - real analysis required'
+        }, { status: 500 });
       }
 
       if (phase2Result.elementsOfValue) {
@@ -294,22 +191,13 @@ Return structured analysis with scores for each element.`;
         const elementsReport = generateElementsB2CReport(phase2Result.elementsOfValue, _url, prompt);
         individualReports.push(elementsReport);
       } else {
-        const fallbackPrompt = `Analyze the website content for B2C Elements of Value (30 elements):
-
-URL: ${url}
-Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
-
-Evaluate each of the 30 B2C Elements of Value and provide specific evidence from the content.
-Return structured analysis with scores for each element.`;
-
-        individualReports.push({
-          id: 'elements-b2c-fallback',
-          name: 'Elements of Value B2C (Manual Fallback)',
-          phase: 'Phase 2',
-          prompt: fallbackPrompt,
-          markdown: `# Elements of Value (B2C) - Manual Required\n\n⚠️ Automated analysis failed.\n\n## Run at https://gemini.google.com/\n\n\`\`\`\n${fallbackPrompt}\n\`\`\``,
-          timestamp: new Date().toISOString()
-        });
+        // B2C Elements failed - return error instead of fallback
+        console.error('B2C Elements analysis failed - no fallback data allowed');
+        return NextResponse.json({
+          success: false,
+          error: 'B2C Elements analysis failed. Check Gemini API configuration.',
+          details: 'No fallback data allowed - real analysis required'
+        }, { status: 500 });
       }
 
       if (phase2Result.b2bElements) {
@@ -323,22 +211,13 @@ Return structured analysis with scores for each element.`;
         const b2bReport = generateB2BElementsReport(phase2Result.b2bElements, _url, prompt);
         individualReports.push(b2bReport);
       } else {
-        const fallbackPrompt = `Analyze the website content for B2B Elements of Value (40 elements):
-
-URL: ${url}
-Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
-
-Evaluate each of the 40 B2B Elements of Value and provide specific evidence from the content.
-Return structured analysis with scores for each element.`;
-
-        individualReports.push({
-          id: 'b2b-elements-fallback',
-          name: 'B2B Elements (Manual Fallback)',
-          phase: 'Phase 2',
-          prompt: fallbackPrompt,
-          markdown: `# B2B Elements of Value - Manual Required\n\n⚠️ Automated analysis failed.\n\n## Run at https://gemini.google.com/\n\n\`\`\`\n${fallbackPrompt}\n\`\`\``,
-          timestamp: new Date().toISOString()
-        });
+        // B2B Elements failed - return error instead of fallback
+        console.error('B2B Elements analysis failed - no fallback data allowed');
+        return NextResponse.json({
+          success: false,
+          error: 'B2B Elements analysis failed. Check Gemini API configuration.',
+          details: 'No fallback data allowed - real analysis required'
+        }, { status: 500 });
       }
 
       if (phase2Result.cliftonStrengths) {
@@ -352,22 +231,13 @@ Return structured analysis with top 5 themes and scores.`;
         const strengthsReport = generateCliftonStrengthsReport(phase2Result.cliftonStrengths, _url, prompt);
         individualReports.push(strengthsReport);
       } else {
-        const fallbackPrompt = `Analyze the website content for CliftonStrengths (34 themes):
-
-URL: ${url}
-Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
-
-Evaluate each of the 34 CliftonStrengths themes and provide specific evidence from the content.
-Return structured analysis with top 5 themes and scores.`;
-
-        individualReports.push({
-          id: 'clifton-strengths-fallback',
-          name: 'CliftonStrengths (Manual Fallback)',
-          phase: 'Phase 2',
-          prompt: fallbackPrompt,
-          markdown: `# CliftonStrengths Analysis - Manual Required\n\n⚠️ Automated analysis failed.\n\n## Run at https://gemini.google.com/\n\n\`\`\`\n${fallbackPrompt}\n\`\`\``,
-          timestamp: new Date().toISOString()
-        });
+        // CliftonStrengths failed - return error instead of fallback
+        console.error('CliftonStrengths analysis failed - no fallback data allowed');
+        return NextResponse.json({
+          success: false,
+          error: 'CliftonStrengths analysis failed. Check Gemini API configuration.',
+          details: 'No fallback data allowed - real analysis required'
+        }, { status: 500 });
       }
 
       const newAnalysisId = analysisId || `analysis-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -495,34 +365,13 @@ Return structured recommendations with quick wins and long-term strategy.`;
         const comprehensiveReport = generateComprehensiveReport(phase3Result.comprehensiveAnalysis, _url, prompt);
         individualReports.push(comprehensiveReport);
       } else {
-        const fallbackPrompt = `Comprehensive Strategic Analysis:
-
-Phase 1 Data:
-- SEO Score: ${phase1Data.summary.seoScore}/100
-- Performance Score: ${phase1Data.summary.performanceScore}/100
-- Total Words: ${phase1Data.summary.totalWords}
-
-Phase 2 Data:
-- Golden Circle Score: ${phase2Data.summary.goldenCircleScore}/100
-- Elements of Value Score: ${phase2Data.summary.elementsOfValueScore}/100
-
-Provide comprehensive recommendations for:
-1. Performance optimization
-2. SEO improvements
-3. Lead generation improvements
-4. Sales optimization
-5. Overall business growth
-
-Return structured recommendations with quick wins and long-term strategy.`;
-
-        individualReports.push({
-          id: 'comprehensive-fallback',
-          name: 'Comprehensive Analysis (Manual Fallback)',
-          phase: 'Phase 3',
-          prompt: fallbackPrompt,
-          markdown: `# Comprehensive Analysis - Manual Required\n\n⚠️ Automated analysis failed.\n\n## Run at https://gemini.google.com/\n\n\`\`\`\n${fallbackPrompt}\n\`\`\``,
-          timestamp: new Date().toISOString()
-        });
+        // Comprehensive analysis failed - return error instead of fallback
+        console.error('Comprehensive analysis failed - no fallback data allowed');
+        return NextResponse.json({
+          success: false,
+          error: 'Comprehensive analysis failed. Check Gemini API configuration.',
+          details: 'No fallback data allowed - real analysis required'
+        }, { status: 500 });
       }
 
       const overallScore = phase3Result.finalReport?.evaluationFramework?.overallScore || 0;
