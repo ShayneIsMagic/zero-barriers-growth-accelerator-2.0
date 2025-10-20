@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { ArrowRight, CheckCircle, Loader2, Play } from 'lucide-react';
 import { useState } from 'react';
-import { ContentPreviewCard } from './ContentPreviewCard';
+// ContentPreviewCard removed - using simple display instead
 import { IndividualReportsView } from './IndividualReportsView';
 
 export function PhasedAnalysisPage() {
@@ -268,7 +268,26 @@ export function PhasedAnalysisPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <ContentPreviewCard data={phase1Data.scrapedContent} />
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-semibold mb-2">Title:</h4>
+                    <p className="text-sm text-muted-foreground">{phase1Data.scrapedContent.title || 'No title found'}</p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-2">Meta Description:</h4>
+                    <p className="text-sm text-muted-foreground">{phase1Data.scrapedContent.metaDescription || 'No meta description found'}</p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-2">Keywords:</h4>
+                    <p className="text-sm text-muted-foreground">{phase1Data.scrapedContent.extractedKeywords?.join(', ') || 'No keywords found'}</p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-2">Content Preview:</h4>
+                    <p className="text-sm text-muted-foreground max-h-32 overflow-y-auto">
+                      {phase1Data.scrapedContent.cleanText?.substring(0, 500) || 'No content found'}...
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           )}

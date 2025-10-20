@@ -40,6 +40,7 @@ model Analysis {
   seo_analyses                                                        seo_analyses?
   transformation_analyses                                             transformation_analyses?
   value_insights                                                      value_insights[]
+  frameworkResults                                                    FrameworkResult[]
 
   @@index([userId])
 }
@@ -63,6 +64,111 @@ model User {
   system_config       system_config[]
   user_preferences    user_preferences[]
   websites            websites[]
+  contentSnapshots    ContentSnapshot[]
+}
+
+// Content Version Control System
+model ContentSnapshot {
+  id              String   @id @default(dbgenerated("gen_random_uuid()"))
+  url             String
+  title           String?
+  content         String
+  metadata        Json?
+  userId          String
+  createdAt       DateTime @default(now()) @db.Timestamp(6)
+
+  user            User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  proposedContent ProposedContent[]
+  comparisons     ContentComparison[]
+
+  @@index([userId])
+  @@index([url])
+}
+
+model ProposedContent {
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
+  snapshotId  String
+  content     String
+  version     Int      @default(1)
+  status      String   @default("draft") // draft, pending, approved, rejected
+  createdBy   String
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+
+  snapshot    ContentSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  comparisons ContentComparison[]
+
+  @@index([snapshotId])
+  @@index([status])
+}
+
+model ContentComparison {
+  id              String   @id @default(dbgenerated("gen_random_uuid()"))
+  existingId      String
+  proposedId      String
+  analysisResults Json?
+  similarityScore Float?
+  createdAt       DateTime @default(now()) @db.Timestamp(6)
+
+  existing        ContentSnapshot @relation(fields: [existingId], references: [id], onDelete: Cascade)
+  proposed        ProposedContent @relation(fields: [proposedId], references: [id], onDelete: Cascade)
+
+  @@index([existingId])
+  @@index([proposedId])
+}
+
+// Structured Framework Results Storage
+model FrameworkResult {
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
+  analysisId  String
+  framework   String   // 'golden-circle', 'b2c-elements', 'b2b-elements', 'clifton-strengths', 'revenue-trends'
+  results     Json     // Structured results instead of blob
+  score       Float?
+  metadata    Json?    // Additional metadata
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  
+  analysis    Analysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  categories  FrameworkCategory[]
+  
+  @@index([analysisId])
+  @@index([framework])
+  @@index([score])
+}
+
+model FrameworkCategory {
+  id              String   @id @default(dbgenerated("gen_random_uuid()"))
+  frameworkResultId String
+  categoryName    String   // 'functional', 'emotional', 'life_changing', etc.
+  categoryScore   Float?
+  presentElements Int?
+  totalElements   Int?
+  fraction        String?  // "18/30" format
+  evidence        Json?    // Evidence found for this category
+  recommendations Json?    // Category-specific recommendations
+  createdAt       DateTime @default(now()) @db.Timestamp(6)
+  
+  frameworkResult FrameworkResult @relation(fields: [frameworkResultId], references: [id], onDelete: Cascade)
+  elements        FrameworkElement[]
+  
+  @@index([frameworkResultId])
+  @@index([categoryName])
+}
+
+model FrameworkElement {
+  id                String   @id @default(dbgenerated("gen_random_uuid()"))
+  categoryId        String
+  elementName       String   // 'saves_time', 'reduces_anxiety', etc.
+  isPresent         Boolean  @default(false)
+  confidence        Float?   // 0-1 confidence score
+  evidence          Json?    // Evidence found for this element
+  revenueOpportunity String? // Revenue opportunity description
+  recommendations   Json?    // Element-specific recommendations
+  createdAt         DateTime @default(now()) @db.Timestamp(6)
+  
+  category          FrameworkCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  @@index([categoryId])
+  @@index([elementName])
+  @@index([isPresent])
 }
 
 model accessibility_issues {

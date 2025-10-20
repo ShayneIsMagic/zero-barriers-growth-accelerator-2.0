@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    console.log(`📊 Starting actionable report generation for: ${url}`);
+    console.log(`📊 Starting actionable report generation for: ${_url}`);
     console.log(`🔍 Analysis type: ${analysisType}`);
 
     const result = await ActionableReportService.generateComprehensiveReport(
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    console.log(`✅ Actionable report completed for: ${url}`);
+    console.log(`✅ Actionable report completed for: ${_url}`);
 
     return NextResponse.json({
       success: true,

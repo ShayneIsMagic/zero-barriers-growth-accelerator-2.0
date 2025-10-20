@@ -140,7 +140,7 @@ EXISTING CONTENT:
 - Word Count: ${existing.wordCount}
 - Title: ${existing.title}
 - Meta Description: ${existing.metaDescription}
-- Keywords: ${existing.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
+- Keywords: ${existing.extractedKeywords.slice(0, 10).join(', ')}
 - Content: ${existing.cleanText.substring(0, 2000)}
 
 ${proposed ? `

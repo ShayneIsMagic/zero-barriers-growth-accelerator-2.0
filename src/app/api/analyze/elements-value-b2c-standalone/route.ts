@@ -1,86 +1,45 @@
 /**
  * B2C Elements of Value Analysis API
- * Uses real AI analysis and Supabase storage - NO HARDCODED FALLBACKS
+ * Uses unified AI analysis service with structured storage
  */
 
-import { ElementsOfValueB2CService } from '@/lib/services/elements-value-b2c.service';
+import { AnalysisFramework, UnifiedAIAnalysisService } from '@/lib/shared/unified-ai-analysis.service';
+// import { StructuredStorageService } from '@/lib/services/structured-storage.service';
+// import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
-import { v4 as uuidv4 } from 'uuid';
 
-export const maxDuration = 60; // Increased for real AI analysis
+export const maxDuration = 30;
 
-// Helper function to generate revenue opportunities from analysis
-function generateRevenueOpportunities(analysis: any): string[] {
-  const opportunities: string[] = [];
 
-  // Find high-scoring elements that could drive revenue
-  const highScoringElements = analysis.elements
-    .filter((e: any) => e.score >= 70)
-    .sort((a: any, b: any) => b.score - a.score);
-
-  if (highScoringElements.length > 0) {
-    opportunities.push(`Leverage high-performing "${highScoringElements[0].element_name}" element (${highScoringElements[0].score}/100) for premium pricing`);
-  }
-
-  // Find low-scoring elements that represent opportunities
-  const lowScoringElements = analysis.elements
-    .filter((e: any) => e.score < 30)
-    .sort((a: any, b: any) => a.score - b.score);
-
-  if (lowScoringElements.length > 0) {
-    opportunities.push(`Improve "${lowScoringElements[0].element_name}" element (${lowScoringElements[0].score}/100) to unlock new revenue streams`);
-  }
-
-  // Category-based opportunities
-  if (analysis.functional_score < 50) {
-    opportunities.push('Enhance functional value elements to justify higher prices');
-  }
-
-  if (analysis.emotional_score < 50) {
-    opportunities.push('Develop emotional connections to increase customer loyalty and lifetime value');
-  }
-
-  return opportunities.length > 0 ? opportunities : ['Focus on improving overall value proposition to increase revenue potential'];
-}
-
-// Helper function to generate recommendations from analysis
-function generateRecommendations(analysis: any): string[] {
-  const recommendations: string[] = [];
-
-  // Overall score recommendations
-  if (analysis.overall_score < 50) {
-    recommendations.push('Focus on fundamental value elements before advanced features');
-  } else if (analysis.overall_score < 75) {
-    recommendations.push('Build on existing strengths while addressing key gaps');
-  } else {
-    recommendations.push('Maintain high performance while exploring new value opportunities');
-  }
-
-  // Category-specific recommendations
-  if (analysis.functional_score < analysis.emotional_score) {
-    recommendations.push('Strengthen functional value elements to match emotional appeal');
-  }
-
-  if (analysis.emotional_score < analysis.functional_score) {
-    recommendations.push('Develop emotional connections to complement functional benefits');
-  }
-
-  // Element-specific recommendations
-  const lowScoringElements = analysis.elements
-    .filter((e: any) => e.score < 40)
-    .slice(0, 3);
-
-  lowScoringElements.forEach((element: any) => {
-    recommendations.push(`Improve "${element.element_name}" element through targeted content and features`);
-  });
-
-  return recommendations.length > 0 ? recommendations : ['Continue monitoring and optimizing value elements'];
-}
+// B2C Elements of Value framework definition
+const B2C_FRAMEWORK: AnalysisFramework = {
+  name: 'B2C Elements of Value',
+  description: 'Analyze consumer value elements across functional, emotional, life-changing, and social impact categories',
+  elements: [
+    // Functional (8 elements)
+    'saves_time', 'simplifies', 'reduces_cost', 'reduces_risk',
+    'organizes', 'integrates', 'connects', 'fun_entertainment',
+    // Emotional (9 elements)
+    'reduces_anxiety', 'rewards_me', 'nostalgia', 'design_aesthetics',
+    'wellness', 'therapeutic_value', 'attractiveness', 'provides_access', 'variety',
+    // Life Changing (8 elements)
+    'self_actualization', 'motivation', 'heirloom', 'affiliation_belonging',
+    'provides_hopes', 'self_expression', 'provides_memories', 'badge_me',
+    // Social Impact (5 elements)
+    'belonging', 'environmental_consciousness', 'social_impact', 'community', 'purpose'
+  ],
+  categories: {
+    functional: ['saves_time', 'simplifies', 'reduces_cost', 'reduces_risk', 'organizes', 'integrates', 'connects', 'fun_entertainment'],
+    emotional: ['reduces_anxiety', 'rewards_me', 'nostalgia', 'design_aesthetics', 'wellness', 'therapeutic_value', 'attractiveness', 'provides_access', 'variety'],
+    life_changing: ['self_actualization', 'motivation', 'heirloom', 'affiliation_belonging', 'provides_hopes', 'self_expression', 'provides_memories', 'badge_me'],
+    social_impact: ['belonging', 'environmental_consciousness', 'social_impact', 'community', 'purpose']
+  },
+  analysisType: 'b2c-elements'
+};
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { url, scrapedContent } = body;
+    const { url, proposedContent } = await request.json();
 
     if (!url) {
       return NextResponse.json({
@@ -89,100 +48,25 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    if (!scrapedContent) {
-      return NextResponse.json({
-        success: false,
-        error: 'Scraped content is required'
-      }, { status: 400 });
-    }
-
-    console.log(`💰 Starting REAL B2C Elements of Value analysis for: ${url}`);
-
-    // Generate unique analysis ID
-    const analysisId = uuidv4();
-
-    // Normalize scraped content format
-    let normalizedContent;
-    if (typeof scrapedContent === 'string') {
-      normalizedContent = {
-        title: url.split('/')[2] || 'Website',
-        cleanText: scrapedContent
-      };
-    } else {
-      normalizedContent = scrapedContent;
-    }
-
-    // Run REAL AI analysis using the proper service
-    const analysis = await ElementsOfValueB2CService.analyze(
-      analysisId,
-      normalizedContent,
-      'general', // industry
-      [] // patterns - will be generated by the service
+    // Use the unified AI analysis service
+    const result = await UnifiedAIAnalysisService.runAnalysis(
+      B2C_FRAMEWORK,
+      url,
+      proposedContent
     );
 
-    console.log(`✅ REAL B2C Elements of Value analysis completed for: ${url}`);
-
-    // Use ONLY real AI analysis data - NO HARDCODED FALLBACKS
-    const frontendData = {
-      overall_score: analysis.overall_score,
-      functional_score: analysis.functional_score,
-      emotional_score: analysis.emotional_score,
-      life_changing_score: analysis.life_changing_score,
-      social_impact_score: analysis.social_impact_score,
-      categories: {
-        functional: {
-          score: analysis.functional_score,
-          elements: analysis.elements
-            .filter(e => e.element_category === 'functional')
-            .map(e => ({
-              name: e.element_name,
-              score: e.score,
-              evidence: e.evidence?.patterns?.join(', ') || 'No evidence found'
-            }))
-        },
-        emotional: {
-          score: analysis.emotional_score,
-          elements: analysis.elements
-            .filter(e => e.element_category === 'emotional')
-            .map(e => ({
-              name: e.element_name,
-              score: e.score,
-              evidence: e.evidence?.patterns?.join(', ') || 'No evidence found'
-            }))
-        },
-        life_changing: {
-          score: analysis.life_changing_score,
-          elements: analysis.elements
-            .filter(e => e.element_category === 'life_changing')
-            .map(e => ({
-              name: e.element_name,
-              score: e.score,
-              evidence: e.evidence?.patterns?.join(', ') || 'No evidence found'
-            }))
-        },
-        social_impact: {
-          score: analysis.social_impact_score,
-          elements: analysis.elements
-            .filter(e => e.element_category === 'social_impact')
-            .map(e => ({
-              name: e.element_name,
-              score: e.score,
-              evidence: e.evidence?.patterns?.join(', ') || 'No evidence found'
-            }))
-        }
-      },
-      // Generate revenue opportunities and recommendations from analysis
-      revenue_opportunities: generateRevenueOpportunities(analysis),
-      recommendations: generateRecommendations(analysis)
-    };
-
-    return NextResponse.json({
-      success: true,
-      url,
-      data: frontendData,
-      analysisId,
-      message: 'B2C Elements of Value analysis completed successfully with real AI analysis'
-    });
+    if (result.success) {
+      return NextResponse.json({
+        success: true,
+        ...result.data,
+        message: 'B2C Elements of Value analysis completed successfully using unified AI analysis service'
+      });
+    } else {
+      return NextResponse.json({
+        success: false,
+        error: result.error || 'B2C Elements of Value analysis failed'
+      }, { status: 500 });
+    }
 
   } catch (error) {
     console.error('B2C Elements of Value API execution error:', error);

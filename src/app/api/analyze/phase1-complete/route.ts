@@ -476,7 +476,7 @@ async function analyzeCompetitors(competitors: any[]) {
   }));
 }
 
-function generateCompetitionRecommendations(competitors: any[]) {
+function generateCompetitionRecommendations(_competitors: any[]) {
   return [
     'Analyze competitor content strategies',
     'Identify gaps in competitor offerings',

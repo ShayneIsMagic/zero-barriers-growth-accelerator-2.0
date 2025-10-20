@@ -1,4 +1,5 @@
-import EvaluationGuideViewer from '@/components/analysis/EvaluationGuideViewer';
+// EvaluationGuideViewer component was removed
+// This page is no longer available
 
 export default function EvaluationGuidePage() {
   return (
@@ -6,11 +7,15 @@ export default function EvaluationGuidePage() {
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Evaluation Guide Deliverable</h1>
         <p className="text-gray-600 mt-2">
-          Access the comprehensive Website Evaluation Worksheet Integration Guide that shows exactly how the system captures actual language and evidence matching.
+          This page has been removed. Please use the individual assessment pages for analysis.
         </p>
       </div>
       
-      <EvaluationGuideViewer />
+      <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+        <p className="text-muted-foreground">
+          The evaluation guide functionality has been integrated into the individual assessment pages.
+        </p>
+      </div>
     </div>
   );
 }

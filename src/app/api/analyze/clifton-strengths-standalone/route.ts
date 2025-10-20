@@ -1,57 +1,70 @@
 /**
- * Standalone CliftonStrengths Analysis API
- * Follows Content-Comparison pattern: No database dependencies
+ * CliftonStrengths Analysis API
+ * Uses unified AI analysis service with content-comparison approach
  */
 
+import { AnalysisFramework, UnifiedAIAnalysisService } from '@/lib/shared/unified-ai-analysis.service';
 import { NextRequest, NextResponse } from 'next/server';
-import { SimpleFrameworkAnalysisService } from '@/lib/simple-framework-analysis.service';
 
-export const maxDuration = 60; // Set max duration for Vercel serverless function
+export const maxDuration = 30;
+
+// CliftonStrengths framework definition
+const CLIFTON_STRENGTHS_FRAMEWORK: AnalysisFramework = {
+  name: 'CliftonStrengths',
+  description: 'Analyze content using Gallup\'s CliftonStrengths framework to identify dominant themes and strengths',
+  elements: [
+    'achiever', 'activator', 'adaptability', 'analytical', 'arranger', 'belief', 'command', 'communication',
+    'competition', 'connectedness', 'consistency', 'context', 'deliberative', 'developer', 'discipline',
+    'empathy', 'focus', 'futuristic', 'harmony', 'ideation', 'includer', 'individualization', 'input',
+    'intellection', 'learner', 'maximizer', 'positivity', 'relator', 'responsibility', 'restorative',
+    'self_assurance', 'significance', 'strategic', 'woo'
+  ],
+  categories: {
+    executing: ['achiever', 'arranger', 'belief', 'consistency', 'deliberative', 'discipline', 'focus', 'responsibility', 'restorative'],
+    influencing: ['activator', 'command', 'communication', 'competition', 'maximizer', 'self_assurance', 'significance', 'woo'],
+    relationship_building: ['adaptability', 'connectedness', 'developer', 'empathy', 'harmony', 'includer', 'individualization', 'positivity', 'relator'],
+    strategic_thinking: ['analytical', 'context', 'futuristic', 'ideation', 'input', 'intellection', 'learner', 'strategic']
+  },
+  analysisType: 'clifton-strengths'
+};
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { _url, scrapedContent } = body;
+    const { url, proposedContent } = await request.json();
 
-    if (!_url) {
+    if (!url) {
       return NextResponse.json({
         success: false,
         error: 'URL is required'
       }, { status: 400 });
     }
 
-    if (!scrapedContent) {
-      return NextResponse.json({
-        success: false,
-        error: 'Scraped content is required'
-      }, { status: 400 });
-    }
-
-    console.log(`🎯 Starting CliftonStrengths analysis for: ${_url}`);
-
-    const result = await SimpleFrameworkAnalysisService.analyzeCliftonStrengths(_url, scrapedContent);
+    // Use the unified AI analysis service
+    const result = await UnifiedAIAnalysisService.runAnalysis(
+      CLIFTON_STRENGTHS_FRAMEWORK,
+      url,
+      proposedContent
+    );
 
     if (result.success) {
-      console.log(`✅ CliftonStrengths analysis completed for: ${_url}`);
       return NextResponse.json({
         success: true,
-        url: _url,
-        data: result.analysis,
-        message: 'CliftonStrengths analysis completed successfully'
+        ...result.data,
+        message: 'CliftonStrengths analysis completed successfully using unified AI analysis service'
       });
     } else {
-      console.error(`❌ CliftonStrengths analysis failed for: ${_url}`, result.error);
       return NextResponse.json({
         success: false,
-        error: result.error
+        error: result.error || 'CliftonStrengths analysis failed'
       }, { status: 500 });
     }
+
   } catch (error) {
-    console.error('CliftonStrengths analysis API error:', error);
+    console.error('CliftonStrengths API execution error:', error);
     return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : 'Analysis failed',
-      details: 'CliftonStrengths analysis encountered an error'
+      error: 'CliftonStrengths analysis failed',
+      details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }
