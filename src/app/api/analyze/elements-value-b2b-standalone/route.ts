@@ -6,7 +6,7 @@
 import { AnalysisFramework, UnifiedAIAnalysisService } from '@/lib/shared/unified-ai-analysis.service';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const maxDuration = 30;
+export const maxDuration = 120; // 2 minutes for AI analysis
 
 // B2B Elements of Value framework definition
 const B2B_FRAMEWORK: AnalysisFramework = {

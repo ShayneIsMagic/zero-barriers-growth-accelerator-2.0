@@ -6,7 +6,7 @@
 import { AnalysisFramework, UnifiedAIAnalysisService } from '@/lib/shared/unified-ai-analysis.service';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const maxDuration = 30;
+export const maxDuration = 120; // 2 minutes for AI analysis
 
 // Golden Circle framework definition
 const GOLDEN_CIRCLE_FRAMEWORK: AnalysisFramework = {

@@ -6,7 +6,7 @@
 import { UniversalPuppeteerScraper } from '@/lib/universal-puppeteer-scraper';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const maxDuration = 30;
+export const maxDuration = 60; // 1 minute for scraping
 
 export async function POST(request: NextRequest) {
   try {

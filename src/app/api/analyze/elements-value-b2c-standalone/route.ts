@@ -8,7 +8,7 @@ import { AnalysisFramework, UnifiedAIAnalysisService } from '@/lib/shared/unifie
 // import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const maxDuration = 30;
+export const maxDuration = 120; // 2 minutes for AI analysis
 
 
 // B2C Elements of Value framework definition
