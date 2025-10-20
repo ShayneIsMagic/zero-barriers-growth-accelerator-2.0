@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { Copy, Download, Loader2, Target } from 'lucide-react';
+import { Copy, Download, History, Loader2, Plus, Save, Target } from 'lucide-react';
 import { useState } from 'react';
 
 export function GoldenCirclePage() {
@@ -16,6 +16,12 @@ export function GoldenCirclePage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Version control state
+  const [snapshotId, setSnapshotId] = useState<string | null>(null);
+  const [proposedContentId, setProposedContentId] = useState<string | null>(null);
+  const [isSavingSnapshot, setIsSavingSnapshot] = useState(false);
+  const [isCreatingProposed, setIsCreatingProposed] = useState(false);
 
   const runAnalysis = async () => {
     if (!url.trim()) {
@@ -69,6 +75,117 @@ export function GoldenCirclePage() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  // Version control functions
+  const saveSnapshot = async () => {
+    if (!url.trim() || !result?.existingData) {
+      setError('Please run analysis first to save snapshot');
+      return;
+    }
+
+    setIsSavingSnapshot(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/content/snapshots', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: url.trim(),
+          title: result.existingData.title || 'Untitled',
+          content: result.existingData.cleanText || '',
+          metadata: {
+            wordCount: result.existingData.wordCount,
+            keywords: result.existingData.extractedKeywords,
+            headings: result.existingData.headings
+          },
+          userId: 'current-user' // TODO: Get from auth context
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSnapshotId(data.snapshot.id);
+        setError(null);
+        console.log('✅ Snapshot saved successfully');
+      } else {
+        setError(data.error || 'Failed to save snapshot');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save snapshot');
+    } finally {
+      setIsSavingSnapshot(false);
+    }
+  };
+
+  const createProposedVersion = async () => {
+    if (!snapshotId || !proposedContent.trim()) {
+      setError('Please save a snapshot first and enter proposed content');
+      return;
+    }
+
+    setIsCreatingProposed(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/content/proposed', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          snapshotId,
+          content: proposedContent.trim(),
+          createdBy: 'current-user', // TODO: Get from auth context
+          status: 'draft'
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setProposedContentId(data.proposedContent.id);
+        setError(null);
+        console.log('✅ Proposed version created successfully');
+      } else {
+        setError(data.error || 'Failed to create proposed version');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create proposed version');
+    } finally {
+      setIsCreatingProposed(false);
+    }
+  };
+
+  const createVersionComparison = async () => {
+    if (!snapshotId || !proposedContentId) {
+      setError('Please save snapshot and create proposed version first');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/content/compare', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          existingId: snapshotId,
+          proposedId: proposedContentId,
+          analysisResults: result?.comparison || null,
+          similarityScore: result?.similarityScore || null
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setError(null);
+        console.log('✅ Version comparison created successfully');
+      } else {
+        setError(data.error || 'Failed to create version comparison');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create version comparison');
+    }
   };
 
   return (
@@ -198,6 +315,59 @@ Comprehensive marketing optimization tools and insights.
               </>
             )}
           </Button>
+
+          {/* Version Control Buttons */}
+          {result && (
+            <div className="flex gap-2 pt-4 border-t">
+              <Button
+                onClick={saveSnapshot}
+                disabled={isSavingSnapshot || snapshotId}
+                variant="outline"
+                size="sm"
+              >
+                {isSavingSnapshot ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" />
+                    {snapshotId ? 'Snapshot Saved' : 'Save Snapshot'}
+                  </>
+                )}
+              </Button>
+
+              <Button
+                onClick={createProposedVersion}
+                disabled={isCreatingProposed || !snapshotId || !proposedContent.trim() || proposedContentId}
+                variant="outline"
+                size="sm"
+              >
+                {isCreatingProposed ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="mr-2 h-4 w-4" />
+                    {proposedContentId ? 'Version Created' : 'Create Proposed Version'}
+                  </>
+                )}
+              </Button>
+
+              <Button
+                onClick={createVersionComparison}
+                disabled={!snapshotId || !proposedContentId}
+                variant="outline"
+                size="sm"
+              >
+                <History className="mr-2 h-4 w-4" />
+                Save Comparison
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
