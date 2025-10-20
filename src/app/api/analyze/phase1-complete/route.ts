@@ -161,25 +161,12 @@ async function runLighthouseAnalysis(url: string) {
   try {
     // Check if Google API key is available
     if (!process.env.GOOGLE_API_KEY) {
-      console.log('⚠️ Google API key not found, using mock Lighthouse data');
+      console.log('⚠️ Google API key not found, skipping Lighthouse analysis');
       return {
-        scores: {
-          performance: 75,
-          accessibility: 80,
-          bestPractices: 85,
-          seo: 70
-        },
-        metrics: {
-          firstContentfulPaint: 1500,
-          largestContentfulPaint: 2500,
-          cumulativeLayoutShift: 0.1,
-          speedIndex: 2000
-        },
-        opportunities: [
-          { id: 'unused-css-rules', title: 'Remove unused CSS', description: 'Remove unused CSS rules', score: 0.8 },
-          { id: 'unused-javascript', title: 'Remove unused JavaScript', description: 'Remove unused JavaScript code', score: 0.7 }
-        ],
-        note: 'Mock data - configure GOOGLE_API_KEY for real Lighthouse analysis'
+        error: 'Lighthouse analysis requires GOOGLE_API_KEY environment variable',
+        scores: null,
+        metrics: null,
+        opportunities: null
       };
     }
 
