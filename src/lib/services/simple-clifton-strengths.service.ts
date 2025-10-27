@@ -64,14 +64,14 @@ export class SimpleCliftonStrengthsService {
 
       return {
         success: true,
-        _url,
+        url,
         data: enhancedResult.analysis
       };
     } catch (error) {
       console.error('CliftonStrengths analysis failed:', error);
       return {
         success: false,
-        _url,
+        url,
         data: {} as any,
         error: error instanceof Error ? error.message : 'Analysis failed'
       };

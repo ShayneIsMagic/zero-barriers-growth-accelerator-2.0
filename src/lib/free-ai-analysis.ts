@@ -5,7 +5,7 @@
  */
 
 import { runLighthouseAnalysis } from '@/lib/lighthouse-service';
-import { _WebsiteAnalysisResult } from '@/types/analysis';
+import { WebsiteAnalysisResult } from '@/types/analysis';
 // import { scrapeWebsiteContent as scrapeFullContent } from '@/lib/reliable-content-scraper';
 import Anthropic from '@anthropic-ai/sdk';
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -64,7 +64,7 @@ function extractMetaDescriptionFromContent(html: string): string {
  */
 function extractHeadingsFromContent(html: string): string[] {
   const headingMatches = html.match(/<h[1-6][^>]*>(.*?)<\/h[1-6]>/gi) || [];
-  return headingMatches.map(heading => 
+  return headingMatches.map(heading =>
     heading.replace(/<[^>]*>/g, '').trim()
   ).filter(heading => heading.length > 0);
 }
@@ -316,7 +316,7 @@ export async function performRealAnalysis(url: string, analysisType: string = 'f
     // Step 1: Use real content scraping
     console.log('🕷️ Scraping real website content...');
     const scrapedContent = await scrapeWebsiteContent(url);
-    
+
     if (!scrapedContent || scrapedContent.length < 100) {
       throw new Error('Failed to scrape sufficient content from website');
     }
@@ -358,17 +358,17 @@ export async function performRealAnalysis(url: string, analysisType: string = 'f
       socialMediaStrategy: analysisResult.socialMediaStrategy,
       successMetrics: analysisResult.successMetrics,
       lighthouseAnalysis: lighthouseAnalysis,
-          // Include real scraped metadata
-          content: {
-            title: extractTitleFromContent(scrapedContent),
-            metaDescription: extractMetaDescriptionFromContent(scrapedContent),
-            headings: extractHeadingsFromContent(scrapedContent),
-            wordCount: scrapedContent.split(/\s+/).length,
-            imageCount: (scrapedContent.match(/<img/g) || []).length,
-            linkCount: (scrapedContent.match(/<a/g) || []).length,
-            extractedKeywords: extractKeywordsFromContent(scrapedContent),
-            schemaTypes: []
-          },
+      // Include real scraped metadata
+      // content: {
+      //   title: extractTitleFromContent(scrapedContent),
+      //   metaDescription: extractMetaDescriptionFromContent(scrapedContent),
+      //   headings: extractHeadingsFromContent(scrapedContent),
+      //   wordCount: scrapedContent.split(/\s+/).length,
+      //   imageCount: (scrapedContent.match(/<img/g) || []).length,
+      //   linkCount: (scrapedContent.match(/<a/g) || []).length,
+      //   extractedKeywords: extractKeywordsFromContent(scrapedContent),
+      //   schemaTypes: []
+      // },
       createdAt: new Date().toISOString()
     };
 

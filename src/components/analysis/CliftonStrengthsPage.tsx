@@ -1,18 +1,18 @@
 'use client';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { Copy, Download, History, Loader2, Plus, Save, Brain } from 'lucide-react';
+import { Brain, Copy, Download, History, Loader2, Plus, Save } from 'lucide-react';
 import { useState } from 'react';
 
 export function CliftonStrengthsPage() {
   const [url, setUrl] = useState('');
   const [proposedContent, setProposedContent] = useState('');
+  const [scrapedContent, setScrapedContent] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
@@ -34,15 +34,35 @@ export function CliftonStrengthsPage() {
     setResult(null);
 
     try {
+      // Parse scraped content if provided
+      let existingContent = null;
+      if (scrapedContent.trim()) {
+        try {
+          existingContent = JSON.parse(scrapedContent.trim());
+        } catch (e) {
+          setError('Invalid JSON in scraped content field');
+          return;
+        }
+      }
+
       const response = await fetch('/api/analyze/clifton-strengths-standalone', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           url: url.trim(),
           proposedContent: proposedContent.trim(),
+          existingContent: existingContent, // Pass scraped content from content-comparison
           analysisType: 'full'
         })
       });
+
+      // Check if response is JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        setError(`Server error: ${response.status} - ${response.statusText}`);
+        return;
+      }
 
       const data = await response.json();
 
@@ -60,6 +80,12 @@ export function CliftonStrengthsPage() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
+  };
+
+  const copyAnalysis = () => {
+    if (!result) return;
+    const analysisText = typeof result.analysis === 'string' ? result.analysis : JSON.stringify(result.analysis, null, 2);
+    copyToClipboard(analysisText);
   };
 
   const downloadMarkdown = () => {
@@ -100,7 +126,7 @@ export function CliftonStrengthsPage() {
             keywords: result.existingData.extractedKeywords,
             headings: result.existingData.headings
           },
-          userId: 'current-user' // TODO: Get from auth context
+          userId: 'current-user'
         })
       });
 
@@ -109,7 +135,6 @@ export function CliftonStrengthsPage() {
       if (data.success) {
         setSnapshotId(data.snapshot.id);
         setError(null);
-        console.log('✅ Snapshot saved successfully');
       } else {
         setError(data.error || 'Failed to save snapshot');
       }
@@ -136,7 +161,7 @@ export function CliftonStrengthsPage() {
         body: JSON.stringify({
           snapshotId,
           content: proposedContent.trim(),
-          createdBy: 'current-user', // TODO: Get from auth context
+          createdBy: 'current-user',
           status: 'draft'
         })
       });
@@ -146,7 +171,6 @@ export function CliftonStrengthsPage() {
       if (data.success) {
         setProposedContentId(data.proposedContent.id);
         setError(null);
-        console.log('✅ Proposed version created successfully');
       } else {
         setError(data.error || 'Failed to create proposed version');
       }
@@ -179,7 +203,6 @@ export function CliftonStrengthsPage() {
 
       if (data.success) {
         setError(null);
-        console.log('✅ Version comparison created successfully');
       } else {
         setError(data.error || 'Failed to create version comparison');
       }
@@ -258,6 +281,29 @@ We leverage our natural talents to deliver exceptional results.
             </p>
           </div>
 
+          {/* Paste Scraped Content (from Content-Comparison) */}
+          <div>
+            <label htmlFor="scraped-content" className="text-sm font-medium mb-2 block">
+              Paste Scraped Content (Optional - from Content-Comparison)
+            </label>
+            <Textarea
+              id="scraped-content"
+              name="scraped-content"
+              placeholder='Paste the "Copy Scraped Data" JSON from the Content-Comparison page here to reuse the scraped content...
+
+Example: {"title":"...","metaDescription":"...","wordCount":...}'
+              value={scrapedContent}
+              onChange={(e) => setScrapedContent(e.target.value)}
+              disabled={isAnalyzing}
+              className="min-h-[100px] font-mono text-xs"
+              aria-label="Paste scraped content from content-comparison"
+              aria-describedby="scraped-help"
+            />
+            <p id="scraped-help" className="text-xs text-muted-foreground mt-2">
+              💡 Paste the "Copy Scraped Data" JSON from Content-Comparison page to reuse already-scraped content. This prevents re-scraping.
+            </p>
+          </div>
+
           {/* What You Get */}
           <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
             <h4 className="font-semibold mb-2 text-blue-900 dark:text-blue-100">What You Get:</h4>
@@ -318,7 +364,7 @@ We leverage our natural talents to deliver exceptional results.
             <div className="flex gap-2 pt-4 border-t">
               <Button
                 onClick={saveSnapshot}
-                disabled={isSavingSnapshot || snapshotId}
+                disabled={isSavingSnapshot || !!snapshotId}
                 variant="outline"
                 size="sm"
               >
@@ -337,7 +383,7 @@ We leverage our natural talents to deliver exceptional results.
 
               <Button
                 onClick={createProposedVersion}
-                disabled={isCreatingProposed || !snapshotId || !proposedContent.trim() || proposedContentId}
+                disabled={isCreatingProposed || !snapshotId || !proposedContent.trim() || !!proposedContentId}
                 variant="outline"
                 size="sm"
               >
@@ -393,86 +439,65 @@ We leverage our natural talents to deliver exceptional results.
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
-                {result.data && (
-                  <div className="prose dark:prose-invert max-w-none">
-                    {/* Side-by-side comparison if proposed content exists */}
-                    {result.proposed && (
-                      <div className="grid md:grid-cols-2 gap-4 mb-6">
-                        {/* Existing Column */}
-                        <div className="p-4 border rounded-lg">
-                          <h3 className="text-lg font-semibold mb-3 flex items-center justify-between">
-                            Existing Content Analysis
-                            <Badge variant="outline">Current</Badge>
-                          </h3>
-                          <div className="space-y-3 text-sm">
-                            <div>
-                              <strong>Title:</strong> {result.existing.title}
-                            </div>
-                            <div>
-                              <strong>Meta Description:</strong> {result.existing.metaDescription}
-                            </div>
-                            <div>
-                              <strong>Word Count:</strong> {result.existing.wordCount}
-                            </div>
-                            <div>
-                              <strong>Top Keywords:</strong>
-                              <div className="flex flex-wrap gap-1 mt-1">
-                                {result.existing.extractedKeywords?.slice(0, 10).map((kw: string, i: number) => (
-                                  <Badge key={i} variant="secondary" className="text-xs">{kw}</Badge>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Proposed Column */}
-                        <div className="p-4 border rounded-lg bg-green-50 dark:bg-green-950 border-green-500">
-                          <h3 className="text-lg font-semibold mb-3 flex items-center justify-between text-green-900 dark:text-green-100">
-                            Proposed Content Analysis
-                            <Badge variant="default" className="bg-green-600">New</Badge>
-                          </h3>
-                          <div className="space-y-3 text-sm text-green-900 dark:text-green-100">
-                            <div>
-                              <strong>Title:</strong> {result.proposed.title}
-                            </div>
-                            <div>
-                              <strong>Meta Description:</strong> {result.proposed.metaDescription}
-                            </div>
-                            <div>
-                              <strong>Word Count:</strong> {result.proposed.wordCount}
-                            </div>
-                            <div>
-                              <strong>Top Keywords:</strong>
-                              <div className="flex flex-wrap gap-1 mt-1">
-                                {result.proposed.extractedKeywords?.slice(0, 10).map((kw: string, i: number) => (
-                                  <Badge key={i} variant="outline" className="text-xs">{kw}</Badge>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                {/* Overall Score */}
+                {result.analysis && (
+                  <div className="p-6 border rounded-lg bg-gradient-to-r from-purple-50 to-violet-50 dark:from-purple-950 dark:to-violet-950">
+                    <div className="text-center">
+                      <h3 className="text-2xl font-bold text-purple-900 dark:text-purple-100 mb-2">
+                        CliftonStrengths Analysis
+                      </h3>
+                      <div className="text-lg text-purple-700 dark:text-purple-300 mb-4">
+                        Analysis completed successfully
                       </div>
-                    )}
-
-                    {/* Analysis Results */}
-                    <div className="space-y-4">
-                      <h3 className="text-xl font-semibold">CliftonStrengths Analysis Results</h3>
-
-                      {/* Show analysis data */}
-                      <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-950">
-                        <h4 className="font-semibold mb-2">Assessment Results</h4>
-                        <div className="text-sm whitespace-pre-wrap">
-                          {JSON.stringify(result.data, null, 2)}
-                        </div>
-                      </div>
-
-                      <Button onClick={() => copyToClipboard(JSON.stringify(result.data, null, 2))}>
-                        <Copy className="mr-2 h-4 w-4" />
-                        Copy Analysis
-                      </Button>
                     </div>
                   </div>
                 )}
+
+                {/* AI Analysis Results */}
+                {result.analysis && (
+                  <div className="mt-6 space-y-4">
+                    <h3 className="text-xl font-semibold">AI Analysis Results</h3>
+
+                    {/* Show analysis data */}
+                    <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-950">
+                      <h4 className="font-semibold mb-2">CliftonStrengths Analysis</h4>
+                      <div className="text-sm whitespace-pre-wrap">
+                        {JSON.stringify(result.analysis, null, 2)}
+                      </div>
+                    </div>
+
+                    <Button onClick={() => copyToClipboard(JSON.stringify(result.analysis, null, 2))}>
+                      <Copy className="mr-2 h-4 w-4" />
+                      Copy Analysis
+                    </Button>
+                  </div>
+                )}
+
+
+                {/* Complete Analysis Data */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Complete Analysis Data</CardTitle>
+                    <CardDescription>
+                      Full analysis results including existing and proposed content
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="p-4 border rounded-lg bg-muted/50">
+                        <h4 className="font-semibold mb-2">Full Analysis Results</h4>
+                        <pre className="text-xs whitespace-pre-wrap overflow-auto max-h-96">
+                          {JSON.stringify(result, null, 2)}
+                        </pre>
+                      </div>
+                      <Button onClick={() => copyToClipboard(JSON.stringify(result, null, 2))}>
+                        <Copy className="mr-2 h-4 w-4" />
+                        Copy Complete Analysis
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
               </CardContent>
             </Card>
           </TabsContent>

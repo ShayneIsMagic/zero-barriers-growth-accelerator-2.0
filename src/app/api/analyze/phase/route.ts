@@ -37,14 +37,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { _url, phase, analysisId } = body;
 
-    if (!url || !phase) {
+    if (!_url || !phase) {
       return NextResponse.json({
         success: false,
         error: 'URL and phase are required'
       }, { status: 400 });
     }
 
-    console.log(`🚀 Starting Phase ${phase} for: ${url}`);
+    console.log(`🚀 Starting Phase ${phase} for: ${_url}`);
 
     // Create or update analysis record
     let analysis;
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const analyzer = new ThreePhaseAnalyzer(url);
+    const analyzer = new ThreePhaseAnalyzer(_url);
     const individualReports: IndividualReport[] = analysis ? JSON.parse(analysis.content || '{}').individualReports || [] : [];
 
     if (phase === 1) {
@@ -66,11 +66,11 @@ export async function POST(request: NextRequest) {
       const phase1Result = await analyzer.executePhase1();
 
       // Generate individual reports for Phase 1
-      const contentReport = generateContentCollectionReport(phase1Result.scrapedContent, url);
+      const contentReport = generateContentCollectionReport(phase1Result.scrapedContent, _url);
       individualReports.push(contentReport);
 
       if (phase1Result.lighthouseData) {
-        const lighthouseReport = generateLighthouseReport(phase1Result.lighthouseData, url);
+        const lighthouseReport = generateLighthouseReport(phase1Result.lighthouseData, _url);
         individualReports.push(lighthouseReport);
       } else {
         // Lighthouse failed - return error instead of fallback
@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
         );
 
         // Create minimal Phase 1 data by scraping directly
-        const analyzer = new ThreePhaseAnalyzer(url);
+        const analyzer = new ThreePhaseAnalyzer(_url);
         phase1Data = await analyzer.executePhase1();
       }
 
@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
       if (phase2Result.goldenCircle) {
         const prompt = `Analyze the website content for Golden Circle framework (Why, How, What, Who):
 
-URL: ${url}
+URL: ${_url}
 Title: ${phase1Data.scrapedContent?.title}
 Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
 
@@ -183,7 +183,7 @@ Return structured analysis with scores and evidence.`;
       if (phase2Result.elementsOfValue) {
         const prompt = `Analyze the website content for B2C Elements of Value (30 elements):
 
-URL: ${url}
+URL: ${_url}
 Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
 
 Evaluate each of the 30 B2C Elements of Value and provide specific evidence from the content.
@@ -203,7 +203,7 @@ Return structured analysis with scores for each element.`;
       if (phase2Result.b2bElements) {
         const prompt = `Analyze the website content for B2B Elements of Value (40 elements):
 
-URL: ${url}
+URL: ${_url}
 Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
 
 Evaluate each of the 40 B2B Elements of Value and provide specific evidence from the content.
@@ -223,7 +223,7 @@ Return structured analysis with scores for each element.`;
       if (phase2Result.cliftonStrengths) {
         const prompt = `Analyze the website content for CliftonStrengths (34 themes):
 
-URL: ${url}
+URL: ${_url}
 Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
 
 Evaluate each of the 34 CliftonStrengths themes and provide specific evidence from the content.
@@ -310,7 +310,7 @@ Return structured analysis with top 5 themes and scores.`;
         );
 
         // Create minimal data
-        const analyzer = new ThreePhaseAnalyzer(url);
+        const analyzer = new ThreePhaseAnalyzer(_url);
         phase1Data = await analyzer.executePhase1();
         phase2Data = await analyzer.executePhase2(phase1Data);
 
@@ -322,7 +322,7 @@ Return structured analysis with top 5 themes and scores.`;
         );
 
         // Create minimal Phase 1 data
-        const analyzer = new ThreePhaseAnalyzer(url);
+        const analyzer = new ThreePhaseAnalyzer(_url);
         phase1Data = await analyzer.executePhase1();
 
       } else if (!phase2Data) {
@@ -333,7 +333,7 @@ Return structured analysis with top 5 themes and scores.`;
         );
 
         // Create minimal Phase 2 data
-        const analyzer = new ThreePhaseAnalyzer(url);
+        const analyzer = new ThreePhaseAnalyzer(_url);
         phase2Data = await analyzer.executePhase2(phase1Data);
       }
 

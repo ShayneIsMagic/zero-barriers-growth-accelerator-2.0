@@ -1,0 +1,467 @@
+# Zero Barriers Growth Accelerator - Cursor Rules
+
+## 🎯 Project Overview
+This is a Next.js 14 AI-powered content analysis platform that evaluates website content using proven business frameworks (B2C/B2B Elements of Value, CliftonStrengths, Golden Circle) to identify growth barriers and provide actionable recommendations.
+
+## 🏗️ Tech Stack & Architecture
+- **Framework**: Next.js 14 with App Router
+- **Language**: TypeScript (strict mode enabled)
+- **Styling**: Tailwind CSS with custom design system
+- **UI Components**: Radix UI + Shadcn/ui
+- **Database**: Prisma + Supabase
+- **AI**: Google Gemini API
+- **Deployment**: Vercel serverless functions
+- **Testing**: Vitest + Playwright
+
+## 🚨 CRITICAL RULES - MUST FOLLOW
+
+### ❌ NEVER DO THESE
+- **NO FALLBACK DATA**: Never use mock/fallback data in production code
+- **NO CONSOLE.LOG**: Never use console.log in production (use proper logging)
+- **NO ANY TYPES**: Never use `any` type - always define proper interfaces
+- **NO UNUSED IMPORTS**: Always remove unused imports and variables
+- **NO HARDCODED VALUES**: Use environment variables for all secrets/config
+- **NO INLINE STYLES**: Use Tailwind classes, never style={{}} in JSX
+- **NO MIXED QUOTES**: Always use single quotes for strings
+- **NO VAR**: Always use const/let, never var
+
+## ✅ MANDATORY CODE STANDARDS
+
+### TypeScript Configuration
+- **STRICT MODE ONLY**: Use strict TypeScript with proper type definitions
+- **INTERFACES OVER TYPES**: Prefer interfaces over types for object shapes
+- **GENERIC CONSTRAINTS**: Use proper generic constraints and utility types
+- **EXPLICIT RETURN TYPES**: Always define return types for functions
+- **TYPED ERROR HANDLING**: Use proper error handling with typed errors
+- **NO IMPLICIT ANY**: Never allow implicit any types
+- **PROPER NULL CHECKS**: Always check for null/undefined before use
+
+### Code Quality Rules
+- **ESLINT STRICT**: Follow all ESLint rules without exceptions
+- **PRETTIER FORMATTING**: Use Prettier for consistent formatting
+- **MEANINGFUL NAMES**: Use descriptive variable and function names
+- **SINGLE RESPONSIBILITY**: Each function should do one thing well
+- **DRY PRINCIPLE**: Don't repeat yourself - extract common logic
+- **KISS PRINCIPLE**: Keep it simple and stupid
+
+### React/Next.js Patterns
+- Use functional components with hooks
+- Implement proper error boundaries
+- Use Next.js App Router patterns (server/client components)
+- Prefer server components when possible
+- Use proper loading and error states
+- Implement proper SEO with metadata
+
+### File Organization
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── api/               # API routes
+│   ├── dashboard/         # Dashboard pages
+│   └── globals.css        # Global styles
+├── components/            # Reusable UI components
+│   ├── ui/               # Base UI components (Shadcn)
+│   └── analysis/         # Analysis-specific components
+├── lib/                  # Utility libraries
+│   ├── services/         # Business logic services
+│   ├── shared/           # Shared utilities
+│   └── auth.ts           # Authentication utilities
+├── types/                # TypeScript type definitions
+└── hooks/                # Custom React hooks
+```
+
+### Naming Conventions
+- **Files**: kebab-case for files, PascalCase for components
+- **Variables**: camelCase
+- **Constants**: UPPER_SNAKE_CASE
+- **Components**: PascalCase
+- **API Routes**: kebab-case
+- **Types/Interfaces**: PascalCase with descriptive suffixes
+
+## Framework Analysis System
+
+### B2C Elements of Value (30 elements)
+- **Functional**: saves_time, simplifies, reduces_cost, reduces_risk, organizes, integrates, connects, fun_entertainment
+- **Emotional**: reduces_anxiety, rewards_me, nostalgia, design_aesthetics, wellness, therapeutic_value, attractiveness, provides_access, variety
+- **Life-Changing**: self_actualization, motivation, heirloom, affiliation_belonging, provides_hopes, self_expression, provides_memories, badge_me
+- **Social Impact**: belonging, environmental_consciousness, social_impact, community, purpose
+
+### B2B Elements of Value (40 elements)
+- **Table Stakes**: meeting_specifications, acceptable_price, regulatory_compliance, ethical_standards
+- **Functional**: improved_top_line, cost_reduction, product_quality, scalability, innovation, risk_reduction, reach, flexibility, component_quality
+- **Ease of Doing Business**: time_savings, reduced_effort, decreased_hassles, information, transparency, organization, simplification, connection, integration, access, availability, variety, configurability, responsiveness, expertise, commitment, stability, cultural_fit
+- **Individual**: network_expansion, marketability, reputational_assurance, design_aesthetics_b2b, growth_development, reduced_anxiety_b2b, fun_perks
+- **Inspirational**: vision, hope_b2b, social_responsibility
+
+### CliftonStrengths (34 themes across 4 domains)
+- **Executing**: achiever, arranger, belief, consistency, deliberative, discipline, focus, responsibility, restorative
+- **Influencing**: activator, command, communication, competition, maximizer, self_assurance, significance, woo
+- **Relationship Building**: adaptability, connectedness, developer, empathy, harmony, includer, individualization, positivity, relator
+- **Strategic Thinking**: analytical, context, futuristic, ideation, input, intellection, learner, strategic
+
+### Golden Circle (12 elements across 3 categories)
+- **Why**: why_purpose, why_belief, why_cause, why_inspiration
+- **How**: how_process, how_methodology, how_differentiation, how_values
+- **What**: what_product, what_service, what_features, what_benefits
+
+## API Development Standards
+
+### API Route Structure
+```typescript
+export async function POST(request: NextRequest) {
+  try {
+    // 1. Validate input
+    const { url, proposedContent } = await request.json();
+    if (!url) {
+      return NextResponse.json({ success: false, error: 'URL is required' }, { status: 400 });
+    }
+
+    // 2. Scrape content
+    const { ProductionContentExtractor } = await import('@/lib/production-content-extractor');
+    const extractor = new ProductionContentExtractor();
+    const scrapedData = await extractor.extractContent(url);
+
+    // 3. Process data
+    const existingData = transformScrapedData(scrapedData);
+
+    // 4. Generate analysis
+    const analysis = await generateFrameworkAnalysis(existingData, proposedData, url);
+
+    // 5. Return structured response
+    return NextResponse.json({
+      success: true,
+      existing: existingData,
+      proposed: proposedData,
+      analysis: analysis,
+      message: 'Analysis completed successfully'
+    });
+
+  } catch (error) {
+    console.error('API execution error:', error);
+    return NextResponse.json({
+      success: false,
+      error: 'Analysis failed',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
+  }
+}
+```
+
+### Error Handling
+- Always use try-catch blocks
+- Provide meaningful error messages
+- Include error details for debugging
+- Use proper HTTP status codes
+- Implement graceful degradation
+
+### Content Scraping
+- Use ProductionContentExtractor for Vercel compatibility
+- Implement proper error handling for blocked websites
+- Provide helpful suggestions for scraper-friendly alternatives
+- Handle different content types (HTML, text, etc.)
+
+## Component Development
+
+### Component Structure
+```typescript
+interface ComponentProps {
+  // Define all props with proper types
+}
+
+export function ComponentName({ prop1, prop2 }: ComponentProps) {
+  // 1. State and hooks
+  const [state, setState] = useState();
+
+  // 2. Effects
+  useEffect(() => {
+    // Effect logic
+  }, [dependencies]);
+
+  // 3. Event handlers
+  const handleEvent = useCallback(() => {
+    // Handler logic
+  }, [dependencies]);
+
+  // 4. Render
+  return (
+    <div className="component-classes">
+      {/* Component JSX */}
+    </div>
+  );
+}
+```
+
+### Styling Guidelines
+- Use Tailwind CSS classes
+- Follow the custom design system (growth, success, warning, barrier colors)
+- Use proper responsive design patterns
+- Implement proper loading and error states
+- Use consistent spacing and typography
+
+### State Management
+- Use React hooks for local state
+- Use proper dependency arrays in useEffect
+- Implement proper cleanup in useEffect
+- Use useCallback for event handlers
+- Use useMemo for expensive calculations
+
+## Database & Data Management
+
+### Prisma Schema
+- Use proper relationships between models
+- Implement proper indexing
+- Use appropriate data types
+- Include proper validation
+
+### Data Validation
+- Use Zod for runtime validation
+- Validate all API inputs
+- Implement proper error handling for validation failures
+- Use proper TypeScript types
+
+## Testing Standards
+
+### Unit Tests
+- Test all utility functions
+- Test component rendering
+- Test API route handlers
+- Use proper mocking for external dependencies
+
+### Integration Tests
+- Test API endpoints end-to-end
+- Test component interactions
+- Test database operations
+- Use proper test data setup
+
+### E2E Tests
+- Test critical user flows
+- Test framework analysis workflows
+- Test error scenarios
+- Use proper page object patterns
+
+## Security & Performance
+
+### Security
+- Validate all inputs
+- Use proper authentication
+- Implement proper CORS
+- Sanitize user data
+- Use environment variables for secrets
+
+### Performance
+- Use proper caching strategies
+- Implement proper loading states
+- Optimize images and assets
+- Use proper code splitting
+- Monitor bundle size
+
+### SEO
+- Implement proper metadata
+- Use semantic HTML
+- Implement proper structured data
+- Use proper heading hierarchy
+- Optimize for Core Web Vitals
+
+## AI Integration
+
+### Gemini API Usage
+- Use proper error handling
+- Implement proper timeout handling
+- Use structured prompts
+- Validate AI responses
+- Implement fallback mechanisms
+
+### Prompt Engineering
+- Use clear, specific prompts
+- Include proper context
+- Use structured output formats
+- Implement proper validation
+- Use consistent terminology
+
+## Deployment & DevOps
+
+### Vercel Configuration
+- Use proper serverless function configuration
+- Implement proper environment variables
+- Use proper build configuration
+- Monitor function performance
+
+### Environment Management
+- Use proper environment variable naming
+- Implement proper secret management
+- Use different configurations for different environments
+- Document all required environment variables
+
+## Code Quality
+
+### Linting & Formatting
+- Use ESLint with proper rules
+- Use Prettier for code formatting
+- Use proper import ordering
+- Remove unused imports and variables
+
+### Git Workflow
+- Use meaningful commit messages
+- Use proper branch naming
+- Implement proper pull request reviews
+- Use proper issue tracking
+
+## Documentation
+
+### Code Documentation
+- Document all public APIs
+- Use proper JSDoc comments
+- Document complex business logic
+- Include usage examples
+
+### README Updates
+- Keep documentation current
+- Include setup instructions
+- Document all environment variables
+- Include troubleshooting guides
+
+## 🚀 PRODUCTION READINESS RULES
+
+### Environment Variables
+- **REQUIRED VARS**: DATABASE_URL, NEXTAUTH_SECRET, NEXTAUTH_URL, GEMINI_API_KEY
+- **NO HARDCODED SECRETS**: All sensitive data must be in environment variables
+- **PROPER VALIDATION**: Validate all environment variables on startup
+- **FALLBACK HANDLING**: Graceful degradation when env vars are missing
+
+### Error Handling
+- **NO SILENT FAILURES**: Always handle errors explicitly
+- **PROPER LOGGING**: Use structured logging instead of console.log
+- **USER-FRIENDLY MESSAGES**: Show meaningful error messages to users
+- **GRACEFUL DEGRADATION**: App should work even when some features fail
+
+### Performance
+- **LAZY LOADING**: Use dynamic imports for heavy components
+- **OPTIMIZE IMAGES**: Use Next.js Image component
+- **BUNDLE SIZE**: Monitor and minimize bundle size
+- **CACHING**: Implement proper caching strategies
+
+## 🔧 DEVELOPMENT WORKFLOW
+
+### Before Committing
+1. **RUN LINTING**: `npm run lint:fix`
+2. **RUN TESTS**: `npm run test`
+3. **TYPE CHECK**: `npm run type-check`
+4. **BUILD CHECK**: `npm run build`
+5. **REMOVE FALLBACKS**: Ensure no mock data exists
+
+### Code Review Checklist
+- [ ] No fallback/mock data
+- [ ] All TypeScript errors fixed
+- [ ] ESLint warnings resolved
+- [ ] Proper error handling
+- [ ] Environment variables used
+- [ ] Tests written/updated
+- [ ] Documentation updated
+
+## Framework-Specific Guidelines
+
+### Content Comparison
+- Implement proper side-by-side analysis
+- Use proper scoring algorithms
+- Implement proper recommendation logic
+- Handle edge cases properly
+
+### Framework Analysis
+- Use consistent scoring methodology
+- Implement proper evidence collection
+- Use proper recommendation generation
+- Handle framework-specific requirements
+
+### Dashboard Components
+- Implement proper loading states
+- Use proper error handling
+- Implement proper data visualization
+- Use consistent UI patterns
+
+## Common Patterns
+
+### API Response Structure
+```typescript
+interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  details?: string;
+  message?: string;
+}
+```
+
+### Error Handling Pattern
+```typescript
+try {
+  // Operation
+} catch (error) {
+  console.error('Operation failed:', error);
+  return NextResponse.json({
+    success: false,
+    error: 'Operation failed',
+    details: error instanceof Error ? error.message : 'Unknown error'
+  }, { status: 500 });
+}
+```
+
+### Component Error Boundary
+```typescript
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error?: Error;
+}
+
+class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('Error caught by boundary:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <ErrorFallback error={this.state.error} />;
+    }
+
+    return this.props.children;
+  }
+}
+```
+
+## Best Practices
+
+1. **Always use TypeScript strict mode**
+2. **Implement proper error handling**
+3. **Use proper loading states**
+4. **Follow the established patterns**
+5. **Write meaningful tests**
+6. **Document complex logic**
+7. **Use proper naming conventions**
+8. **Implement proper accessibility**
+9. **Follow security best practices**
+10. **Monitor performance metrics**
+
+## Zero Barriers Brand Guidelines
+
+### Color Usage
+- **Growth (Blue)**: Primary actions, success states, positive metrics
+- **Success (Green)**: Completed actions, positive outcomes, growth indicators
+- **Warning (Yellow)**: Caution states, attention needed, medium priority
+- **Barrier (Red)**: Errors, critical issues, things needing improvement
+
+### UI Patterns
+- Use consistent spacing and typography
+- Implement proper visual hierarchy
+- Use appropriate icons and imagery
+- Follow accessibility guidelines
+- Maintain consistent component styling
+
+Remember: This project focuses on identifying and removing growth barriers through systematic content analysis. Every feature should contribute to this core mission while maintaining high code quality and user experience standards.

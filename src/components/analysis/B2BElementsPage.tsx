@@ -1,18 +1,18 @@
 'use client';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { Copy, Download, History, Loader2, Plus, Save, BarChart3 } from 'lucide-react';
+import { BarChart3, Brain, Copy, Download, FileText, History, Loader2, Plus, Save, Target, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 
 export function B2BElementsPage() {
   const [url, setUrl] = useState('');
   const [proposedContent, setProposedContent] = useState('');
+  const [scrapedContent, setScrapedContent] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
@@ -34,15 +34,35 @@ export function B2BElementsPage() {
     setResult(null);
 
     try {
+      // Parse scraped content if provided
+      let existingContent = null;
+      if (scrapedContent.trim()) {
+        try {
+          existingContent = JSON.parse(scrapedContent.trim());
+        } catch (e) {
+          setError('Invalid JSON in scraped content field');
+          return;
+        }
+      }
+
       const response = await fetch('/api/analyze/elements-value-b2b-standalone', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           url: url.trim(),
           proposedContent: proposedContent.trim(),
+          existingContent: existingContent, // Pass scraped content from content-comparison
           analysisType: 'full'
         })
       });
+
+      // Check if response is JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        setError(`Server error: ${response.status} - ${response.statusText}`);
+        return;
+      }
 
       const data = await response.json();
 
@@ -60,6 +80,12 @@ export function B2BElementsPage() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
+  };
+
+  const copyAnalysis = () => {
+    if (!result) return;
+    const analysisText = typeof result.comparison === 'string' ? result.comparison : JSON.stringify(result.comparison, null, 2);
+    copyToClipboard(analysisText);
   };
 
   const downloadMarkdown = () => {
@@ -100,7 +126,7 @@ export function B2BElementsPage() {
             keywords: result.existingData.extractedKeywords,
             headings: result.existingData.headings
           },
-          userId: 'current-user' // TODO: Get from auth context
+          userId: 'current-user'
         })
       });
 
@@ -109,7 +135,6 @@ export function B2BElementsPage() {
       if (data.success) {
         setSnapshotId(data.snapshot.id);
         setError(null);
-        console.log('✅ Snapshot saved successfully');
       } else {
         setError(data.error || 'Failed to save snapshot');
       }
@@ -136,7 +161,7 @@ export function B2BElementsPage() {
         body: JSON.stringify({
           snapshotId,
           content: proposedContent.trim(),
-          createdBy: 'current-user', // TODO: Get from auth context
+          createdBy: 'current-user',
           status: 'draft'
         })
       });
@@ -146,7 +171,6 @@ export function B2BElementsPage() {
       if (data.success) {
         setProposedContentId(data.proposedContent.id);
         setError(null);
-        console.log('✅ Proposed version created successfully');
       } else {
         setError(data.error || 'Failed to create proposed version');
       }
@@ -179,7 +203,6 @@ export function B2BElementsPage() {
 
       if (data.success) {
         setError(null);
-        console.log('✅ Version comparison created successfully');
       } else {
         setError(data.error || 'Failed to create version comparison');
       }
@@ -258,6 +281,29 @@ Comprehensive B2B solutions that drive business growth and operational efficienc
             </p>
           </div>
 
+          {/* Paste Scraped Content (from Content-Comparison) */}
+          <div>
+            <label htmlFor="scraped-content" className="text-sm font-medium mb-2 block">
+              Paste Scraped Content (Optional - from Content-Comparison)
+            </label>
+            <Textarea
+              id="scraped-content"
+              name="scraped-content"
+              placeholder='Paste the "Copy Scraped Data" JSON from the Content-Comparison page here to reuse the scraped content...
+
+Example: {"title":"...","metaDescription":"...","wordCount":...}'
+              value={scrapedContent}
+              onChange={(e) => setScrapedContent(e.target.value)}
+              disabled={isAnalyzing}
+              className="min-h-[100px] font-mono text-xs"
+              aria-label="Paste scraped content from content-comparison"
+              aria-describedby="scraped-help"
+            />
+            <p id="scraped-help" className="text-xs text-muted-foreground mt-2">
+              💡 Paste the "Copy Scraped Data" JSON from Content-Comparison page to reuse already-scraped content. This prevents re-scraping.
+            </p>
+          </div>
+
           {/* What You Get */}
           <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
             <h4 className="font-semibold mb-2 text-blue-900 dark:text-blue-100">What You Get:</h4>
@@ -318,7 +364,7 @@ Comprehensive B2B solutions that drive business growth and operational efficienc
             <div className="flex gap-2 pt-4 border-t">
               <Button
                 onClick={saveSnapshot}
-                disabled={isSavingSnapshot || snapshotId}
+                disabled={isSavingSnapshot || !!snapshotId}
                 variant="outline"
                 size="sm"
               >
@@ -337,7 +383,7 @@ Comprehensive B2B solutions that drive business growth and operational efficienc
 
               <Button
                 onClick={createProposedVersion}
-                disabled={isCreatingProposed || !snapshotId || !proposedContent.trim() || proposedContentId}
+                disabled={isCreatingProposed || !snapshotId || !proposedContent.trim() || !!proposedContentId}
                 variant="outline"
                 size="sm"
               >
@@ -370,177 +416,211 @@ Comprehensive B2B solutions that drive business growth and operational efficienc
 
       {/* Results */}
       {result && (
-        <Tabs defaultValue="analysis" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="analysis">Analysis Results</TabsTrigger>
-            <TabsTrigger value="existing">Existing Content</TabsTrigger>
-            {result.proposed && <TabsTrigger value="proposed">Proposed Content</TabsTrigger>}
-          </TabsList>
-
-          {/* Analysis Tab */}
-          <TabsContent value="analysis">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>B2B Elements of Value Analysis</CardTitle>
-                    <CardDescription>40 B2B Elements framework analysis</CardDescription>
-                  </div>
-                  <Button onClick={downloadMarkdown} variant="outline">
+        <div className="space-y-6">
+          {/* Header with Actions */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Brain className="h-6 w-6 text-green-600" />
+                    B2B Elements of Value Analysis
+                  </CardTitle>
+                  <CardDescription>40 B2B Elements framework analysis results</CardDescription>
+                </div>
+                <div className="flex gap-2">
+                  <Button onClick={copyAnalysis} variant="outline" size="sm">
+                    <Copy className="mr-2 h-4 w-4" />
+                    Copy Analysis
+                  </Button>
+                  <Button onClick={downloadMarkdown} variant="outline" size="sm">
                     <Download className="mr-2 h-4 w-4" />
                     Download Report
                   </Button>
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {result.analysis && (
-                  <div className="prose dark:prose-invert max-w-none">
-                    {/* Side-by-side comparison if proposed content exists */}
-                    {result.proposed && (
-                      <div className="grid md:grid-cols-2 gap-4 mb-6">
-                        {/* Existing Column */}
-                        <div className="p-4 border rounded-lg">
-                          <h3 className="text-lg font-semibold mb-3 flex items-center justify-between">
-                            Existing Content Analysis
-                            <Badge variant="outline">Current</Badge>
-                          </h3>
-                          <div className="space-y-3 text-sm">
-                            <div>
-                              <strong>Title:</strong> {result.existing.title}
-                            </div>
-                            <div>
-                              <strong>Meta Description:</strong> {result.existing.metaDescription}
-                            </div>
-                            <div>
-                              <strong>Word Count:</strong> {result.existing.wordCount}
-                            </div>
-                            <div>
-                              <strong>Top Keywords:</strong>
-                              <div className="flex flex-wrap gap-1 mt-1">
-                                {result.existing.extractedKeywords?.slice(0, 10).map((kw: string, i: number) => (
-                                  <Badge key={i} variant="secondary" className="text-xs">{kw}</Badge>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+              </div>
+            </CardHeader>
+          </Card>
 
-                        {/* Proposed Column */}
-                        <div className="p-4 border rounded-lg bg-green-50 dark:bg-green-950 border-green-500">
-                          <h3 className="text-lg font-semibold mb-3 flex items-center justify-between text-green-900 dark:text-green-100">
-                            Proposed Content Analysis
-                            <Badge variant="default" className="bg-green-600">New</Badge>
-                          </h3>
-                          <div className="space-y-3 text-sm text-green-900 dark:text-green-100">
-                            <div>
-                              <strong>Title:</strong> {result.proposed.title}
-                            </div>
-                            <div>
-                              <strong>Meta Description:</strong> {result.proposed.metaDescription}
-                            </div>
-                            <div>
-                              <strong>Word Count:</strong> {result.proposed.wordCount}
-                            </div>
-                            <div>
-                              <strong>Top Keywords:</strong>
-                              <div className="flex flex-wrap gap-1 mt-1">
-                                {result.proposed.extractedKeywords?.slice(0, 10).map((kw: string, i: number) => (
-                                  <Badge key={i} variant="outline" className="text-xs">{kw}</Badge>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Analysis Results */}
-                    <div className="space-y-4">
-                      <h3 className="text-xl font-semibold">B2B Elements Analysis Results</h3>
-
-                      {/* Show analysis data */}
-                      <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-950">
-                        <h4 className="font-semibold mb-2">Assessment Results</h4>
-                        <div className="text-sm whitespace-pre-wrap">
-                          {JSON.stringify(result.analysis, null, 2)}
-                        </div>
-                      </div>
-
-                      <Button onClick={() => copyToClipboard(JSON.stringify(result.analysis, null, 2))}>
-                        <Copy className="mr-2 h-4 w-4" />
-                        Copy Analysis
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Existing Content Tab */}
-          <TabsContent value="existing">
+          {/* Side-by-Side Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left Column - Existing Content */}
             <Card>
               <CardHeader>
-                <CardTitle>Existing Website Content</CardTitle>
-                <CardDescription>Current live content from {url}</CardDescription>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-green-600" />
+                  Existing Content
+                </CardTitle>
+                <CardDescription>Content scraped from {url}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="p-3 border rounded-lg">
-                    <h4 className="font-semibold mb-2">Meta Information</h4>
-                    <div className="space-y-2 text-sm">
-                      <div><strong>Title:</strong> {result.existing.title}</div>
-                      <div><strong>Description:</strong> {result.existing.metaDescription}</div>
-                      <div><strong>Keywords:</strong> {result.existing.metaKeywords?.join(', ') || 'None'}</div>
-                    </div>
-                  </div>
-
-                  <div className="p-3 border rounded-lg">
-                    <h4 className="font-semibold mb-2">Content Preview</h4>
-                    <div className="max-h-96 overflow-y-auto">
-                      <pre className="text-xs whitespace-pre-wrap bg-gray-50 dark:bg-gray-900 p-3 rounded">
-                        {result.existing.cleanText}
-                      </pre>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      📊 Total content length: {result.existing.cleanText.length.toLocaleString()} characters
+                  <div className="bg-muted p-4 rounded-lg">
+                    <h4 className="font-semibold mb-2">Content Summary</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {result.existing?.wordCount ? `${result.existing.wordCount} words` : 'Content analysis available'}
                     </p>
+                  </div>
+                  <div className="max-h-96 overflow-y-auto">
+                    <pre className="text-xs bg-muted p-3 rounded whitespace-pre-wrap">
+                      {result.existing?.cleanText?.substring(0, 2000) || 'No existing content data available'}
+                    </pre>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
 
-          {/* Proposed Content Tab */}
-          {result.proposed && (
-            <TabsContent value="proposed">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Proposed New Content</CardTitle>
-                  <CardDescription>Your suggested content changes</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="p-3 border rounded-lg">
-                      <h4 className="font-semibold mb-2">Proposed Meta Information</h4>
-                      <div className="space-y-2 text-sm">
-                        <div><strong>Title:</strong> {result.proposed.title}</div>
-                        <div><strong>Description:</strong> {result.proposed.metaDescription}</div>
+            {/* Right Column - Proposed Content */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5 text-purple-600" />
+                  Proposed Content
+                </CardTitle>
+                <CardDescription>
+                  {proposedContent ? 'Your proposed new content' : 'No proposed content provided'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="bg-muted p-4 rounded-lg">
+                    <h4 className="font-semibold mb-2">Content Summary</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {proposedContent ? `${proposedContent.length} characters` : 'No proposed content provided'}
+                    </p>
+                  </div>
+                  <div className="max-h-96 overflow-y-auto">
+                    <pre className="text-xs bg-muted p-3 rounded whitespace-pre-wrap">
+                      {proposedContent || 'No proposed content provided'}
+                    </pre>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* AI Analysis Results */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-6 w-6 text-green-600" />
+                AI Analysis Results
+              </CardTitle>
+              <CardDescription>B2B Elements of Value framework analysis</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tabs defaultValue="overview" className="space-y-4">
+                <TabsList className="grid w-full grid-cols-4">
+                  <TabsTrigger value="overview">Overview</TabsTrigger>
+                  <TabsTrigger value="detailed">Detailed Analysis</TabsTrigger>
+                  <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
+                  <TabsTrigger value="raw">Raw Data</TabsTrigger>
+                </TabsList>
+
+                {/* Overview Tab */}
+                <TabsContent value="overview" className="space-y-4">
+                  {result.comparison && (
+                    <div className="p-6 border rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950">
+                      <div className="text-center">
+                        <h3 className="text-2xl font-bold text-green-900 dark:text-green-100 mb-2">
+                          B2B Elements of Value Analysis
+                        </h3>
+                        <div className="text-lg text-green-700 dark:text-green-300 mb-4">
+                          Analysis completed successfully
+                        </div>
                       </div>
                     </div>
+                  )}
 
-                    <div className="p-3 border rounded-lg">
-                      <h4 className="font-semibold mb-2">Proposed Content</h4>
-                      <pre className="text-xs whitespace-pre-wrap bg-gray-50 dark:bg-gray-900 p-3 rounded">
-                        {result.proposed.cleanText}
-                      </pre>
+                  {/* AI Analysis Results */}
+                  {result.comparison && (
+                    <div className="mt-6 space-y-4">
+                      <h3 className="text-xl font-semibold">AI Analysis Results</h3>
+
+                      {/* Show analysis data */}
+                      <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-950">
+                        <h4 className="font-semibold mb-2">B2B Elements of Value Analysis</h4>
+                        <div className="text-sm whitespace-pre-wrap max-h-96 overflow-auto">
+                          {typeof result.comparison === 'string' ? result.comparison : JSON.stringify(result.comparison, null, 2)}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          )}
-        </Tabs>
+                  )}
+                </TabsContent>
+
+                {/* Detailed Analysis Tab */}
+                <TabsContent value="detailed" className="space-y-4">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Complete Analysis Data</CardTitle>
+                      <CardDescription>
+                        Full analysis results including existing and proposed content
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="p-4 border rounded-lg bg-muted/50">
+                          <h4 className="font-semibold mb-2">Full Analysis Results</h4>
+                          <pre className="text-xs whitespace-pre-wrap overflow-auto max-h-96">
+                            {typeof result.comparison === 'string' ? result.comparison : JSON.stringify(result.comparison, null, 2)}
+                          </pre>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                {/* Recommendations Tab */}
+                <TabsContent value="recommendations" className="space-y-4">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <TrendingUp className="h-5 w-5 text-green-600" />
+                        Recommendations
+                      </CardTitle>
+                      <CardDescription>
+                        Actionable insights and improvements based on B2B Elements of Value analysis
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <p className="text-sm text-muted-foreground">
+                          Review the analysis results in the Overview tab for specific recommendations and improvements.
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                {/* Raw Data Tab */}
+                <TabsContent value="raw" className="space-y-4">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Raw Analysis Data</CardTitle>
+                      <CardDescription>
+                        Complete raw data from the analysis
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="p-4 border rounded-lg bg-muted/50">
+                          <h4 className="font-semibold mb-2">Complete Raw Data</h4>
+                          <pre className="text-xs whitespace-pre-wrap overflow-auto max-h-96">
+                            {JSON.stringify(result, null, 2)}
+                          </pre>
+                        </div>
+                        <Button onClick={() => copyToClipboard(JSON.stringify(result, null, 2))}>
+                          <Copy className="mr-2 h-4 w-4" />
+                          Copy Raw Data
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </div>
       )}
     </div>
   );
@@ -549,7 +629,7 @@ Comprehensive B2B solutions that drive business growth and operational efficienc
 function generateB2BMarkdown(result: any): string {
   return `# B2B Elements of Value Analysis
 
-**URL:** ${result.existing.url || 'N/A'}
+**URL:** ${result.existing?.url || 'N/A'}
 **Date:** ${new Date().toLocaleString()}
 **Analysis Type:** B2B Elements of Value
 
@@ -557,24 +637,24 @@ function generateB2BMarkdown(result: any): string {
 
 ## Existing Content
 
-**Title:** ${result.existing.title}
-**Meta Description:** ${result.existing.metaDescription}
-**Word Count:** ${result.existing.wordCount}
-**Keywords:** ${result.existing.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
+**Title:** ${result.existing?.title || 'N/A'}
+**Meta Description:** ${result.existing?.metaDescription || 'N/A'}
+**Word Count:** ${result.existing?.wordCount || 0}
+**Keywords:** ${result.existing?.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
 
 ${result.proposed ? `
 ## Proposed Content
 
-**Title:** ${result.proposed.title}
-**Meta Description:** ${result.proposed.metaDescription}
-**Word Count:** ${result.proposed.wordCount}
-**Keywords:** ${result.proposed.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
+**Title:** ${result.proposed?.title || 'N/A'}
+**Meta Description:** ${result.proposed?.metaDescription || 'N/A'}
+**Word Count:** ${result.proposed?.wordCount || 0}
+**Keywords:** ${result.proposed?.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
 
 ---
 
 ## B2B Elements Analysis Results
 
-${JSON.stringify(result.analysis, null, 2)}
+${typeof result.comparison === 'string' ? result.comparison : JSON.stringify(result.comparison, null, 2)}
 ` : ''}
 
 ---

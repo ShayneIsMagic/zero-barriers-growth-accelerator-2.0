@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
 'use client';
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Sparkles, Target, TrendingUp, AlertCircle, CheckCircle, Lightbulb, Zap, Clock } from 'lucide-react';
+import { AlertCircle, CheckCircle, Clock, Lightbulb, Sparkles, Target, Zap } from 'lucide-react';
+import { useState } from 'react';
 
 interface Phase3Data {
   comprehensiveAnalysis: any;
@@ -40,11 +40,11 @@ export default function Phase3Page() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url }),
         });
-        
+
         if (!phase1Response.ok) {
           throw new Error('Phase 1 analysis failed');
         }
-        
+
         const phase1Result = await phase1Response.json();
         setPhase1Data(phase1Result.data);
       }
@@ -55,10 +55,10 @@ export default function Phase3Page() {
         const phase2Response = await fetch('/api/analyze/phase2-complete', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            _url, 
+          body: JSON.stringify({
+            url,
             content: phase1Data?.scrapedContent,
-            phase1Data 
+            phase1Data
           }),
         });
 
@@ -75,10 +75,10 @@ export default function Phase3Page() {
       const phase3Response = await fetch('/api/analyze/phase3-complete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          _url, 
-          phase1Data, 
-          phase2Data 
+        body: JSON.stringify({
+          url,
+          phase1Data,
+          phase2Data
         }),
       });
 
@@ -142,15 +142,15 @@ export default function Phase3Page() {
               onChange={(e) => setUrl(e.target.value)}
               className="flex-grow"
             />
-            <Button 
-              onClick={runPhase3Analysis} 
+            <Button
+              onClick={runPhase3Analysis}
               disabled={loading || !url}
               className="min-w-[200px]"
             >
               {loading ? 'Analyzing...' : 'Run Phase 3 Analysis'}
             </Button>
           </div>
-          
+
           {error && (
             <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-md">
               <AlertCircle className="h-4 w-4 text-red-500" />
@@ -180,7 +180,7 @@ export default function Phase3Page() {
           <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="executive-summary">Executive Summary</TabsTrigger>
             <TabsTrigger value="what-works">What Works</TabsTrigger>
-            <TabsTrigger value="what-doesnt">What Doesn't Work</TabsTrigger>
+            <TabsTrigger value="what-doesnt">What Doesn&apos;t Work</TabsTrigger>
             <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
             <TabsTrigger value="quick-wins">Quick Wins</TabsTrigger>
             <TabsTrigger value="roadmap">Roadmap</TabsTrigger>

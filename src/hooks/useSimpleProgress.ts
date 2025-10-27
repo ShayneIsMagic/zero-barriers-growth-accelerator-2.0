@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface SimpleStep {
   id: string;
@@ -51,7 +51,7 @@ export function useSimpleProgress() {
     const id = `analysis_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const newAnalysis: SimpleAnalysis = {
       id,
-      _url,
+      url,
       status: 'running',
       progress: 0,
       steps: {
@@ -74,7 +74,7 @@ export function useSimpleProgress() {
         const updatedSteps = { ...analysis.steps, [step]: completed };
         const completedSteps = Object.values(updatedSteps).filter(Boolean).length;
         const progress = Math.round((completedSteps / 4) * 100);
-        
+
         const status: 'running' | 'completed' | 'failed' = progress === 100 ? 'completed' : 'running';
         const completedAt = status === 'completed' ? new Date().toISOString() : undefined;
 

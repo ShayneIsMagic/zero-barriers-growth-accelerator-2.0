@@ -1,17 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Loader2, CheckCircle, XCircle, Play } from 'lucide-react';
+import { CheckCircle, Loader2, Play, XCircle } from 'lucide-react';
+import { useState } from 'react';
 
 interface GoogleToolsButtonsProps {
   url: string;
   onToolComplete?: (tool: string, data: any) => void;
 }
 
-export function GoogleToolsButtons({ _url, onToolComplete }: GoogleToolsButtonsProps) {
+export function GoogleToolsButtons({ url, onToolComplete }: GoogleToolsButtonsProps) {
   const [lighthouseRunning, setLighthouseRunning] = useState(false);
   const [lighthouseData, setLighthouseData] = useState<any>(null);
   const [lighthouseError, setLighthouseError] = useState<string | null>(null);

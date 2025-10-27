@@ -6,10 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+// import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { AlertCircle, CheckCircle, Copy, FileText, Link, Upload, Database, Table, BarChart3 } from 'lucide-react';
+import { AlertCircle, BarChart3, Database } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -441,11 +441,11 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
             <Label className="text-lg font-semibold">Select Assessment Type:</Label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {Object.entries(ASSESSMENT_TYPES).map(([key, config]) => (
-                <Card 
+                <Card
                   key={key}
                   className={`cursor-pointer transition-all ${
-                    selectedAssessment === key 
-                      ? 'ring-2 ring-primary bg-primary/5' 
+                    selectedAssessment === key
+                      ? 'ring-2 ring-primary bg-primary/5'
                       : 'hover:bg-muted/50'
                   }`}
                   onClick={() => setSelectedAssessment(key)}
@@ -467,7 +467,7 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
           {/* Data Collection Method */}
           <div className="space-y-4">
             <Label className="text-lg font-semibold">Choose Data Source:</Label>
-            <RadioGroup value={uploadMethod} onValueChange={(value: 'url' | 'paste' | 'upload') => setUploadMethod(value)}>
+            {/* <RadioGroup value={uploadMethod} onValueChange={(value: 'url' | 'paste' | 'upload') => setUploadMethod(value)}>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="url" id="url" />
                 <Label htmlFor="url" className="flex items-center gap-2">
@@ -489,7 +489,18 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
                   Upload File
                 </Label>
               </div>
-            </RadioGroup>
+            </RadioGroup> */}
+
+            {/* Temporary replacement with select */}
+            <select
+              value={uploadMethod}
+              onChange={(e) => setUploadMethod(e.target.value as 'url' | 'paste' | 'upload')}
+              className="w-full p-2 border rounded-md"
+            >
+              <option value="url">Collect from URL</option>
+              <option value="paste">Paste Content</option>
+              <option value="upload">Upload File</option>
+            </select>
           </div>
 
           {/* Validation Errors */}
@@ -520,8 +531,8 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
                   disabled={isProcessing}
                 />
               </div>
-              <Button 
-                onClick={handleUrlSubmit} 
+              <Button
+                onClick={handleUrlSubmit}
                 disabled={isProcessing || !url.trim()}
                 className="w-full"
               >
@@ -585,7 +596,7 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
                       <TabsTrigger value="content">Content</TabsTrigger>
                       <TabsTrigger value="seo">SEO Data</TabsTrigger>
                     </TabsList>
-                    
+
                     <TabsContent value="summary" className="space-y-3">
                       <div className="grid grid-cols-2 gap-3 text-sm">
                         <div className="p-2 bg-muted rounded">
@@ -614,7 +625,7 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
                         </div>
                       </div>
                     </TabsContent>
-                    
+
                     <TabsContent value="content" className="space-y-3">
                       <div className="max-h-40 overflow-y-auto text-sm bg-muted p-3 rounded">
                         {collectedData.cleanText?.substring(0, 1000) || 'No content available'}
@@ -624,7 +635,7 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
                         {collectedData.wordCount || 0} words total
                       </div>
                     </TabsContent>
-                    
+
                     <TabsContent value="seo" className="space-y-3">
                       <div className="space-y-2 text-sm">
                         <div><strong>Meta Description:</strong> {collectedData.seo?.metaDescription || 'N/A'}</div>
@@ -657,7 +668,7 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
                       <TabsTrigger value="tables">Tables</TabsTrigger>
                       <TabsTrigger value="keywords">Keywords</TabsTrigger>
                     </TabsList>
-                    
+
                     <TabsContent value="variables" className="space-y-3">
                       <div className="space-y-2">
                         <h4 className="font-semibold text-sm">Required Variables</h4>
@@ -665,7 +676,7 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
                           {ASSESSMENT_TYPES[selectedAssessment as keyof typeof ASSESSMENT_TYPES].variables.map((variable) => {
                             const value = collectedData.mappedVariables?.[variable];
                             const hasValue = value && value !== 'N/A' && value !== '' && (Array.isArray(value) ? value.length > 0 : true);
-                            
+
                             return (
                               <div key={variable} className={`p-2 rounded border-l-4 ${
                                 hasValue ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'
@@ -678,7 +689,7 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
                                 </div>
                                 <div className="text-xs text-muted-foreground mt-1">
                                   {hasValue ? (
-                                    typeof value === 'object' ? 
+                                    typeof value === 'object' ?
                                       `${Array.isArray(value) ? value.length : Object.keys(value).length} items` :
                                       String(value).substring(0, 50) + (String(value).length > 50 ? '...' : '')
                                   ) : 'No data available'}
@@ -689,7 +700,7 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
                         </div>
                       </div>
                     </TabsContent>
-                    
+
                     <TabsContent value="tables" className="space-y-3">
                       <div className="space-y-2">
                         <h4 className="font-semibold text-sm">Database Tables</h4>
@@ -697,7 +708,7 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
                           {ASSESSMENT_TYPES[selectedAssessment as keyof typeof ASSESSMENT_TYPES].tables.map((table) => {
                             const tableData = collectedData.tableMapping?.[table];
                             const fieldCount = tableData ? Object.keys(tableData).length : 0;
-                            
+
                             return (
                               <div key={table} className="p-3 border rounded-lg">
                                 <div className="flex items-center justify-between">
@@ -713,7 +724,7 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
                         </div>
                       </div>
                     </TabsContent>
-                    
+
                     <TabsContent value="keywords" className="space-y-3">
                       <div className="space-y-2">
                         <h4 className="font-semibold text-sm">Keyword Analysis</h4>
@@ -754,8 +765,8 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
           {/* Continue Button */}
           {collectedData && (
             <div className="flex justify-end pt-4">
-              <Button 
-                onClick={() => onContinue(selectedAssessment)} 
+              <Button
+                onClick={() => onContinue(selectedAssessment)}
                 size="lg"
                 className="bg-green-600 hover:bg-green-700"
               >

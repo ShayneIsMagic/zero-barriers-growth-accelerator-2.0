@@ -1,7 +1,6 @@
 'use client';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -13,6 +12,7 @@ import { useState } from 'react';
 export function GoldenCirclePage() {
   const [url, setUrl] = useState('');
   const [proposedContent, setProposedContent] = useState('');
+  const [scrapedContent, setScrapedContent] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
@@ -34,15 +34,35 @@ export function GoldenCirclePage() {
     setResult(null);
 
     try {
+      // Parse scraped content if provided
+      let existingContent = null;
+      if (scrapedContent.trim()) {
+        try {
+          existingContent = JSON.parse(scrapedContent.trim());
+        } catch (e) {
+          setError('Invalid JSON in scraped content field');
+          return;
+        }
+      }
+
       const response = await fetch('/api/analyze/golden-circle-standalone', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           url: url.trim(),
           proposedContent: proposedContent.trim(),
+          existingContent: existingContent, // Pass scraped content from content-comparison
           analysisType: 'full'
         })
       });
+
+      // Check if response is JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        setError(`Server error: ${response.status} - ${response.statusText}`);
+        return;
+      }
 
       const data = await response.json();
 
@@ -60,6 +80,12 @@ export function GoldenCirclePage() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
+  };
+
+  const copyAnalysis = () => {
+    if (!result) return;
+    const analysisText = typeof result.analysis === 'string' ? result.analysis : JSON.stringify(result.analysis, null, 2);
+    copyToClipboard(analysisText);
   };
 
   const downloadMarkdown = () => {
@@ -100,7 +126,7 @@ export function GoldenCirclePage() {
             keywords: result.existingData.extractedKeywords,
             headings: result.existingData.headings
           },
-          userId: 'current-user' // TODO: Get from auth context
+          userId: 'current-user'
         })
       });
 
@@ -109,7 +135,6 @@ export function GoldenCirclePage() {
       if (data.success) {
         setSnapshotId(data.snapshot.id);
         setError(null);
-        console.log('✅ Snapshot saved successfully');
       } else {
         setError(data.error || 'Failed to save snapshot');
       }
@@ -136,7 +161,7 @@ export function GoldenCirclePage() {
         body: JSON.stringify({
           snapshotId,
           content: proposedContent.trim(),
-          createdBy: 'current-user', // TODO: Get from auth context
+          createdBy: 'current-user',
           status: 'draft'
         })
       });
@@ -146,7 +171,6 @@ export function GoldenCirclePage() {
       if (data.success) {
         setProposedContentId(data.proposedContent.id);
         setError(null);
-        console.log('✅ Proposed version created successfully');
       } else {
         setError(data.error || 'Failed to create proposed version');
       }
@@ -179,7 +203,6 @@ export function GoldenCirclePage() {
 
       if (data.success) {
         setError(null);
-        console.log('✅ Version comparison created successfully');
       } else {
         setError(data.error || 'Failed to create version comparison');
       }
@@ -261,6 +284,29 @@ Comprehensive marketing optimization tools and insights.
             </p>
           </div>
 
+          {/* Paste Scraped Content (from Content-Comparison) */}
+          <div>
+            <label htmlFor="scraped-content" className="text-sm font-medium mb-2 block">
+              Paste Scraped Content (Optional - from Content-Comparison)
+            </label>
+            <Textarea
+              id="scraped-content"
+              name="scraped-content"
+              placeholder='Paste the "Copy Scraped Data" JSON from the Content-Comparison page here to reuse the scraped content...
+
+Example: {"title":"...","metaDescription":"...","wordCount":...}'
+              value={scrapedContent}
+              onChange={(e) => setScrapedContent(e.target.value)}
+              disabled={isAnalyzing}
+              className="min-h-[100px] font-mono text-xs"
+              aria-label="Paste scraped content from content-comparison"
+              aria-describedby="scraped-help"
+            />
+            <p id="scraped-help" className="text-xs text-muted-foreground mt-2">
+              💡 Paste the "Copy Scraped Data" JSON from Content-Comparison page to reuse already-scraped content. This prevents re-scraping.
+            </p>
+          </div>
+
           {/* What You Get */}
           <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
             <h4 className="font-semibold mb-2 text-blue-900 dark:text-blue-100">What You Get:</h4>
@@ -321,7 +367,7 @@ Comprehensive marketing optimization tools and insights.
             <div className="flex gap-2 pt-4 border-t">
               <Button
                 onClick={saveSnapshot}
-                disabled={isSavingSnapshot || snapshotId}
+                disabled={isSavingSnapshot || !!snapshotId}
                 variant="outline"
                 size="sm"
               >
@@ -340,7 +386,7 @@ Comprehensive marketing optimization tools and insights.
 
               <Button
                 onClick={createProposedVersion}
-                disabled={isCreatingProposed || !snapshotId || !proposedContent.trim() || proposedContentId}
+                disabled={isCreatingProposed || !snapshotId || !proposedContent.trim() || !!proposedContentId}
                 variant="outline"
                 size="sm"
               >
@@ -396,86 +442,110 @@ Comprehensive marketing optimization tools and insights.
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
-                {result.data && (
-                  <div className="prose dark:prose-invert max-w-none">
-                    {/* Side-by-side comparison if proposed content exists */}
-                    {result.proposed && (
-                      <div className="grid md:grid-cols-2 gap-4 mb-6">
-                        {/* Existing Column */}
-                        <div className="p-4 border rounded-lg">
-                          <h3 className="text-lg font-semibold mb-3 flex items-center justify-between">
-                            Existing Content Analysis
-                            <Badge variant="outline">Current</Badge>
-                          </h3>
-                          <div className="space-y-3 text-sm">
-                            <div>
-                              <strong>Title:</strong> {result.existing.title}
-                            </div>
-                            <div>
-                              <strong>Meta Description:</strong> {result.existing.metaDescription}
-                            </div>
-                            <div>
-                              <strong>Word Count:</strong> {result.existing.wordCount}
-                            </div>
-                            <div>
-                              <strong>Top Keywords:</strong>
-                              <div className="flex flex-wrap gap-1 mt-1">
-                                {result.existing.extractedKeywords?.slice(0, 10).map((kw: string, i: number) => (
-                                  <Badge key={i} variant="secondary" className="text-xs">{kw}</Badge>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                {/* AI Analysis Results */}
+                {result.analysis && (
+                  <div className="mt-6 space-y-4">
+                    <h3 className="text-xl font-semibold">AI Analysis Results</h3>
 
-                        {/* Proposed Column */}
-                        <div className="p-4 border rounded-lg bg-green-50 dark:bg-green-950 border-green-500">
-                          <h3 className="text-lg font-semibold mb-3 flex items-center justify-between text-green-900 dark:text-green-100">
-                            Proposed Content Analysis
-                            <Badge variant="default" className="bg-green-600">New</Badge>
-                          </h3>
-                          <div className="space-y-3 text-sm text-green-900 dark:text-green-100">
-                            <div>
-                              <strong>Title:</strong> {result.proposed.title}
-                            </div>
-                            <div>
-                              <strong>Meta Description:</strong> {result.proposed.metaDescription}
-                            </div>
-                            <div>
-                              <strong>Word Count:</strong> {result.proposed.wordCount}
-                            </div>
-                            <div>
-                              <strong>Top Keywords:</strong>
-                              <div className="flex flex-wrap gap-1 mt-1">
-                                {result.proposed.extractedKeywords?.slice(0, 10).map((kw: string, i: number) => (
-                                  <Badge key={i} variant="outline" className="text-xs">{kw}</Badge>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                    {/* Show analysis data */}
+                    <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-950">
+                      <h4 className="font-semibold mb-2">Golden Circle Analysis</h4>
+                      <div className="text-sm whitespace-pre-wrap">
+                        {JSON.stringify(result.analysis, null, 2)}
                       </div>
-                    )}
-
-                    {/* Analysis Results */}
-                    <div className="space-y-4">
-                      <h3 className="text-xl font-semibold">Golden Circle Analysis Results</h3>
-
-                      {/* Show analysis data */}
-                      <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-950">
-                        <h4 className="font-semibold mb-2">Assessment Results</h4>
-                        <div className="text-sm whitespace-pre-wrap">
-                          {JSON.stringify(result.data, null, 2)}
-                        </div>
-                      </div>
-
-                      <Button onClick={() => copyToClipboard(JSON.stringify(result.data, null, 2))}>
-                        <Copy className="mr-2 h-4 w-4" />
-                        Copy Analysis
-                      </Button>
                     </div>
+
+                    <Button onClick={() => copyToClipboard(JSON.stringify(result.analysis, null, 2))}>
+                      <Copy className="mr-2 h-4 w-4" />
+                      Copy Analysis
+                    </Button>
                   </div>
                 )}
+
+
+                {/* Why/How/What Analysis */}
+                {result.why && result.how && result.what && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Golden Circle Framework Analysis</CardTitle>
+                      <CardDescription>
+                        Simon Sinek's Why/How/What framework breakdown
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-6">
+                        {/* WHY */}
+                        <div className="p-4 border rounded-lg bg-orange-50 dark:bg-orange-950">
+                          <h4 className="text-lg font-semibold text-orange-900 dark:text-orange-100 mb-2">
+                            WHY - Your Purpose
+                          </h4>
+                          <div className="text-sm text-orange-800 dark:text-orange-200">
+                            {result.why.evidence || result.why.description || 'No clear WHY identified'}
+                          </div>
+                          {result.why.recommendations && (
+                            <div className="text-xs text-orange-700 dark:text-orange-300 mt-2">
+                              <strong>Recommendations:</strong> {result.why.recommendations}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* HOW */}
+                        <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-950">
+                          <h4 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                            HOW - Your Process
+                          </h4>
+                          <div className="text-sm text-blue-800 dark:text-blue-200">
+                            {result.how.evidence || result.how.description || 'No clear HOW identified'}
+                          </div>
+                          {result.how.recommendations && (
+                            <div className="text-xs text-blue-700 dark:text-blue-300 mt-2">
+                              <strong>Recommendations:</strong> {result.how.recommendations}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* WHAT */}
+                        <div className="p-4 border rounded-lg bg-green-50 dark:bg-green-950">
+                          <h4 className="text-lg font-semibold text-green-900 dark:text-green-100 mb-2">
+                            WHAT - Your Product/Service
+                          </h4>
+                          <div className="text-sm text-green-800 dark:text-green-200">
+                            {result.what.evidence || result.what.description || 'No clear WHAT identified'}
+                          </div>
+                          {result.what.recommendations && (
+                            <div className="text-xs text-green-700 dark:text-green-300 mt-2">
+                              <strong>Recommendations:</strong> {result.what.recommendations}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Raw Analysis Data */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Analysis Details</CardTitle>
+                    <CardDescription>
+                      Complete analysis results and metadata
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="p-4 border rounded-lg bg-muted/50">
+                        <h4 className="font-semibold mb-2">Analysis Results</h4>
+                        <pre className="text-xs whitespace-pre-wrap overflow-auto max-h-96">
+                          {JSON.stringify(result, null, 2)}
+                        </pre>
+                      </div>
+                      <Button onClick={() => copyToClipboard(JSON.stringify(result, null, 2))}>
+                        <Copy className="mr-2 h-4 w-4" />
+                        Copy Full Analysis
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
               </CardContent>
             </Card>
           </TabsContent>

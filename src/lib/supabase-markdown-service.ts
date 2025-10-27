@@ -147,7 +147,7 @@ export async function saveMarkdownExport(
       },
       create: {
         analysis_id: analysis_id,
-        url: _url,
+        url: url,
         markdown: markdown,
         overall_score: overallScore || null,
         rating: rating || null

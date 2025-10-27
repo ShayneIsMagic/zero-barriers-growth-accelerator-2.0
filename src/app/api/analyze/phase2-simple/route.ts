@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { FocusedAnalysisService } from '@/lib/services/focused-analysis.service';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 60;
 
@@ -8,14 +8,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { _url, content, industry } = body;
 
-    if (!url || !content) {
+    if (!_url || !content) {
       return NextResponse.json({
         success: false,
         error: 'URL and content are required'
       }, { status: 400 });
     }
 
-    console.log(`🚀 Starting simple Phase 2 AI analysis for: ${url}`);
+    console.log(`🚀 Starting simple Phase 2 AI analysis for: ${_url}`);
 
     // Run focused analyses in parallel
     const [whyAnalysis, functionalAnalysis, strategicAnalysis, tableStakesAnalysis] = await Promise.all([

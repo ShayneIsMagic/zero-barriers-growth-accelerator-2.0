@@ -90,7 +90,7 @@ export class RevenueTrendsAnalysisService {
 
       return {
         success: true,
-        _url,
+        url,
         data: analysisResult
       };
 
@@ -98,7 +98,7 @@ export class RevenueTrendsAnalysisService {
       console.error('Revenue-Focused Trends analysis failed:', error);
       return {
         success: false,
-        _url,
+        url,
         data: {} as any,
         error: error instanceof Error ? error.message : 'Analysis failed'
       };

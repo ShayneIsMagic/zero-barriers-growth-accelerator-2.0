@@ -23,40 +23,40 @@ export interface ContentAnalysisResult extends AnalysisResult {
 export class ContentAnalyzer {
   async analyzeContent(content: string, url: string, pageType: string = 'general'): Promise<ContentAnalysisResult> {
     const startTime = Date.now();
-    
+
     // Extract basic content metrics
     const wordCount = content.split(/\s+/).length;
     const imageCount = (content.match(/<img[^>]*>/gi) || []).length;
     const linkCount = (content.match(/<a[^>]*href[^>]*>/gi) || []).length;
-    
+
     // Analyze Golden Circle
     const goldenCircle = this.analyzeGoldenCircle(content, pageType);
-    
+
     // Analyze Elements of Value
     const elementsOfValue = this.analyzeElementsOfValue(content);
-    
+
     // Analyze CliftonStrengths
     const cliftonStrengths = this.analyzeCliftonStrengths(content);
-    
+
     // Generate recommendations
     const recommendations = this.generateRecommendations(content, pageType);
-    
+
     // Calculate overall score
     const overallScore = Math.round(
       (goldenCircle.overallScore + elementsOfValue.overallScore + cliftonStrengths.overallScore) / 3
     );
-    
+
     // Generate summary
     const summary = this.generateSummary(content, goldenCircle, elementsOfValue, cliftonStrengths);
-    
+
     // Generate page-specific insights
     const specificInsights = this.generatePageSpecificInsights(content, pageType);
-    
+
     const loadingTime = Date.now() - startTime;
-    
+
     return {
       id: `content_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      _url,
+      url,
       createdAt: new Date().toISOString(),
       goldenCircle,
       elementsOfValue,
@@ -77,22 +77,22 @@ export class ContentAnalyzer {
   private analyzeGoldenCircle(content: string, pageType: string) {
     // Extract WHY - Look for mission statements, purpose, values
     const whyText = this.extractWhy(content, pageType);
-    
+
     // Extract HOW - Look for methodologies, processes, approaches
     const howText = this.extractHow(content, pageType);
-    
+
     // Extract WHAT - Look for products, services, solutions
     const whatText = this.extractWhat(content, pageType);
-    
+
     // Extract WHO - Look for testimonials, clients, target audience
     const whoText = this.extractWho(content, pageType);
-    
+
     // Generate insights
     const insights = this.generateGoldenCircleInsights(whyText, howText, whatText, whoText);
-    
+
     // Calculate score based on clarity and specificity
     const overallScore = this.calculateGoldenCircleScore(whyText, howText, whatText, whoText);
-    
+
     return {
       why: {
         statement: whyText,
@@ -137,9 +137,9 @@ export class ContentAnalyzer {
       /(?:making|creating|building|delivering).{0,50}(?:better|easier|simpler|more).{0,50}/gi,
       /(?:specialize|focus|dedicated).{0,50}(?:to|on).{0,100}/gi
     ];
-    
+
     let why = '';
-    
+
     for (const pattern of whyPatterns) {
       const matches = content.match(pattern);
       if (matches && matches.length > 0) {
@@ -151,7 +151,7 @@ export class ContentAnalyzer {
         }
       }
     }
-    
+
     // Fallback to looking for company descriptions
     if (!why) {
       const companyDesc = content.match(/(?:apple|company|we|our).{0,100}(?:design|create|develop|build|innovate).{0,50}/gi);
@@ -159,7 +159,7 @@ export class ContentAnalyzer {
         why = companyDesc[0].replace(/\s+/g, ' ').trim();
       }
     }
-    
+
     return why || 'Purpose and mission not clearly defined in content';
   }
 
@@ -171,9 +171,9 @@ export class ContentAnalyzer {
       /(?:four-phase|step-by-step|systematic).{0,100}/gi,
       /(?:proven|tested|established).{0,50}(?:method|approach|process).{0,50}/gi
     ];
-    
+
     let how = '';
-    
+
     for (const pattern of howPatterns) {
       const matches = content.match(pattern);
       if (matches && matches.length > 0) {
@@ -184,13 +184,13 @@ export class ContentAnalyzer {
         }
       }
     }
-    
+
     // Look for specific methodologies
     const methodologies = content.match(/(Attitude Cycle|IMPROV Sales Methodology|Purpose-Driven Exercise)[^.]*?\./gi);
     if (methodologies) {
       how = methodologies.join(' ');
     }
-    
+
     return how || 'Methodology and approach not clearly defined in content';
   }
 
@@ -202,9 +202,9 @@ export class ContentAnalyzer {
       /(?:software|hardware|devices|accessories).{0,50}/gi,
       /(?:custom|specialized|professional).{0,50}(?:solutions|services|products).{0,50}/gi
     ];
-    
+
     let what = '';
-    
+
     for (const pattern of whatPatterns) {
       const matches = content.match(pattern);
       if (matches && matches.length > 0) {
@@ -215,49 +215,49 @@ export class ContentAnalyzer {
         }
       }
     }
-    
+
     // Look for specific services
     const services = content.match(/(Human Transformation|Technology Enablement|Revenue Acceleration)[^.]*?\./gi);
     if (services) {
       what = services.join(' ');
     }
-    
+
     // Look for specific offerings
     const offerings = content.match(/(Custom software development|Salesforce implementation|Sales process optimization)[^.]*?\./gi);
     if (offerings) {
       what = offerings.join(' ');
     }
-    
+
     return what || 'Products and services not clearly defined in content';
   }
 
   private extractWho(content: string, pageType: string): string {
     let who = '';
-    
+
     // Look for testimonials and client names (limit to first 3)
     const testimonials = content.match(/([A-Z][a-z]+ [A-Z][a-z]+)[^.]*?\./gi);
     if (testimonials && testimonials.length > 0) {
       who = testimonials.slice(0, 3).join(' ');
     }
-    
+
     // Look for success metrics (limit to first 2)
     const successMetrics = content.match(/(\d+% growth|\d+% ROI|\d+% increase)[^.]*?\./gi);
     if (successMetrics && successMetrics.length > 0) {
       who += ' ' + successMetrics.slice(0, 2).join(' ');
     }
-    
+
     // Look for target audience
     const targetAudience = content.match(/(businesses|companies|organizations|customers|users).{0,50}/gi);
     if (targetAudience && targetAudience.length > 0) {
       who += ' ' + targetAudience[0].trim();
     }
-    
+
     // Limit total length to prevent overly long responses
     const cleanWho = who.trim();
     if (cleanWho.length > 300) {
       return cleanWho.substring(0, 300) + '...';
     }
-    
+
     return cleanWho || 'Target audience and client testimonials not clearly defined in content';
   }
 
@@ -299,7 +299,7 @@ export class ContentAnalyzer {
     const functionalScore = Math.round(Object.values(functional).reduce((a, b) => a + b, 0) / Object.keys(functional).length);
     const emotionalScore = Math.round(Object.values(emotional).reduce((a, b) => a + b, 0) / Object.keys(emotional).length);
     const lifeChangingScore = Math.round(Object.values(lifeChanging).reduce((a, b) => a + b, 0) / Object.keys(lifeChanging).length);
-    
+
     const overallScore = Math.round((functionalScore + emotionalScore + lifeChangingScore) / 3);
 
     return {
@@ -345,13 +345,13 @@ export class ContentAnalyzer {
   private analyzeCliftonStrengths(content: string) {
     // Analyze strategic thinking themes
     const strategic = this.scoreElement(content, ['strategic', 'planning', 'vision', 'future', 'analysis']);
-    
+
     // Analyze executing themes
     const executing = this.scoreElement(content, ['implement', 'execute', 'deliver', 'results', 'action']);
-    
+
     // Analyze influencing themes
     const influencing = this.scoreElement(content, ['influence', 'persuade', 'lead', 'inspire', 'motivate']);
-    
+
     // Analyze relationship building themes
     const relationshipBuilding = this.scoreElement(content, ['relationship', 'connect', 'collaborate', 'team', 'community']);
 
@@ -409,36 +409,36 @@ export class ContentAnalyzer {
   private scoreElement(content: string, keywords: string[]): number {
     let score = 0;
     const contentLower = content.toLowerCase();
-    
+
     for (const keyword of keywords) {
       const matches = contentLower.match(new RegExp(keyword, 'g'));
       if (matches) {
         score += matches.length * 2; // 2 points per match
       }
     }
-    
+
     // Cap at 10
     return Math.min(score, 10);
   }
 
   private getTopElements(elements: any): string[] {
     const allElements: Array<{name: string, score: number}> = [];
-    
+
     // Add functional elements
     Object.entries(elements.functional).forEach(([key, value]) => {
       allElements.push({ name: key, score: (value as any).score });
     });
-    
+
     // Add emotional elements
     Object.entries(elements.emotional).forEach(([key, value]) => {
       allElements.push({ name: key, score: (value as any).score });
     });
-    
+
     // Add life-changing elements
     Object.entries(elements.lifeChanging).forEach(([key, value]) => {
       allElements.push({ name: key, score: (value as any).score });
     });
-    
+
     // Sort by score and return top 5
     return allElements
       .sort((a, b) => b.score - a.score)
@@ -448,7 +448,7 @@ export class ContentAnalyzer {
 
   private getTopThemes(strengths: any): string[] {
     const allThemes: Array<{name: string, score: number}> = [];
-    
+
     // Add all theme categories
     Object.entries(strengths.executing).forEach(([key, value]) => {
       allThemes.push({ name: key, score: (value as any).score });
@@ -462,7 +462,7 @@ export class ContentAnalyzer {
     Object.entries(strengths.strategicThinking).forEach(([key, value]) => {
       allThemes.push({ name: key, score: (value as any).score });
     });
-    
+
     // Sort by score and return top 10
     return allThemes
       .sort((a, b) => b.score - a.score)
@@ -474,7 +474,7 @@ export class ContentAnalyzer {
     const highPriority = [];
     const mediumPriority = [];
     const lowPriority = [];
-    
+
     // Check for missing elements
     if (!content.includes('mission') && !content.includes('purpose')) {
       highPriority.push({
@@ -487,7 +487,7 @@ export class ContentAnalyzer {
         timeline: '1-2 weeks'
       });
     }
-    
+
     if (!content.includes('methodology') && !content.includes('process')) {
       highPriority.push({
         category: 'Golden Circle',
@@ -499,7 +499,7 @@ export class ContentAnalyzer {
         timeline: '1-2 weeks'
       });
     }
-    
+
     if (!content.includes('testimonial') && !content.includes('client')) {
       mediumPriority.push({
         category: 'Golden Circle',
@@ -511,7 +511,7 @@ export class ContentAnalyzer {
         timeline: 'Immediate'
       });
     }
-    
+
     if (!content.includes('contact') && !content.includes('phone')) {
       mediumPriority.push({
         category: 'Content',
@@ -523,7 +523,7 @@ export class ContentAnalyzer {
         timeline: 'Immediate'
       });
     }
-    
+
     if (!content.includes('call to action') && !content.includes('get started')) {
       mediumPriority.push({
         category: 'Content',
@@ -535,7 +535,7 @@ export class ContentAnalyzer {
         timeline: '1-2 weeks'
       });
     }
-    
+
     // Page-specific recommendations
     if (pageType === 'home') {
       lowPriority.push({
@@ -548,7 +548,7 @@ export class ContentAnalyzer {
         timeline: '1-2 weeks'
       });
     }
-    
+
     if (pageType === 'testimonials') {
       lowPriority.push({
         category: 'Content',
@@ -560,7 +560,7 @@ export class ContentAnalyzer {
         timeline: '1-2 weeks'
       });
     }
-    
+
     return {
       highPriority,
       mediumPriority,
@@ -575,7 +575,7 @@ export class ContentAnalyzer {
     const hasTestimonials = content.includes('testimonial') || content.includes('client');
     const hasContact = content.includes('contact') || content.includes('phone');
     const hasCTA = content.includes('call to action') || content.includes('get started');
-    
+
     return `This ${wordCount}-word content analysis reveals a ${goldenCircle.overallScore}/100 Golden Circle score with ${elementsOfValue.overallScore}/100 Elements of Value alignment. The content ${hasTestimonials ? 'includes' : 'lacks'} client testimonials, ${hasContact ? 'provides' : 'missing'} contact information, and ${hasCTA ? 'features' : 'needs'} clear call-to-action elements. The messaging appeals to ${cliftonStrengths.overallScore}/100 CliftonStrengths themes, suggesting strong ${cliftonStrengths.executing > 7 ? 'execution-focused' : 'strategic'} positioning.`;
   }
 
@@ -592,31 +592,31 @@ export class ContentAnalyzer {
 
   private extractConversionElements(content: string): string[] {
     const elements: string[] = [];
-    
+
     if (content.includes('get started')) elements.push('Get Started button');
     if (content.includes('contact')) elements.push('Contact form');
     if (content.includes('schedule')) elements.push('Schedule consultation');
     if (content.includes('learn more')) elements.push('Learn More links');
     if (content.includes('download')) elements.push('Download resources');
-    
+
     return elements;
   }
 
   private extractTrustSignals(content: string): string[] {
     const signals: string[] = [];
-    
+
     if (content.includes('certification')) signals.push('Professional certifications');
     if (content.includes('experience')) signals.push('Years of experience');
     if (content.includes('client')) signals.push('Client testimonials');
     if (content.includes('award')) signals.push('Awards and recognition');
     if (content.includes('guarantee')) signals.push('Money-back guarantee');
-    
+
     return signals;
   }
 
   private extractCallToActions(content: string): string[] {
     const ctas: string[] = [];
-    
+
     const ctaPatterns = [
       /get started/gi,
       /contact us/gi,
@@ -625,80 +625,80 @@ export class ContentAnalyzer {
       /download/gi,
       /sign up/gi
     ];
-    
+
     for (const pattern of ctaPatterns) {
       const matches = content.match(pattern);
       if (matches) {
         ctas.push(...matches.map(m => m.charAt(0).toUpperCase() + m.slice(1)));
       }
     }
-    
+
     return [...new Set(ctas)]; // Remove duplicates
   }
 
   private extractSocialProof(content: string): string[] {
     const proof: string[] = [];
-    
+
     if (content.includes('testimonial')) proof.push('Client testimonials');
     if (content.includes('case study')) proof.push('Case studies');
     if (content.includes('client logo')) proof.push('Client logos');
     if (content.includes('success story')) proof.push('Success stories');
     if (content.includes('growth')) proof.push('Growth metrics');
-    
+
     return proof;
   }
 
   private identifyTechnicalIssues(content: string): string[] {
     const issues: string[] = [];
-    
+
     if (!content.includes('meta description')) issues.push('Missing meta description');
     if (!content.includes('alt=')) issues.push('Images missing alt text');
     if (content.length < 300) issues.push('Content too short for SEO');
     if (!content.includes('heading')) issues.push('Missing proper heading structure');
-    
+
     return issues;
   }
 
   private generateGoldenCircleInsights(why: string, how: string, what: string, who: string): string[] {
     const insights: string[] = [];
-    
+
     if (why.length > 50) insights.push('Strong WHY statement with clear purpose');
     if (how.length > 50) insights.push('Well-defined methodology and approach');
     if (what.length > 50) insights.push('Clear product and service offerings');
     if (who.length > 50) insights.push('Good client testimonials and target audience definition');
-    
+
     return insights;
   }
 
   private generateElementsOfValueInsights(functional: any, emotional: any, lifeChanging: any): string[] {
     const insights: string[] = [];
-    
+
     if (functional.savesTime > 7) insights.push('Strong time-saving value proposition');
     if (emotional.reducesAnxiety > 7) insights.push('Good anxiety reduction messaging');
     if (lifeChanging.selfActualization > 7) insights.push('Strong transformation messaging');
-    
+
     return insights;
   }
 
   private generateCliftonStrengthsInsights(strategic: number, executing: number, influencing: number, relationshipBuilding: number): string[] {
     const insights: string[] = [];
-    
+
     if (strategic > 7) insights.push('Appeals to strategic thinkers');
     if (executing > 7) insights.push('Resonates with execution-focused individuals');
     if (influencing > 7) insights.push('Strong influence and leadership appeal');
     if (relationshipBuilding > 7) insights.push('Good relationship-building messaging');
-    
+
     return insights;
   }
 
   private calculateGoldenCircleScore(why: string, how: string, what: string, who: string): number {
     let score = 0;
-    
+
     if (why.length > 50) score += 25;
     if (how.length > 50) score += 25;
     if (what.length > 50) score += 25;
     if (who.length > 50) score += 25;
-    
+
     return Math.min(score, 100);
   }
 }

@@ -1,25 +1,23 @@
 'use client';
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  CheckCircle, 
-  AlertCircle, 
-  Loader2, 
-  Copy, 
-  Download, 
-  RefreshCw,
-  Target,
-  TrendingUp,
-  Users,
-  BarChart3,
-  Brain,
-  Building2
+import {
+    AlertCircle,
+    BarChart3,
+    Brain,
+    Building2,
+    Copy,
+    Download,
+    Loader2,
+    RefreshCw,
+    Target,
+    Users
 } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 interface AssessmentResultsViewProps {
@@ -69,13 +67,13 @@ const ASSESSMENT_CONFIG = {
   }
 };
 
-export function AssessmentResultsView({ 
-  assessmentType, 
-  data, 
-  isLoading, 
-  error, 
+export function AssessmentResultsView({
+  assessmentType,
+  data,
+  isLoading,
+  error,
   onRetry,
-  showRawData = false 
+  showRawData = false
 }: AssessmentResultsViewProps) {
   const [activeTab, setActiveTab] = useState('overview');
   const config = ASSESSMENT_CONFIG[assessmentType];
@@ -105,7 +103,7 @@ export function AssessmentResultsView({
     return 'text-red-600';
   };
 
-  const getScoreBadgeVariant = (score: number) => {
+  const getScoreBadgeVariant = (score: number): "default" | "secondary" | "destructive" | "outline" => {
     if (score >= 80) return 'default';
     if (score >= 60) return 'secondary';
     return 'destructive';
@@ -223,7 +221,7 @@ export function AssessmentResultsView({
   );
 }
 
-function renderOverview(data: any, assessmentType: string, getScoreColor: (score: number) => string, getScoreBadgeVariant: (score: number) => string) {
+function renderOverview(data: any, assessmentType: string, getScoreColor: (score: number) => string, getScoreBadgeVariant: (score: number) => "default" | "secondary" | "destructive" | "outline") {
   switch (assessmentType) {
     case 'b2c-elements':
       return (
@@ -262,7 +260,7 @@ function renderOverview(data: any, assessmentType: string, getScoreColor: (score
                 {data.revenue_opportunities.slice(0, 3).map((opp: any, index: number) => (
                   <div key={index} className="flex items-center justify-between p-2 bg-white rounded border">
                     <span className="font-medium">{opp.element}</span>
-                    <Badge variant={getScoreBadgeVariant(opp.current_strength)}>
+                    <Badge variant={getScoreBadgeVariant(typeof opp.current_strength === 'number' ? opp.current_strength : 0)}>
                       {opp.current_strength}/10
                     </Badge>
                   </div>
@@ -360,7 +358,7 @@ function renderOverview(data: any, assessmentType: string, getScoreColor: (score
   }
 }
 
-function renderDetails(data: any, assessmentType: string, getScoreColor: (score: number) => string, getScoreBadgeVariant: (score: number) => string) {
+function renderDetails(data: any, assessmentType: string, getScoreColor: (score: number) => string, getScoreBadgeVariant: (score: number) => "default" | "secondary" | "destructive" | "outline") {
   switch (assessmentType) {
     case 'b2c-elements':
       return (
@@ -373,7 +371,7 @@ function renderDetails(data: any, assessmentType: string, getScoreColor: (score:
                   <div key={category} className="p-4 bg-white rounded border">
                     <div className="flex items-center justify-between mb-2">
                       <h5 className="font-medium capitalize">{category.replace('_', ' ')}</h5>
-                      <Badge variant={getScoreBadgeVariant(catData.score)}>
+                      <Badge variant={getScoreBadgeVariant(typeof catData.score === 'number' ? catData.score : 0)}>
                         {catData.score}%
                       </Badge>
                     </div>
@@ -382,7 +380,7 @@ function renderDetails(data: any, assessmentType: string, getScoreColor: (score:
                         {catData.elements.slice(0, 3).map((element: any, index: number) => (
                           <div key={index} className="flex items-center justify-between text-sm">
                             <span>{element.name}</span>
-                            <Badge variant={getScoreBadgeVariant(element.score)} size="sm">
+                            <Badge variant={getScoreBadgeVariant(typeof element.score === 'number' ? element.score : 0)}>
                               {element.score}/10
                             </Badge>
                           </div>

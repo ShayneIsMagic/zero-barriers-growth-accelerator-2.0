@@ -235,34 +235,78 @@ export default function DashboardPage() {
       estimatedTime: '5-10 minutes',
       complexity: 'Beginner',
       prerequisites: 'None - just enter your website URL and paste data'
+    },
+    {
+      id: 'golden-circle',
+      name: 'Golden Circle Analysis',
+      status: 'ready',
+      description: 'Individual Golden Circle analysis for focused strategic clarity',
+      icon: Target,
+      route: '/dashboard/golden-circle-standalone',
+      whatYouGet: [
+        'Purpose, Methodology, and Offerings analysis',
+        'Strategic clarity and positioning insights',
+        'Value proposition optimization',
+        'Target audience identification'
+      ],
+      estimatedTime: '2-3 minutes',
+      complexity: 'Beginner',
+      prerequisites: 'None - just enter your website URL'
+    },
+    {
+      id: 'elements-b2c-individual',
+      name: 'B2C Elements of Value Analysis',
+      status: 'ready',
+      description: 'Individual B2C Elements of Value analysis for consumer-focused businesses',
+      icon: Users,
+      route: '/dashboard/elements-value-b2c',
+      whatYouGet: [
+        '30 B2C Elements of Value analysis',
+        'Consumer value proposition optimization',
+        'Customer satisfaction insights',
+        'Revenue opportunity identification'
+      ],
+      estimatedTime: '2-3 minutes',
+      complexity: 'Beginner',
+      prerequisites: 'None - just enter your website URL'
+    },
+    {
+      id: 'elements-b2b-individual',
+      name: 'B2B Elements of Value Analysis',
+      status: 'ready',
+      description: 'Individual B2B Elements of Value analysis for enterprise and B2B businesses',
+      icon: BarChart3,
+      route: '/dashboard/elements-value-b2b',
+      whatYouGet: [
+        '40 B2B Elements of Value analysis',
+        'Enterprise value proposition optimization',
+        'Sales enablement recommendations',
+        'Customer retention strategy insights'
+      ],
+      estimatedTime: '2-3 minutes',
+      complexity: 'Beginner',
+      prerequisites: 'None - just enter your website URL'
+    },
+    {
+      id: 'clifton-strengths-individual',
+      name: 'CliftonStrengths Analysis',
+      status: 'ready',
+      description: 'Individual CliftonStrengths themes analysis for organizational strengths',
+      icon: Brain,
+      route: '/dashboard/clifton-strengths',
+      whatYouGet: [
+        '34 CliftonStrengths themes analysis',
+        'Top 5 dominant themes identification',
+        'Domain scoring and insights',
+        'Actionable recommendations for leveraging strengths'
+      ],
+      estimatedTime: '2-3 minutes',
+      complexity: 'Beginner',
+      prerequisites: 'None - just enter your website URL'
     }
   ];
 
   const comingSoonAssessments = [
-    {
-      id: 'golden-circle',
-      name: 'Golden Circle Analysis',
-      status: 'testing',
-      description: 'Individual Golden Circle analysis for focused strategic clarity',
-      eta: 'Next week',
-      icon: Target
-    },
-    {
-      id: 'elements-of-value',
-      name: 'Elements of Value',
-      status: 'testing',
-      description: 'Individual B2C and B2B value elements analysis',
-      eta: 'Next week',
-      icon: BarChart3
-    },
-    {
-      id: 'clifton-strengths',
-      name: 'CliftonStrengths Analysis',
-      status: 'testing',
-      description: 'Individual CliftonStrengths themes analysis',
-      eta: 'Next week',
-      icon: Users
-    },
     {
       id: 'lighthouse',
       name: 'Lighthouse Performance',

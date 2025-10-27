@@ -1,7 +1,7 @@
 'use client';
 
 import { AnalysisResult } from '@/lib/ai-providers';
-import { AnalysisVisualization } from './AnalysisVisualization';
+// import { AnalysisVisualization } from './AnalysisVisualization';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ExternalLink } from 'lucide-react';
 
@@ -38,7 +38,7 @@ export function AnalysisResults({ analysis }: AnalysisResultsProps) {
       </Card>
 
       {/* Rich Visualization */}
-      <AnalysisVisualization analysis={analysis} />
+      {/* <AnalysisVisualization analysis={analysis} /> */}
     </div>
   );
 }

@@ -3,9 +3,9 @@
  * Uses Content-Comparison pattern: Direct AI analysis without database dependencies
  */
 
+import { EnhancedAnalysisService } from '@/lib/ai-engines/enhanced-analysis.service';
 import { scrapeWebsiteContent } from '@/lib/reliable-content-scraper';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { EnhancedAnalysisService } from '@/lib/ai-engines/enhanced-analysis.service';
 
 export interface GoldenCircleResult {
   success: boolean;
@@ -113,7 +113,7 @@ export class StandaloneGoldenCircleService {
 
       return {
         success: true,
-        _url,
+        url,
         data: enhancedResult.analysis
       };
 
@@ -121,7 +121,7 @@ export class StandaloneGoldenCircleService {
       console.error('Golden Circle analysis failed:', error);
       return {
         success: false,
-        _url,
+        url,
         data: {} as any,
         error: error instanceof Error ? error.message : 'Analysis failed'
       };

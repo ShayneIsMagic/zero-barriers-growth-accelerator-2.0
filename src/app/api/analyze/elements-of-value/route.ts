@@ -8,14 +8,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { _url, content } = body;
 
-    if (!url || !content) {
+    if (!_url || !content) {
       return NextResponse.json({
         success: false,
         error: 'URL and content are required'
       }, { status: 400 });
     }
 
-    console.log(`🎯 Starting Elements of Value analysis for: ${url}`);
+    console.log(`🎯 Starting Elements of Value analysis for: ${_url}`);
 
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json({
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
 Analyze the following website content using Bain & Company's Elements of Value framework. Score each of the 30 elements based on evidence in the content.
 
-**URL:** ${url}
+**URL:** ${_url}
 **Content to Analyze:**
 ${JSON.stringify(content, null, 2)}
 
@@ -178,7 +178,7 @@ Return a JSON object with this exact structure:
       }, { status: 500 });
     }
 
-    console.log(`✅ Elements of Value analysis completed for: ${url}`);
+    console.log(`✅ Elements of Value analysis completed for: ${_url}`);
 
     return NextResponse.json({
       success: true,

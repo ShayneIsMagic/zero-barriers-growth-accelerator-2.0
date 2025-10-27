@@ -23,7 +23,7 @@ import {
     Zap
 } from 'lucide-react';
 import { useState } from 'react';
-import { ContentPreviewBox } from './ContentPreviewBox';
+// import { ContentPreviewBox } from './ContentPreviewBox';
 
 interface CliftonStrengthsData {
   overall_score: number;
@@ -112,7 +112,7 @@ export function SimpleCliftonStrengthsPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          _url,
+          url,
           scrapedContent
         }),
       });
@@ -249,12 +249,21 @@ export function SimpleCliftonStrengthsPage() {
 
         {/* Scraped Content Preview */}
         {scrapedContent && (
-          <ContentPreviewBox
-            scrapedContent={scrapedContent}
-            url={url}
-            title="CliftonStrengths Analysis - Scraped Content Preview"
-            description="Content successfully scraped from the website. Review the data before running CliftonStrengths analysis."
-          />
+          <div className="mb-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Scraped Content Preview</CardTitle>
+                <CardDescription>
+                  Content successfully scraped from the website. Review the data before running CliftonStrengths analysis.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600">
+                  Content length: {scrapedContent.length} characters
+                </p>
+              </CardContent>
+            </Card>
+          </div>
         )}
 
         {/* Results */}

@@ -1,17 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { SEOAnalysis } from '@/types/analysis';
-import SEOAnalysisResults from './SEOAnalysisResults';
-import { Search, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AnalysisClient } from '@/lib/analysis-client';
+import { SEOAnalysis } from '@/types/analysis';
+import { AlertCircle, CheckCircle2, Loader2, Search } from 'lucide-react';
+import { useState } from 'react';
+import SEOAnalysisResults from './SEOAnalysisResults';
 
 export default function SEOAnalysisForm() {
   const [url, setUrl] = useState('');
@@ -20,7 +20,7 @@ export default function SEOAnalysisForm() {
   const [includeSearchConsole, setIncludeSearchConsole] = useState(true);
   const [includeKeywordResearch, setIncludeKeywordResearch] = useState(true);
   const [includeCompetitiveAnalysis, setIncludeCompetitiveAnalysis] = useState(true);
-  
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<SEOAnalysis | null>(null);
@@ -51,9 +51,9 @@ export default function SEOAnalysisForm() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          _url,
+          url,
           targetKeywords: keywords.length > 0 ? keywords : undefined,
-          competitorUrls: competitors.length > 0 ? competitors : undefined,
+          competitorUrls: _competitors.length > 0 ? _competitors : undefined,
           includeSearchConsole,
           includeKeywordResearch,
           includeCompetitiveAnalysis,
@@ -70,7 +70,7 @@ export default function SEOAnalysisForm() {
       try {
         const analysisForStorage = {
           id: Date.now().toString(),
-          url: _url,
+          url: url,
           overallScore: 75, // SEO analyses don't have overall scores, using default
           summary: 'SEO analysis completed',
           status: 'completed' as const,
@@ -80,7 +80,7 @@ export default function SEOAnalysisForm() {
           cliftonStrengths: { themes: [], recommendations: [], overallScore: 0, insights: [] },
           recommendations: []
         };
-        
+
         AnalysisClient.saveAnalysis(analysisForStorage);
         console.log('✅ SEO analysis saved to localStorage');
       } catch (saveError) {
@@ -98,7 +98,7 @@ export default function SEOAnalysisForm() {
 
   const handleQuickAnalysis = async () => {
     if (!url) return;
-    
+
     setLoading(true);
     setError(null);
     setAnalysis(null);
@@ -115,7 +115,7 @@ export default function SEOAnalysisForm() {
       try {
         const analysisForStorage = {
           id: Date.now().toString(),
-          url: _url,
+          url: url,
           overallScore: 75,
           summary: 'Quick SEO analysis completed',
           status: 'completed' as const,
@@ -125,7 +125,7 @@ export default function SEOAnalysisForm() {
           cliftonStrengths: { themes: [], recommendations: [], overallScore: 0, insights: [] },
           recommendations: []
         };
-        
+
         AnalysisClient.saveAnalysis(analysisForStorage);
         console.log('✅ Quick SEO analysis saved to localStorage');
       } catch (saveError) {
@@ -274,7 +274,7 @@ export default function SEOAnalysisForm() {
                   </>
                 )}
               </Button>
-              
+
               <Button
                 type="button"
                 variant="outline"
@@ -314,7 +314,7 @@ export default function SEOAnalysisForm() {
                 Analyze current keyword rankings and performance metrics
               </p>
             </div>
-            
+
             <div className="text-center p-4 border rounded-lg">
               <div className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">
                 2
@@ -324,7 +324,7 @@ export default function SEOAnalysisForm() {
                 Research search volume and identify new opportunities
               </p>
             </div>
-            
+
             <div className="text-center p-4 border rounded-lg">
               <div className="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">
                 3
@@ -334,7 +334,7 @@ export default function SEOAnalysisForm() {
                 Validate keyword trends and industry direction
               </p>
             </div>
-            
+
             <div className="text-center p-4 border rounded-lg">
               <div className="w-8 h-8 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">
                 4

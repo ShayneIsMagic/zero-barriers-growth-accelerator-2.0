@@ -6,7 +6,7 @@ export const maxDuration = 120; // 2 minutes for multiple analyses
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { _url, options } = body;
+    const { url, options } = body;
 
     if (!url) {
       return NextResponse.json({

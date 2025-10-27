@@ -8,14 +8,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { _url, content } = body;
 
-    if (!url) {
+    if (!_url) {
       return NextResponse.json({
         success: false,
         error: 'URL is required'
       }, { status: 400 });
     }
 
-    console.log(`🚧 Lighthouse analysis requested for: ${url} (Coming Soon)`);
+    console.log(`🚧 Lighthouse analysis requested for: ${_url} (Coming Soon)`);
 
     // Return coming soon response with manual prompt
     const response = {
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
         status: 'coming_soon',
         estimatedRelease: 'Q2 2025'
       },
-      manualPrompt: `Analyze Lighthouse performance for ${url}. Content: ${content?.substring(0, 1000)}...`
+      manualPrompt: `Analyze Lighthouse performance for ${_url}. Content: ${content?.substring(0, 1000)}...`
     };
 
     return NextResponse.json(response);

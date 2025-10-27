@@ -1,0 +1,40 @@
+repos:
+  - repo: local
+    hooks:
+      - id: detect-secrets
+        name: detect-secrets
+        entry: detect-secrets scan --all-files
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: gitleaks
+        name: gitleaks
+        entry: gitleaks detect --source . --verbose
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: eslint
+        name: eslint
+        entry: npm run lint:fix
+        language: system
+        pass_filenames: false
+        files: \.(js|jsx|ts|tsx)$
+      - id: prettier
+        name: prettier
+        entry: npm run format
+        language: system
+        pass_filenames: false
+        files: \.(js|jsx|ts|tsx|json|md)$
+      - id: type-check
+        name: type-check
+        entry: npm run type-check
+        language: system
+        pass_filenames: false
+      - id: test
+        name: test
+        entry: npm run test
+        language: system
+        pass_filenames: false
+
+
+

@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { ThreePhaseAnalyzer, Phase3Report } from '@/lib/three-phase-analyzer';
 import { reportStorage } from '@/lib/report-storage';
+import { Phase3Report, ThreePhaseAnalyzer } from '@/lib/three-phase-analyzer';
+import { NextRequest, NextResponse } from 'next/server';
 
 export interface StepByStepExecutionRequest {
   url: string;
@@ -27,7 +27,7 @@ export interface StepByStepExecutionResponse {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { _url, stepId: _stepId } = body;
+    const { url, stepId: _stepId } = body;
 
     if (!url) {
       return NextResponse.json({
@@ -47,9 +47,9 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`🚀 Starting step-by-step execution for: ${url}`);
-    
+
     let progressData: any = null;
-    
+
     // Execute 3-phase analysis with progress tracking
     const analyzer = new ThreePhaseAnalyzer(url, (phase, step, progress) => {
       progressData = {
@@ -59,11 +59,11 @@ export async function POST(request: NextRequest) {
       };
       console.log(`📊 ${phase}: ${step} - ${progress.toFixed(1)}%`);
     });
-    
+
     const result = await analyzer.execute();
 
     // Store the report automatically
-    const storedReport = await reportStorage.storeReport(result, _url, 'comprehensive');
+    const storedReport = await reportStorage.storeReport(result, url, 'comprehensive');
 
     return NextResponse.json({
       success: true,
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Step-by-step execution error:', error);
-    
+
     return NextResponse.json({
       success: false,
       error: 'Analysis failed',
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const sessionId = searchParams.get('sessionId');
-    
+
     if (!sessionId) {
       return NextResponse.json({
         success: false,
@@ -107,7 +107,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Status check error:', error);
-    
+
     return NextResponse.json({
       success: false,
       error: 'Status check failed',

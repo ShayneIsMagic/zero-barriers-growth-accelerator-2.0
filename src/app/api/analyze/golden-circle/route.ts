@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 60;
 
@@ -8,14 +8,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { _url, content } = body;
 
-    if (!url || !content) {
+    if (!_url || !content) {
       return NextResponse.json({
         success: false,
         error: 'URL and content are required'
       }, { status: 400 });
     }
 
-    console.log(`🎯 Starting Golden Circle analysis for: ${url}`);
+    console.log(`🎯 Starting Golden Circle analysis for: ${_url}`);
 
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json({
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
 Analyze the following website content using Simon Sinek's Golden Circle framework. Extract specific details and provide scores for each dimension.
 
-**URL:** ${url}
+**URL:** ${_url}
 **Content to Analyze:**
 ${JSON.stringify(content, null, 2)}
 
@@ -151,7 +151,7 @@ Return a JSON object with this exact structure:
       }, { status: 500 });
     }
 
-    console.log(`✅ Golden Circle analysis completed for: ${url}`);
+    console.log(`✅ Golden Circle analysis completed for: ${_url}`);
 
     return NextResponse.json({
       success: true,

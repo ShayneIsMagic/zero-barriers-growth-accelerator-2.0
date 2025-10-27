@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { _url, scrapedData, assessmentType } = body;
 
-    if (!url) {
+    if (!_url) {
       return NextResponse.json({
         success: false,
         error: 'URL is required'
@@ -35,11 +35,11 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    console.log(`🤖 Starting Claude project analysis for: ${url}`);
+    console.log(`🤖 Starting Claude project analysis for: ${_url}`);
     console.log(`📊 Assessment type: ${assessmentType}`);
 
     // Create fresh Claude session for this client
-    const session = await ClaudeProjectIntegrationService.createClientSession(url);
+    const session = await ClaudeProjectIntegrationService.createClientSession(_url);
     console.log(`✅ Claude session created: ${session.sessionId}`);
 
     // Run assessment using Claude project
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     );
 
     if (result.success) {
-      console.log(`✅ Claude project analysis completed for: ${url}`);
+      console.log(`✅ Claude project analysis completed for: ${_url}`);
 
       return NextResponse.json({
         success: true,
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
         projectUrl: 'https://claude.ai/project/0199eeed-2813-7556-982f-f4773a045d86'
       });
     } else {
-      console.error(`❌ Claude project analysis failed for: ${url}`, result.error);
+      console.error(`❌ Claude project analysis failed for: ${_url}`, result.error);
 
       return NextResponse.json({
         success: false,

@@ -57,7 +57,7 @@ export class StandaloneCliftonStrengthsService {
 
       return {
         success: true,
-        _url,
+        url,
         data: analysisResult
       };
 
@@ -65,7 +65,7 @@ export class StandaloneCliftonStrengthsService {
       console.error('CliftonStrengths analysis failed:', error);
       return {
         success: false,
-        _url,
+        url,
         data: {} as any,
         error: error instanceof Error ? error.message : 'Analysis failed'
       };

@@ -8,7 +8,7 @@ import { reportStorage } from '@/lib/report-storage';
 import { NextRequest, NextResponse } from 'next/server';
 
 export interface ControlledAnalysisRequest {
-  url: string;
+  _url: string;
   steps?: string[]; // Optional: specify which steps to run
   timeoutPerStep?: number; // Optional: override default timeout
 }
@@ -16,7 +16,7 @@ export interface ControlledAnalysisRequest {
 export interface ControlledAnalysisResponse {
   success: boolean;
   data?: {
-    url: string;
+    _url: string;
     timestamp: string;
     steps: Array<{
       name: string;
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     const body: ControlledAnalysisRequest = await request.json();
     const { _url, steps, timeoutPerStep = 30000 } = body;
 
-    if (!url) {
+    if (!_url) {
       return NextResponse.json({
         success: false,
         error: 'URL is required'
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 
     // Validate URL
     try {
-      new URL(url);
+      new URL(_url);
     } catch {
       return NextResponse.json({
         success: false,
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    console.log(`🚀 Starting controlled analysis for: ${url}`);
+    console.log(`🚀 Starting controlled analysis for: ${_url}`);
 
     // Filter steps if specified
     const selectedSteps = steps ?

@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { _url, scrapedData, assessmentType } = body;
 
-    if (!url) {
+    if (!_url) {
       return NextResponse.json({
         success: false,
         error: 'URL is required'
@@ -34,18 +34,18 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    console.log(`🧠 Starting enhanced analysis for: ${url}`);
+    console.log(`🧠 Starting enhanced analysis for: ${_url}`);
     console.log(`📊 Assessment type: ${assessmentType}`);
 
     // Run enhanced analysis with framework knowledge
     const result = await EnhancedAnalysisService.analyzeWithFramework(
       assessmentType,
       scrapedData,
-      url
+      _url
     );
 
     if (result.success) {
-      console.log(`✅ Enhanced analysis completed for: ${url}`);
+      console.log(`✅ Enhanced analysis completed for: ${_url}`);
       console.log(`🎯 Framework used: ${result.frameworkUsed}`);
       console.log(`📈 Validation score: ${result.validation.score}`);
 
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
         timestamp: new Date().toISOString()
       });
     } else {
-      console.error(`❌ Enhanced analysis failed for: ${url}`, result.error);
+      console.error(`❌ Enhanced analysis failed for: ${_url}`, result.error);
 
       return NextResponse.json({
         success: false,

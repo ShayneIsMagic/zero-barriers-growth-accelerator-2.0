@@ -115,7 +115,7 @@ export class SEOActionableAnalysisService {
 
       return {
         success: true,
-        _url,
+        url,
         report: aiResponse.analysis
       };
 
@@ -123,7 +123,7 @@ export class SEOActionableAnalysisService {
       console.error('SEO actionable analysis failed:', error);
       return {
         success: false,
-        _url,
+        url,
         report: {} as any,
         error: error instanceof Error ? error.message : 'SEO analysis failed'
       };
