@@ -56,24 +56,45 @@ export const B2C_PROMPT_TEMPLATE = {
 ## Scoring: Present (1) or Absent (0) for each element`,
   categories: {
     functional: [
-      'saves_time', 'simplifies', 'makes_money', 'reduces_effort', 'reduces_cost',
-      'reduces_risk', 'organizes', 'integrates', 'connects', 'quality', 'variety',
-      'informs', 'avoids_hassles', 'sensory_appeal'
+      'saves_time',
+      'simplifies',
+      'makes_money',
+      'reduces_effort',
+      'reduces_cost',
+      'reduces_risk',
+      'organizes',
+      'integrates',
+      'connects',
+      'quality',
+      'variety',
+      'informs',
+      'avoids_hassles',
+      'sensory_appeal',
     ],
     emotional: [
-      'reduces_anxiety', 'rewards_me', 'nostalgia', 'design_aesthetics', 'badge_value',
-      'wellness', 'therapeutic', 'fun_entertainment', 'attractiveness', 'provides_access'
+      'reduces_anxiety',
+      'rewards_me',
+      'nostalgia',
+      'design_aesthetics',
+      'badge_value',
+      'wellness',
+      'therapeutic',
+      'fun_entertainment',
+      'attractiveness',
+      'provides_access',
     ],
     lifeChanging: [
-      'provides_hope', 'self_actualization', 'motivation', 'heirloom', 'affiliation_belonging'
+      'provides_hope',
+      'self_actualization',
+      'motivation',
+      'heirloom',
+      'affiliation_belonging',
     ],
-    socialImpact: [
-      'self_transcendence'
-    ]
+    socialImpact: ['self_transcendence'],
   },
   totalElements: 30,
   scoreRange: '0-30',
-  analysisType: 'Consumer value proposition'
+  analysisType: 'Consumer value proposition',
 };
 
 /**
@@ -162,29 +183,56 @@ export const B2B_PROMPT_TEMPLATE = {
 ## Scoring: Present (1) or Absent (0) for each element`,
   categories: {
     tableStakes: [
-      'meeting_specifications', 'acceptable_price', 'regulatory_compliance', 'ethical_standards'
+      'meeting_specifications',
+      'acceptable_price',
+      'regulatory_compliance',
+      'ethical_standards',
     ],
     functional: [
-      'improved_top_line', 'cost_reduction', 'product_quality', 'scalability', 'innovation',
-      'risk_reduction', 'reach', 'flexibility', 'component_quality'
+      'improved_top_line',
+      'cost_reduction',
+      'product_quality',
+      'scalability',
+      'innovation',
+      'risk_reduction',
+      'reach',
+      'flexibility',
+      'component_quality',
     ],
     easeOfDoingBusiness: [
-      'time_savings', 'reduced_effort', 'decreased_hassles', 'information', 'transparency',
-      'organization', 'simplification', 'connection', 'integration', 'access', 'availability',
-      'variety', 'configurability', 'responsiveness', 'expertise', 'commitment', 'stability',
-      'cultural_fit'
+      'time_savings',
+      'reduced_effort',
+      'decreased_hassles',
+      'information',
+      'transparency',
+      'organization',
+      'simplification',
+      'connection',
+      'integration',
+      'access',
+      'availability',
+      'variety',
+      'configurability',
+      'responsiveness',
+      'expertise',
+      'commitment',
+      'stability',
+      'cultural_fit',
     ],
     individual: [
-      'network_expansion', 'marketability', 'reputational_assurance', 'design_aesthetics_b2b',
-      'growth_development', 'reduced_anxiety_b2b', 'fun_perks'
+      'network_expansion',
+      'marketability',
+      'reputational_assurance',
+      'design_aesthetics_b2b',
+      'growth_development',
+      'reduced_anxiety_b2b',
+      'fun_perks',
     ],
-    inspirational: [
-      'purpose', 'vision', 'hope_b2b', 'social_responsibility'
-    ]
+    inspirational: ['purpose', 'vision', 'hope_b2b', 'social_responsibility'],
   },
   totalElements: 42,
   scoreRange: '0-42',
-  analysisType: 'Business value proposition'
+  analysisType: 'Business value proposition',
 };
 
 /**
@@ -243,24 +291,51 @@ export const CLIFTON_PROMPT_TEMPLATE = {
 ## Scoring: Present (1) or Absent (0) for each theme`,
   domains: {
     strategicThinking: [
-      'analytical', 'context', 'futuristic', 'ideation', 'input', 'intellection', 'learner', 'strategic'
+      'analytical',
+      'context',
+      'futuristic',
+      'ideation',
+      'input',
+      'intellection',
+      'learner',
+      'strategic',
     ],
     executing: [
-      'achiever', 'arranger', 'belief', 'consistency', 'deliberative', 'discipline', 'focus',
-      'responsibility', 'restorative'
+      'achiever',
+      'arranger',
+      'belief',
+      'consistency',
+      'deliberative',
+      'discipline',
+      'focus',
+      'responsibility',
+      'restorative',
     ],
     influencing: [
-      'activator', 'command', 'communication', 'competition', 'maximizer', 'self_assurance',
-      'significance', 'woo'
+      'activator',
+      'command',
+      'communication',
+      'competition',
+      'maximizer',
+      'self_assurance',
+      'significance',
+      'woo',
     ],
     relationshipBuilding: [
-      'adaptability', 'connectedness', 'developer', 'empathy', 'harmony', 'includer',
-      'individualization', 'positivity', 'relator'
-    ]
+      'adaptability',
+      'connectedness',
+      'developer',
+      'empathy',
+      'harmony',
+      'includer',
+      'individualization',
+      'positivity',
+      'relator',
+    ],
   },
   totalThemes: 34,
   scoreRange: '0-34',
-  analysisType: 'Organizational strengths and cultural patterns'
+  analysisType: 'Organizational strengths and cultural patterns',
 };
 
 /**
@@ -315,52 +390,52 @@ The people connected to the organization:
       title: 'WHY - Purpose, Cause, Belief',
       questions: [
         "What is the organization's purpose?",
-        "What cause does it serve?",
-        "What belief drives it?",
-        "Why does it exist beyond making money?",
-        "What is the organization's reason for being?"
+        'What cause does it serve?',
+        'What belief drives it?',
+        'Why does it exist beyond making money?',
+        "What is the organization's reason for being?",
       ],
-      scoreRange: '0-10'
+      scoreRange: '0-10',
     },
     how: {
       title: 'HOW - Process, Methodology, Differentiation',
       questions: [
-        "How does the organization fulfill its purpose?",
-        "What unique process or methodology does it use?",
-        "How is it different from competitors?",
-        "What values guide its actions?",
-        "What is the organization's unique approach?"
+        'How does the organization fulfill its purpose?',
+        'What unique process or methodology does it use?',
+        'How is it different from competitors?',
+        'What values guide its actions?',
+        "What is the organization's unique approach?",
       ],
-      scoreRange: '0-10'
+      scoreRange: '0-10',
     },
     what: {
       title: 'WHAT - Products, Services, Features',
       questions: [
-        "What products or services does it offer?",
-        "What specific features or benefits?",
-        "What tangible things does it provide?",
-        "What can customers buy or use?",
-        "What does the organization actually do?"
+        'What products or services does it offer?',
+        'What specific features or benefits?',
+        'What tangible things does it provide?',
+        'What can customers buy or use?',
+        'What does the organization actually do?',
       ],
-      scoreRange: '0-10'
+      scoreRange: '0-10',
     },
     who: {
       title: 'WHO - Target Audience, People, Relationships',
       questions: [
-        "Who is their ideal customer?",
-        "Who are they serving?",
-        "Who believes what they believe?",
-        "Who is their target audience?",
-        "Who are the people in their testimonials?",
-        "Who benefits from their WHY?",
-        "Who is their team/community?"
+        'Who is their ideal customer?',
+        'Who are they serving?',
+        'Who believes what they believe?',
+        'Who is their target audience?',
+        'Who are the people in their testimonials?',
+        'Who benefits from their WHY?',
+        'Who is their team/community?',
       ],
-      scoreRange: '0-10'
-    }
+      scoreRange: '0-10',
+    },
   },
   totalElements: 4,
   scoreRange: '0-40',
-  analysisType: 'Purpose-driven strategy alignment'
+  analysisType: 'Purpose-driven strategy alignment',
 };
 
 /**
@@ -375,10 +450,10 @@ export const CONTENT_COMPARISON_PROMPT_TEMPLATE = {
     'Keywords Targeting',
     'Readability',
     'Call-to-Action',
-    'Overall Recommendation'
+    'Overall Recommendation',
   ],
   comparisonType: 'Existing vs. Proposed content',
-  outputFormat: 'Structured comparison with scores and specific improvements'
+  outputFormat: 'Structured comparison with scores and specific improvements',
 };
 
 /**
@@ -391,10 +466,10 @@ export function buildFrameworkPrompt(
   url: string
 ): string {
   const templates = {
-    'b2c': B2C_PROMPT_TEMPLATE,
-    'b2b': B2B_PROMPT_TEMPLATE,
-    'clifton': CLIFTON_PROMPT_TEMPLATE,
-    'golden-circle': GOLDEN_CIRCLE_PROMPT_TEMPLATE
+    b2c: B2C_PROMPT_TEMPLATE,
+    b2b: B2B_PROMPT_TEMPLATE,
+    clifton: CLIFTON_PROMPT_TEMPLATE,
+    'golden-circle': GOLDEN_CIRCLE_PROMPT_TEMPLATE,
   };
 
   const template = templates[framework];
@@ -411,14 +486,18 @@ ${url}
 - **Keywords:** ${existing.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
 - **Content Preview:** ${existing.cleanText?.substring(0, 2000) || 'No content available'}
 
-${proposed ? `
+${
+  proposed
+    ? `
 ## Proposed Content (Comparison)
 - **Word Count:** ${proposed.wordCount || 0}
 - **Title:** ${proposed.title || 'N/A'}
 - **Meta Description:** ${proposed.metaDescription || 'N/A'}
 - **Keywords:** ${proposed.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
 - **Content Preview:** ${proposed.cleanText?.substring(0, 2000) || 'No content available'}
-` : ''}
+`
+    : ''
+}
 
 ---
 
@@ -448,6 +527,5 @@ export const PROMPT_TEMPLATES = {
   b2b: B2B_PROMPT_TEMPLATE,
   cliftonStrengths: CLIFTON_PROMPT_TEMPLATE,
   goldenCircle: GOLDEN_CIRCLE_PROMPT_TEMPLATE,
-  contentComparison: CONTENT_COMPARISON_PROMPT_TEMPLATE
+  contentComparison: CONTENT_COMPARISON_PROMPT_TEMPLATE,
 };
-

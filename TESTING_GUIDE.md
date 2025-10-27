@@ -3,12 +3,15 @@
 ## ✅ **Quick Test (2 minutes)**
 
 ### **Step 1: Start the Development Server**
+
 ```bash
 npm run dev
 ```
+
 Open `http://localhost:3000`
 
 ### **Step 2: Test Content-Comparison Page**
+
 1. Navigate to `/dashboard/content-comparison`
 2. Enter a URL: `https://example.com`
 3. Click "Run Analysis"
@@ -17,6 +20,7 @@ Open `http://localhost:3000`
 6. ✅ JSON is now in your clipboard
 
 ### **Step 3: Test B2B Elements Page**
+
 1. Navigate to `/dashboard/elements-of-value-b2b`
 2. Enter the same URL: `https://example.com`
 3. **Paste** the copied JSON into "Paste Scraped Content" field
@@ -29,6 +33,7 @@ Open `http://localhost:3000`
 ## 📋 **Complete Test Checklist**
 
 ### **Test 1: Content-Comparison (Source)**
+
 - [ ] Navigate to `/dashboard/content-comparison`
 - [ ] Enter URL: `https://example.com`
 - [ ] Run analysis
@@ -37,6 +42,7 @@ Open `http://localhost:3000`
 - [ ] Verify JSON is copied to clipboard
 
 ### **Test 2: B2B Elements (Consumer)**
+
 - [ ] Navigate to `/dashboard/elements-of-value-b2b`
 - [ ] Enter same URL: `https://example.com`
 - [ ] Paste copied JSON into "Paste Scraped Content" field
@@ -45,6 +51,7 @@ Open `http://localhost:3000`
 - [ ] Verify results display correctly
 
 ### **Test 3: B2C Elements (Consumer)**
+
 - [ ] Navigate to `/dashboard/elements-of-value-b2c`
 - [ ] Enter same URL: `https://example.com`
 - [ ] Paste same JSON into "Paste Scraped Content" field
@@ -52,6 +59,7 @@ Open `http://localhost:3000`
 - [ ] Verify results display correctly
 
 ### **Test 4: CliftonStrengths**
+
 - [ ] Navigate to `/dashboard/clifton-strengths`
 - [ ] Enter same URL: `https://example.com`
 - [ ] Paste same JSON into "Paste Scraped Content" field
@@ -59,6 +67,7 @@ Open `http://localhost:3000`
 - [ ] Verify results display correctly
 
 ### **Test 5: Golden Circle**
+
 - [ ] Navigate to `/dashboard/golden-circle`
 - [ ] Enter same URL: `https://example.com`
 - [ ] Paste same JSON into "Paste Scraped Content" field
@@ -70,22 +79,26 @@ Open `http://localhost:3000`
 ## 🔍 **What to Verify**
 
 ### **1. No Duplicate Scraping**
+
 - ✅ Content-Comparison scrapes once
 - ✅ Other pages use pasted content
 - ✅ Analysis starts immediately (no waiting for scraping)
 
 ### **2. Consistent Data**
+
 - ✅ All pages use the same scraped content
 - ✅ Results are consistent across pages
 - ✅ No discrepancies between analyses
 
 ### **3. UI/UX**
+
 - ✅ "Paste Scraped Content" field appears
 - ✅ Clear placeholder text
 - ✅ Copy/paste works smoothly
 - ✅ Results display properly
 
 ### **4. Error Handling**
+
 - ✅ Invalid JSON shows error message
 - ✅ Empty scraped content works (fallback)
 - ✅ Missing URL shows validation error
@@ -113,12 +126,14 @@ Open `http://localhost:3000`
 ## 📊 **Expected Results**
 
 ### **When Paste Field is Used:**
+
 - ✅ Analysis starts immediately
 - ✅ No "scraping" step
 - ✅ Fast execution (~5 seconds)
 - ✅ Uses pasted content
 
 ### **When Paste Field is Empty:**
+
 - ✅ Falls back to scraping
 - ✅ Calls content-comparison API internally
 - ✅ Slower execution (~30 seconds)
@@ -129,18 +144,22 @@ Open `http://localhost:3000`
 ## 🐛 **Troubleshooting**
 
 ### **Issue: "Invalid JSON" Error**
+
 - **Solution**: Make sure you copied the entire JSON from "Copy Scraped Data" button
 - **Check**: JSON should start with `{` and end with `}`
 
 ### **Issue: Analysis Still Scrapes**
+
 - **Solution**: Ensure you pasted the JSON into the "Paste Scraped Content" field
 - **Check**: The field should contain the JSON, not be empty
 
 ### **Issue: No "Copy Scraped Data" Button**
+
 - **Solution**: Make sure you're on the Content-Comparison page
 - **Check**: Run analysis first, then the button appears
 
 ### **Issue: Results Don't Display**
+
 - **Solution**: Check browser console for errors
 - **Check**: Verify API calls are successful in Network tab
 
@@ -149,6 +168,7 @@ Open `http://localhost:3000`
 ## ✅ **Success Criteria**
 
 **Test is successful if:**
+
 1. ✅ Content-Comparison scrapes and returns data
 2. ✅ "Copy Scraped Data" button copies JSON to clipboard
 3. ✅ Pasting JSON into any assessment page works
@@ -169,7 +189,3 @@ npm run dev
 Then follow the steps above to test the complete workflow!
 
 **Estimated Time:** 5-10 minutes for complete testing
-
-
-
-

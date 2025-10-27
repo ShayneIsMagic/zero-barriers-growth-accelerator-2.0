@@ -7,21 +7,27 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-    CheckCircle,
-    ExternalLink,
-    FileText,
-    Globe,
-    Loader2,
-    Search,
-    Target,
-    TrendingUp,
-    Users,
-    Zap
+  CheckCircle,
+  ExternalLink,
+  FileText,
+  Globe,
+  Loader2,
+  Search,
+  Target,
+  TrendingUp,
+  Users,
+  Zap,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -70,7 +76,7 @@ export function MultiPageScrapingPage() {
     includeAbout: true,
     includeContact: true,
     includeServices: true,
-    maxDepth: 2
+    maxDepth: 2,
   });
 
   const handleScrape = async () => {
@@ -101,28 +107,31 @@ export function MultiPageScrapingPage() {
         setError(data.error || 'Multi-page scraping failed');
       }
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Multi-page scraping failed');
+      setError(
+        error instanceof Error ? error.message : 'Multi-page scraping failed'
+      );
     } finally {
       setIsScraping(false);
     }
   };
 
   const handleOptionChange = (key: keyof PageDiscoveryOptions, value: any) => {
-    setOptions(prev => ({
+    setOptions((prev) => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
-      <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold flex items-center justify-center">
+    <div className="mx-auto max-w-6xl space-y-6 p-6">
+      <div className="space-y-4 text-center">
+        <h1 className="flex items-center justify-center text-3xl font-bold">
           <Globe className="mr-3 h-8 w-8 text-blue-600" />
           Multi-Page Content Scraping
         </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Discover and scrape content from multiple pages across a website for comprehensive analysis
+        <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+          Discover and scrape content from multiple pages across a website for
+          comprehensive analysis
         </p>
       </div>
 
@@ -185,7 +194,7 @@ export function MultiPageScrapingPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-4">
               <div>
                 <Label htmlFor="maxPages">Maximum Pages</Label>
@@ -195,7 +204,9 @@ export function MultiPageScrapingPage() {
                   min="1"
                   max="20"
                   value={options.maxPages}
-                  onChange={(e) => handleOptionChange('maxPages', parseInt(e.target.value))}
+                  onChange={(e) =>
+                    handleOptionChange('maxPages', parseInt(e.target.value))
+                  }
                   disabled={isScraping}
                   className="mt-1"
                 />
@@ -209,7 +220,9 @@ export function MultiPageScrapingPage() {
                   min="1"
                   max="5"
                   value={options.maxDepth}
-                  onChange={(e) => handleOptionChange('maxDepth', parseInt(e.target.value))}
+                  onChange={(e) =>
+                    handleOptionChange('maxDepth', parseInt(e.target.value))
+                  }
                   disabled={isScraping}
                   className="mt-1"
                 />
@@ -221,7 +234,9 @@ export function MultiPageScrapingPage() {
                 <Checkbox
                   id="includeSubpages"
                   checked={options.includeSubpages}
-                  onCheckedChange={(checked) => handleOptionChange('includeSubpages', checked)}
+                  onCheckedChange={(checked) =>
+                    handleOptionChange('includeSubpages', checked)
+                  }
                   disabled={isScraping}
                 />
                 <Label htmlFor="includeSubpages">Include Subpages</Label>
@@ -231,7 +246,9 @@ export function MultiPageScrapingPage() {
                 <Checkbox
                   id="includeBlog"
                   checked={options.includeBlog}
-                  onCheckedChange={(checked) => handleOptionChange('includeBlog', checked)}
+                  onCheckedChange={(checked) =>
+                    handleOptionChange('includeBlog', checked)
+                  }
                   disabled={isScraping}
                 />
                 <Label htmlFor="includeBlog">Include Blog/News Pages</Label>
@@ -241,7 +258,9 @@ export function MultiPageScrapingPage() {
                 <Checkbox
                   id="includeProducts"
                   checked={options.includeProducts}
-                  onCheckedChange={(checked) => handleOptionChange('includeProducts', checked)}
+                  onCheckedChange={(checked) =>
+                    handleOptionChange('includeProducts', checked)
+                  }
                   disabled={isScraping}
                 />
                 <Label htmlFor="includeProducts">Include Product Pages</Label>
@@ -251,30 +270,42 @@ export function MultiPageScrapingPage() {
                 <Checkbox
                   id="includeAbout"
                   checked={options.includeAbout}
-                  onCheckedChange={(checked) => handleOptionChange('includeAbout', checked)}
+                  onCheckedChange={(checked) =>
+                    handleOptionChange('includeAbout', checked)
+                  }
                   disabled={isScraping}
                 />
-                <Label htmlFor="includeAbout">Include About/Company Pages</Label>
+                <Label htmlFor="includeAbout">
+                  Include About/Company Pages
+                </Label>
               </div>
 
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="includeContact"
                   checked={options.includeContact}
-                  onCheckedChange={(checked) => handleOptionChange('includeContact', checked)}
+                  onCheckedChange={(checked) =>
+                    handleOptionChange('includeContact', checked)
+                  }
                   disabled={isScraping}
                 />
-                <Label htmlFor="includeContact">Include Contact/Support Pages</Label>
+                <Label htmlFor="includeContact">
+                  Include Contact/Support Pages
+                </Label>
               </div>
 
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="includeServices"
                   checked={options.includeServices}
-                  onCheckedChange={(checked) => handleOptionChange('includeServices', checked)}
+                  onCheckedChange={(checked) =>
+                    handleOptionChange('includeServices', checked)
+                  }
                   disabled={isScraping}
                 />
-                <Label htmlFor="includeServices">Include Services/Solutions Pages</Label>
+                <Label htmlFor="includeServices">
+                  Include Services/Solutions Pages
+                </Label>
               </div>
             </div>
           </div>
@@ -304,22 +335,38 @@ export function MultiPageScrapingPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">{result.siteMap.totalPages}</div>
-                  <div className="text-sm text-muted-foreground">Total Pages</div>
+                  <div className="text-2xl font-bold text-blue-600">
+                    {result.siteMap.totalPages}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Total Pages
+                  </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">{result.comprehensiveContent.allKeywords.length}</div>
-                  <div className="text-sm text-muted-foreground">Keywords Found</div>
+                  <div className="text-2xl font-bold text-green-600">
+                    {result.comprehensiveContent.allKeywords.length}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Keywords Found
+                  </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">{result.comprehensiveContent.allHeadings.length}</div>
-                  <div className="text-sm text-muted-foreground">Headings Found</div>
+                  <div className="text-2xl font-bold text-purple-600">
+                    {result.comprehensiveContent.allHeadings.length}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Headings Found
+                  </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-600">{result.comprehensiveContent.contentThemes.length}</div>
-                  <div className="text-sm text-muted-foreground">Content Themes</div>
+                  <div className="text-2xl font-bold text-orange-600">
+                    {result.comprehensiveContent.contentThemes.length}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Content Themes
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -335,11 +382,13 @@ export function MultiPageScrapingPage() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                {Object.entries(result.siteMap.pageTypes).map(([type, count]) => (
-                  <Badge key={type} variant="secondary" className="text-sm">
-                    {type}: {count}
-                  </Badge>
-                ))}
+                {Object.entries(result.siteMap.pageTypes).map(
+                  ([type, count]) => (
+                    <Badge key={type} variant="secondary" className="text-sm">
+                      {type}: {count}
+                    </Badge>
+                  )
+                )}
               </div>
             </CardContent>
           </Card>
@@ -354,11 +403,13 @@ export function MultiPageScrapingPage() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                {result.comprehensiveContent.contentThemes.map((theme, index) => (
-                  <Badge key={index} variant="outline" className="text-sm">
-                    {theme}
-                  </Badge>
-                ))}
+                {result.comprehensiveContent.contentThemes.map(
+                  (theme, index) => (
+                    <Badge key={index} variant="outline" className="text-sm">
+                      {theme}
+                    </Badge>
+                  )
+                )}
               </div>
             </CardContent>
           </Card>
@@ -372,9 +423,12 @@ export function MultiPageScrapingPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2 max-h-96 overflow-y-auto">
+              <div className="max-h-96 space-y-2 overflow-y-auto">
                 {result.additionalPages.map((page, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between rounded-lg border p-3"
+                  >
                     <div className="flex-1">
                       <div className="font-medium">{page.url}</div>
                       <div className="text-sm text-muted-foreground">
@@ -401,13 +455,15 @@ export function MultiPageScrapingPage() {
             </CardHeader>
             <CardContent>
               <div className="max-h-96 overflow-y-auto">
-                <pre className="text-xs whitespace-pre-wrap bg-gray-50 dark:bg-gray-900 p-3 rounded">
+                <pre className="whitespace-pre-wrap rounded bg-gray-50 p-3 text-xs dark:bg-gray-900">
                   {result.comprehensiveContent.allText.substring(0, 2000)}
                   {result.comprehensiveContent.allText.length > 2000 && '...'}
                 </pre>
               </div>
               <div className="mt-2 text-sm text-muted-foreground">
-                Total content length: {result.comprehensiveContent.allText.length.toLocaleString()} characters
+                Total content length:{' '}
+                {result.comprehensiveContent.allText.length.toLocaleString()}{' '}
+                characters
               </div>
             </CardContent>
           </Card>

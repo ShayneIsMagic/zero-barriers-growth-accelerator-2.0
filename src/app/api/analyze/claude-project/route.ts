@@ -15,31 +15,41 @@ export async function POST(request: NextRequest) {
     const { _url, scrapedData, assessmentType } = body;
 
     if (!_url) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL is required',
+        },
+        { status: 400 }
+      );
     }
 
     if (!scrapedData) {
-      return NextResponse.json({
-        success: false,
-        error: 'Scraped data is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Scraped data is required',
+        },
+        { status: 400 }
+      );
     }
 
     if (!assessmentType) {
-      return NextResponse.json({
-        success: false,
-        error: 'Assessment type is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Assessment type is required',
+        },
+        { status: 400 }
+      );
     }
 
     console.log(`🤖 Starting Claude project analysis for: ${_url}`);
     console.log(`📊 Assessment type: ${assessmentType}`);
 
     // Create fresh Claude session for this client
-    const session = await ClaudeProjectIntegrationService.createClientSession(_url);
+    const session =
+      await ClaudeProjectIntegrationService.createClientSession(_url);
     console.log(`✅ Claude session created: ${session.sessionId}`);
 
     // Run assessment using Claude project
@@ -61,30 +71,42 @@ export async function POST(request: NextRequest) {
         claudeChatUrl: result.claudeChatUrl,
         analysis: result.analysis,
         timestamp: result.timestamp,
-        projectUrl: 'https://claude.ai/project/0199eeed-2813-7556-982f-f4773a045d86'
+        projectUrl:
+          'https://claude.ai/project/0199eeed-2813-7556-982f-f4773a045d86',
       });
     } else {
-      console.error(`❌ Claude project analysis failed for: ${_url}`, result.error);
+      console.error(
+        `❌ Claude project analysis failed for: ${_url}`,
+        result.error
+      );
 
-      return NextResponse.json({
-        success: false,
-        _url,
-        assessmentType,
-        clientId: session.clientId,
-        sessionId: session.sessionId,
-        error: result.error,
-        timestamp: result.timestamp
-      }, { status: 500 });
+      return NextResponse.json(
+        {
+          success: false,
+          _url,
+          assessmentType,
+          clientId: session.clientId,
+          sessionId: session.sessionId,
+          error: result.error,
+          timestamp: result.timestamp,
+        },
+        { status: 500 }
+      );
     }
-
   } catch (error) {
     console.error('Claude project analysis API error:', error);
 
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Claude project analysis failed',
-      details: 'Failed to create Claude session or run analysis'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Claude project analysis failed',
+        details: 'Failed to create Claude session or run analysis',
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -98,15 +120,20 @@ export async function GET(_request: NextRequest) {
     return NextResponse.json({
       success: true,
       sessions,
-      projectUrl: 'https://claude.ai/project/0199eeed-2813-7556-982f-f4773a045d86',
-      timestamp: new Date().toISOString()
+      projectUrl:
+        'https://claude.ai/project/0199eeed-2813-7556-982f-f4773a045d86',
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     console.error('Failed to get active sessions:', error);
 
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Failed to get sessions'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Failed to get sessions',
+      },
+      { status: 500 }
+    );
   }
 }

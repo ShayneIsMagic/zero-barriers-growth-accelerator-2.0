@@ -105,7 +105,10 @@ export class SEOActionableAnalysisService {
       console.log(`🎯 Focus area: ${focusArea}`);
 
       const prompt = this.buildSEOPrompt(url, scrapedContent, focusArea);
-      const aiResponse = await analyzeWithGemini(prompt, `seo-actionable-${focusArea}`);
+      const aiResponse = await analyzeWithGemini(
+        prompt,
+        `seo-actionable-${focusArea}`
+      );
 
       if (!aiResponse.success) {
         throw new Error(aiResponse.error || 'AI analysis failed');
@@ -116,21 +119,24 @@ export class SEOActionableAnalysisService {
       return {
         success: true,
         url,
-        report: aiResponse.analysis
+        report: aiResponse.analysis,
       };
-
     } catch (error) {
       console.error('SEO actionable analysis failed:', error);
       return {
         success: false,
         url,
         report: {} as any,
-        error: error instanceof Error ? error.message : 'SEO analysis failed'
+        error: error instanceof Error ? error.message : 'SEO analysis failed',
       };
     }
   }
 
-  private static buildSEOPrompt(url: string, scrapedContent: any, focusArea: string): string {
+  private static buildSEOPrompt(
+    url: string,
+    scrapedContent: any,
+    focusArea: string
+  ): string {
     return `
 You are a world-class SEO strategist and digital marketing expert. Generate a comprehensive, actionable SEO report that includes specific keyword recommendations, copy-paste content, and implementation roadmaps.
 

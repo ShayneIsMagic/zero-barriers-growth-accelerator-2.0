@@ -5,6 +5,7 @@
 ### What You're Seeing:
 
 Supabase offers different connection modes:
+
 - **Session pooler** - For long-lived connections
 - **Transaction pooler** - For serverless (Vercel) ✅ **USE THIS ONE**
 - **Direct connection** - For IPv6 networks
@@ -42,11 +43,13 @@ Above the IPv4 compatibility options, there should be a **"Connection String"** 
 ## What I Need:
 
 **The complete connection string that looks like:**
+
 ```
 postgresql://postgres.chkwezsyopfciibifmxx:YourPassword@aws-0-us-west-1.pooler.supabase.com:6543/postgres
 ```
 
 **Key parts:**
+
 - Starts with `postgresql://`
 - Has your project ID: `chkwezsyopfciibifmxx`
 - Has your password (not `[YOUR-PASSWORD]`)
@@ -55,4 +58,3 @@ postgresql://postgres.chkwezsyopfciibifmxx:YourPassword@aws-0-us-west-1.pooler.s
 ---
 
 **Paste that here and I'll set it up immediately!** 🚀
-

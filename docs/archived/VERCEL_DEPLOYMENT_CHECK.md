@@ -20,6 +20,7 @@
    - **Auto-Deploy:** Should be enabled
 
 **If disconnected:**
+
 - Click "Connect Git Repository"
 - Select your GitHub repo
 - Choose `main` branch
@@ -33,6 +34,7 @@
 2. Look for recent deployments (should show today's date)
 
 **If last deployment is from yesterday:**
+
 - GitHub → Vercel connection is broken
 - Need to reconnect or trigger manual deploy
 
@@ -43,17 +45,20 @@
 If auto-deploy isn't working:
 
 **Option A: Vercel CLI**
+
 ```bash
 # From this project directory
 vercel --prod
 ```
 
 **Option B: Vercel Dashboard**
+
 1. Go to Deployments tab
 2. Click "Redeploy" on the latest deployment
 3. Select "Use existing build cache" or "Rebuild"
 
 **Option C: GitHub**
+
 1. Make a small change (e.g., add space to README)
 2. Commit and push
 3. Should trigger Vercel deployment
@@ -70,6 +75,7 @@ vercel --prod
 ```
 
 This will:
+
 1. Build your app locally
 2. Deploy directly to Vercel production
 3. Bypass GitHub integration
@@ -95,6 +101,7 @@ GitHub should notify Vercel on every push.
    - Status should be green checkmarks
 
 **If webhook is missing or failing:**
+
 - Reconnect Vercel to GitHub
 - Or use manual deploy (vercel CLI)
 
@@ -103,6 +110,7 @@ GitHub should notify Vercel on every push.
 ## ✅ Verify Our Commits Are on GitHub
 
 Our recent commits (last 2 hours):
+
 ```
 0dbc0f5 - fix: Complete Supabase login SQL script
 f96c4ef - docs: Working URLs and step-by-step testing guide
@@ -130,15 +138,16 @@ vercel --prod
 ```
 
 **What it does:**
+
 - Deploys immediately (bypasses GitHub webhook)
 - Shows build progress
 - Gives you live URL when done
 - Takes 2-3 minutes
 
 **Then test:**
+
 ```
 https://zero-barriers-growth-accelerator-20.vercel.app/dashboard/phased-analysis
 ```
 
 Should work immediately after deploy completes!
-

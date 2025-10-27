@@ -13,10 +13,13 @@ export async function POST(request: NextRequest) {
     const { url } = await request.json();
 
     if (!url) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL is required',
+        },
+        { status: 400 }
+      );
     }
 
     console.log(`🔍 Starting universal scraping for: ${url}`);
@@ -27,15 +30,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: scrapedData,
-      message: 'Content scraped successfully'
+      message: 'Content scraped successfully',
     });
-
   } catch (error) {
     console.error('Universal scraping error:', error);
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Scraping failed'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Scraping failed',
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -47,12 +52,15 @@ export async function GET() {
       success: true,
       status: healthCheck.status,
       message: healthCheck.message,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Health check failed'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Health check failed',
+      },
+      { status: 500 }
+    );
   }
 }

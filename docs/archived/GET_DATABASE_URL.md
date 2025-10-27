@@ -20,6 +20,7 @@
 6. **Click "Copy" button** next to the connection string
 
 7. **The string will look like:**
+
    ```
    postgresql://postgres.xxxxxxxxxxxxx:[YOUR-PASSWORD]@aws-0-us-west-1.pooler.supabase.com:6543/postgres
    ```
@@ -54,11 +55,11 @@ Supabase Dashboard
 
 ## ⚠️ Don't Confuse These:
 
-| What You See | What It Is | Do We Need It? |
-|--------------|------------|----------------|
-| **Project URL** | API endpoint | ❌ No |
-| **API Key (anon public)** | For Supabase client | ❌ No |
-| **API Key (service role)** | For admin operations | ❌ No |
+| What You See                | What It Is                  | Do We Need It?         |
+| --------------------------- | --------------------------- | ---------------------- |
+| **Project URL**             | API endpoint                | ❌ No                  |
+| **API Key (anon public)**   | For Supabase client         | ❌ No                  |
+| **API Key (service role)**  | For admin operations        | ❌ No                  |
 | **Connection String (URI)** | **PostgreSQL database URL** | ✅ **YES - This one!** |
 
 ---
@@ -72,4 +73,3 @@ Supabase Dashboard
 ---
 
 **Once you paste that connection string here, I'll do the rest!** 🚀
-

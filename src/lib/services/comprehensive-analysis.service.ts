@@ -68,7 +68,9 @@ export class ComprehensiveAnalysisService {
   /**
    * Run comprehensive analysis using hybrid approach
    */
-  static async analyzeWebsite(url: string): Promise<ComprehensiveAnalysisResult> {
+  static async analyzeWebsite(
+    url: string
+  ): Promise<ComprehensiveAnalysisResult> {
     try {
       console.log(`🔍 Starting comprehensive analysis for: ${url}`);
 
@@ -99,17 +101,16 @@ export class ComprehensiveAnalysisService {
         data: {
           direct_tools: directTools,
           content_analysis: contentAnalysis,
-          comprehensive_report: comprehensiveReport
-        }
+          comprehensive_report: comprehensiveReport,
+        },
       };
-
     } catch (error) {
       console.error('Comprehensive analysis failed:', error);
       return {
         success: false,
         url,
         data: {} as any,
-        error: error instanceof Error ? error.message : 'Analysis failed'
+        error: error instanceof Error ? error.message : 'Analysis failed',
       };
     }
   }
@@ -128,14 +129,17 @@ export class ComprehensiveAnalysisService {
       pagespeed_link: `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(url)}`,
       lighthouse_link: `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(url)}`,
       gtmetrix_link: `https://gtmetrix.com/analyze.html?url=${encodeURIComponent(url)}`,
-      webpage_test_link: `https://www.webpagetest.org/result/?url=${encodeURIComponent(url)}`
+      webpage_test_link: `https://www.webpagetest.org/result/?url=${encodeURIComponent(url)}`,
     };
   }
 
   /**
    * Run content analysis using PTCF framework (Option 2)
    */
-  private static async runContentAnalysis(scrapedData: any, url: string): Promise<any> {
+  private static async runContentAnalysis(
+    scrapedData: any,
+    url: string
+  ): Promise<any> {
     if (!this.genAI) {
       this.initialize();
     }
@@ -143,25 +147,30 @@ export class ComprehensiveAnalysisService {
     const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
 
     // Run all analyses in parallel
-    const [goldenCircle, elementsB2C, elementsB2B, cliftonStrengths] = await Promise.all([
-      this.runGoldenCircleAnalysis(scrapedData, url, model),
-      this.runElementsValueB2CAnalysis(scrapedData, url, model),
-      this.runElementsValueB2BAnalysis(scrapedData, url, model),
-      this.runCliftonStrengthsAnalysis(scrapedData, url, model)
-    ]);
+    const [goldenCircle, elementsB2C, elementsB2B, cliftonStrengths] =
+      await Promise.all([
+        this.runGoldenCircleAnalysis(scrapedData, url, model),
+        this.runElementsValueB2CAnalysis(scrapedData, url, model),
+        this.runElementsValueB2BAnalysis(scrapedData, url, model),
+        this.runCliftonStrengthsAnalysis(scrapedData, url, model),
+      ]);
 
     return {
       golden_circle: goldenCircle,
       elements_value_b2c: elementsB2C,
       elements_value_b2b: elementsB2B,
-      clifton_strengths: cliftonStrengths
+      clifton_strengths: cliftonStrengths,
     };
   }
 
   /**
    * Run Golden Circle analysis using PTCF
    */
-  private static async runGoldenCircleAnalysis(scrapedData: any, url: string, model: any): Promise<any> {
+  private static async runGoldenCircleAnalysis(
+    scrapedData: any,
+    url: string,
+    model: any
+  ): Promise<any> {
     const persona = `You are a Senior Business Model Architect and Revenue Growth Strategist. Your expertise is in identifying core business drivers and translating them into specific, high-impact revenue opportunities.`;
 
     const task = `Analyze the provided website content to identify the client's Golden Circle (Why, How, What, Who). For each component, assess current strengths, identify revenue opportunities, and calculate potential ROI.`;
@@ -190,7 +199,11 @@ Headings: ${JSON.stringify(scrapedData.headings)}`;
   /**
    * Run Elements of Value B2C analysis using PTCF
    */
-  private static async runElementsValueB2CAnalysis(scrapedData: any, url: string, model: any): Promise<any> {
+  private static async runElementsValueB2CAnalysis(
+    scrapedData: any,
+    url: string,
+    model: any
+  ): Promise<any> {
     const persona = `You are a Customer Value Expert specializing in B2C value elements. Your goal is to identify which value elements drive the most revenue and customer satisfaction.`;
 
     const task = `Analyze the website content against the 30 B2C Elements of Value. Identify current strengths, revenue opportunities, and recommendations for each element.`;
@@ -218,7 +231,11 @@ Headings: ${JSON.stringify(scrapedData.headings)}`;
   /**
    * Run Elements of Value B2B analysis using PTCF
    */
-  private static async runElementsValueB2BAnalysis(scrapedData: any, url: string, model: any): Promise<any> {
+  private static async runElementsValueB2BAnalysis(
+    scrapedData: any,
+    url: string,
+    model: any
+  ): Promise<any> {
     const persona = `You are a B2B Value Strategy Expert specializing in enterprise value elements. Your goal is to identify which value elements drive the most revenue in B2B contexts.`;
 
     const task = `Analyze the website content against the 40 B2B Elements of Value. Identify current strengths, revenue opportunities, and recommendations for each element.`;
@@ -246,7 +263,11 @@ Headings: ${JSON.stringify(scrapedData.headings)}`;
   /**
    * Run CliftonStrengths analysis using PTCF
    */
-  private static async runCliftonStrengthsAnalysis(scrapedData: any, url: string, model: any): Promise<any> {
+  private static async runCliftonStrengthsAnalysis(
+    scrapedData: any,
+    url: string,
+    model: any
+  ): Promise<any> {
     const persona = `You are an Organizational Excellence Expert specializing in CliftonStrengths. Your goal is to identify the organization's core strengths and how they drive business success.`;
 
     const task = `Analyze the website content against the 34 CliftonStrengths themes. Identify the top 5-7 strengths and how they can be leveraged for revenue growth.`;

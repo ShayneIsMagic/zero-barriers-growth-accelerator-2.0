@@ -45,6 +45,7 @@
 ```
 
 **Issues:**
+
 - ❌ All data in one JSON blob
 - ❌ Can't query "Show me all analyses with WHY score > 80"
 - ❌ Can't track progress over time
@@ -133,6 +134,7 @@
 **File:** `src/app/api/analyze/phase/route.ts`
 
 **Current code (simplified):**
+
 ```typescript
 // OLD: Stores everything as JSON blob
 const analysis = await prisma.Analysis.create({
@@ -141,22 +143,23 @@ const analysis = await prisma.Analysis.create({
       why: aiResponse.why,
       how: aiResponse.how,
       what: aiResponse.what,
-      scores: aiResponse.scores
+      scores: aiResponse.scores,
     }),
-    frameworks: 'golden_circle'
-  }
-})
+    frameworks: 'golden_circle',
+  },
+});
 ```
 
 **New code (uses detailed tables):**
+
 ```typescript
 // NEW: Stores in structured tables
 const analysis = await prisma.Analysis.create({
   data: {
     content: JSON.stringify(aiResponse), // Keep for backward compat
-    frameworks: 'golden_circle'
-  }
-})
+    frameworks: 'golden_circle',
+  },
+});
 
 // Create detailed Golden Circle analysis
 const gc = await prisma.golden_circle_analyses.create({
@@ -164,9 +167,9 @@ const gc = await prisma.golden_circle_analyses.create({
     analysis_id: analysis.id,
     overall_score: aiResponse.overallScore,
     alignment_score: aiResponse.alignmentScore,
-    clarity_score: aiResponse.clarityScore
-  }
-})
+    clarity_score: aiResponse.clarityScore,
+  },
+});
 
 // Create WHY dimension
 await prisma.golden_circle_why.create({
@@ -179,9 +182,9 @@ await prisma.golden_circle_why.create({
     emotional_resonance_rating: aiResponse.why.emotionalResonance,
     differentiation_rating: aiResponse.why.differentiation,
     evidence: aiResponse.why.evidence,
-    recommendations: aiResponse.why.recommendations
-  }
-})
+    recommendations: aiResponse.why.recommendations,
+  },
+});
 
 // Create HOW dimension
 await prisma.golden_circle_how.create({
@@ -194,17 +197,17 @@ await prisma.golden_circle_how.create({
     credibility_rating: aiResponse.how.credibility,
     specificity_rating: aiResponse.how.specificity,
     evidence: aiResponse.how.evidence,
-    recommendations: aiResponse.how.recommendations
-  }
-})
+    recommendations: aiResponse.how.recommendations,
+  },
+});
 
 // Similar for WHAT and WHO...
 
 return NextResponse.json({
   success: true,
   analysisId: analysis.id,
-  goldenCircleId: gc.id
-})
+  goldenCircleId: gc.id,
+});
 ```
 
 ---
@@ -214,30 +217,29 @@ return NextResponse.json({
 **Create:** `src/lib/services/synonym-detection.service.ts`
 
 ```typescript
-import { prisma } from '@/lib/prisma'
+import { prisma } from '@/lib/prisma';
 
 export class SynonymDetectionService {
   /**
    * Find value patterns in content using database pattern matching
    */
-  static async findValuePatterns(
-    content: string,
-    industry?: string
-  ) {
-    const patterns = await prisma.$queryRaw<Array<{
-      element_name: string
-      pattern_text: string
-      match_count: number
-      confidence: number
-    }>>`
+  static async findValuePatterns(content: string, industry?: string) {
+    const patterns = await prisma.$queryRaw<
+      Array<{
+        element_name: string;
+        pattern_text: string;
+        match_count: number;
+        confidence: number;
+      }>
+    >`
       SELECT * FROM find_value_patterns(
         ${content},
         ${industry || null}
       )
       LIMIT 100
-    `
+    `;
 
-    return patterns
+    return patterns;
   }
 
   /**
@@ -246,10 +248,10 @@ export class SynonymDetectionService {
   static async storePatternMatches(
     analysisId: string,
     patterns: Array<{
-      element_name: string
-      pattern_text: string
-      confidence: number
-      matched_text: string
+      element_name: string;
+      pattern_text: string;
+      confidence: number;
+      matched_text: string;
     }>,
     pageUrl?: string
   ) {
@@ -261,9 +263,9 @@ export class SynonymDetectionService {
         context_text: p.pattern_text,
         confidence_score: p.confidence,
         page_url: pageUrl,
-        position_in_content: idx
-      }))
-    })
+        position_in_content: idx,
+      })),
+    });
   }
 
   /**
@@ -272,8 +274,8 @@ export class SynonymDetectionService {
   static async getIndustryTerms(industry: string) {
     return prisma.industry_terminology.findMany({
       where: { industry },
-      orderBy: { confidence_score: 'desc' }
-    })
+      orderBy: { confidence_score: 'desc' },
+    });
   }
 
   /**
@@ -284,24 +286,30 @@ export class SynonymDetectionService {
     content: string,
     industry?: string
   ): Promise<string> {
-    if (!industry) return basePrompt
+    if (!industry) return basePrompt;
 
-    const terms = await this.getIndustryTerms(industry)
-    const patterns = await this.findValuePatterns(content, industry)
+    const terms = await this.getIndustryTerms(industry);
+    const patterns = await this.findValuePatterns(content, industry);
 
     const industryContext = `
 INDUSTRY-SPECIFIC CONTEXT (${industry}):
 
 Common value propositions in this industry:
-${terms.slice(0, 10).map(t => `- "${t.industry_term}" → signals ${t.standard_term}`).join('\n')}
+${terms
+  .slice(0, 10)
+  .map((t) => `- "${t.industry_term}" → signals ${t.standard_term}`)
+  .join('\n')}
 
 Patterns detected in this content:
-${patterns.slice(0, 10).map(p => `- "${p.pattern_text}" (confidence: ${p.confidence})`).join('\n')}
+${patterns
+  .slice(0, 10)
+  .map((p) => `- "${p.pattern_text}" (confidence: ${p.confidence})`)
+  .join('\n')}
 
 Use this context to provide more accurate, industry-relevant analysis.
-`
+`;
 
-    return basePrompt + '\n\n' + industryContext
+    return basePrompt + '\n\n' + industryContext;
   }
 }
 ```
@@ -572,6 +580,7 @@ export function GoldenCircleResults({ analysisId }: { analysisId: string }) {
 **I can create all these files for you!** Here's what I'll build:
 
 **Services (8 hours):**
+
 1. `synonym-detection.service.ts`
 2. `golden-circle-detailed.service.ts`
 3. `elements-value-detailed.service.ts`
@@ -582,12 +591,14 @@ export function GoldenCircleResults({ analysisId }: { analysisId: string }) {
 8. `progress-tracking.service.ts`
 
 **API Routes (4 hours):**
+
 1. Update `phase/route.ts` to use new services
 2. Create `golden-circle/[id]/route.ts`
 3. Create `elements-value/[id]/route.ts`
 4. Create `clifton-strengths/[id]/route.ts`
 
 **Components (6 hours):**
+
 1. Update results components to show detailed data
 2. Create pattern visualization components
 3. Add evidence citations
@@ -598,4 +609,3 @@ export function GoldenCircleResults({ analysisId }: { analysisId: string }) {
 ---
 
 **Want me to start building these now?** I'll continue working on the TODO list!
-

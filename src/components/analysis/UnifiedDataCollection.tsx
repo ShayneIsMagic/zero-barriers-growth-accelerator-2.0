@@ -2,22 +2,28 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Globe, 
-  FileText, 
-  Upload, 
-  CheckCircle, 
+import {
+  Globe,
+  FileText,
+  Upload,
+  CheckCircle,
   AlertCircle,
   Loader2,
   Copy,
-  Download
+  Download,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -57,18 +63,22 @@ interface CollectedData {
   scrapedAt: string;
 }
 
-export function UnifiedDataCollection({ 
-  onDataCollected, 
+export function UnifiedDataCollection({
+  onDataCollected,
   initialData = null,
-  showDataPreview = true 
+  showDataPreview = true,
 }: UnifiedDataCollectionProps) {
-  const [uploadMethod, setUploadMethod] = useState<'url' | 'paste' | 'upload'>('url');
+  const [uploadMethod, setUploadMethod] = useState<'url' | 'paste' | 'upload'>(
+    'url'
+  );
   const [url, setUrl] = useState(initialData?.url || '');
   const [pastedData, setPastedData] = useState('');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
-  const [collectedData, setCollectedData] = useState<CollectedData | null>(initialData);
+  const [collectedData, setCollectedData] = useState<CollectedData | null>(
+    initialData
+  );
 
   const handleUrlSubmit = async () => {
     if (!url.trim()) {
@@ -83,7 +93,7 @@ export function UnifiedDataCollection({
       const response = await fetch('/api/scrape-content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: url.trim() })
+        body: JSON.stringify({ url: url.trim() }),
       });
 
       const data = await response.json();
@@ -108,18 +118,18 @@ export function UnifiedDataCollection({
             twitterCard: '',
             twitterTitle: '',
             twitterDescription: '',
-            twitterImage: ''
+            twitterImage: '',
           },
           technical: scrapedData.technical || {
             language: '',
             charset: '',
             doctype: '',
             lastModified: '',
-            contentLength: 0
+            contentLength: 0,
           },
-          scrapedAt: new Date().toISOString()
+          scrapedAt: new Date().toISOString(),
         };
-        
+
         setCollectedData(processedData);
         onDataCollected(processedData);
         toast.success('Data collected successfully from URL');
@@ -127,7 +137,9 @@ export function UnifiedDataCollection({
         setValidationErrors([data.error || 'Failed to collect data from URL']);
       }
     } catch (error) {
-      setValidationErrors([`Error: ${error instanceof Error ? error.message : 'Unknown error'}`]);
+      setValidationErrors([
+        `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      ]);
     } finally {
       setIsProcessing(false);
     }
@@ -157,16 +169,16 @@ export function UnifiedDataCollection({
         twitterCard: '',
         twitterTitle: '',
         twitterDescription: '',
-        twitterImage: ''
+        twitterImage: '',
       },
       technical: {
         language: '',
         charset: '',
         doctype: '',
         lastModified: '',
-        contentLength: pastedData.length
+        contentLength: pastedData.length,
       },
-      scrapedAt: new Date().toISOString()
+      scrapedAt: new Date().toISOString(),
     };
 
     setCollectedData(processedData);
@@ -179,7 +191,7 @@ export function UnifiedDataCollection({
     if (!file) return;
 
     setUploadedFile(file);
-    
+
     const reader = new FileReader();
     reader.onload = (e) => {
       const content = e.target?.result as string;
@@ -197,7 +209,9 @@ export function UnifiedDataCollection({
 
   const handleDownloadData = () => {
     if (collectedData) {
-      const blob = new Blob([JSON.stringify(collectedData, null, 2)], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify(collectedData, null, 2)], {
+        type: 'application/json',
+      });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -229,11 +243,15 @@ export function UnifiedDataCollection({
             Data Collection
           </CardTitle>
           <CardDescription>
-            Collect website data through URL scraping, paste content, or file upload
+            Collect website data through URL scraping, paste content, or file
+            upload
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs value={uploadMethod} onValueChange={(value) => setUploadMethod(value as any)}>
+          <Tabs
+            value={uploadMethod}
+            onValueChange={(value) => setUploadMethod(value as any)}
+          >
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="url" className="flex items-center gap-2">
                 <Globe className="h-4 w-4" />
@@ -261,8 +279,8 @@ export function UnifiedDataCollection({
                     onChange={(e) => setUrl(e.target.value)}
                     disabled={isProcessing}
                   />
-                  <Button 
-                    onClick={handleUrlSubmit} 
+                  <Button
+                    onClick={handleUrlSubmit}
                     disabled={isProcessing || !url.trim()}
                     className="min-w-[120px]"
                   >
@@ -290,8 +308,8 @@ export function UnifiedDataCollection({
                   rows={8}
                   disabled={isProcessing}
                 />
-                <Button 
-                  onClick={handlePasteSubmit} 
+                <Button
+                  onClick={handlePasteSubmit}
                   disabled={isProcessing || !pastedData.trim()}
                   className="w-full"
                 >
@@ -313,11 +331,12 @@ export function UnifiedDataCollection({
                 {uploadedFile && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <FileText className="h-4 w-4" />
-                    {uploadedFile.name} ({(uploadedFile.size / 1024).toFixed(1)} KB)
+                    {uploadedFile.name} ({(uploadedFile.size / 1024).toFixed(1)}{' '}
+                    KB)
                   </div>
                 )}
-                <Button 
-                  onClick={handlePasteSubmit} 
+                <Button
+                  onClick={handlePasteSubmit}
                   disabled={isProcessing || !pastedData.trim()}
                   className="w-full"
                 >
@@ -331,7 +350,7 @@ export function UnifiedDataCollection({
             <Alert className="mt-4">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                <ul className="list-disc list-inside">
+                <ul className="list-inside list-disc">
                   {validationErrors.map((error, index) => (
                     <li key={index}>{error}</li>
                   ))}
@@ -353,16 +372,21 @@ export function UnifiedDataCollection({
                   Collected Data
                 </CardTitle>
                 <CardDescription>
-                  Data ready for analysis - {collectedData.cleanText.length} characters
+                  Data ready for analysis - {collectedData.cleanText.length}{' '}
+                  characters
                 </CardDescription>
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={handleCopyData}>
-                  <Copy className="h-4 w-4 mr-1" />
+                  <Copy className="mr-1 h-4 w-4" />
                   Copy
                 </Button>
-                <Button variant="outline" size="sm" onClick={handleDownloadData}>
-                  <Download className="h-4 w-4 mr-1" />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDownloadData}
+                >
+                  <Download className="mr-1 h-4 w-4" />
                   Download
                 </Button>
                 <Button variant="outline" size="sm" onClick={clearData}>
@@ -376,40 +400,54 @@ export function UnifiedDataCollection({
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="font-medium">URL:</span>
-                  <span className="ml-2 text-gray-600">{collectedData.url}</span>
+                  <span className="ml-2 text-gray-600">
+                    {collectedData.url}
+                  </span>
                 </div>
                 <div>
                   <span className="font-medium">Title:</span>
-                  <span className="ml-2 text-gray-600">{collectedData.title}</span>
+                  <span className="ml-2 text-gray-600">
+                    {collectedData.title}
+                  </span>
                 </div>
                 <div>
                   <span className="font-medium">Content Length:</span>
-                  <span className="ml-2 text-gray-600">{collectedData.cleanText.length} characters</span>
+                  <span className="ml-2 text-gray-600">
+                    {collectedData.cleanText.length} characters
+                  </span>
                 </div>
                 <div>
                   <span className="font-medium">Headings:</span>
-                  <span className="ml-2 text-gray-600">{collectedData.headings.length}</span>
+                  <span className="ml-2 text-gray-600">
+                    {collectedData.headings.length}
+                  </span>
                 </div>
                 <div>
                   <span className="font-medium">Images:</span>
-                  <span className="ml-2 text-gray-600">{collectedData.images.length}</span>
+                  <span className="ml-2 text-gray-600">
+                    {collectedData.images.length}
+                  </span>
                 </div>
                 <div>
                   <span className="font-medium">Links:</span>
-                  <span className="ml-2 text-gray-600">{collectedData.links.length}</span>
+                  <span className="ml-2 text-gray-600">
+                    {collectedData.links.length}
+                  </span>
                 </div>
               </div>
 
               {collectedData.metaDescription && (
                 <div>
-                  <span className="font-medium text-sm">Meta Description:</span>
-                  <p className="text-sm text-gray-600 mt-1">{collectedData.metaDescription}</p>
+                  <span className="text-sm font-medium">Meta Description:</span>
+                  <p className="mt-1 text-sm text-gray-600">
+                    {collectedData.metaDescription}
+                  </p>
                 </div>
               )}
 
               <div>
-                <span className="font-medium text-sm">Content Preview:</span>
-                <div className="mt-1 p-3 bg-gray-50 rounded-md max-h-32 overflow-y-auto">
+                <span className="text-sm font-medium">Content Preview:</span>
+                <div className="mt-1 max-h-32 overflow-y-auto rounded-md bg-gray-50 p-3">
                   <p className="text-sm text-gray-700">
                     {collectedData.cleanText.substring(0, 500)}
                     {collectedData.cleanText.length > 500 && '...'}

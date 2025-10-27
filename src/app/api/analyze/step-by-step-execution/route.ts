@@ -30,20 +30,26 @@ export async function POST(request: NextRequest) {
     const { url, stepId: _stepId } = body;
 
     if (!url) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL is required',
+        },
+        { status: 400 }
+      );
     }
 
     // Validate URL
     try {
       new URL(url);
     } catch {
-      return NextResponse.json({
-        success: false,
-        error: 'Invalid URL format'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Invalid URL format',
+        },
+        { status: 400 }
+      );
     }
 
     console.log(`🚀 Starting step-by-step execution for: ${url}`);
@@ -55,7 +61,7 @@ export async function POST(request: NextRequest) {
       progressData = {
         currentStep: `${phase}: ${step}`,
         progress: Math.round(progress),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
       console.log(`📊 ${phase}: ${step} - ${progress.toFixed(1)}%`);
     });
@@ -63,24 +69,30 @@ export async function POST(request: NextRequest) {
     const result = await analyzer.execute();
 
     // Store the report automatically
-    const storedReport = await reportStorage.storeReport(result, url, 'comprehensive');
+    const storedReport = await reportStorage.storeReport(
+      result,
+      url,
+      'comprehensive'
+    );
 
     return NextResponse.json({
       success: true,
       data: result,
       reportId: storedReport.id,
       message: 'Step-by-step analysis completed successfully',
-      finalProgress: progressData
+      finalProgress: progressData,
     });
-
   } catch (error) {
     console.error('Step-by-step execution error:', error);
 
-    return NextResponse.json({
-      success: false,
-      error: 'Analysis failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Analysis failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -91,10 +103,13 @@ export async function GET(request: NextRequest) {
     const sessionId = searchParams.get('sessionId');
 
     if (!sessionId) {
-      return NextResponse.json({
-        success: false,
-        error: 'Session ID is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Session ID is required',
+        },
+        { status: 400 }
+      );
     }
 
     // For now, return a simple status
@@ -102,16 +117,18 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       status: 'ready',
-      message: 'Step-by-step analysis system is ready'
+      message: 'Step-by-step analysis system is ready',
     });
-
   } catch (error) {
     console.error('Status check error:', error);
 
-    return NextResponse.json({
-      success: false,
-      error: 'Status check failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Status check failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

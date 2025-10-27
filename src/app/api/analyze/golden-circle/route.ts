@@ -9,19 +9,25 @@ export async function POST(request: NextRequest) {
     const { _url, content } = body;
 
     if (!_url || !content) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL and content are required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL and content are required',
+        },
+        { status: 400 }
+      );
     }
 
     console.log(`🎯 Starting Golden Circle analysis for: ${_url}`);
 
     if (!process.env.GEMINI_API_KEY) {
-      return NextResponse.json({
-        success: false,
-        error: 'GEMINI_API_KEY not configured'
-      }, { status: 500 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'GEMINI_API_KEY not configured',
+        },
+        { status: 500 }
+      );
     }
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -144,11 +150,14 @@ Return a JSON object with this exact structure:
       }
     } catch (parseError) {
       console.error('Failed to parse Gemini response:', parseError);
-      return NextResponse.json({
-        success: false,
-        error: 'Failed to parse AI response',
-        rawResponse: text
-      }, { status: 500 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Failed to parse AI response',
+          rawResponse: text,
+        },
+        { status: 500 }
+      );
     }
 
     console.log(`✅ Golden Circle analysis completed for: ${_url}`);
@@ -158,15 +167,17 @@ Return a JSON object with this exact structure:
       _url,
       assessment: 'Golden Circle',
       data: analysisResult,
-      message: 'Golden Circle analysis completed successfully'
+      message: 'Golden Circle analysis completed successfully',
     });
-
   } catch (error) {
     console.error('Golden Circle analysis error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Golden Circle analysis failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Golden Circle analysis failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

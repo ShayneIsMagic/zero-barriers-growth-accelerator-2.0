@@ -3,6 +3,7 @@
 ## 🚨 **CURRENT SPAGHETTI CODE PROBLEMS**
 
 ### **Repository Bloat:**
+
 - **327 TypeScript files** - Way too many for focused app
 - **223 markdown files** - Documentation bloat
 - **80+ broken API endpoints** - Mixed with working ones
@@ -10,6 +11,7 @@
 - **Broken dashboard pages** - Mixed with working ones
 
 ### **Critical Code Scattered Across:**
+
 - Multiple analysis services doing the same thing
 - Duplicate API routes with different names
 - Broken components mixed with working ones
@@ -22,6 +24,7 @@
 ### **Step 1: Identify Working Core (PROTECT THESE)**
 
 #### **✅ WORKING API ENDPOINTS:**
+
 ```bash
 ✅ /api/scrape-content - Universal scraper (working)
 ✅ /api/analyze/compare - Content comparison (working)
@@ -34,6 +37,7 @@
 ```
 
 #### **✅ WORKING COMPONENTS:**
+
 ```bash
 ✅ ContentComparisonPage.tsx - Golden template (PROTECTED)
 ✅ B2CElementsPage.tsx - Working B2C analysis
@@ -45,6 +49,7 @@
 ```
 
 #### **✅ WORKING SERVICES:**
+
 ```bash
 ✅ StructuredStorageService - New structured storage
 ✅ StandardizedDataCollector - Working data collection
@@ -55,6 +60,7 @@
 ### **Step 2: Archive Broken Code**
 
 #### **❌ BROKEN API ENDPOINTS TO ARCHIVE:**
+
 ```bash
 ❌ /api/analyze/phase-new - Broken Prisma calls
 ❌ /api/analyze/seo - Incomplete implementation
@@ -66,6 +72,7 @@
 ```
 
 #### **❌ BROKEN COMPONENTS TO ARCHIVE:**
+
 ```bash
 ❌ StandaloneElementsOfValueB2CPage.tsx - Replaced by B2CElementsPage
 ❌ StandaloneGoldenCirclePage.tsx - Replaced by GoldenCirclePage
@@ -75,6 +82,7 @@
 ```
 
 #### **❌ BROKEN SERVICES TO ARCHIVE:**
+
 ```bash
 ❌ LighthouseDetailedService - Uses $queryRaw
 ❌ SEOOpportunitiesService - Uses $queryRaw
@@ -164,6 +172,7 @@ mv docs/essential/*.md .
 ## 📊 **CLEAN REPOSITORY STRUCTURE**
 
 ### **After Cleanup:**
+
 ```
 zero-barriers-growth-accelerator-2.0/
 ├── src/
@@ -185,6 +194,7 @@ zero-barriers-growth-accelerator-2.0/
 ```
 
 ### **File Count After Cleanup:**
+
 - **TypeScript files**: ~50 (down from 327)
 - **Markdown files**: ~10 (down from 223)
 - **API endpoints**: 8 (down from 80+)
@@ -195,6 +205,7 @@ zero-barriers-growth-accelerator-2.0/
 ## 🚨 **CRITICAL PROTECTION MEASURES**
 
 ### **1. Content Comparison Page Protection**
+
 ```bash
 # Create backup before any changes
 cp src/working/components/ContentComparisonPage.tsx src/working/components/ContentComparisonPage.tsx.backup
@@ -204,6 +215,7 @@ cp src/working/components/ContentComparisonPage.tsx src/working/components/Conte
 ```
 
 ### **2. Working API Protection**
+
 ```bash
 # Test all working APIs before cleanup
 curl -s "https://zero-barriers-growth-accelerator-20.vercel.app/api/scrape-content" -X POST -H "Content-Type: application/json" -d '{"url": "https://example.com"}'
@@ -211,6 +223,7 @@ curl -s "https://zero-barriers-growth-accelerator-20.vercel.app/api/analyze/comp
 ```
 
 ### **3. Database Protection**
+
 ```bash
 # Backup database before any changes
 ./scripts/backup-database.sh
@@ -224,6 +237,7 @@ npx prisma db push --preview-feature
 ## 🎯 **SUCCESS CRITERIA**
 
 ### **After Cleanup:**
+
 - [ ] **Repository size reduced by 80%**
 - [ ] **Only working code in main branch**
 - [ ] **All broken code archived (not deleted)**
@@ -233,6 +247,7 @@ npx prisma db push --preview-feature
 - [ ] **Clean, maintainable codebase**
 
 ### **Rollback Plan:**
+
 - [ ] **All broken code archived (not deleted)**
 - [ ] **Git branches for each cleanup phase**
 - [ ] **Database backup before changes**

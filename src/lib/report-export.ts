@@ -3,7 +3,6 @@
  * Export analysis reports as PDF or Markdown for easy sharing via email
  */
 
-
 /**
  * Export analysis report as Markdown
  */
@@ -90,12 +89,16 @@ ${analysis.recommendations?.longTerm?.map((r: string) => `- ${r}`).join('\n') ||
 
 ## Performance Metrics
 
-${analysis.lighthouseAnalysis ? `
+${
+  analysis.lighthouseAnalysis
+    ? `
 **Performance**: ${analysis.lighthouseAnalysis.scores?.performance || 0}/100
 **Accessibility**: ${analysis.lighthouseAnalysis.scores?.accessibility || 0}/100
 **Best Practices**: ${analysis.lighthouseAnalysis.scores?.bestPractices || 0}/100
 **SEO**: ${analysis.lighthouseAnalysis.scores?.seo || 0}/100
-` : 'Performance metrics not available'}
+`
+    : 'Performance metrics not available'
+}
 
 ---
 
@@ -213,7 +216,9 @@ export function exportAsHTML(analysis: any): string {
     ${analysis.recommendations?.longTerm?.map((r: string) => `<li>${r}</li>`).join('') || '<li>None</li>'}
   </ul>
 
-  ${analysis.lighthouseAnalysis ? `
+  ${
+    analysis.lighthouseAnalysis
+      ? `
   <h2>Performance Metrics</h2>
   <div class="metadata">
     <p><strong>Performance:</strong> ${analysis.lighthouseAnalysis.scores?.performance || 0}/100</p>
@@ -221,7 +226,9 @@ export function exportAsHTML(analysis: any): string {
     <p><strong>Best Practices:</strong> ${analysis.lighthouseAnalysis.scores?.bestPractices || 0}/100</p>
     <p><strong>SEO:</strong> ${analysis.lighthouseAnalysis.scores?.seo || 0}/100</p>
   </div>
-  ` : ''}
+  `
+      : ''
+  }
 
   <div class="footer">
     <p>Report generated on ${new Date().toLocaleString()}</p>
@@ -241,7 +248,11 @@ function getScoreClass(score: number): string {
 /**
  * Download file helper
  */
-export function downloadFile(content: string, filename: string, type: string = 'text/plain') {
+export function downloadFile(
+  content: string,
+  filename: string,
+  type: string = 'text/plain'
+) {
   const blob = new Blob([content], { type });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -298,7 +309,9 @@ export function exportAsPDF(analysis: any) {
  */
 export function emailReport(analysis: any, recipientEmail: string = '') {
   const markdown = exportAsMarkdown(analysis);
-  const subject = encodeURIComponent(`Website Analysis Report - ${analysis.url}`);
+  const subject = encodeURIComponent(
+    `Website Analysis Report - ${analysis.url}`
+  );
   const body = encodeURIComponent(markdown);
 
   // Note: Email clients have body length limits (~2000 chars)
@@ -311,8 +324,12 @@ export function emailReport(analysis: any, recipientEmail: string = '') {
 /**
  * Copy report to clipboard
  */
-export async function copyToClipboard(analysis: any, format: 'markdown' | 'html' = 'markdown') {
-  const content = format === 'markdown' ? exportAsMarkdown(analysis) : exportAsHTML(analysis);
+export async function copyToClipboard(
+  analysis: any,
+  format: 'markdown' | 'html' = 'markdown'
+) {
+  const content =
+    format === 'markdown' ? exportAsMarkdown(analysis) : exportAsHTML(analysis);
 
   try {
     await navigator.clipboard.writeText(content);
@@ -322,4 +339,3 @@ export async function copyToClipboard(analysis: any, format: 'markdown' | 'html'
     return false;
   }
 }
-

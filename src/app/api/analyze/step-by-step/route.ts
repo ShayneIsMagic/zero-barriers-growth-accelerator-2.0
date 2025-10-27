@@ -5,13 +5,21 @@ import { z } from 'zod';
 const stepSchemas = {
   'base-analysis': z.object({
     url: z.string().url('Invalid URL format'),
-    analysisType: z.enum(['full', 'golden-circle', 'elements-of-value', 'b2b-elements', 'clifton-strengths']).default('full'),
+    analysisType: z
+      .enum([
+        'full',
+        'golden-circle',
+        'elements-of-value',
+        'b2b-elements',
+        'clifton-strengths',
+      ])
+      .default('full'),
   }),
-  'pageaudit': z.object({
+  pageaudit: z.object({
     url: z.string().url('Invalid URL format'),
     keyword: z.string().optional(),
   }),
-  'lighthouse': z.object({
+  lighthouse: z.object({
     url: z.string().url('Invalid URL format'),
     includeAllPages: z.boolean().default(false),
   }),
@@ -29,20 +37,26 @@ export async function POST(request: NextRequest) {
     const { step, data } = body;
 
     if (!step || !data) {
-      return NextResponse.json({
-        success: false,
-        error: 'MISSING_PARAMETERS',
-        message: 'Step and data parameters are required',
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'MISSING_PARAMETERS',
+          message: 'Step and data parameters are required',
+        },
+        { status: 400 }
+      );
     }
 
     // Validate step data
     if (!stepSchemas[step as keyof typeof stepSchemas]) {
-      return NextResponse.json({
-        success: false,
-        error: 'INVALID_STEP',
-        message: `Invalid step: ${step}. Valid steps are: ${Object.keys(stepSchemas).join(', ')}`,
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'INVALID_STEP',
+          message: `Invalid step: ${step}. Valid steps are: ${Object.keys(stepSchemas).join(', ')}`,
+        },
+        { status: 400 }
+      );
     }
 
     const schema = stepSchemas[step as keyof typeof stepSchemas];
@@ -70,8 +84,10 @@ export async function POST(request: NextRequest) {
       }
     } catch (stepError) {
       error = {
-        message: stepError instanceof Error ? stepError.message : 'Unknown error',
-        details: stepError instanceof Error ? stepError.stack : 'No details available',
+        message:
+          stepError instanceof Error ? stepError.message : 'Unknown error',
+        details:
+          stepError instanceof Error ? stepError.stack : 'No details available',
         timestamp: new Date().toISOString(),
       };
     }
@@ -83,20 +99,23 @@ export async function POST(request: NextRequest) {
       error,
       timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('Step-by-step analysis error:', error);
-    
-    return NextResponse.json({
-      success: false,
-      error: 'STEP_EXECUTION_FAILED',
-      message: error instanceof Error ? error.message : 'Step execution failed',
-      details: {
-        type: 'validation_error',
-        timestamp: new Date().toISOString(),
-        error: error instanceof Error ? error.stack : 'Unknown error'
-      }
-    }, { status: 500 });
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'STEP_EXECUTION_FAILED',
+        message:
+          error instanceof Error ? error.message : 'Step execution failed',
+        details: {
+          type: 'validation_error',
+          timestamp: new Date().toISOString(),
+          error: error instanceof Error ? error.stack : 'Unknown error',
+        },
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -105,11 +124,13 @@ export async function POST(request: NextRequest) {
  */
 async function executeBaseAnalysis(data: any) {
   const { performRealAnalysis } = await import('@/lib/free-ai-analysis');
-  
+
   console.log(`Step 1: Running base AI analysis for ${data.url}...`);
   const result = await performRealAnalysis(data.url, data.analysisType);
-  
-  console.log(`Base analysis completed with overall score: ${result.overallScore}`);
+
+  console.log(
+    `Base analysis completed with overall score: ${result.overallScore}`
+  );
   return {
     type: 'base-analysis',
     url: data.url,
@@ -127,19 +148,23 @@ async function executePageAuditAnalysis(data: any) {
   const { exec } = await import('child_process');
   const { promisify } = await import('util');
   const path = await import('path');
-  
+
   const execAsync = promisify(exec);
-  
+
   try {
     console.log(`Step 2: Running PageAudit analysis for ${data.url}...`);
-    const scriptPath = path.join(process.cwd(), 'scripts', 'pageaudit-analysis.js');
+    const scriptPath = path.join(
+      process.cwd(),
+      'scripts',
+      'pageaudit-analysis.js'
+    );
     const keywordArg = data.keyword ? `"${data.keyword}"` : '';
     const command = `node "${scriptPath}" "${data.url}" ${keywordArg}`;
-    
+
     console.log(`PageAudit command: ${command}`);
     const { stdout, stderr } = await execAsync(command, {
       timeout: 120000, // 2 minutes timeout
-      maxBuffer: 1024 * 1024 * 10 // 10MB buffer
+      maxBuffer: 1024 * 1024 * 10, // 10MB buffer
     });
 
     if (stderr) {
@@ -150,7 +175,9 @@ async function executePageAuditAnalysis(data: any) {
     const jsonMatch = stdout.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       const result = JSON.parse(jsonMatch[0]);
-      console.log(`PageAudit analysis completed with overall score: ${result.scores?.overall || 'unknown'}`);
+      console.log(
+        `PageAudit analysis completed with overall score: ${result.scores?.overall || 'unknown'}`
+      );
       return {
         type: 'pageaudit',
         url: data.url,
@@ -182,11 +209,13 @@ async function executePageAuditAnalysis(data: any) {
 async function executeLighthouseAnalysis(data: any) {
   try {
     console.log(`Step 3: Running Lighthouse analysis for ${data.url}...`);
-    
+
     const { runLighthouseAnalysis } = await import('@/lib/lighthouse-service');
     const result = await runLighthouseAnalysis(data.url);
-    
-    console.log(`Lighthouse analysis completed with overall score: ${result.scores?.overall || 'unknown'}`);
+
+    console.log(
+      `Lighthouse analysis completed with overall score: ${result.scores?.overall || 'unknown'}`
+    );
     return {
       type: 'lighthouse',
       url: data.url,
@@ -215,10 +244,13 @@ async function executeLighthouseAnalysis(data: any) {
 async function executeGeminiInsights(data: any) {
   try {
     console.log('Step 4: Generating Gemini insights...');
-    
+
     const { GoogleGenerativeAI } = await import('@google/generative-ai');
-    
-    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'your-gemini-api-key-here') {
+
+    if (
+      !process.env.GEMINI_API_KEY ||
+      process.env.GEMINI_API_KEY === 'your-gemini-api-key-here'
+    ) {
       throw new Error('Gemini API key not configured');
     }
 
@@ -309,7 +341,7 @@ Output ONLY valid JSON, no additional text.
 
     // Clean up the response to extract JSON
     let jsonText = text.trim();
-    
+
     // Remove markdown code blocks if present
     if (jsonText.startsWith('```json')) {
       jsonText = jsonText.replace(/^```json\n/, '').replace(/\n```$/, '');
@@ -336,7 +368,8 @@ Output ONLY valid JSON, no additional text.
     return {
       type: 'gemini-insights',
       result: {
-        executiveSummary: 'AI insights generation failed. Please check API configuration.',
+        executiveSummary:
+          'AI insights generation failed. Please check API configuration.',
         keyStrengths: ['Analysis incomplete'],
         criticalWeaknesses: ['AI service unavailable'],
         competitiveAdvantages: ['Manual review required'],
@@ -344,13 +377,13 @@ Output ONLY valid JSON, no additional text.
         implementationRoadmap: {
           immediate: ['Configure AI API keys'],
           shortTerm: ['Re-run comprehensive analysis'],
-          longTerm: ['Implement AI-powered insights']
+          longTerm: ['Implement AI-powered insights'],
         },
         successMetrics: {
           current: ['Baseline metrics unavailable'],
           target: ['Target metrics to be defined'],
-          measurement: ['Measurement methods to be established']
-        }
+          measurement: ['Measurement methods to be established'],
+        },
       },
       status: 'failed',
       error: error instanceof Error ? error.message : 'Unknown error',

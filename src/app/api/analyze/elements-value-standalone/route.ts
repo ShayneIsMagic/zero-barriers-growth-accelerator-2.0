@@ -14,23 +14,31 @@ export async function POST(request: NextRequest) {
     const { url } = body;
 
     if (!url) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL is required',
+        },
+        { status: 400 }
+      );
     }
 
-    console.log(`🚀 Starting standalone Elements of Value analysis for: ${url}`);
+    console.log(
+      `🚀 Starting standalone Elements of Value analysis for: ${url}`
+    );
 
     const result = await StandaloneElementsOfValueService.analyzeWebsite(url);
 
     if (!result.success) {
       console.error('Elements of Value analysis failed:', result.error);
-      return NextResponse.json({
-        success: false,
-        error: 'Elements of Value analysis failed',
-        details: result.error
-      }, { status: 500 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Elements of Value analysis failed',
+          details: result.error,
+        },
+        { status: 500 }
+      );
     }
 
     console.log(`✅ Elements of Value analysis completed for: ${url}`);
@@ -39,15 +47,17 @@ export async function POST(request: NextRequest) {
       success: true,
       url: result.url,
       data: result.data,
-      message: 'Elements of Value analysis completed successfully'
+      message: 'Elements of Value analysis completed successfully',
     });
-
   } catch (error) {
     console.error('Elements of Value API execution error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Elements of Value analysis failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Elements of Value analysis failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

@@ -5,35 +5,38 @@
  * Based on Harvard Business Review's B2B Elements of Value framework
  */
 
-import { prisma } from '@/lib/prisma'
-import { PatternMatch, SimpleSynonymDetectionService } from './simple-synonym-detection.service'
+import { prisma } from '@/lib/prisma';
+import {
+  PatternMatch,
+  SimpleSynonymDetectionService,
+} from './simple-synonym-detection.service';
 
 export interface ElementsOfValueB2BAnalysis {
-  id: string
-  analysis_id: string
-  overall_score: number
-  table_stakes_score: number
-  functional_score: number
-  ease_of_business_score: number
-  individual_score: number
-  inspirational_score: number
-  elements: B2BElementScore[]
+  id: string;
+  analysis_id: string;
+  overall_score: number;
+  table_stakes_score: number;
+  functional_score: number;
+  ease_of_business_score: number;
+  individual_score: number;
+  inspirational_score: number;
+  elements: B2BElementScore[];
 }
 
 export interface B2BElementScore {
-  id: string
-  element_name: string
-  element_category: string
-  category_level: number
-  score: number
-  weight: number
-  weighted_score: number
+  id: string;
+  element_name: string;
+  element_category: string;
+  category_level: number;
+  score: number;
+  weight: number;
+  weighted_score: number;
   evidence: {
-    patterns: string[]
-    citations: string[]
-    confidence: number
-  }
-  recommendations: string[]
+    patterns: string[];
+    citations: string[];
+    confidence: number;
+  };
+  recommendations: string[];
 }
 
 export class ElementsOfValueB2BService {
@@ -50,13 +53,21 @@ export class ElementsOfValueB2BService {
       patterns = await SimpleSynonymDetectionService.findValuePatterns(
         content.text || content.content,
         industry
-      )
+      );
     }
 
-    const prompt = await this.buildB2BElementsPrompt(content, industry, patterns)
-    const aiResponse = await this.callGeminiForB2BElements(prompt)
+    const prompt = await this.buildB2BElementsPrompt(
+      content,
+      industry,
+      patterns
+    );
+    const aiResponse = await this.callGeminiForB2BElements(prompt);
 
-    return await this.storeB2BElementsAnalysis(analysisId, aiResponse, patterns)
+    return await this.storeB2BElementsAnalysis(
+      analysisId,
+      aiResponse,
+      patterns
+    );
   }
 
   /**
@@ -182,27 +193,27 @@ Return as JSON:
     // ... 39 more elements
   ]
 }
-`
+`;
 
     if (industry && patterns) {
       return await SimpleSynonymDetectionService.buildEnhancedPrompt(
         basePrompt,
         content.text || content.content,
         industry
-      )
+      );
     }
 
-    return basePrompt
+    return basePrompt;
   }
 
   /**
    * Call Gemini for B2B analysis
    */
   private static async callGeminiForB2BElements(prompt: string): Promise<any> {
-    const apiKey = process.env.GEMINI_API_KEY
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      throw new Error('GEMINI_API_KEY not configured')
+      throw new Error('GEMINI_API_KEY not configured');
     }
 
     const response = await fetch(
@@ -214,31 +225,31 @@ Return as JSON:
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 8192
-          }
-        })
+            maxOutputTokens: 8192,
+          },
+        }),
       }
-    )
+    );
 
     if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.statusText}`)
+      throw new Error(`Gemini API error: ${response.statusText}`);
     }
 
-    const data = await response.json()
-    const text = data.candidates[0]?.content?.parts[0]?.text
+    const data = await response.json();
+    const text = data.candidates[0]?.content?.parts[0]?.text;
 
     if (!text) {
-      throw new Error('No response from Gemini')
+      throw new Error('No response from Gemini');
     }
 
-    const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/) ||
-                     text.match(/\{[\s\S]*\}/)
+    const jsonMatch =
+      text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/\{[\s\S]*\}/);
 
     if (jsonMatch) {
-      return JSON.parse(jsonMatch[1] || jsonMatch[0])
+      return JSON.parse(jsonMatch[1] || jsonMatch[0]);
     }
 
-    throw new Error('Could not parse Gemini response')
+    throw new Error('Could not parse Gemini response');
   }
 
   /**
@@ -258,12 +269,12 @@ Return as JSON:
         functional_score: aiResponse.functional_score || 0,
         ease_of_business_score: aiResponse.ease_of_business_score || 0,
         individual_score: aiResponse.individual_score || 0,
-        inspirational_score: aiResponse.inspirational_score || 0
-      }
-    })
+        inspirational_score: aiResponse.inspirational_score || 0,
+      },
+    });
 
     // Store element scores using Prisma client
-    const elements: B2BElementScore[] = []
+    const elements: B2BElementScore[] = [];
 
     for (const elem of aiResponse.elements || []) {
       const stored = await prisma.b2b_element_scores.create({
@@ -276,25 +287,37 @@ Return as JSON:
           weight: 1.0,
           weighted_score: elem.score || 0,
           evidence: elem.evidence || {},
-          recommendations: elem.recommendations || []
-        }
-      })
+          recommendations: elem.recommendations || [],
+        },
+      });
 
-      const evidence = stored.evidence as { patterns?: unknown[]; citations?: unknown[]; confidence?: number } | null;
+      const evidence = stored.evidence as {
+        patterns?: unknown[];
+        citations?: unknown[];
+        confidence?: number;
+      } | null;
       const recommendations = stored.recommendations as unknown[] | null;
-      
+
       elements.push({
         ...stored,
         score: stored.score ? Number(stored.score) : 0,
         weight: stored.weight ? Number(stored.weight) : 0,
-        weighted_score: stored.weighted_score ? Number(stored.weighted_score) : 0,
+        weighted_score: stored.weighted_score
+          ? Number(stored.weighted_score)
+          : 0,
         evidence: {
-          patterns: Array.isArray(evidence?.patterns) ? evidence.patterns as string[] : [],
-          citations: Array.isArray(evidence?.citations) ? evidence.citations as string[] : [],
-          confidence: evidence?.confidence || 0
+          patterns: Array.isArray(evidence?.patterns)
+            ? (evidence.patterns as string[])
+            : [],
+          citations: Array.isArray(evidence?.citations)
+            ? (evidence.citations as string[])
+            : [],
+          confidence: evidence?.confidence || 0,
         },
-        recommendations: Array.isArray(recommendations) ? recommendations as string[] : []
-      })
+        recommendations: Array.isArray(recommendations)
+          ? (recommendations as string[])
+          : [],
+      });
     }
 
     return {
@@ -306,50 +329,69 @@ Return as JSON:
       ease_of_business_score: aiResponse.ease_of_business_score,
       individual_score: aiResponse.individual_score,
       inspirational_score: aiResponse.inspirational_score,
-      elements
-    }
+      elements,
+    };
   }
 
   /**
    * Fetch existing B2B analysis
    */
-  static async getByAnalysisId(analysisId: string): Promise<ElementsOfValueB2BAnalysis | null> {
+  static async getByAnalysisId(
+    analysisId: string
+  ): Promise<ElementsOfValueB2BAnalysis | null> {
     try {
       const eov = await prisma.elements_of_value_b2b.findFirst({
         where: { analysis_id: analysisId },
         include: {
-          b2b_element_scores: true
-        }
-      })
+          b2b_element_scores: true,
+        },
+      });
 
-      if (!eov) return null
+      if (!eov) return null;
 
       return {
         id: eov.id,
         analysis_id: eov.analysis_id,
         overall_score: eov.overall_score ? Number(eov.overall_score) : 0,
-        table_stakes_score: eov.table_stakes_score ? Number(eov.table_stakes_score) : 0,
-        functional_score: eov.functional_score ? Number(eov.functional_score) : 0,
-        ease_of_business_score: eov.ease_of_business_score ? Number(eov.ease_of_business_score) : 0,
-        individual_score: eov.individual_score ? Number(eov.individual_score) : 0,
-        inspirational_score: eov.inspirational_score ? Number(eov.inspirational_score) : 0,
-        elements: eov.b2b_element_scores.map(score => ({
+        table_stakes_score: eov.table_stakes_score
+          ? Number(eov.table_stakes_score)
+          : 0,
+        functional_score: eov.functional_score
+          ? Number(eov.functional_score)
+          : 0,
+        ease_of_business_score: eov.ease_of_business_score
+          ? Number(eov.ease_of_business_score)
+          : 0,
+        individual_score: eov.individual_score
+          ? Number(eov.individual_score)
+          : 0,
+        inspirational_score: eov.inspirational_score
+          ? Number(eov.inspirational_score)
+          : 0,
+        elements: eov.b2b_element_scores.map((score) => ({
           ...score,
           score: score.score ? Number(score.score) : 0,
           weight: score.weight ? Number(score.weight) : 0,
-          weighted_score: score.weighted_score ? Number(score.weighted_score) : 0,
+          weighted_score: score.weighted_score
+            ? Number(score.weighted_score)
+            : 0,
           evidence: {
-            patterns: Array.isArray((score.evidence as any)?.patterns) ? (score.evidence as any).patterns : [],
-            citations: Array.isArray((score.evidence as any)?.citations) ? (score.evidence as any).citations : [],
-            confidence: (score.evidence as any)?.confidence || 0
+            patterns: Array.isArray((score.evidence as any)?.patterns)
+              ? (score.evidence as any).patterns
+              : [],
+            citations: Array.isArray((score.evidence as any)?.citations)
+              ? (score.evidence as any).citations
+              : [],
+            confidence: (score.evidence as any)?.confidence || 0,
           },
-          recommendations: Array.isArray(score.recommendations) ? score.recommendations as string[] : []
-        }))
-      }
+          recommendations: Array.isArray(score.recommendations)
+            ? (score.recommendations as string[])
+            : [],
+        })),
+      };
     } catch (error) {
-      console.error('Failed to fetch B2B Elements:', error)
-      return null
+      console.error('Failed to fetch B2B Elements:', error);
+      return null;
     }
   }
 }
-

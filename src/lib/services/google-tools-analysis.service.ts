@@ -40,19 +40,25 @@ export class GoogleToolsAnalysisService {
       const keywords = await this.extractKeywordsFromDomain(domain);
 
       // Step 2: Run all Google Tools analyses in parallel
-      const [trendsData, analyticsData, searchConsoleData, pagespeedData] = await Promise.all([
-        this.getGoogleTrendsData(keywords),
-        this.getGoogleAnalyticsData(domain),
-        this.getGoogleSearchConsoleData(domain),
-        this.getPageSpeedInsightsData(url)
-      ]);
+      const [trendsData, analyticsData, searchConsoleData, pagespeedData] =
+        await Promise.all([
+          this.getGoogleTrendsData(keywords),
+          this.getGoogleAnalyticsData(domain),
+          this.getGoogleSearchConsoleData(domain),
+          this.getPageSpeedInsightsData(url),
+        ]);
 
       // Step 3: Run AI analysis on each dataset
-      const [trendsAnalysis, analyticsAnalysis, searchConsoleAnalysis, pagespeedAnalysis] = await Promise.all([
+      const [
+        trendsAnalysis,
+        analyticsAnalysis,
+        searchConsoleAnalysis,
+        pagespeedAnalysis,
+      ] = await Promise.all([
         this.runTrendsAnalysis(trendsData, url),
         this.runAnalyticsAnalysis(analyticsData, url),
         this.runSearchConsoleAnalysis(searchConsoleData, url),
-        this.runPageSpeedAnalysis(pagespeedData, url)
+        this.runPageSpeedAnalysis(pagespeedData, url),
       ]);
 
       console.log(`✅ Google Tools analysis completed for: ${url}`);
@@ -64,17 +70,16 @@ export class GoogleToolsAnalysisService {
           trends_analysis: trendsAnalysis,
           analytics_analysis: analyticsAnalysis,
           search_console_analysis: searchConsoleAnalysis,
-          pagespeed_analysis: pagespeedAnalysis
-        }
+          pagespeed_analysis: pagespeedAnalysis,
+        },
       };
-
     } catch (error) {
       console.error('Google Tools analysis failed:', error);
       return {
         success: false,
         url,
         data: {},
-        error: error instanceof Error ? error.message : 'Analysis failed'
+        error: error instanceof Error ? error.message : 'Analysis failed',
       };
     }
   }
@@ -94,10 +99,14 @@ export class GoogleToolsAnalysisService {
   /**
    * Extract keywords from domain (basic implementation)
    */
-  private static async extractKeywordsFromDomain(domain: string): Promise<string[]> {
+  private static async extractKeywordsFromDomain(
+    domain: string
+  ): Promise<string[]> {
     // This would be enhanced with actual keyword extraction
-    const domainParts = domain.replace(/\.(com|org|net|co|io)$/, '').split(/[.-]/);
-    return domainParts.filter(part => part.length > 2);
+    const domainParts = domain
+      .replace(/\.(com|org|net|co|io)$/, '')
+      .split(/[.-]/);
+    return domainParts.filter((part) => part.length > 2);
   }
 
   /**
@@ -108,15 +117,15 @@ export class GoogleToolsAnalysisService {
     return {
       keywords,
       related_queries: [
-        { query: "custom homes utah", interest: 85 },
-        { query: "home builders sanpete county", interest: 72 },
-        { query: "custom home construction", interest: 68 }
+        { query: 'custom homes utah', interest: 85 },
+        { query: 'home builders sanpete county', interest: 72 },
+        { query: 'custom home construction', interest: 68 },
       ],
       related_topics: [
-        { topic: "Home Construction", interest: 90 },
-        { topic: "Custom Homes", interest: 85 },
-        { topic: "Utah Real Estate", interest: 78 }
-      ]
+        { topic: 'Home Construction', interest: 90 },
+        { topic: 'Custom Homes', interest: 85 },
+        { topic: 'Utah Real Estate', interest: 78 },
+      ],
     };
   }
 
@@ -128,32 +137,49 @@ export class GoogleToolsAnalysisService {
     return {
       sessions: 1250,
       bounce_rate: 0.45,
-      revenue_per_session: 125.50,
+      revenue_per_session: 125.5,
       conversion_rate: 0.08,
       top_pages: [
-        { page: "/", sessions: 450, bounce_rate: 0.42, revenue: 12500 },
-        { page: "/services", sessions: 320, bounce_rate: 0.38, revenue: 8500 },
-        { page: "/projects", sessions: 280, bounce_rate: 0.52, revenue: 6200 }
-      ]
+        { page: '/', sessions: 450, bounce_rate: 0.42, revenue: 12500 },
+        { page: '/services', sessions: 320, bounce_rate: 0.38, revenue: 8500 },
+        { page: '/projects', sessions: 280, bounce_rate: 0.52, revenue: 6200 },
+      ],
     };
   }
 
   /**
    * Get Google Search Console data (placeholder - would use actual API)
    */
-  private static async getGoogleSearchConsoleData(domain: string): Promise<any> {
+  private static async getGoogleSearchConsoleData(
+    domain: string
+  ): Promise<any> {
     // Placeholder - would use Google Search Console API
     return {
       queries: [
-        { query: "custom homes utah", impressions: 1250, clicks: 85, position: 12.5 },
-        { query: "home builders sanpete county", impressions: 890, clicks: 45, position: 15.2 },
-        { query: "custom home construction", impressions: 2100, clicks: 120, position: 8.7 }
+        {
+          query: 'custom homes utah',
+          impressions: 1250,
+          clicks: 85,
+          position: 12.5,
+        },
+        {
+          query: 'home builders sanpete county',
+          impressions: 890,
+          clicks: 45,
+          position: 15.2,
+        },
+        {
+          query: 'custom home construction',
+          impressions: 2100,
+          clicks: 120,
+          position: 8.7,
+        },
       ],
       pages: [
-        { page: "/", impressions: 2100, clicks: 180, position: 8.5 },
-        { page: "/services", impressions: 1500, clicks: 95, position: 12.1 },
-        { page: "/projects", impressions: 1200, clicks: 78, position: 14.3 }
-      ]
+        { page: '/', impressions: 2100, clicks: 180, position: 8.5 },
+        { page: '/services', impressions: 1500, clicks: 95, position: 12.1 },
+        { page: '/projects', impressions: 1200, clicks: 78, position: 14.3 },
+      ],
     };
   }
 
@@ -168,17 +194,20 @@ export class GoogleToolsAnalysisService {
       cls: 0.12,
       fcp: 1.2,
       opportunities: [
-        { opportunity: "Remove unused CSS", savings: 850 },
-        { opportunity: "Optimize images", savings: 1200 },
-        { opportunity: "Minify JavaScript", savings: 450 }
-      ]
+        { opportunity: 'Remove unused CSS', savings: 850 },
+        { opportunity: 'Optimize images', savings: 1200 },
+        { opportunity: 'Minify JavaScript', savings: 450 },
+      ],
     };
   }
 
   /**
    * Run Trends analysis using PTCF framework
    */
-  private static async runTrendsAnalysis(trendsData: any, url: string): Promise<any> {
+  private static async runTrendsAnalysis(
+    trendsData: any,
+    url: string
+  ): Promise<any> {
     if (!this.genAI) {
       this.initialize();
     }
@@ -221,7 +250,10 @@ ${format}`;
   /**
    * Run Analytics analysis using PTCF framework
    */
-  private static async runAnalyticsAnalysis(analyticsData: any, url: string): Promise<any> {
+  private static async runAnalyticsAnalysis(
+    analyticsData: any,
+    url: string
+  ): Promise<any> {
     if (!this.genAI) {
       this.initialize();
     }
@@ -264,7 +296,10 @@ ${format}`;
   /**
    * Run Search Console analysis using PTCF framework
    */
-  private static async runSearchConsoleAnalysis(searchConsoleData: any, url: string): Promise<any> {
+  private static async runSearchConsoleAnalysis(
+    searchConsoleData: any,
+    url: string
+  ): Promise<any> {
     if (!this.genAI) {
       this.initialize();
     }
@@ -307,7 +342,10 @@ ${format}`;
   /**
    * Run PageSpeed analysis using PTCF framework
    */
-  private static async runPageSpeedAnalysis(pagespeedData: any, url: string): Promise<any> {
+  private static async runPageSpeedAnalysis(
+    pagespeedData: any,
+    url: string
+  ): Promise<any> {
     if (!this.genAI) {
       this.initialize();
     }

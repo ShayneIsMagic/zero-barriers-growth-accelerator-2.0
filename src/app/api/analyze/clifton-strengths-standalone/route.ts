@@ -9,13 +9,21 @@ export const maxDuration = 30;
 
 export async function POST(request: NextRequest) {
   try {
-    const { url, proposedContent, analysisType: _analysisType, existingContent } = await request.json();
+    const {
+      url,
+      proposedContent,
+      analysisType: _analysisType,
+      existingContent,
+    } = await request.json();
 
     if (!url) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL required',
+        },
+        { status: 400 }
+      );
     }
 
     console.log(`🔄 Starting CliftonStrengths analysis for: ${url}`);
@@ -26,12 +34,17 @@ export async function POST(request: NextRequest) {
       console.log('📦 Using provided existing content from content-comparison');
       existingData = existingContent;
     } else {
-      console.log('🔍 No existing content provided - calling content-comparison API to get scraped data...');
-      const compareResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/analyze/compare`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, proposedContent: '' })
-      });
+      console.log(
+        '🔍 No existing content provided - calling content-comparison API to get scraped data...'
+      );
+      const compareResponse = await fetch(
+        `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/analyze/compare`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url, proposedContent: '' }),
+        }
+      );
 
       if (!compareResponse.ok) {
         throw new Error('Failed to get scraped content');
@@ -56,8 +69,8 @@ export async function POST(request: NextRequest) {
           metaTitle: extractTitle(proposedContent),
           metaDescription: extractMetaDescription(proposedContent),
           extractedKeywords: extractKeywordsFromText(proposedContent),
-          headings: extractHeadings(proposedContent)
-        }
+          headings: extractHeadings(proposedContent),
+        },
       };
     }
 
@@ -79,19 +92,24 @@ export async function POST(request: NextRequest) {
         extractedKeywords: existingData.seo.extractedKeywords,
         headings: existingData.seo.headings,
         cleanText: existingData.cleanText,
-        url: existingData.url
+        url: existingData.url,
       },
       proposed: proposedData,
       analysis: analysis,
-      message: 'CliftonStrengths analysis completed'
+      message: 'CliftonStrengths analysis completed',
     });
-
   } catch (error) {
     console.error('CliftonStrengths analysis error:', error);
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'CliftonStrengths analysis failed'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'CliftonStrengths analysis failed',
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -103,22 +121,26 @@ function extractTitle(content: string): string {
 
 function extractMetaDescription(content: string): string {
   const lines = content.split('\n');
-  return lines.slice(0, 3).join(' ').trim().substring(0, 160) || 'Proposed description';
+  return (
+    lines.slice(0, 3).join(' ').trim().substring(0, 160) ||
+    'Proposed description'
+  );
 }
 
 function extractKeywordsFromText(text: string): string[] {
-  const words = text.toLowerCase()
+  const words = text
+    .toLowerCase()
     .replace(/[^\w\s]/g, ' ')
     .split(/\s+/)
-    .filter(word => word.length > 4);
+    .filter((word) => word.length > 4);
 
   const wordCount: { [key: string]: number } = {};
-  words.forEach(word => {
+  words.forEach((word) => {
     wordCount[word] = (wordCount[word] || 0) + 1;
   });
 
   return Object.entries(wordCount)
-    .sort(([,a], [,b]) => b - a)
+    .sort(([, a], [, b]) => b - a)
     .slice(0, 10)
     .map(([word]) => word);
 }
@@ -126,13 +148,21 @@ function extractKeywordsFromText(text: string): string[] {
 function extractHeadings(content: string): string[] {
   const lines = content.split('\n');
   return lines
-    .filter(line => line.trim().startsWith('#') || line.trim().match(/^[A-Z][^.!?]*$/))
-    .map(line => line.trim().replace(/^#+\s*/, ''))
+    .filter(
+      (line) =>
+        line.trim().startsWith('#') || line.trim().match(/^[A-Z][^.!?]*$/)
+    )
+    .map((line) => line.trim().replace(/^#+\s*/, ''))
     .slice(0, 10);
 }
 
 // CliftonStrengths Analysis Function
-async function generateCliftonStrengthsAnalysis(existing: any, proposed: any, url: string, _analysisType: string) {
+async function generateCliftonStrengthsAnalysis(
+  existing: any,
+  proposed: any,
+  url: string,
+  _analysisType: string
+) {
   const { analyzeWithGemini } = await import('@/lib/free-ai-analysis');
 
   const prompt = `Analyze this website using the CliftonStrengths framework (34 themes across 4 domains):
@@ -146,14 +176,18 @@ EXISTING CONTENT:
 - Keywords: ${existing.extractedKeywords.slice(0, 10).join(', ')}
 - Content: ${existing.cleanText.substring(0, 2000)}
 
-${proposed ? `
+${
+  proposed
+    ? `
 PROPOSED CONTENT:
 - Word Count: ${proposed.wordCount}
 - Title: ${proposed.title}
 - Meta Description: ${proposed.metaDescription}
 - Keywords: ${proposed.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
 - Content: ${proposed.cleanText.substring(0, 2000)}
-` : 'No proposed content provided - analyze existing only'}
+`
+    : 'No proposed content provided - analyze existing only'
+}
 
 CLIFTONSTRENGTHS FRAMEWORK (34 Themes - Gallup):
 
@@ -215,7 +249,7 @@ Return structured analysis with scores and actionable insights.`;
   } catch (error) {
     return {
       error: 'CliftonStrengths analysis failed',
-      fallbackPrompt: prompt
+      fallbackPrompt: prompt,
     };
   }
 }

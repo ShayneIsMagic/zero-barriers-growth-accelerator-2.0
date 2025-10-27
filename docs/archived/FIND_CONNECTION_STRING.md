@@ -52,4 +52,3 @@ If YES: Use the string above and replace [YOUR-DB-PASSWORD]
 If NO: Click "Reset database password" on the page you're viewing now
 
 **Then paste the complete connection string here!** 🚀
-

@@ -1,7 +1,9 @@
 # CODEBASE CLEANUP PLAN - SEPARATE WORKING FROM BROKEN
 
 ## 🎯 **CORE PROBLEM**
+
 The codebase has become bloated with:
+
 - Multiple incomplete assessment implementations
 - Broken API endpoints that don't work
 - Duplicate functionality across different routes
@@ -11,6 +13,7 @@ The codebase has become bloated with:
 ## ✅ **WHAT'S ACTUALLY WORKING**
 
 ### **Working API Endpoints**
+
 ```bash
 ✅ /api/health - Health check (working)
 ✅ /api/analyze/phase1-simple - Data collection (working)
@@ -21,6 +24,7 @@ The codebase has become bloated with:
 ```
 
 ### **Working UI Pages**
+
 ```bash
 ✅ / - Homepage (working)
 ✅ /dashboard - Main dashboard (working)
@@ -30,6 +34,7 @@ The codebase has become bloated with:
 ```
 
 ### **Working Components**
+
 ```bash
 ✅ WebsiteAnalysisForm - Phase 1 data collection
 ✅ Phase2Button - Phase 2 AI analysis
@@ -40,6 +45,7 @@ The codebase has become bloated with:
 ## ❌ **WHAT'S BROKEN/BLOATED**
 
 ### **Broken API Endpoints**
+
 ```bash
 ❌ /api/analyze/phase-new - Uses broken Prisma calls
 ❌ /api/analyze/seo - Incomplete implementation
@@ -49,6 +55,7 @@ The codebase has become bloated with:
 ```
 
 ### **Broken UI Pages**
+
 ```bash
 ❌ /dashboard/golden-circle - Missing implementation
 ❌ /dashboard/elements-of-value - Incomplete
@@ -58,6 +65,7 @@ The codebase has become bloated with:
 ```
 
 ### **Broken Services**
+
 ```bash
 ❌ LighthouseDetailedService - Uses $queryRaw
 ❌ SEOOpportunitiesService - Uses $queryRaw
@@ -68,6 +76,7 @@ The codebase has become bloated with:
 ## 🚀 **CLEANUP STRATEGY**
 
 ### **Phase 1: Create Working Environment**
+
 ```bash
 # 1. Create clean working directory
 mkdir src/working
@@ -91,6 +100,7 @@ mv src/app/page.tsx src/working/pages/
 ```
 
 ### **Phase 2: Create Broken Environment**
+
 ```bash
 # 1. Create broken directory
 mkdir src/broken
@@ -115,6 +125,7 @@ mv src/app/dashboard/clifton-strengths src/broken/pages/
 ```
 
 ### **Phase 3: Create Assessment Pipeline**
+
 ```bash
 # 1. Create assessment status system
 mkdir src/assessments
@@ -131,6 +142,7 @@ mkdir src/assessments/ready
 ## 🎯 **NEW CLEAN ARCHITECTURE**
 
 ### **Working Core (src/working/)**
+
 ```
 src/working/
 ├── api/
@@ -150,6 +162,7 @@ src/working/
 ```
 
 ### **Assessment Pipeline (src/assessments/)**
+
 ```
 src/assessments/
 ├── pending/
@@ -165,6 +178,7 @@ src/assessments/
 ```
 
 ### **Broken Archive (src/broken/)**
+
 ```
 src/broken/
 ├── services/
@@ -184,6 +198,7 @@ src/broken/
 ## 🔄 **ASSESSMENT PROMOTION WORKFLOW**
 
 ### **1. Development Phase**
+
 ```bash
 # Work on assessment in src/assessments/pending/
 # Fix all issues
@@ -193,6 +208,7 @@ src/broken/
 ```
 
 ### **2. Testing Phase**
+
 ```bash
 # Move to src/assessments/testing/
 # Deploy to staging
@@ -202,6 +218,7 @@ src/broken/
 ```
 
 ### **3. Ready Phase**
+
 ```bash
 # Move to src/assessments/ready/
 # Integrate with main app
@@ -213,6 +230,7 @@ src/broken/
 ## 📊 **CLEAN USER EXPERIENCE**
 
 ### **Main Dashboard (Working Only)**
+
 ```typescript
 // Only show assessments that are fully working
 const workingAssessments = [
@@ -221,8 +239,8 @@ const workingAssessments = [
     name: 'Website Analysis',
     status: 'ready',
     description: 'Complete AI-powered business framework analysis',
-    route: '/dashboard/website-analysis'
-  }
+    route: '/dashboard/website-analysis',
+  },
 ];
 
 // Show coming soon for assessments in development
@@ -232,12 +250,13 @@ const comingSoonAssessments = [
     name: 'Golden Circle Analysis',
     status: 'testing',
     description: 'Coming soon - Individual Golden Circle analysis',
-    eta: 'Next week'
-  }
+    eta: 'Next week',
+  },
 ];
 ```
 
 ### **Assessment Status Indicators**
+
 ```typescript
 // Clear status indicators
 const statusBadges = {
@@ -251,6 +270,7 @@ const statusBadges = {
 ## 🚀 **IMMEDIATE ACTION PLAN**
 
 ### **Step 1: Create Clean Working Environment**
+
 ```bash
 # 1. Create working directory structure
 # 2. Move only working components
@@ -259,6 +279,7 @@ const statusBadges = {
 ```
 
 ### **Step 2: Archive Broken Code**
+
 ```bash
 # 1. Move broken code to archive
 # 2. Remove from main app
@@ -267,6 +288,7 @@ const statusBadges = {
 ```
 
 ### **Step 3: Create Assessment Pipeline**
+
 ```bash
 # 1. Set up assessment status system
 # 2. Create promotion workflow
@@ -275,6 +297,7 @@ const statusBadges = {
 ```
 
 ### **Step 4: Deploy Clean Version**
+
 ```bash
 # 1. Test locally
 # 2. Deploy to production
@@ -285,6 +308,7 @@ const statusBadges = {
 ## 🎯 **SUCCESS METRICS**
 
 ### **Before Cleanup**
+
 - ❌ 15+ API endpoints (many broken)
 - ❌ 10+ UI pages (many incomplete)
 - ❌ 8+ services (many using $queryRaw)
@@ -292,6 +316,7 @@ const statusBadges = {
 - ❌ Template-based responses
 
 ### **After Cleanup**
+
 - ✅ 5 working API endpoints
 - ✅ 3 working UI pages
 - ✅ 2 working services
@@ -301,6 +326,7 @@ const statusBadges = {
 ## 🔧 **IMPLEMENTATION COMMANDS**
 
 ### **Create Clean Structure**
+
 ```bash
 # Create directories
 mkdir -p src/working/{api,components,pages,services}
@@ -319,6 +345,7 @@ cp -r src/app/api/health src/working/api/
 ```
 
 ### **Update Imports**
+
 ```bash
 # Update all imports to use working versions
 # Remove broken imports
@@ -326,6 +353,7 @@ cp -r src/app/api/health src/working/api/
 ```
 
 ### **Deploy Clean Version**
+
 ```bash
 # Test locally
 npm run dev
@@ -339,6 +367,7 @@ git push origin main
 ## 🎯 **RESULT**
 
 A clean, working application with:
+
 - ✅ Only working features exposed to users
 - ✅ Clear assessment status indicators
 - ✅ Proper development pipeline

@@ -33,6 +33,7 @@ Success. 250 rows affected
 ```
 
 **This means:**
+
 - ✅ CREATE TABLE statements: "No rows returned" (tables created)
 - ✅ INSERT statements: "X rows affected" (data inserted)
 - ✅ Everything worked!
@@ -66,6 +67,7 @@ Executing...
 ```
 
 **This means:** SQL is STILL RUNNING
+
 - Wait longer (it's 2,100 lines of SQL)
 - Can take 2-5 minutes for large schemas
 - Don't refresh the page!
@@ -83,6 +85,7 @@ ERROR: relation "Analysis" already exists
 ```
 
 **These specific errors are OK!**
+
 - The schema tries to create User/Analysis tables
 - They already exist in your database
 - The new tables should still create successfully
@@ -108,6 +111,7 @@ ERROR: invalid input syntax
 ### **Method 1: Count Success Messages**
 
 Scroll through the results panel:
+
 - Count how many "Success" you see
 - Should be 80+ success messages (one per table + seed data)
 
@@ -120,6 +124,7 @@ Scroll through the results panel:
 **Step 2:** Look at the table list (left side)
 
 **Step 3:** Look for these NEW tables:
+
 - `websites` ✅
 - `golden_circle_analyses` ✅
 - `golden_circle_why` ✅
@@ -142,14 +147,17 @@ Scroll through the results panel:
 **In Table Editor:**
 
 **Click on `value_element_reference`:**
+
 - Should show **27 records**
 - Should have columns: id, element_name, element_category, etc.
 
 **Click on `industry_terminology`:**
+
 - Should show **250+ records**
 - Should have columns: id, industry, term_type, etc.
 
 **Click on `clifton_themes_reference`:**
+
 - Should show **34 records**
 - Should have columns: id, theme_name, domain, etc.
 
@@ -160,18 +168,22 @@ Scroll through the results panel:
 ## 🎯 WHAT TO DO NOW
 
 ### **If SQL is still "Executing..."**
+
 → Wait 2-5 more minutes
 → Don't refresh!
 
 ### **If you see "Success" messages**
+
 → Great! Continue to next step (Prisma)
 
 ### **If you see error messages**
+
 → Scroll through ALL results
 → Check if NEW tables created anyway
 → Copy/paste errors to me
 
 ### **If nothing happened**
+
 → Did you click the green "RUN" button?
 → Check top-right corner of SQL Editor
 
@@ -180,6 +192,7 @@ Scroll through the results panel:
 ## 📸 VISUAL GUIDE
 
 ### **Before Running SQL:**
+
 ```
 ┌─────────────────────────────────────────┐
 │ SQL Editor                     [RUN] ← Click here │
@@ -196,6 +209,7 @@ Scroll through the results panel:
 ```
 
 ### **While Running:**
+
 ```
 ┌─────────────────────────────────────────┐
 │ SQL Editor                     [STOP]   │
@@ -211,6 +225,7 @@ Scroll through the results panel:
 ```
 
 ### **After Success:**
+
 ```
 ┌─────────────────────────────────────────┐
 │ SQL Editor                     [RUN]    │
@@ -237,6 +252,7 @@ Scroll through the results panel:
 **Cause:** SQL might have timed out or frozen
 
 **Fix:**
+
 1. Refresh the page
 2. Re-paste the SQL
 3. Click RUN again
@@ -246,6 +262,7 @@ Scroll through the results panel:
 ### **Issue: "Session expired"**
 
 **Fix:**
+
 1. Log out of Supabase
 2. Log back in
 3. Navigate to SQL Editor
@@ -257,6 +274,7 @@ Scroll through the results panel:
 ### **Issue: Results panel is empty**
 
 **Check:**
+
 1. Did you click RUN?
 2. Scroll down - results appear BELOW the SQL code
 3. Expand the Results panel (might be collapsed)
@@ -270,6 +288,7 @@ Once you confirm SQL worked:
 **Tell me:** "SQL worked! I see the new tables"
 
 **Then run:**
+
 ```bash
 npx prisma db pull
 ```
@@ -298,4 +317,3 @@ npx prisma db pull
    → I'll help you troubleshoot
 
 **What do you see?**
-

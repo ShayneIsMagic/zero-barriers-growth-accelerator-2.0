@@ -16,10 +16,13 @@ export async function POST(request: NextRequest) {
     const { url } = await request.json();
 
     if (!url) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL is required',
+        },
+        { status: 400 }
+      );
     }
 
     console.log(`🔍 Content scraping requested for: ${url}`);
@@ -32,7 +35,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: true,
           cached: true,
-          content: cached
+          content: cached,
         });
       }
     }
@@ -54,56 +57,68 @@ export async function POST(request: NextRequest) {
         metaTitle: scrapedData.title || '',
         metaDescription: scrapedData.seo?.metaDescription || '',
         extractedKeywords: scrapedData.seo?.extractedKeywords || [],
-        headings: scrapedData.seo?.headings || { h1: [], h2: [], h3: [] }
-      }
+        headings: scrapedData.seo?.headings || { h1: [], h2: [], h3: [] },
+      },
     };
 
     // Cache the content
-    const cached = await ContentCacheService.getContent(url, async () => content);
+    const cached = await ContentCacheService.getContent(
+      url,
+      async () => content
+    );
 
     return NextResponse.json({
       success: true,
       cached: false,
-      content: cached
+      content: cached,
     });
-
   } catch (error) {
     console.error('Content scraping error:', error);
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Content scraping failed'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Content scraping failed',
+      },
+      { status: 500 }
+    );
   }
 }
 
 // Helper functions
 function extractKeywords(text: string): string[] {
-  const words = text.toLowerCase()
+  const words = text
+    .toLowerCase()
     .replace(/[^\w\s]/g, ' ')
     .split(/\s+/)
-    .filter(word => word.length > 4);
+    .filter((word) => word.length > 4);
 
   const wordCount: { [key: string]: number } = {};
-  words.forEach(word => {
+  words.forEach((word) => {
     wordCount[word] = (wordCount[word] || 0) + 1;
   });
 
   return Object.entries(wordCount)
-    .sort(([,a], [,b]) => b - a)
+    .sort(([, a], [, b]) => b - a)
     .slice(0, 10)
     .map(([word]) => word);
 }
 
 function extractHeadings(content: string) {
   const lines = content.split('\n');
-  const h1 = lines.filter(line => line.trim().startsWith('# ')).map(line => line.trim().replace(/^#+\s*/, ''));
-  const h2 = lines.filter(line => line.trim().startsWith('## ')).map(line => line.trim().replace(/^#+\s*/, ''));
-  const h3 = lines.filter(line => line.trim().startsWith('### ')).map(line => line.trim().replace(/^#+\s*/, ''));
+  const h1 = lines
+    .filter((line) => line.trim().startsWith('# '))
+    .map((line) => line.trim().replace(/^#+\s*/, ''));
+  const h2 = lines
+    .filter((line) => line.trim().startsWith('## '))
+    .map((line) => line.trim().replace(/^#+\s*/, ''));
+  const h3 = lines
+    .filter((line) => line.trim().startsWith('### '))
+    .map((line) => line.trim().replace(/^#+\s*/, ''));
 
   return {
     h1: h1.slice(0, 10),
     h2: h2.slice(0, 10),
-    h3: h3.slice(0, 10)
+    h3: h3.slice(0, 10),
   };
 }
-

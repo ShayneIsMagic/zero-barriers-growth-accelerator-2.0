@@ -37,5 +37,3 @@ async function setupSuperAdmin() {
 }
 
 setupSuperAdmin();
-
-

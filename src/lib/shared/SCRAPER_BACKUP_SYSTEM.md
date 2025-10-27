@@ -1,17 +1,20 @@
 # Scraper Backup System Documentation
 
 ## Overview
+
 The standardized data collection system includes a robust backup mechanism to ensure reliable data collection across all assessment frameworks.
 
 ## Architecture
 
 ### Primary Scraper
+
 - **Tool**: `UniversalPuppeteerScraper`
 - **Method**: `scrapeWebsite(url)`
 - **Purpose**: Primary data collection using the same approach as content-comparison page
 - **Error Handling**: Standard error propagation
 
 ### Backup Scraper
+
 - **Tool**: `UniversalPuppeteerScraper` (same tool, different error handling)
 - **Method**: `backupScrapeWebsite(url)`
 - **Purpose**: Fallback when primary scraper fails
@@ -40,16 +43,19 @@ Return StandardizedWebsiteData
 ## Error Handling Strategy
 
 ### Primary Failure
+
 - Log warning with error details
 - Automatically trigger backup scraper
 - No user interruption
 
 ### Backup Failure
+
 - Log error with both primary and backup error details
 - Throw comprehensive error message
 - User sees clear failure reason
 
 ### Success
+
 - Transform data to standardized format
 - Log success metrics (word count, keywords)
 - Return structured data
@@ -73,7 +79,8 @@ const existingData = await StandardizedDataCollector.collectWebsiteData(url);
 // Step 2: Process proposed content (if provided)
 let proposedData = null;
 if (proposedContent && proposedContent.trim().length > 0) {
-  proposedData = StandardizedDataCollector.processProposedContent(proposedContent);
+  proposedData =
+    StandardizedDataCollector.processProposedContent(proposedContent);
 }
 
 // Step 3: Generate framework-specific analysis

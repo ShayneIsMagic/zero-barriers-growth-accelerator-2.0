@@ -4,7 +4,13 @@
  */
 
 export interface ParsedAssessment {
-  type: 'golden-circle' | 'b2c-elements' | 'b2b-elements' | 'clifton-strengths' | 'lighthouse' | 'seo';
+  type:
+    | 'golden-circle'
+    | 'b2c-elements'
+    | 'b2b-elements'
+    | 'clifton-strengths'
+    | 'lighthouse'
+    | 'seo';
   data: any;
   score: number;
   status: 'completed' | 'failed' | 'pending';
@@ -15,7 +21,9 @@ export class ComprehensiveParserService {
   /**
    * Parse comprehensive analysis results into individual assessments
    */
-  static parseComprehensiveResults(comprehensiveData: any): Record<string, ParsedAssessment> {
+  static parseComprehensiveResults(
+    comprehensiveData: any
+  ): Record<string, ParsedAssessment> {
     const results: Record<string, ParsedAssessment> = {};
 
     try {
@@ -25,7 +33,7 @@ export class ComprehensiveParserService {
           type: 'golden-circle',
           data: comprehensiveData.goldenCircle,
           score: comprehensiveData.goldenCircle.overallScore || 0,
-          status: 'completed'
+          status: 'completed',
         };
       }
 
@@ -35,7 +43,7 @@ export class ComprehensiveParserService {
           type: 'b2c-elements',
           data: comprehensiveData.elementsOfValue,
           score: comprehensiveData.elementsOfValue.overallScore || 0,
-          status: 'completed'
+          status: 'completed',
         };
       }
 
@@ -45,7 +53,7 @@ export class ComprehensiveParserService {
           type: 'b2b-elements',
           data: comprehensiveData.b2bElements,
           score: comprehensiveData.b2bElements.overallScore || 0,
-          status: 'completed'
+          status: 'completed',
         };
       }
 
@@ -55,7 +63,7 @@ export class ComprehensiveParserService {
           type: 'clifton-strengths',
           data: comprehensiveData.cliftonStrengths,
           score: comprehensiveData.cliftonStrengths.overallScore || 0,
-          status: 'completed'
+          status: 'completed',
         };
       }
 
@@ -64,8 +72,10 @@ export class ComprehensiveParserService {
         results['lighthouse'] = {
           type: 'lighthouse',
           data: comprehensiveData.lighthouseAnalysis,
-          score: this.calculateLighthouseScore(comprehensiveData.lighthouseAnalysis),
-          status: 'completed'
+          score: this.calculateLighthouseScore(
+            comprehensiveData.lighthouseAnalysis
+          ),
+          status: 'completed',
         };
       }
 
@@ -75,14 +85,13 @@ export class ComprehensiveParserService {
           type: 'seo',
           data: comprehensiveData.pageAuditAnalysis,
           score: this.calculateSEOScore(comprehensiveData.pageAuditAnalysis),
-          status: 'completed'
+          status: 'completed',
         };
       }
-
     } catch (error) {
       console.error('Error parsing comprehensive results:', error);
       // Mark all as failed if parsing fails
-      Object.keys(results).forEach(key => {
+      Object.keys(results).forEach((key) => {
         results[key].status = 'failed';
         results[key].error = 'Failed to parse comprehensive results';
       });
@@ -96,15 +105,17 @@ export class ComprehensiveParserService {
    */
   private static calculateLighthouseScore(lighthouseData: any): number {
     if (!lighthouseData) return 0;
-    
+
     const scores = [
       lighthouseData.performance || 0,
       lighthouseData.accessibility || 0,
       lighthouseData.bestPractices || 0,
-      lighthouseData.seo || 0
+      lighthouseData.seo || 0,
     ];
-    
-    return Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
+
+    return Math.round(
+      scores.reduce((sum, score) => sum + score, 0) / scores.length
+    );
   }
 
   /**
@@ -112,21 +123,26 @@ export class ComprehensiveParserService {
    */
   private static calculateSEOScore(seoData: any): number {
     if (!seoData) return 0;
-    
+
     const scores = [
       seoData.performance || 0,
       seoData.accessibility || 0,
       seoData.bestPractices || 0,
-      seoData.seo || 0
+      seoData.seo || 0,
     ];
-    
-    return Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
+
+    return Math.round(
+      scores.reduce((sum, score) => sum + score, 0) / scores.length
+    );
   }
 
   /**
    * Get individual assessment by type
    */
-  static getIndividualAssessment(comprehensiveData: any, assessmentType: string): ParsedAssessment | null {
+  static getIndividualAssessment(
+    comprehensiveData: any,
+    assessmentType: string
+  ): ParsedAssessment | null {
     const parsed = this.parseComprehensiveResults(comprehensiveData);
     return parsed[assessmentType] || null;
   }

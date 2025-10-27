@@ -3,18 +3,21 @@
 ## Getting API Keys
 
 ### 1. OpenAI (shayne@devpipeline.com)
+
 1. Go to https://platform.openai.com/api-keys
 2. Sign in with shayne@devpipeline.com
 3. Click "Create new secret key"
 4. Copy the API key (starts with `sk-`)
 
 ### 2. Google Gemini (shayne@devpipeline.com)
+
 1. Go to https://makersuite.google.com/app/apikey
 2. Sign in with shayne@devpipeline.com
 3. Click "Create API Key"
 4. Copy the API key
 
 ### 3. Anthropic Claude (shayne@devpipeline.com)
+
 1. Go to https://console.anthropic.com/
 2. Sign in with shayne@devpipeline.com
 3. Go to API Keys section
@@ -42,16 +45,19 @@ CLAUDE_MODEL=claude-3-haiku-20240307
 ## Free Tier Limits
 
 ### OpenAI
+
 - $5 free credit (expires after 3 months)
 - GPT-4: ~$0.03 per 1K tokens
 - GPT-3.5: ~$0.001 per 1K tokens
 
 ### Google Gemini
+
 - 15 requests per minute
 - 1M tokens per day
 - Free tier available
 
 ### Anthropic Claude
+
 - $5 free credit (expires after 1 month)
 - Claude 3 Haiku: ~$0.25 per 1M input tokens
 - Claude 3 Sonnet: ~$3 per 1M input tokens

@@ -9,13 +9,15 @@ export async function generateStaticParams() {
 export async function GET(_request: NextRequest) {
   return NextResponse.json({
     error: 'tRPC not available on static hosting',
-    message: 'This feature requires a server environment. Please run locally for full functionality.'
+    message:
+      'This feature requires a server environment. Please run locally for full functionality.',
   });
 }
 
 export async function POST(_request: NextRequest) {
   return NextResponse.json({
     error: 'tRPC not available on static hosting',
-    message: 'This feature requires a server environment. Please run locally for full functionality.'
+    message:
+      'This feature requires a server environment. Please run locally for full functionality.',
   });
 }

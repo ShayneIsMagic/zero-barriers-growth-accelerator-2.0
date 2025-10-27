@@ -39,6 +39,7 @@ npx prisma generate
 **Why:** Fix 67 security warnings in Supabase
 
 **How:**
+
 1. Open: `ENABLE_RLS_SECURITY.sql`
 2. Copy all SQL
 3. Paste in Supabase SQL Editor
@@ -143,6 +144,7 @@ git push origin feature/advanced-schema
 ### **F. Test on Vercel Preview (15 min)**
 
 **After pushing:**
+
 1. Wait for Vercel to build (~3 min)
 2. Get preview URL: `https://...-git-feature-advanced-schema-....vercel.app`
 3. Test Phase 1 → 2 → 3 workflow
@@ -154,6 +156,7 @@ git push origin feature/advanced-schema
 ### **G. Merge to Main (When Ready)**
 
 **After testing preview:**
+
 1. Go to GitHub
 2. Create Pull Request
 3. Review changes
@@ -167,6 +170,7 @@ git push origin feature/advanced-schema
 ### **If Prisma pull keeps failing:**
 
 **Manual fix:**
+
 ```typescript
 // Add to prisma/schema.prisma manually:
 
@@ -192,25 +196,27 @@ model websites {
 ### **If services fail:**
 
 **Check:**
+
 1. DATABASE_URL in .env.local is correct
 2. Supabase tables exist (check Table Editor)
 3. GEMINI_API_KEY is set
 4. Dev server is running
 
 **Test individual service:**
+
 ```typescript
 // test-service.ts
-import { SynonymDetectionService } from '@/lib/services/synonym-detection.service'
+import { SynonymDetectionService } from '@/lib/services/synonym-detection.service';
 
 const test = async () => {
   const patterns = await SynonymDetectionService.findValuePatterns(
     'Save time with automation',
     'saas'
-  )
-  console.log(patterns)
-}
+  );
+  console.log(patterns);
+};
 
-test()
+test();
 ```
 
 ---
@@ -218,6 +224,7 @@ test()
 ### **If frontend breaks:**
 
 **Rollback:**
+
 ```bash
 # Services are in new files, old code still works
 # Just don't update the frontend yet
@@ -279,11 +286,13 @@ npx ts-node src/test-services.ts
 ## 📞 **HELP NEEDED?**
 
 **If you get stuck, tell me:**
+
 1. What command you ran
 2. What error you got
 3. What you're trying to accomplish
 
 **I'll help you:**
+
 - Debug the issue
 - Provide workarounds
 - Create helper scripts
@@ -292,4 +301,3 @@ npx ts-node src/test-services.ts
 ---
 
 **Ready to continue? Tell me which next step you want to tackle!** 🚀
-

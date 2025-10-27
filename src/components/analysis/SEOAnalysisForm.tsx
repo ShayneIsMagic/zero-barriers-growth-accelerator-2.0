@@ -2,7 +2,13 @@
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,7 +25,8 @@ export default function SEOAnalysisForm() {
   const [competitorUrls, setCompetitorUrls] = useState('');
   const [includeSearchConsole, setIncludeSearchConsole] = useState(true);
   const [includeKeywordResearch, setIncludeKeywordResearch] = useState(true);
-  const [includeCompetitiveAnalysis, setIncludeCompetitiveAnalysis] = useState(true);
+  const [includeCompetitiveAnalysis, setIncludeCompetitiveAnalysis] =
+    useState(true);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,14 +43,14 @@ export default function SEOAnalysisForm() {
       // Parse target keywords
       const keywords = targetKeywords
         .split(',')
-        .map(k => k.trim())
-        .filter(k => k.length > 0);
+        .map((k) => k.trim())
+        .filter((k) => k.length > 0);
 
       // Parse competitor URLs
       const _competitors = competitorUrls
         .split(',')
-        .map(c => c.trim())
-        .filter(c => c.length > 0);
+        .map((c) => c.trim())
+        .filter((c) => c.length > 0);
 
       const response = await fetch('/api/analyze/seo', {
         method: 'POST',
@@ -75,10 +82,28 @@ export default function SEOAnalysisForm() {
           summary: 'SEO analysis completed',
           status: 'completed' as const,
           timestamp: data.timestamp || new Date().toISOString(),
-          goldenCircle: { why: '', how: '', what: '', overallScore: 0, insights: [] },
-          elementsOfValue: { functional: {}, emotional: {}, lifeChanging: {}, socialImpact: {}, overallScore: 0, insights: [] },
-          cliftonStrengths: { themes: [], recommendations: [], overallScore: 0, insights: [] },
-          recommendations: []
+          goldenCircle: {
+            why: '',
+            how: '',
+            what: '',
+            overallScore: 0,
+            insights: [],
+          },
+          elementsOfValue: {
+            functional: {},
+            emotional: {},
+            lifeChanging: {},
+            socialImpact: {},
+            overallScore: 0,
+            insights: [],
+          },
+          cliftonStrengths: {
+            themes: [],
+            recommendations: [],
+            overallScore: 0,
+            insights: [],
+          },
+          recommendations: [],
         };
 
         AnalysisClient.saveAnalysis(analysisForStorage);
@@ -104,7 +129,9 @@ export default function SEOAnalysisForm() {
     setAnalysis(null);
 
     try {
-      const response = await fetch(`/api/analyze/seo?url=${encodeURIComponent(url)}`);
+      const response = await fetch(
+        `/api/analyze/seo?url=${encodeURIComponent(url)}`
+      );
       const data = await response.json();
 
       if (!response.ok) {
@@ -120,10 +147,28 @@ export default function SEOAnalysisForm() {
           summary: 'Quick SEO analysis completed',
           status: 'completed' as const,
           timestamp: data.timestamp || new Date().toISOString(),
-          goldenCircle: { why: '', how: '', what: '', overallScore: 0, insights: [] },
-          elementsOfValue: { functional: {}, emotional: {}, lifeChanging: {}, socialImpact: {}, overallScore: 0, insights: [] },
-          cliftonStrengths: { themes: [], recommendations: [], overallScore: 0, insights: [] },
-          recommendations: []
+          goldenCircle: {
+            why: '',
+            how: '',
+            what: '',
+            overallScore: 0,
+            insights: [],
+          },
+          elementsOfValue: {
+            functional: {},
+            emotional: {},
+            lifeChanging: {},
+            socialImpact: {},
+            overallScore: 0,
+            insights: [],
+          },
+          cliftonStrengths: {
+            themes: [],
+            recommendations: [],
+            overallScore: 0,
+            insights: [],
+          },
+          recommendations: [],
         };
 
         AnalysisClient.saveAnalysis(analysisForStorage);
@@ -135,18 +180,22 @@ export default function SEOAnalysisForm() {
       setAnalysis(data.data);
       setTimestamp(data.timestamp);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Quick SEO analysis failed');
+      setError(
+        err instanceof Error ? err.message : 'Quick SEO analysis failed'
+      );
     } finally {
       setLoading(false);
     }
   };
 
   if (analysis) {
-    return <SEOAnalysisResults analysis={analysis} url={url} timestamp={timestamp} />;
+    return (
+      <SEOAnalysisResults analysis={analysis} url={url} timestamp={timestamp} />
+    );
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="mx-auto max-w-4xl space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -156,7 +205,9 @@ export default function SEOAnalysisForm() {
           <CardDescription>
             Configure your SEO analysis following the practical workflow:
             <br />
-            <strong>Search Console</strong> → <strong>Keyword Planner</strong> → <strong>Google Trends</strong> → <strong>Competitive Analysis</strong>
+            <strong>Search Console</strong> → <strong>Keyword Planner</strong> →{' '}
+            <strong>Google Trends</strong> →{' '}
+            <strong>Competitive Analysis</strong>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -190,7 +241,8 @@ export default function SEOAnalysisForm() {
                 rows={3}
               />
               <p className="text-sm text-gray-500">
-                Comma-separated list of keywords you want to analyze (leave empty for automatic discovery)
+                Comma-separated list of keywords you want to analyze (leave
+                empty for automatic discovery)
               </p>
             </div>
 
@@ -212,25 +264,38 @@ export default function SEOAnalysisForm() {
 
             {/* Analysis Options */}
             <div className="space-y-4">
-              <Label className="text-base font-medium">Analysis Components</Label>
+              <Label className="text-base font-medium">
+                Analysis Components
+              </Label>
               <div className="space-y-3">
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="search-console"
                     checked={includeSearchConsole}
-                    onCheckedChange={(checked) => setIncludeSearchConsole(checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      setIncludeSearchConsole(checked as boolean)
+                    }
                   />
-                  <Label htmlFor="search-console" className="text-sm font-normal">
-                    Search Console Analysis - Current keyword rankings and performance
+                  <Label
+                    htmlFor="search-console"
+                    className="text-sm font-normal"
+                  >
+                    Search Console Analysis - Current keyword rankings and
+                    performance
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="keyword-research"
                     checked={includeKeywordResearch}
-                    onCheckedChange={(checked) => setIncludeKeywordResearch(checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      setIncludeKeywordResearch(checked as boolean)
+                    }
                   />
-                  <Label htmlFor="keyword-research" className="text-sm font-normal">
+                  <Label
+                    htmlFor="keyword-research"
+                    className="text-sm font-normal"
+                  >
                     Keyword Research - Search volume and opportunity analysis
                   </Label>
                 </div>
@@ -238,9 +303,14 @@ export default function SEOAnalysisForm() {
                   <Checkbox
                     id="competitive-analysis"
                     checked={includeCompetitiveAnalysis}
-                    onCheckedChange={(checked) => setIncludeCompetitiveAnalysis(checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      setIncludeCompetitiveAnalysis(checked as boolean)
+                    }
                   />
-                  <Label htmlFor="competitive-analysis" className="text-sm font-normal">
+                  <Label
+                    htmlFor="competitive-analysis"
+                    className="text-sm font-normal"
+                  >
                     Competitive Analysis - Compare against reference sites
                   </Label>
                 </div>
@@ -304,43 +374,43 @@ export default function SEOAnalysisForm() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="text-center p-4 border rounded-lg">
-              <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-lg border p-4 text-center">
+              <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-600">
                 1
               </div>
-              <h4 className="font-semibold text-sm">Search Console</h4>
-              <p className="text-xs text-gray-600 mt-1">
+              <h4 className="text-sm font-semibold">Search Console</h4>
+              <p className="mt-1 text-xs text-gray-600">
                 Analyze current keyword rankings and performance metrics
               </p>
             </div>
 
-            <div className="text-center p-4 border rounded-lg">
-              <div className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">
+            <div className="rounded-lg border p-4 text-center">
+              <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-sm font-bold text-green-600">
                 2
               </div>
-              <h4 className="font-semibold text-sm">Keyword Research</h4>
-              <p className="text-xs text-gray-600 mt-1">
+              <h4 className="text-sm font-semibold">Keyword Research</h4>
+              <p className="mt-1 text-xs text-gray-600">
                 Research search volume and identify new opportunities
               </p>
             </div>
 
-            <div className="text-center p-4 border rounded-lg">
-              <div className="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">
+            <div className="rounded-lg border p-4 text-center">
+              <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-purple-100 text-sm font-bold text-purple-600">
                 3
               </div>
-              <h4 className="font-semibold text-sm">Google Trends</h4>
-              <p className="text-xs text-gray-600 mt-1">
+              <h4 className="text-sm font-semibold">Google Trends</h4>
+              <p className="mt-1 text-xs text-gray-600">
                 Validate keyword trends and industry direction
               </p>
             </div>
 
-            <div className="text-center p-4 border rounded-lg">
-              <div className="w-8 h-8 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">
+            <div className="rounded-lg border p-4 text-center">
+              <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-red-100 text-sm font-bold text-red-600">
                 4
               </div>
-              <h4 className="font-semibold text-sm">Competitive Analysis</h4>
-              <p className="text-xs text-gray-600 mt-1">
+              <h4 className="text-sm font-semibold">Competitive Analysis</h4>
+              <p className="mt-1 text-xs text-gray-600">
                 Compare against reference sites and identify gaps
               </p>
             </div>

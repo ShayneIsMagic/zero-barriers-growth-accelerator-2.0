@@ -20,6 +20,7 @@
 ### Step 1: Check Supabase Database URL
 
 **1. Go to Supabase Dashboard:**
+
 ```
 https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/settings/database
 ```
@@ -27,6 +28,7 @@ https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/settings/database
 **2. Look for "Connection string"**
 
 **3. Copy the "URI" format** (should look like):
+
 ```
 postgresql://postgres.[PROJECT_REF]:[PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres
 ```
@@ -38,6 +40,7 @@ postgresql://postgres.[PROJECT_REF]:[PASSWORD]@aws-0-us-east-1.pooler.supabase.c
 ### Step 2: Check Vercel Environment Variables
 
 **1. Go to Vercel Dashboard:**
+
 ```
 https://vercel.com/your-username/zero-barriers-growth-accelerator-20/settings/environment-variables
 ```
@@ -47,11 +50,13 @@ https://vercel.com/your-username/zero-barriers-growth-accelerator-20/settings/en
 **3. Verify it matches your Supabase connection string**
 
 **Expected format:**
+
 ```
 DATABASE_URL="postgresql://postgres.chkwezsyopfciibifmxx:[PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
 ```
 
 **Key points:**
+
 - ✅ Contains `chkwezsyopfciibifmxx` (correct project)
 - ✅ Uses `pooler.supabase.com` (recommended)
 - ✅ Has `?pgbouncer=true` at the end (for connection pooling)
@@ -63,6 +68,7 @@ DATABASE_URL="postgresql://postgres.chkwezsyopfciibifmxx:[PASSWORD]@aws-0-us-eas
 **Option A: Via Vercel**
 
 1. Go to your deployed app:
+
    ```
    https://zero-barriers-growth-accelerator-20.vercel.app/api/test-db
    ```
@@ -98,11 +104,13 @@ npx prisma db push
 ## 🗄️ Verify Database Schema
 
 **1. Go to Supabase Table Editor:**
+
 ```
 https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/editor
 ```
 
 **2. Check for these tables:**
+
 - ✅ `User` table
 - ✅ `Analysis` table
 - ⚠️ `individual_reports` (optional - for markdown storage)
@@ -111,6 +119,7 @@ https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/editor
 **3. If tables are missing:**
 
 Run this in Supabase SQL Editor:
+
 ```sql
 -- Check what tables exist
 SELECT table_name
@@ -132,16 +141,17 @@ npx prisma db push
 
 ### Your Situation:
 
-| Aspect | Status |
-|--------|--------|
-| **Supabase Project** | ✅ `chkwezsyopfciibifmxx` |
-| **GitHub Repo** | ✅ Correct: `zero-barriers-growth-accelerator-2.0` |
+| Aspect                | Status                                              |
+| --------------------- | --------------------------------------------------- |
+| **Supabase Project**  | ✅ `chkwezsyopfciibifmxx`                           |
+| **GitHub Repo**       | ✅ Correct: `zero-barriers-growth-accelerator-2.0`  |
 | **Vercel Deployment** | ✅ `zero-barriers-growth-accelerator-20.vercel.app` |
-| **Connection** | ✅ Everything connected to CORRECT repo |
+| **Connection**        | ✅ Everything connected to CORRECT repo             |
 
 ### If You Had an "Old Repo":
 
 You would see:
+
 - ❌ Different Supabase project ID
 - ❌ Old GitHub repo name
 - ❌ Different Vercel deployment URL
@@ -155,11 +165,13 @@ You would see:
 ### Issue 1: "Cannot connect to database"
 
 **Check:**
+
 1. DATABASE_URL is set in Vercel
 2. Password is correct (no typos)
 3. Using pooler URL (ends with `pooler.supabase.com:6543`)
 
 **Fix:**
+
 ```bash
 # Get correct connection string from Supabase
 # Settings → Database → Connection string → URI (with connection pooling)
@@ -170,6 +182,7 @@ You would see:
 ### Issue 2: "Tables don't exist"
 
 **Fix:**
+
 ```bash
 # Push Prisma schema to Supabase
 npx prisma db push
@@ -182,6 +195,7 @@ npx prisma db push
 ### Issue 3: "Users can't sign in"
 
 **Fix:**
+
 ```bash
 # 1. Go to Supabase SQL Editor
 # 2. Run this SQL:
@@ -208,21 +222,25 @@ VALUES
 ## ✅ Verification Checklist
 
 ### **1. Supabase Project**
+
 - [ ] Project ID is `chkwezsyopfciibifmxx` ✅
 - [ ] Dashboard link: https://supabase.com/dashboard/project/chkwezsyopfciibifmxx ✅
 - [ ] Database connection string copied ✅
 
 ### **2. Vercel Deployment**
+
 - [ ] Deployed to: `zero-barriers-growth-accelerator-20.vercel.app` ✅
 - [ ] Connected to GitHub repo: `zero-barriers-growth-accelerator-2.0` ✅
 - [ ] DATABASE_URL environment variable set ✅
 
 ### **3. Database Schema**
+
 - [ ] `User` table exists ✅
 - [ ] `Analysis` table exists ✅
 - [ ] Can query tables (no errors) ✅
 
 ### **4. Connection Test**
+
 - [ ] `/api/test-db` returns success ✅
 - [ ] `npx prisma db push` works locally ✅
 - [ ] No connection errors in Vercel logs ✅
@@ -313,17 +331,23 @@ DATABASE_URL="postgresql://postgres.chkwezsyopfciibifmxx:[PASSWORD]@aws-0-us-eas
 ## ❓ FAQ
 
 ### **Q: Is my Supabase using the old repo?**
+
 **A:** NO! Your Supabase project `chkwezsyopfciibifmxx` is using the CORRECT repo:
+
 - ✅ https://github.com/ShayneIsMagic/zero-barriers-growth-accelerator-2.0
 
 ### **Q: How do I know if it's the right connection?**
+
 **A:** Check these 3 things:
+
 1. Supabase project ID in DATABASE_URL: `chkwezsyopfciibifmxx` ✅
 2. Vercel connected to correct GitHub repo ✅
 3. `/api/test-db` endpoint works ✅
 
 ### **Q: What if I had an old Supabase project?**
+
 **A:** You would see:
+
 - Different project ID (not `chkwezsyopfciibifmxx`)
 - Different connection string
 - Tables might have old schema
@@ -331,7 +355,9 @@ DATABASE_URL="postgresql://postgres.chkwezsyopfciibifmxx:[PASSWORD]@aws-0-us-eas
 **You DON'T have this problem!** Your project is correct.
 
 ### **Q: Do I need to create a new Supabase project?**
+
 **A:** NO! Your current project is correct:
+
 - Project ID: `chkwezsyopfciibifmxx`
 - Connected to correct repo
 - Just need to verify DATABASE_URL is set in Vercel
@@ -361,4 +387,3 @@ DATABASE_URL="postgresql://postgres.chkwezsyopfciibifmxx:[PASSWORD]@aws-0-us-eas
 **Last Updated:** October 10, 2025
 **Supabase Project:** chkwezsyopfciibifmxx
 **Status:** ✅ Connected to Correct Repo
-

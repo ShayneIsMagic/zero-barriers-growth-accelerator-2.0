@@ -3,18 +3,24 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-    BarChart3,
-    CheckCircle,
-    ExternalLink,
-    Info,
-    Search,
-    Settings,
-    Shield,
-    TrendingUp,
-    Zap
+  BarChart3,
+  CheckCircle,
+  ExternalLink,
+  Info,
+  Search,
+  Settings,
+  Shield,
+  TrendingUp,
+  Zap,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -23,7 +29,10 @@ interface GoogleToolsPanelProps {
   onToolSelect?: (tool: string) => void;
 }
 
-export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanelProps) {
+export default function GoogleToolsPanel({
+  url,
+  onToolSelect,
+}: GoogleToolsPanelProps) {
   const [selectedTool, setSelectedTool] = useState<string>('');
 
   const workingTools = [
@@ -37,10 +46,10 @@ export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanel
         'Golden Circle Analysis',
         'Elements of Value Scoring',
         'CliftonStrengths Identification',
-        'Content Quality Analysis'
+        'Content Quality Analysis',
       ],
       setup: 'Already configured',
-      cost: 'FREE (60 requests/min)'
+      cost: 'FREE (60 requests/min)',
     },
     {
       id: 'lighthouse',
@@ -52,10 +61,10 @@ export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanel
         'Performance Score (Core Web Vitals)',
         'Accessibility (WCAG 2.1)',
         'SEO Optimization',
-        'Best Practices'
+        'Best Practices',
       ],
       setup: 'No setup required',
-      cost: 'FREE'
+      cost: 'FREE',
     },
     {
       id: 'trends',
@@ -67,11 +76,11 @@ export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanel
         'Keyword Trending Data',
         'Interest Over Time',
         'Related Queries',
-        'Regional Interest'
+        'Regional Interest',
       ],
       setup: 'No setup required',
-      cost: 'FREE'
-    }
+      cost: 'FREE',
+    },
   ];
 
   const readyToActivate = [
@@ -85,7 +94,7 @@ export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanel
         'Keyword Rankings',
         'Impressions & Clicks',
         'CTR Analysis',
-        'Top Performing Pages'
+        'Top Performing Pages',
       ],
       setup: 'OAuth2 authentication required',
       cost: 'FREE',
@@ -93,8 +102,8 @@ export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanel
         'Go to Google Cloud Console',
         'Enable Search Console API',
         'Create OAuth2 credentials',
-        'Add credentials to environment variables'
-      ]
+        'Add credentials to environment variables',
+      ],
     },
     {
       id: 'keyword-planner',
@@ -106,7 +115,7 @@ export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanel
         'Search Volume Data',
         'Keyword Ideas',
         'Competition Analysis',
-        'Bid Estimates'
+        'Bid Estimates',
       ],
       setup: 'Google Ads account required',
       cost: 'FREE',
@@ -114,8 +123,8 @@ export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanel
         'Create Google Ads account',
         'Enable Keyword Planner API',
         'Add API credentials',
-        'Configure in environment variables'
-      ]
+        'Configure in environment variables',
+      ],
     },
     {
       id: 'pagespeed-insights',
@@ -127,15 +136,15 @@ export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanel
         'Real User Metrics',
         'Field Data',
         'Lab Data',
-        'Performance Recommendations'
+        'Performance Recommendations',
       ],
       setup: 'Optional API key (Lighthouse used instead)',
       cost: 'FREE',
       setupSteps: [
         'Get PageSpeed Insights API key',
         'Add to environment variables',
-        'Enable in configuration'
-      ]
+        'Enable in configuration',
+      ],
     },
     {
       id: 'safe-browsing',
@@ -147,16 +156,16 @@ export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanel
         'Malware Detection',
         'Phishing Protection',
         'Security Status',
-        'Threat Intelligence'
+        'Threat Intelligence',
       ],
       setup: 'API key required',
       cost: 'FREE',
       setupSteps: [
         'Get Safe Browsing API key',
         'Add to environment variables',
-        'Enable security scanning'
-      ]
-    }
+        'Enable security scanning',
+      ],
+    },
   ];
 
   const handleToolSelect = (toolId: string) => {
@@ -173,7 +182,8 @@ export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanel
             Google Tools Integration
           </CardTitle>
           <CardDescription>
-            Access Google's suite of analysis tools for comprehensive website insights
+            Access Google's suite of analysis tools for comprehensive website
+            insights
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -191,7 +201,8 @@ export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanel
               <Alert>
                 <CheckCircle className="h-4 w-4" />
                 <AlertDescription>
-                  These tools are fully integrated and working. They're automatically used in your analyses.
+                  These tools are fully integrated and working. They're
+                  automatically used in your analyses.
                 </AlertDescription>
               </Alert>
 
@@ -210,8 +221,11 @@ export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanel
                           <tool.icon className="h-5 w-5 text-green-600" />
                           <CardTitle className="text-lg">{tool.name}</CardTitle>
                         </div>
-                        <Badge variant="secondary" className="bg-green-100 text-green-800">
-                          <CheckCircle className="h-3 w-3 mr-1" />
+                        <Badge
+                          variant="secondary"
+                          className="bg-green-100 text-green-800"
+                        >
+                          <CheckCircle className="mr-1 h-3 w-3" />
                           Working
                         </Badge>
                       </div>
@@ -220,17 +234,19 @@ export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanel
                     <CardContent className="pt-0">
                       <div className="space-y-3">
                         <div>
-                          <h4 className="font-medium text-sm mb-2">Features:</h4>
-                          <ul className="text-sm text-gray-600 space-y-1">
+                          <h4 className="mb-2 text-sm font-medium">
+                            Features:
+                          </h4>
+                          <ul className="space-y-1 text-sm text-gray-600">
                             {tool.features.map((feature, index) => (
                               <li key={index} className="flex items-center">
-                                <CheckCircle className="h-3 w-3 text-green-500 mr-2" />
+                                <CheckCircle className="mr-2 h-3 w-3 text-green-500" />
                                 {feature}
                               </li>
                             ))}
                           </ul>
                         </div>
-                        <div className="pt-2 border-t">
+                        <div className="border-t pt-2">
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-500">Setup:</span>
                             <span className="text-green-600">{tool.setup}</span>
@@ -251,7 +267,8 @@ export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanel
               <Alert>
                 <Info className="h-4 w-4" />
                 <AlertDescription>
-                  These tools are ready to activate. Follow the setup steps to unlock additional insights.
+                  These tools are ready to activate. Follow the setup steps to
+                  unlock additional insights.
                 </AlertDescription>
               </Alert>
 
@@ -270,8 +287,11 @@ export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanel
                           <tool.icon className="h-5 w-5 text-orange-600" />
                           <CardTitle className="text-lg">{tool.name}</CardTitle>
                         </div>
-                        <Badge variant="outline" className="border-orange-200 text-orange-800">
-                          <Settings className="h-3 w-3 mr-1" />
+                        <Badge
+                          variant="outline"
+                          className="border-orange-200 text-orange-800"
+                        >
+                          <Settings className="mr-1 h-3 w-3" />
                           Ready
                         </Badge>
                       </div>
@@ -280,36 +300,44 @@ export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanel
                     <CardContent className="pt-0">
                       <div className="space-y-3">
                         <div>
-                          <h4 className="font-medium text-sm mb-2">Features:</h4>
-                          <ul className="text-sm text-gray-600 space-y-1">
+                          <h4 className="mb-2 text-sm font-medium">
+                            Features:
+                          </h4>
+                          <ul className="space-y-1 text-sm text-gray-600">
                             {tool.features.map((feature, index) => (
                               <li key={index} className="flex items-center">
-                                <CheckCircle className="h-3 w-3 text-orange-500 mr-2" />
+                                <CheckCircle className="mr-2 h-3 w-3 text-orange-500" />
                                 {feature}
                               </li>
                             ))}
                           </ul>
                         </div>
 
-                        <div className="pt-2 border-t">
+                        <div className="border-t pt-2">
                           <div className="space-y-2">
                             <div className="flex justify-between text-sm">
                               <span className="text-gray-500">Setup:</span>
-                              <span className="text-orange-600">{tool.setup}</span>
+                              <span className="text-orange-600">
+                                {tool.setup}
+                              </span>
                             </div>
                             <div className="flex justify-between text-sm">
                               <span className="text-gray-500">Cost:</span>
-                              <span className="text-green-600">{tool.cost}</span>
+                              <span className="text-green-600">
+                                {tool.cost}
+                              </span>
                             </div>
                           </div>
 
                           {tool.setupSteps && (
                             <div className="mt-3">
-                              <h5 className="font-medium text-sm mb-2">Setup Steps:</h5>
-                              <ol className="text-xs text-gray-600 space-y-1">
+                              <h5 className="mb-2 text-sm font-medium">
+                                Setup Steps:
+                              </h5>
+                              <ol className="space-y-1 text-xs text-gray-600">
                                 {tool.setupSteps.map((step, index) => (
                                   <li key={index} className="flex items-start">
-                                    <span className="bg-orange-100 text-orange-800 rounded-full w-4 h-4 flex items-center justify-center text-xs mr-2 mt-0.5">
+                                    <span className="mr-2 mt-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-orange-100 text-xs text-orange-800">
                                       {index + 1}
                                     </span>
                                     {step}
@@ -341,11 +369,16 @@ export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanel
             {url && (
               <div className="mt-4">
                 <Button
-                  onClick={() => window.open(`https://pagespeed.web.dev/analysis/${url}`, '_blank')}
+                  onClick={() =>
+                    window.open(
+                      `https://pagespeed.web.dev/analysis/${url}`,
+                      '_blank'
+                    )
+                  }
                   variant="outline"
                   className="mr-2"
                 >
-                  <ExternalLink className="h-4 w-4 mr-2" />
+                  <ExternalLink className="mr-2 h-4 w-4" />
                   Test with {url}
                 </Button>
               </div>

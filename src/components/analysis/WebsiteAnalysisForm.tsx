@@ -1,11 +1,26 @@
 'use client';
 
-import { AnalysisNotification, SiteIdentification } from '@/components/ui/analysis-notification';
+import {
+  AnalysisNotification,
+  SiteIdentification,
+} from '@/components/ui/analysis-notification';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { AnalysisClient } from '@/lib/analysis-client';
 import { FileText, Globe, Loader2, Share2 } from 'lucide-react';
@@ -15,10 +30,14 @@ interface WebsiteAnalysisFormProps {
   onAnalysisComplete: (result: any) => void;
 }
 
-export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormProps) {
+export function WebsiteAnalysisForm({
+  onAnalysisComplete,
+}: WebsiteAnalysisFormProps) {
   const [url, setUrl] = useState('');
   const [content, setContent] = useState('');
-  const [analysisType, setAnalysisType] = useState<'full' | 'quick' | 'social-media'>('full');
+  const [analysisType, setAnalysisType] = useState<
+    'full' | 'quick' | 'social-media'
+  >('full');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<{
     type: 'error' | 'info';
@@ -45,7 +64,7 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
         },
         body: JSON.stringify({
           url,
-          industry: 'general'
+          industry: 'general',
         }),
       });
 
@@ -57,14 +76,18 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
           setError({
             type: 'error',
             title: 'AI Service Not Available',
-            message: 'No AI services are configured. Please set up your API keys.',
+            message:
+              'No AI services are configured. Please set up your API keys.',
             details: result.details,
             action: {
               label: 'Setup AI Services',
               onClick: () => {
-                window.open('https://makersuite.google.com/app/apikey', '_blank');
-              }
-            }
+                window.open(
+                  'https://makersuite.google.com/app/apikey',
+                  '_blank'
+                );
+              },
+            },
           });
         } else if (result.error === 'WEBSITE_UNAVAILABLE') {
           setError({
@@ -74,21 +97,22 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
             details: result.details,
             action: {
               label: 'Try Again',
-              onClick: () => setError(null)
-            }
+              onClick: () => setError(null),
+            },
           });
         } else if (result.error === 'ANALYSIS_FAILED') {
           setError({
             type: 'error',
             title: 'Analysis Failed',
-            message: 'AI analysis could not be completed. Please check your configuration.',
+            message:
+              'AI analysis could not be completed. Please check your configuration.',
             details: result.details,
             action: {
               label: 'Check Configuration',
               onClick: () => {
                 window.open('https://console.anthropic.com/', '_blank');
-              }
-            }
+              },
+            },
           });
         } else {
           setError({
@@ -98,8 +122,8 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
             details: result.details,
             action: {
               label: 'Try Again',
-              onClick: () => setError(null)
-            }
+              onClick: () => setError(null),
+            },
           });
         }
         return;
@@ -120,7 +144,7 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
           cliftonStrengths: null,
           recommendations: [],
           scrapedContent: result.data, // Store scraped content for Phase 2
-          phase: 1
+          phase: 1,
         };
 
         AnalysisClient.saveAnalysis(analysisForStorage);
@@ -139,8 +163,8 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
         details: err instanceof Error ? err.message : 'Unknown error',
         action: {
           label: 'Try Again',
-          onClick: () => setError(null)
-        }
+          onClick: () => setError(null),
+        },
       });
     } finally {
       setIsAnalyzing(false);
@@ -148,14 +172,15 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="mx-auto w-full max-w-2xl">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Globe className="h-5 w-5" />
           Website Analysis
         </CardTitle>
         <CardDescription>
-          Analyze any website using the Zero Barriers Growth Accelerator framework
+          Analyze any website using the Zero Barriers Growth Accelerator
+          framework
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -196,7 +221,10 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
 
           <div className="space-y-2">
             <Label htmlFor="analysisType">Analysis Type</Label>
-            <Select value={analysisType} onValueChange={(value: any) => setAnalysisType(value)}>
+            <Select
+              value={analysisType}
+              onValueChange={(value: any) => setAnalysisType(value)}
+            >
               <SelectTrigger id="analysisType" name="analysisType">
                 <SelectValue />
               </SelectTrigger>
@@ -235,7 +263,6 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
             />
           </div>
 
-
           <Button
             type="submit"
             className="w-full"
@@ -252,9 +279,9 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
           </Button>
         </form>
 
-        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
-          <h4 className="font-medium text-blue-900 mb-2">Analysis Includes:</h4>
-          <ul className="text-sm text-blue-800 space-y-1">
+        <div className="mt-6 rounded-md border border-blue-200 bg-blue-50 p-4">
+          <h4 className="mb-2 font-medium text-blue-900">Analysis Includes:</h4>
+          <ul className="space-y-1 text-sm text-blue-800">
             <li>• Simon Sinek&apos;s Golden Circle Analysis</li>
             <li>• Consumer Elements of Value Assessment</li>
             <li>• B2B Elements of Value Evaluation</li>

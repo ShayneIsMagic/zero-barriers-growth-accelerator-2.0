@@ -75,14 +75,18 @@ export function trackAnalysis(estimatedDuration: number = 180) {
   // Estimate function hours (duration in seconds / 3600)
   const hours = estimatedDuration / 3600;
   usage.functions.hours += hours;
-  usage.functions.percentage = (usage.functions.hours / usage.functions.limit) * 100;
+  usage.functions.percentage =
+    (usage.functions.hours / usage.functions.limit) * 100;
   usage.functions.remaining = usage.functions.limit - usage.functions.hours;
 
   // Estimate bandwidth (average analysis response ~500KB)
   const estimatedBandwidth = 500 * 1024; // 500 KB
   usage.bandwidth.used += estimatedBandwidth;
-  usage.bandwidth.percentage = (usage.bandwidth.used / usage.bandwidth.limit) * 100;
-  usage.bandwidth.remaining = formatBytes(usage.bandwidth.limit - usage.bandwidth.used);
+  usage.bandwidth.percentage =
+    (usage.bandwidth.used / usage.bandwidth.limit) * 100;
+  usage.bandwidth.remaining = formatBytes(
+    usage.bandwidth.limit - usage.bandwidth.used
+  );
 
   // Check for warnings
   usage.warnings = checkThresholds(usage);
@@ -125,7 +129,10 @@ export function trackBuild(durationMinutes: number = 1) {
 export function resetUsageTracking() {
   if (typeof window === 'undefined') return;
 
-  localStorage.setItem('vercel_usage_tracking', JSON.stringify(getEmptyUsage()));
+  localStorage.setItem(
+    'vercel_usage_tracking',
+    JSON.stringify(getEmptyUsage())
+  );
 }
 
 /**
@@ -137,25 +144,41 @@ function checkThresholds(usage: UsageData): string[] {
   // Check bandwidth
   const bandwidthPercent = usage.bandwidth.percentage / 100;
   if (bandwidthPercent >= VERCEL_LIMITS.bandwidth.criticalThreshold) {
-    warnings.push(`🚨 CRITICAL: Bandwidth at ${usage.bandwidth.percentage.toFixed(1)}% (${usage.bandwidth.remaining} remaining)`);
+    warnings.push(
+      `🚨 CRITICAL: Bandwidth at ${usage.bandwidth.percentage.toFixed(1)}% (${usage.bandwidth.remaining} remaining)`
+    );
   } else if (bandwidthPercent >= VERCEL_LIMITS.bandwidth.warningThreshold) {
-    warnings.push(`⚠️ WARNING: Bandwidth at ${usage.bandwidth.percentage.toFixed(1)}% (${usage.bandwidth.remaining} remaining)`);
+    warnings.push(
+      `⚠️ WARNING: Bandwidth at ${usage.bandwidth.percentage.toFixed(1)}% (${usage.bandwidth.remaining} remaining)`
+    );
   }
 
   // Check function hours
   const functionPercent = usage.functions.percentage / 100;
-  if (functionPercent >= VERCEL_LIMITS.serverlessFunctionHours.criticalThreshold) {
-    warnings.push(`🚨 CRITICAL: Serverless hours at ${usage.functions.percentage.toFixed(1)}% (${usage.functions.remaining.toFixed(0)} hours remaining)`);
-  } else if (functionPercent >= VERCEL_LIMITS.serverlessFunctionHours.warningThreshold) {
-    warnings.push(`⚠️ WARNING: Serverless hours at ${usage.functions.percentage.toFixed(1)}% (${usage.functions.remaining.toFixed(0)} hours remaining)`);
+  if (
+    functionPercent >= VERCEL_LIMITS.serverlessFunctionHours.criticalThreshold
+  ) {
+    warnings.push(
+      `🚨 CRITICAL: Serverless hours at ${usage.functions.percentage.toFixed(1)}% (${usage.functions.remaining.toFixed(0)} hours remaining)`
+    );
+  } else if (
+    functionPercent >= VERCEL_LIMITS.serverlessFunctionHours.warningThreshold
+  ) {
+    warnings.push(
+      `⚠️ WARNING: Serverless hours at ${usage.functions.percentage.toFixed(1)}% (${usage.functions.remaining.toFixed(0)} hours remaining)`
+    );
   }
 
   // Check builds
   const buildPercent = usage.builds.percentage / 100;
   if (buildPercent >= VERCEL_LIMITS.builds.criticalThreshold) {
-    warnings.push(`🚨 CRITICAL: Build minutes at ${usage.builds.percentage.toFixed(1)}% (${usage.builds.remaining} minutes remaining)`);
+    warnings.push(
+      `🚨 CRITICAL: Build minutes at ${usage.builds.percentage.toFixed(1)}% (${usage.builds.remaining} minutes remaining)`
+    );
   } else if (buildPercent >= VERCEL_LIMITS.builds.warningThreshold) {
-    warnings.push(`⚠️ WARNING: Build minutes at ${usage.builds.percentage.toFixed(1)}% (${usage.builds.remaining} minutes remaining)`);
+    warnings.push(
+      `⚠️ WARNING: Build minutes at ${usage.builds.percentage.toFixed(1)}% (${usage.builds.remaining} minutes remaining)`
+    );
   }
 
   return warnings;
@@ -165,7 +188,7 @@ function checkThresholds(usage: UsageData): string[] {
  * Show usage warnings to user
  */
 function showUsageWarnings(warnings: string[]) {
-  warnings.forEach(warning => {
+  warnings.forEach((warning) => {
     if (warning.includes('CRITICAL')) {
       console.error(warning);
       // Could also show toast notification
@@ -278,4 +301,3 @@ export function initializeUsageTracking() {
     localStorage.setItem('usage_last_reset', currentMonth);
   }
 }
-

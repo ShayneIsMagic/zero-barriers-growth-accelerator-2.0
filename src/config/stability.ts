@@ -40,7 +40,8 @@ export const STABILITY_CONFIG = {
 };
 
 export const ERROR_MESSAGES = {
-  NETWORK_ERROR: 'Unable to connect to the server. Please check your connection and try again.',
+  NETWORK_ERROR:
+    'Unable to connect to the server. Please check your connection and try again.',
   TIMEOUT_ERROR: 'The request took too long to complete. Please try again.',
   VALIDATION_ERROR: 'Please check your input and try again.',
   SERVER_ERROR: 'The server encountered an error. Please try again later.',
@@ -57,9 +58,27 @@ export const FALLBACK_DATA = {
     overallScore: 0,
     executiveSummary: 'Analysis temporarily unavailable',
     goldenCircle: {
-      why: { score: 0, currentState: '', issues: [], recommendations: [], transformedMessage: '' },
-      how: { score: 0, currentState: '', issues: [], recommendations: [], transformedMessage: '' },
-      what: { score: 0, currentState: '', issues: [], recommendations: [], transformedMessage: '' },
+      why: {
+        score: 0,
+        currentState: '',
+        issues: [],
+        recommendations: [],
+        transformedMessage: '',
+      },
+      how: {
+        score: 0,
+        currentState: '',
+        issues: [],
+        recommendations: [],
+        transformedMessage: '',
+      },
+      what: {
+        score: 0,
+        currentState: '',
+        issues: [],
+        recommendations: [],
+        transformedMessage: '',
+      },
       overallScore: 0,
     },
     elementsOfValue: {
@@ -82,13 +101,33 @@ export const FALLBACK_DATA = {
       overallScore: 0,
     },
     transformation: {
-      heroSection: { score: 0, currentState: '', issues: [], recommendations: [] },
-      socialMedia: { score: 0, currentState: '', issues: [], recommendations: [] },
-      competitivePositioning: { score: 0, currentState: '', issues: [], recommendations: [] },
+      heroSection: {
+        score: 0,
+        currentState: '',
+        issues: [],
+        recommendations: [],
+      },
+      socialMedia: {
+        score: 0,
+        currentState: '',
+        issues: [],
+        recommendations: [],
+      },
+      competitivePositioning: {
+        score: 0,
+        currentState: '',
+        issues: [],
+        recommendations: [],
+      },
       overallScore: 0,
     },
     lighthouseAnalysis: {
-      performance: { score: 0, metrics: {}, opportunities: [], diagnostics: [] },
+      performance: {
+        score: 0,
+        metrics: {},
+        opportunities: [],
+        diagnostics: [],
+      },
       accessibility: { score: 0, issues: [], recommendations: [] },
       bestPractices: { score: 0, issues: [], recommendations: [] },
       seo: { score: 0, issues: [], recommendations: [] },
@@ -108,7 +147,9 @@ export function getErrorMessage(error: any): string {
 export function isValidUrl(url: string): boolean {
   try {
     const urlObj = new URL(url);
-    return STABILITY_CONFIG.VALIDATION.ALLOWED_PROTOCOLS.includes(urlObj.protocol);
+    return STABILITY_CONFIG.VALIDATION.ALLOWED_PROTOCOLS.includes(
+      urlObj.protocol
+    );
   } catch {
     return false;
   }

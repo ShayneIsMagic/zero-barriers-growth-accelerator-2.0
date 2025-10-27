@@ -27,7 +27,7 @@ const result = await db.query(`
 ```typescript
 // Simple, type-safe code
 const user = await prisma.user.findUnique({
-  where: { email: email }
+  where: { email: email },
 });
 // Clean, safe, autocomplete works!
 ```
@@ -39,6 +39,7 @@ const user = await prisma.user.findUnique({
 ### 1. **Defines Your Database Structure**
 
 The `prisma/schema.prisma` file says:
+
 ```prisma
 model User {
   id        String   @id
@@ -55,6 +56,7 @@ This creates a "User" table in your database.
 ### 2. **Creates Tables Automatically**
 
 When you run `prisma db push`:
+
 ```
 Your schema.prisma → Prisma reads it
                   ↓
@@ -71,18 +73,19 @@ Your schema.prisma → Prisma reads it
 ### 3. **Lets You Query Easily**
 
 Instead of writing SQL, you write:
+
 ```typescript
 // Find a user
-await prisma.user.findUnique({ where: { email } })
+await prisma.user.findUnique({ where: { email } });
 
 // Create a user
-await prisma.user.create({ data: { email, password, name } })
+await prisma.user.create({ data: { email, password, name } });
 
 // Update a user
-await prisma.user.update({ where: { id }, data: { name } })
+await prisma.user.update({ where: { id }, data: { name } });
 
 // Delete a user
-await prisma.user.delete({ where: { id } })
+await prisma.user.delete({ where: { id } });
 ```
 
 Clean, simple, type-safe! ✅
@@ -98,6 +101,7 @@ Commands like `npx prisma db push` keep getting interrupted or hanging.
 ### Why It's Happening:
 
 **Possible reasons:**
+
 1. **Network Connection** - Can't reach Supabase from your machine
 2. **Firewall/VPN** - Blocking database connection
 3. **Long Operation** - Prisma is working, just taking time
@@ -133,6 +137,7 @@ Even though local setup is struggling, **Vercel has everything it needs:**
 5. Then run user setup script on Vercel
 
 **How to create users on Vercel:**
+
 ```bash
 # After deployment, run this once:
 vercel exec -- node scripts/setup-production-users.js
@@ -199,12 +204,14 @@ VALUES
 ### **Let's Use Option 1: Let Vercel Handle It**
 
 **Why:**
+
 - ✅ Avoids local connection issues
 - ✅ Vercel deployment will create tables
 - ✅ Simpler, less can go wrong
 - ✅ You've already done the hard part (environment variables)
 
 **Steps:**
+
 1. Wait for current Vercel deployment to finish
 2. Check if it worked
 3. If tables aren't created, run setup command on Vercel
@@ -215,6 +222,7 @@ VALUES
 ## Is It Broken? **NO** ❌
 
 ### What's Working: ✅
+
 - ✅ Supabase database exists
 - ✅ Connection string is correct
 - ✅ Vercel has all environment variables
@@ -222,10 +230,12 @@ VALUES
 - ✅ Prisma schema is valid
 
 ### What's Struggling: ⚠️
+
 - ⚠️ Local Prisma connection (network/timing issue)
 - ⚠️ Commands getting interrupted
 
 ### Solution:
+
 **Don't worry about local setup!** Let Vercel create the tables when it deploys. Your production environment will work fine.
 
 ---
@@ -233,6 +243,7 @@ VALUES
 ## 🚀 What To Do Now
 
 **Option A: Wait and Test** (5 minutes)
+
 1. Wait for Vercel deployment to finish
 2. Test login at: https://zero-barriers-growth-accelerator-20-mr035qo2m.vercel.app/auth/signin
 3. If login works → Everything is fine! ✅
@@ -244,4 +255,3 @@ Use Supabase SQL Editor (Option 2 above)
 ---
 
 **Which would you prefer? Wait and test, or create tables manually now?**
-

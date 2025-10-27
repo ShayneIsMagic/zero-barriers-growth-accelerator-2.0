@@ -10,19 +10,23 @@
 When a user runs an analysis, they get **individual markdown reports** for each assessment:
 
 ### Phase 1 Reports
+
 1. **Content Collection** - All scraped data
 2. **Lighthouse Performance** - Technical scores
 
 ### Phase 2 Reports
+
 3. **Golden Circle Analysis** - Why, How, What, Who
 4. **Elements of Value (B2C)** - 30 value elements
 5. **B2B Elements** - 40 business value elements
 6. **CliftonStrengths** - 34 personality themes
 
 ### Phase 3 Report
+
 7. **Comprehensive Strategic Analysis** - Final recommendations
 
 ### Combined Export
+
 8. **Complete Report** - All phases merged into one document
 
 ---
@@ -112,7 +116,7 @@ Copy `supabase-markdown-schema.sql` → Supabase SQL Editor → Execute
 ```typescript
 import {
   saveIndividualReports,
-  getAnalysisReports
+  getAnalysisReports,
 } from '@/lib/supabase-markdown-service';
 
 // Save reports
@@ -140,14 +144,10 @@ export async function POST(request: NextRequest) {
     const result = await analyzer.executePhase1();
 
     // Generate markdown
-    reports.push(
-      generateContentCollectionReport(result.scrapedContent, url)
-    );
+    reports.push(generateContentCollectionReport(result.scrapedContent, url));
 
     if (result.lighthouseData) {
-      reports.push(
-        generateLighthouseReport(result.lighthouseData, url)
-      );
+      reports.push(generateLighthouseReport(result.lighthouseData, url));
     }
   }
 
@@ -189,7 +189,7 @@ export async function POST(request: NextRequest) {
     success: true,
     phase,
     analysisId,
-    individualReports: reports
+    individualReports: reports,
   });
 }
 ```
@@ -199,12 +199,15 @@ export async function POST(request: NextRequest) {
 ## 🎨 Frontend Components (Already Exist!)
 
 ### 1. IndividualReportsView.tsx
+
 Displays individual reports in tabs
 
 ### 2. ReadableReportSection.tsx
+
 Renders markdown with styling
 
 ### 3. PhasedAnalysisPage.tsx
+
 Main page that shows reports after each phase
 
 **They're ready to use - just pass the reports!**
@@ -214,11 +217,13 @@ Main page that shows reports after each phase
 ## ✅ Verification
 
 ### Check Generated Files
+
 ```bash
 ls -lh test-markdown-output/
 ```
 
 Expected output:
+
 - `1-content-collection.md` (3.0 KB)
 - `2-lighthouse.md` (0.7 KB)
 - `3-golden-circle.md` (1.3 KB)
@@ -230,11 +235,13 @@ Expected output:
 - `test-results.json` ✅ 100% pass rate
 
 ### View Test Results
+
 ```bash
 cat test-markdown-output/test-results.json
 ```
 
 ### Read a Sample
+
 ```bash
 cat test-markdown-output/3-golden-circle.md
 ```
@@ -244,6 +251,7 @@ cat test-markdown-output/3-golden-circle.md
 ## 📊 What Each Report Contains
 
 ### Content Collection (Phase 1)
+
 - Meta tags (title, description)
 - Open Graph tags
 - Keywords & rankings
@@ -252,6 +260,7 @@ cat test-markdown-output/3-golden-circle.md
 - Content preview
 
 ### Lighthouse (Phase 1)
+
 - Performance score
 - Accessibility score
 - Best Practices score
@@ -259,6 +268,7 @@ cat test-markdown-output/3-golden-circle.md
 - Key metrics (FCP, LCP, etc.)
 
 ### Golden Circle (Phase 2)
+
 - Why (Purpose) + Score
 - How (Process) + Score
 - What (Products) + Score
@@ -267,6 +277,7 @@ cat test-markdown-output/3-golden-circle.md
 - Recommendations
 
 ### Elements B2C (Phase 2)
+
 - Functional value elements
 - Emotional value elements
 - Life-changing elements
@@ -275,6 +286,7 @@ cat test-markdown-output/3-golden-circle.md
 - Key findings
 
 ### B2B Elements (Phase 2)
+
 - Table stakes
 - Functional value
 - Ease of doing business
@@ -283,6 +295,7 @@ cat test-markdown-output/3-golden-circle.md
 - Scores for each
 
 ### CliftonStrengths (Phase 2)
+
 - Top 5 brand strengths
 - Executing themes
 - Influencing themes
@@ -291,6 +304,7 @@ cat test-markdown-output/3-golden-circle.md
 - Brand personality summary
 
 ### Comprehensive (Phase 3)
+
 - Executive summary
 - Priority recommendations
 - Quick wins
@@ -305,11 +319,13 @@ cat test-markdown-output/3-golden-circle.md
 ### Tables
 
 **individual_reports**
+
 - Stores each markdown report
 - Links to Analysis record
 - Indexed by analysis_id, phase, timestamp
 
 **markdown_exports**
+
 - Stores combined report
 - One per analysis
 - Includes overall score and rating
@@ -327,12 +343,14 @@ cat test-markdown-output/3-golden-circle.md
 ## 🚀 Next Steps
 
 ### Without Database (Simpler)
+
 1. Generate reports in API
 2. Return in response
 3. Display in frontend
 4. Download as files
 
 ### With Database (Full Featured)
+
 1. Set DATABASE_URL
 2. Run SQL schema
 3. Generate reports in API
@@ -347,6 +365,7 @@ cat test-markdown-output/3-golden-circle.md
 ## 📞 Support
 
 ### Files to Check
+
 - `MARKDOWN_EXECUTION_COMPLETE.md` - Full documentation
 - `supabase-markdown-schema.sql` - Database schema
 - `test-markdown-output/` - Sample outputs
@@ -354,6 +373,7 @@ cat test-markdown-output/3-golden-circle.md
 - `src/lib/supabase-markdown-service.ts` - Database service
 
 ### Test Scripts
+
 ```bash
 # Basic markdown generation (no database)
 npx tsx test-markdown-execution.ts
@@ -379,12 +399,14 @@ npx tsx test-markdown-supabase-execution.ts
 ## 🎉 You're Ready!
 
 The markdown system is:
+
 - ✅ Fully implemented
 - ✅ 100% tested
 - ✅ Ready to use
 - ✅ Production-ready
 
 Just:
+
 1. Call the generators in your API
 2. Return the reports
 3. Display in frontend
@@ -397,4 +419,3 @@ Just:
 **Quick Start Guide**
 Last Updated: October 10, 2025
 Status: Production Ready ✅
-

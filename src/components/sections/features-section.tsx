@@ -179,5 +179,3 @@ export function FeaturesSection() {
     </section>
   );
 }
-
-

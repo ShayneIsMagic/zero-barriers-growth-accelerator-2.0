@@ -3,7 +3,11 @@
  * Provides precise control over analysis timing, prompts, and deliverables
  */
 
-import { ANALYSIS_STEPS, ControlledAnalysisConfig, ControlledAnalyzer } from '@/lib/controlled-analysis';
+import {
+  ANALYSIS_STEPS,
+  ControlledAnalysisConfig,
+  ControlledAnalyzer,
+} from '@/lib/controlled-analysis';
 import { reportStorage } from '@/lib/report-storage';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -43,34 +47,43 @@ export async function POST(request: NextRequest) {
     const { _url, steps, timeoutPerStep = 30000 } = body;
 
     if (!_url) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL is required',
+        },
+        { status: 400 }
+      );
     }
 
     // Validate URL
     try {
       new URL(_url);
     } catch {
-      return NextResponse.json({
-        success: false,
-        error: 'Invalid URL format'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Invalid URL format',
+        },
+        { status: 400 }
+      );
     }
 
     console.log(`🚀 Starting controlled analysis for: ${_url}`);
 
     // Filter steps if specified
-    const selectedSteps = steps ?
-      ANALYSIS_STEPS.filter(step => steps.includes(step.id)) :
-      ANALYSIS_STEPS;
+    const selectedSteps = steps
+      ? ANALYSIS_STEPS.filter((step) => steps.includes(step.id))
+      : ANALYSIS_STEPS;
 
     if (selectedSteps.length === 0) {
-      return NextResponse.json({
-        success: false,
-        error: 'No valid steps specified'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'No valid steps specified',
+        },
+        { status: 400 }
+      );
     }
 
     // Create controlled analysis configuration
@@ -80,8 +93,10 @@ export async function POST(request: NextRequest) {
       timeoutPerStep,
       retryAttempts: 2,
       onProgressUpdate: (progress) => {
-        console.log(`📊 ${progress.stepName}: ${progress.progress}% - ${progress.status}`);
-      }
+        console.log(
+          `📊 ${progress.stepName}: ${progress.progress}% - ${progress.status}`
+        );
+      },
     };
 
     // Initialize analyzer
@@ -91,7 +106,11 @@ export async function POST(request: NextRequest) {
     const result = await analyzer.execute();
 
     // Store the report
-    const storedReport = await reportStorage.storeReport(result, _url, 'controlled-analysis');
+    const storedReport = await reportStorage.storeReport(
+      result,
+      _url,
+      'controlled-analysis'
+    );
 
     return NextResponse.json({
       success: true,
@@ -101,18 +120,20 @@ export async function POST(request: NextRequest) {
       metadata: {
         totalSteps: selectedSteps.length,
         totalDuration: result.totalDuration,
-        completedAt: result.timestamp
-      }
+        completedAt: result.timestamp,
+      },
     });
-
   } catch (error) {
     console.error('Controlled analysis error:', error);
 
-    return NextResponse.json({
-      success: false,
-      error: 'Analysis failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Analysis failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -127,14 +148,14 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({
           success: true,
           data: {
-            availableSteps: ANALYSIS_STEPS.map(step => ({
+            availableSteps: ANALYSIS_STEPS.map((step) => ({
               id: step.id,
               name: step.name,
               description: step.description,
               expectedDuration: step.expectedDuration,
-              dependencies: step.dependencies
-            }))
-          }
+              dependencies: step.dependencies,
+            })),
+          },
         });
 
       case 'status':
@@ -145,8 +166,8 @@ export async function GET(request: NextRequest) {
             status: 'ready',
             geminiApiKey: process.env.GEMINI_API_KEY ? 'configured' : 'missing',
             availableSteps: ANALYSIS_STEPS.length,
-            systemHealth: 'operational'
-          }
+            systemHealth: 'operational',
+          },
         });
 
       default:
@@ -156,20 +177,23 @@ export async function GET(request: NextRequest) {
             message: 'Controlled Analysis API is ready',
             endpoints: {
               'POST /api/analyze/controlled': 'Execute controlled analysis',
-              'GET /api/analyze/controlled?action=steps': 'Get available analysis steps',
-              'GET /api/analyze/controlled?action=status': 'Get system status'
-            }
-          }
+              'GET /api/analyze/controlled?action=steps':
+                'Get available analysis steps',
+              'GET /api/analyze/controlled?action=status': 'Get system status',
+            },
+          },
         });
     }
-
   } catch (error) {
     console.error('Controlled analysis GET error:', error);
 
-    return NextResponse.json({
-      success: false,
-      error: 'Request failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Request failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

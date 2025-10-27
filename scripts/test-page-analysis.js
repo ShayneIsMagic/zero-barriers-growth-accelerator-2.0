@@ -9,13 +9,13 @@ async function testPageAnalysis() {
     {
       url: 'https://zerobarriers.io/',
       pageType: 'home',
-      description: 'Zero Barriers Home Page'
+      description: 'Zero Barriers Home Page',
     },
     {
       url: 'https://zerobarriers.io/testimonials/',
       pageType: 'testimonials',
-      description: 'Zero Barriers Testimonials Page'
-    }
+      description: 'Zero Barriers Testimonials Page',
+    },
   ];
 
   for (const test of testUrls) {
@@ -26,24 +26,29 @@ async function testPageAnalysis() {
 
     try {
       const startTime = Date.now();
-      
-      const response = await fetch('http://localhost:3000/api/analyze/website/enhanced', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          url: test.url,
-          contentType: 'website'
-        }),
-      });
+
+      const response = await fetch(
+        'http://localhost:3000/api/analyze/website/enhanced',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            url: test.url,
+            contentType: 'website',
+          }),
+        }
+      );
 
       const endTime = Date.now();
       const duration = endTime - startTime;
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.log(`❌ Analysis failed: ${errorData.details || errorData.error}`);
+        console.log(
+          `❌ Analysis failed: ${errorData.details || errorData.error}`
+        );
         console.log('');
         continue;
       }
@@ -53,9 +58,15 @@ async function testPageAnalysis() {
 
       console.log(`✅ Analysis completed in ${duration}ms`);
       console.log(`📊 Overall Score: ${analysis.overallScore}/100`);
-      console.log(`🎯 Golden Circle Score: ${analysis.goldenCircle.overallScore}/100`);
-      console.log(`💎 Elements of Value Score: ${analysis.elementsOfValue.overallScore}/100`);
-      console.log(`🌟 CliftonStrengths Score: ${analysis.cliftonStrengths.overallScore}/100`);
+      console.log(
+        `🎯 Golden Circle Score: ${analysis.goldenCircle.overallScore}/100`
+      );
+      console.log(
+        `💎 Elements of Value Score: ${analysis.elementsOfValue.overallScore}/100`
+      );
+      console.log(
+        `🌟 CliftonStrengths Score: ${analysis.cliftonStrengths.overallScore}/100`
+      );
       console.log('');
       console.log('🎯 GOLDEN CIRCLE ANALYSIS:');
       console.log(`Why: ${analysis.goldenCircle.why}`);
@@ -75,7 +86,6 @@ async function testPageAnalysis() {
       console.log('📄 SUMMARY:');
       console.log(analysis.summary.substring(0, 200) + '...');
       console.log('');
-
     } catch (error) {
       console.log(`❌ Error: ${error.message}`);
       console.log('');

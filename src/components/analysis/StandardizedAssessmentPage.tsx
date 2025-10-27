@@ -3,7 +3,13 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
@@ -15,7 +21,11 @@ interface AssessmentConfig {
   description: string;
   icon: LucideIcon;
   apiEndpoint: string;
-  analysisType: 'b2c-elements' | 'b2b-elements' | 'golden-circle' | 'clifton-strengths';
+  analysisType:
+    | 'b2c-elements'
+    | 'b2b-elements'
+    | 'golden-circle'
+    | 'clifton-strengths';
   whatYouGet: string[];
   estimatedTime: string;
   complexity: string;
@@ -26,7 +36,9 @@ interface StandardizedAssessmentPageProps {
   config: AssessmentConfig;
 }
 
-export function StandardizedAssessmentPage({ config }: StandardizedAssessmentPageProps) {
+export function StandardizedAssessmentPage({
+  config,
+}: StandardizedAssessmentPageProps) {
   const [url, setUrl] = useState('');
   const [proposedContent, setProposedContent] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -50,8 +62,8 @@ export function StandardizedAssessmentPage({ config }: StandardizedAssessmentPag
         body: JSON.stringify({
           url: url.trim(),
           proposedContent: proposedContent.trim(),
-          analysisType: 'full'
-        })
+          analysisType: 'full',
+        }),
       });
 
       const data = await response.json();
@@ -90,21 +102,22 @@ export function StandardizedAssessmentPage({ config }: StandardizedAssessmentPag
   const IconComponent = config.icon;
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className="mx-auto max-w-7xl space-y-6 p-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-2xl">
             <IconComponent className="h-6 w-6" />
             {config.name}
           </CardTitle>
-          <CardDescription>
-            {config.description}
-          </CardDescription>
+          <CardDescription>{config.description}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* URL Input */}
           <div>
-            <label htmlFor="website-url" className="text-sm font-medium mb-2 block">
+            <label
+              htmlFor="website-url"
+              className="mb-2 block text-sm font-medium"
+            >
               Website URL
             </label>
             <Input
@@ -120,14 +133,17 @@ export function StandardizedAssessmentPage({ config }: StandardizedAssessmentPag
               autoComplete="url"
               required
             />
-            <p id="url-help" className="text-xs text-muted-foreground mt-1">
+            <p id="url-help" className="mt-1 text-xs text-muted-foreground">
               Enter the URL of the website you want to analyze
             </p>
           </div>
 
           {/* Proposed Content */}
           <div>
-            <label htmlFor="proposed-content" className="text-sm font-medium mb-2 block">
+            <label
+              htmlFor="proposed-content"
+              className="mb-2 block text-sm font-medium"
+            >
               Proposed New Content (Optional)
             </label>
             <Textarea
@@ -153,23 +169,28 @@ New compelling description that highlights our unique value proposition.
               aria-label={`Enter proposed new content for ${config.analysisType} analysis`}
               aria-describedby="content-help"
             />
-            <p id="content-help" className="text-xs text-muted-foreground mt-2">
-              💡 Leave empty to just analyze existing content. Add proposed content to see side-by-side comparison.
+            <p id="content-help" className="mt-2 text-xs text-muted-foreground">
+              💡 Leave empty to just analyze existing content. Add proposed
+              content to see side-by-side comparison.
             </p>
           </div>
 
           {/* What You Get */}
-          <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
-            <h4 className="font-semibold mb-2 text-blue-900 dark:text-blue-100">What You Get:</h4>
-            <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+          <div className="rounded-lg bg-blue-50 p-4 dark:bg-blue-950">
+            <h4 className="mb-2 font-semibold text-blue-900 dark:text-blue-100">
+              What You Get:
+            </h4>
+            <ul className="space-y-1 text-sm text-blue-800 dark:text-blue-200">
               {config.whatYouGet.map((item, index) => (
                 <li key={index} className="flex items-start gap-2">
-                  <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
+                  <span className="mt-1 text-blue-600 dark:text-blue-400">
+                    •
+                  </span>
                   <span>{item}</span>
                 </li>
               ))}
             </ul>
-            <div className="flex gap-4 mt-3 text-xs text-blue-700 dark:text-blue-300">
+            <div className="mt-3 flex gap-4 text-xs text-blue-700 dark:text-blue-300">
               <span>⏱️ {config.estimatedTime}</span>
               <span>📊 {config.complexity}</span>
               <span>✅ {config.prerequisites}</span>
@@ -198,7 +219,9 @@ New compelling description that highlights our unique value proposition.
             ) : (
               <>
                 <IconComponent className="mr-2 h-4 w-4" />
-                {proposedContent ? `Compare Existing vs. Proposed` : 'Analyze Existing Content'}
+                {proposedContent
+                  ? `Compare Existing vs. Proposed`
+                  : 'Analyze Existing Content'}
               </>
             )}
           </Button>
@@ -211,7 +234,9 @@ New compelling description that highlights our unique value proposition.
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="analysis">Analysis Results</TabsTrigger>
             <TabsTrigger value="existing">Existing Content</TabsTrigger>
-            {result.proposed && <TabsTrigger value="proposed">Proposed Content</TabsTrigger>}
+            {result.proposed && (
+              <TabsTrigger value="proposed">Proposed Content</TabsTrigger>
+            )}
           </TabsList>
 
           {/* Analysis Tab */}
@@ -221,7 +246,9 @@ New compelling description that highlights our unique value proposition.
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle>AI Analysis Results</CardTitle>
-                    <CardDescription>{config.name} framework analysis</CardDescription>
+                    <CardDescription>
+                      {config.name} framework analysis
+                    </CardDescription>
                   </div>
                   <Button onClick={downloadMarkdown} variant="outline">
                     <Download className="mr-2 h-4 w-4" />
@@ -234,10 +261,10 @@ New compelling description that highlights our unique value proposition.
                   <div className="prose dark:prose-invert max-w-none">
                     {/* Side-by-side comparison if proposed content exists */}
                     {result.proposed && (
-                      <div className="grid md:grid-cols-2 gap-4 mb-6">
+                      <div className="mb-6 grid gap-4 md:grid-cols-2">
                         {/* Existing Column */}
-                        <div className="p-4 border rounded-lg">
-                          <h3 className="text-lg font-semibold mb-3 flex items-center justify-between">
+                        <div className="rounded-lg border p-4">
+                          <h3 className="mb-3 flex items-center justify-between text-lg font-semibold">
                             Existing Content Analysis
                             <Badge variant="outline">Current</Badge>
                           </h3>
@@ -246,44 +273,66 @@ New compelling description that highlights our unique value proposition.
                               <strong>Title:</strong> {result.existing.title}
                             </div>
                             <div>
-                              <strong>Meta Description:</strong> {result.existing.metaDescription}
+                              <strong>Meta Description:</strong>{' '}
+                              {result.existing.metaDescription}
                             </div>
                             <div>
-                              <strong>Word Count:</strong> {result.existing.wordCount}
+                              <strong>Word Count:</strong>{' '}
+                              {result.existing.wordCount}
                             </div>
                             <div>
                               <strong>Top Keywords:</strong>
-                              <div className="flex flex-wrap gap-1 mt-1">
-                                {result.existing.extractedKeywords?.slice(0, 10).map((kw: string, i: number) => (
-                                  <Badge key={i} variant="secondary" className="text-xs">{kw}</Badge>
-                                ))}
+                              <div className="mt-1 flex flex-wrap gap-1">
+                                {result.existing.extractedKeywords
+                                  ?.slice(0, 10)
+                                  .map((kw: string, i: number) => (
+                                    <Badge
+                                      key={i}
+                                      variant="secondary"
+                                      className="text-xs"
+                                    >
+                                      {kw}
+                                    </Badge>
+                                  ))}
                               </div>
                             </div>
                           </div>
                         </div>
 
                         {/* Proposed Column */}
-                        <div className="p-4 border rounded-lg bg-green-50 dark:bg-green-950 border-green-500">
-                          <h3 className="text-lg font-semibold mb-3 flex items-center justify-between text-green-900 dark:text-green-100">
+                        <div className="rounded-lg border border-green-500 bg-green-50 p-4 dark:bg-green-950">
+                          <h3 className="mb-3 flex items-center justify-between text-lg font-semibold text-green-900 dark:text-green-100">
                             Proposed Content Analysis
-                            <Badge variant="default" className="bg-green-600">New</Badge>
+                            <Badge variant="default" className="bg-green-600">
+                              New
+                            </Badge>
                           </h3>
                           <div className="space-y-3 text-sm text-green-900 dark:text-green-100">
                             <div>
                               <strong>Title:</strong> {result.proposed.title}
                             </div>
                             <div>
-                              <strong>Meta Description:</strong> {result.proposed.metaDescription}
+                              <strong>Meta Description:</strong>{' '}
+                              {result.proposed.metaDescription}
                             </div>
                             <div>
-                              <strong>Word Count:</strong> {result.proposed.wordCount}
+                              <strong>Word Count:</strong>{' '}
+                              {result.proposed.wordCount}
                             </div>
                             <div>
                               <strong>Top Keywords:</strong>
-                              <div className="flex flex-wrap gap-1 mt-1">
-                                {result.proposed.extractedKeywords?.slice(0, 10).map((kw: string, i: number) => (
-                                  <Badge key={i} variant="outline" className="text-xs">{kw}</Badge>
-                                ))}
+                              <div className="mt-1 flex flex-wrap gap-1">
+                                {result.proposed.extractedKeywords
+                                  ?.slice(0, 10)
+                                  .map((kw: string, i: number) => (
+                                    <Badge
+                                      key={i}
+                                      variant="outline"
+                                      className="text-xs"
+                                    >
+                                      {kw}
+                                    </Badge>
+                                  ))}
                               </div>
                             </div>
                           </div>
@@ -293,17 +342,27 @@ New compelling description that highlights our unique value proposition.
 
                     {/* Analysis Results */}
                     <div className="space-y-4">
-                      <h3 className="text-xl font-semibold">Analysis Results</h3>
+                      <h3 className="text-xl font-semibold">
+                        Analysis Results
+                      </h3>
 
                       {/* Show analysis data */}
-                      <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-950">
-                        <h4 className="font-semibold mb-2">Assessment Results</h4>
-                        <div className="text-sm whitespace-pre-wrap">
+                      <div className="rounded-lg border bg-blue-50 p-4 dark:bg-blue-950">
+                        <h4 className="mb-2 font-semibold">
+                          Assessment Results
+                        </h4>
+                        <div className="whitespace-pre-wrap text-sm">
                           {JSON.stringify(result.analysis, null, 2)}
                         </div>
                       </div>
 
-                      <Button onClick={() => copyToClipboard(JSON.stringify(result.analysis, null, 2))}>
+                      <Button
+                        onClick={() =>
+                          copyToClipboard(
+                            JSON.stringify(result.analysis, null, 2)
+                          )
+                        }
+                      >
                         <Copy className="mr-2 h-4 w-4" />
                         Copy Analysis
                       </Button>
@@ -319,28 +378,40 @@ New compelling description that highlights our unique value proposition.
             <Card>
               <CardHeader>
                 <CardTitle>Existing Website Content</CardTitle>
-                <CardDescription>Current live content from {url}</CardDescription>
+                <CardDescription>
+                  Current live content from {url}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="p-3 border rounded-lg">
-                    <h4 className="font-semibold mb-2">Meta Information</h4>
+                  <div className="rounded-lg border p-3">
+                    <h4 className="mb-2 font-semibold">Meta Information</h4>
                     <div className="space-y-2 text-sm">
-                      <div><strong>Title:</strong> {result.existing.title}</div>
-                      <div><strong>Description:</strong> {result.existing.metaDescription}</div>
-                      <div><strong>Keywords:</strong> {result.existing.metaKeywords?.join(', ') || 'None'}</div>
+                      <div>
+                        <strong>Title:</strong> {result.existing.title}
+                      </div>
+                      <div>
+                        <strong>Description:</strong>{' '}
+                        {result.existing.metaDescription}
+                      </div>
+                      <div>
+                        <strong>Keywords:</strong>{' '}
+                        {result.existing.metaKeywords?.join(', ') || 'None'}
+                      </div>
                     </div>
                   </div>
 
-                  <div className="p-3 border rounded-lg">
-                    <h4 className="font-semibold mb-2">Content Preview</h4>
+                  <div className="rounded-lg border p-3">
+                    <h4 className="mb-2 font-semibold">Content Preview</h4>
                     <div className="max-h-96 overflow-y-auto">
-                      <pre className="text-xs whitespace-pre-wrap bg-gray-50 dark:bg-gray-900 p-3 rounded">
+                      <pre className="whitespace-pre-wrap rounded bg-gray-50 p-3 text-xs dark:bg-gray-900">
                         {result.existing.cleanText}
                       </pre>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      📊 Total content length: {result.existing.cleanText.length.toLocaleString()} characters
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      📊 Total content length:{' '}
+                      {result.existing.cleanText.length.toLocaleString()}{' '}
+                      characters
                     </p>
                   </div>
                 </div>
@@ -354,21 +425,30 @@ New compelling description that highlights our unique value proposition.
               <Card>
                 <CardHeader>
                   <CardTitle>Proposed New Content</CardTitle>
-                  <CardDescription>Your suggested content changes</CardDescription>
+                  <CardDescription>
+                    Your suggested content changes
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="p-3 border rounded-lg">
-                      <h4 className="font-semibold mb-2">Proposed Meta Information</h4>
+                    <div className="rounded-lg border p-3">
+                      <h4 className="mb-2 font-semibold">
+                        Proposed Meta Information
+                      </h4>
                       <div className="space-y-2 text-sm">
-                        <div><strong>Title:</strong> {result.proposed.title}</div>
-                        <div><strong>Description:</strong> {result.proposed.metaDescription}</div>
+                        <div>
+                          <strong>Title:</strong> {result.proposed.title}
+                        </div>
+                        <div>
+                          <strong>Description:</strong>{' '}
+                          {result.proposed.metaDescription}
+                        </div>
                       </div>
                     </div>
 
-                    <div className="p-3 border rounded-lg">
-                      <h4 className="font-semibold mb-2">Proposed Content</h4>
-                      <pre className="text-xs whitespace-pre-wrap bg-gray-50 dark:bg-gray-900 p-3 rounded">
+                    <div className="rounded-lg border p-3">
+                      <h4 className="mb-2 font-semibold">Proposed Content</h4>
+                      <pre className="whitespace-pre-wrap rounded bg-gray-50 p-3 text-xs dark:bg-gray-900">
                         {result.proposed.cleanText}
                       </pre>
                     </div>
@@ -383,7 +463,10 @@ New compelling description that highlights our unique value proposition.
   );
 }
 
-function generateAssessmentMarkdown(result: any, config: AssessmentConfig): string {
+function generateAssessmentMarkdown(
+  result: any,
+  config: AssessmentConfig
+): string {
   return `# ${config.name} Analysis
 
 **URL:** ${result.existing.url || 'N/A'}
@@ -399,7 +482,9 @@ function generateAssessmentMarkdown(result: any, config: AssessmentConfig): stri
 **Word Count:** ${result.existing.wordCount}
 **Keywords:** ${result.existing.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
 
-${result.proposed ? `
+${
+  result.proposed
+    ? `
 ## Proposed Content
 
 **Title:** ${result.proposed.title}
@@ -412,7 +497,9 @@ ${result.proposed ? `
 ## AI Analysis Results
 
 ${JSON.stringify(result.analysis, null, 2)}
-` : ''}
+`
+    : ''
+}
 
 ---
 

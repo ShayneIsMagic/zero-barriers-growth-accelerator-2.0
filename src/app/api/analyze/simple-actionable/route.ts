@@ -9,17 +9,23 @@ export async function POST(request: NextRequest) {
     const { url, scrapedContent, analysisType = 'seo' } = body;
 
     if (!url) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL is required',
+        },
+        { status: 400 }
+      );
     }
 
     if (!scrapedContent) {
-      return NextResponse.json({
-        success: false,
-        error: 'Scraped content is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Scraped content is required',
+        },
+        { status: 400 }
+      );
     }
 
     console.log(`📊 Starting simple actionable analysis for: ${url}`);
@@ -33,11 +39,14 @@ export async function POST(request: NextRequest) {
 
     if (!result.success) {
       console.error('Simple actionable analysis failed:', result.error);
-      return NextResponse.json({
-        success: false,
-        error: 'Simple actionable analysis failed',
-        details: result.error
-      }, { status: 500 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Simple actionable analysis failed',
+          details: result.error,
+        },
+        { status: 500 }
+      );
     }
 
     console.log(`✅ Simple actionable analysis completed for: ${url}`);
@@ -47,14 +56,16 @@ export async function POST(request: NextRequest) {
       url: result.url,
       analysisType,
       report: result.report,
-      message: 'Simple actionable analysis generated successfully'
+      message: 'Simple actionable analysis generated successfully',
     });
-
   } catch (error) {
     console.error('Simple actionable analysis API error:', error);
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

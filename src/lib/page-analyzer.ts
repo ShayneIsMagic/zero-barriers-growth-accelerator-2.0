@@ -4,7 +4,14 @@ import { ContentAnalyzer } from './content-analyzer';
 
 export interface PageAnalysisRequest {
   url: string;
-  pageType: 'home' | 'testimonials' | 'services' | 'about' | 'contact' | 'case-studies' | 'general';
+  pageType:
+    | 'home'
+    | 'testimonials'
+    | 'services'
+    | 'about'
+    | 'contact'
+    | 'case-studies'
+    | 'general';
   includeScreenshots?: boolean;
   deepAnalysis?: boolean;
 }
@@ -48,25 +55,28 @@ export class PageAnalyzer {
         model: process.env.CLAUDE_MODEL || 'claude-3-haiku-20240307',
       },
     };
-    
+
     this.aiProvider = new AIProviderService(config);
   }
 
   async analyzePage(request: PageAnalysisRequest): Promise<PageAnalysisResult> {
     const startTime = Date.now();
-    
+
     try {
       // Step 1: Scrape and extract content from the page
       const pageContent = await this.scrapePageContent(request.url);
-      
+
       // Step 2: Analyze the content based on page type
       const analysis = await this.performPageAnalysis(pageContent, request);
-      
+
       // Step 3: Generate page-specific insights
-      const specificInsights = await this.generatePageSpecificInsights(pageContent, request);
-      
+      const specificInsights = await this.generatePageSpecificInsights(
+        pageContent,
+        request
+      );
+
       const loadingTime = Date.now() - startTime;
-      
+
       return {
         ...analysis,
         pageType: request.pageType,
@@ -76,11 +86,13 @@ export class PageAnalyzer {
         imageCount: pageContent.imageCount,
         linkCount: pageContent.linkCount,
         loadingTime,
-        specificInsights
+        specificInsights,
       };
     } catch (error) {
       console.error('Page analysis failed:', error);
-      throw new Error(`Page analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Page analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -94,21 +106,23 @@ export class PageAnalyzer {
   }> {
     try {
       // Use a web scraping service or API
-      const response = await fetch(`/api/scrape-page?url=${encodeURIComponent(url)}`);
-      
+      const response = await fetch(
+        `/api/scrape-page?url=${encodeURIComponent(url)}`
+      );
+
       if (!response.ok) {
         throw new Error(`Failed to scrape page: ${response.statusText}`);
       }
-      
+
       const data = await response.json();
-      
+
       return {
         content: data.content || '',
         title: data.title || '',
         metaDescription: data.metaDescription || '',
         wordCount: data.wordCount || 0,
         imageCount: data.imageCount || 0,
-        linkCount: data.linkCount || 0
+        linkCount: data.linkCount || 0,
       };
     } catch (error) {
       console.error('Page scraping failed:', error);
@@ -119,16 +133,23 @@ export class PageAnalyzer {
         metaDescription: 'Page description',
         wordCount: 0,
         imageCount: 0,
-        linkCount: 0
+        linkCount: 0,
       };
     }
   }
 
-  private async performPageAnalysis(pageContent: any, request: PageAnalysisRequest): Promise<AnalysisResult> {
+  private async performPageAnalysis(
+    pageContent: any,
+    request: PageAnalysisRequest
+  ): Promise<AnalysisResult> {
     // Use content analyzer for real analysis without API keys
     const contentAnalyzer = new ContentAnalyzer();
-    const result = await contentAnalyzer.analyzeContent(pageContent.content, request.url, request.pageType);
-    
+    const result = await contentAnalyzer.analyzeContent(
+      pageContent.content,
+      request.url,
+      request.pageType
+    );
+
     // Convert ContentAnalysisResult to AnalysisResult
     return {
       id: result.id,
@@ -139,13 +160,16 @@ export class PageAnalyzer {
       cliftonStrengths: result.cliftonStrengths,
       recommendations: result.recommendations,
       overallScore: result.overallScore,
-      summary: result.summary
+      summary: result.summary,
     };
   }
 
-  private buildPageAnalysisPrompt(content: string, request: PageAnalysisRequest): string {
+  private buildPageAnalysisPrompt(
+    content: string,
+    request: PageAnalysisRequest
+  ): string {
     const pageTypeInstructions = this.getPageTypeInstructions(request.pageType);
-    
+
     return `
 You are an expert digital marketing analyst specializing in comprehensive website analysis. Analyze the following ${request.pageType} page content with extreme attention to detail and specificity.
 
@@ -386,7 +410,10 @@ GENERAL PAGE ANALYSIS FOCUS:
     }
   }
 
-  private async generatePageSpecificInsights(pageContent: any, request: PageAnalysisRequest): Promise<{
+  private async generatePageSpecificInsights(
+    pageContent: any,
+    request: PageAnalysisRequest
+  ): Promise<{
     pageSpecificAnalysis: string;
     conversionElements: string[];
     trustSignals: string[];
@@ -401,7 +428,11 @@ GENERAL PAGE ANALYSIS FOCUS:
       trustSignals: ['Client logos', 'Testimonials', 'Certifications'],
       callToActions: ['Get Started', 'Contact Us', 'Learn More'],
       socialProof: ['Client testimonials', 'Case studies', 'Success metrics'],
-      technicalIssues: ['Loading speed', 'Mobile responsiveness', 'SEO optimization']
+      technicalIssues: [
+        'Loading speed',
+        'Mobile responsiveness',
+        'SEO optimization',
+      ],
     };
   }
 }

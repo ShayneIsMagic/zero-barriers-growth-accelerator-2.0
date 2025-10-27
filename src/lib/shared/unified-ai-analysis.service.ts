@@ -4,7 +4,11 @@
  * Based on the content-comparison pattern with robust error handling
  */
 
-import { StandardizedDataCollector, StandardizedProposedData, StandardizedWebsiteData } from './standardized-data-collector';
+import {
+  StandardizedDataCollector,
+  StandardizedProposedData,
+  StandardizedWebsiteData,
+} from './standardized-data-collector';
 
 export interface AnalysisFramework {
   name: string;
@@ -42,7 +46,9 @@ export class UnifiedAIAnalysisService {
 
       // Step 1: Scrape website data using the same approach as content-comparison
       console.log('📊 Step 1: Scraping website content...');
-      const { UniversalPuppeteerScraper } = await import('@/lib/universal-puppeteer-scraper');
+      const { UniversalPuppeteerScraper } = await import(
+        '@/lib/universal-puppeteer-scraper'
+      );
       const scrapedData = await UniversalPuppeteerScraper.scrapeWebsite(url);
 
       // Transform to standardized format
@@ -58,20 +64,20 @@ export class UnifiedAIAnalysisService {
           metaTitle: scrapedData.title || '',
           metaDescription: scrapedData.metaDescription || '',
           extractedKeywords: scrapedData.seo?.extractedKeywords || [],
-          headings: scrapedData.seo?.headings || { h1: [], h2: [], h3: [] }
+          headings: scrapedData.seo?.headings || { h1: [], h2: [], h3: [] },
         },
         business: {
           industry: 'Unknown',
           confidence: 0.5,
-          tags: []
+          tags: [],
         },
         technical: {
           images: 0,
           links: 0,
-          schemaTypes: 0
+          schemaTypes: 0,
         },
         scrapedAt: new Date().toISOString(),
-        analysisId: `${framework.name}-${Date.now()}`
+        analysisId: `${framework.name}-${Date.now()}`,
       };
 
       // Step 2: Process proposed content (if provided)
@@ -82,18 +88,26 @@ export class UnifiedAIAnalysisService {
           cleanText: proposedContent.trim(),
           wordCount: proposedContent.trim().split(/\s+/).length,
           title: UnifiedAIAnalysisService.extractTitle(proposedContent),
-          metaDescription: UnifiedAIAnalysisService.extractMetaDescription(proposedContent),
-          extractedKeywords: UnifiedAIAnalysisService.extractKeywordsFromText(proposedContent),
-          headings: UnifiedAIAnalysisService.extractHeadings(proposedContent)
+          metaDescription:
+            UnifiedAIAnalysisService.extractMetaDescription(proposedContent),
+          extractedKeywords:
+            UnifiedAIAnalysisService.extractKeywordsFromText(proposedContent),
+          headings: UnifiedAIAnalysisService.extractHeadings(proposedContent),
         };
       }
 
       // Step 3: Generate framework-specific analysis
       console.log(`🤖 Step 3: Running ${framework.name} analysis...`);
-      const analysis = await this.generateAnalysis(framework, existingData, proposedData);
+      const analysis = await this.generateAnalysis(
+        framework,
+        existingData,
+        proposedData
+      );
 
       const processingTime = Date.now() - startTime;
-      console.log(`✅ ${framework.name} analysis completed in ${processingTime}ms`);
+      console.log(
+        `✅ ${framework.name} analysis completed in ${processingTime}ms`
+      );
 
       return {
         success: true,
@@ -102,16 +116,15 @@ export class UnifiedAIAnalysisService {
           proposed: proposedData,
           analysis: analysis,
           url,
-          framework: framework.name
+          framework: framework.name,
         },
         metadata: {
           framework: framework.name,
           analysis_type: 'ai_generated',
           generated_at: new Date().toISOString(),
-          processing_time_ms: processingTime
-        }
+          processing_time_ms: processingTime,
+        },
       };
-
     } catch (error) {
       const processingTime = Date.now() - startTime;
       console.error(`❌ ${framework.name} analysis failed:`, error);
@@ -124,8 +137,8 @@ export class UnifiedAIAnalysisService {
           framework: framework.name,
           analysis_type: 'structured_fallback',
           generated_at: new Date().toISOString(),
-          processing_time_ms: processingTime
-        }
+          processing_time_ms: processingTime,
+        },
       };
     }
   }
@@ -153,13 +166,15 @@ export class UnifiedAIAnalysisService {
     const aiResult = await Promise.race([
       analyzeWithGemini(prompt, framework.analysisType),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('AI analysis timeout after 20 seconds')), 20000)
-      )
+        setTimeout(
+          () => reject(new Error('AI analysis timeout after 20 seconds')),
+          20000
+        )
+      ),
     ]);
 
     return aiResult;
   }
-
 
   /**
    * Format existing data for frontend consumption
@@ -172,7 +187,7 @@ export class UnifiedAIAnalysisService {
       extractedKeywords: existingData.extractedKeywords,
       headings: existingData.headings,
       cleanText: existingData.cleanText,
-      url: existingData.url
+      url: existingData.url,
     };
   }
 
@@ -184,36 +199,46 @@ export class UnifiedAIAnalysisService {
 
   private static extractMetaDescription(content: string): string {
     const lines = content.split('\n');
-    return lines.slice(0, 3).join(' ').trim().substring(0, 160) || 'Proposed description';
+    return (
+      lines.slice(0, 3).join(' ').trim().substring(0, 160) ||
+      'Proposed description'
+    );
   }
 
   private static extractKeywordsFromText(text: string): string[] {
-    const words = text.toLowerCase()
+    const words = text
+      .toLowerCase()
       .replace(/[^\w\s]/g, ' ')
       .split(/\s+/)
-      .filter(word => word.length > 4);
+      .filter((word) => word.length > 4);
 
     const wordCount: { [key: string]: number } = {};
-    words.forEach(word => {
+    words.forEach((word) => {
       wordCount[word] = (wordCount[word] || 0) + 1;
     });
 
     return Object.entries(wordCount)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 10)
       .map(([word]) => word);
   }
 
   private static extractHeadings(content: string) {
     const lines = content.split('\n');
-    const h1 = lines.filter(line => line.trim().startsWith('# ')).map(line => line.trim().replace(/^#+\s*/, ''));
-    const h2 = lines.filter(line => line.trim().startsWith('## ')).map(line => line.trim().replace(/^#+\s*/, ''));
-    const h3 = lines.filter(line => line.trim().startsWith('### ')).map(line => line.trim().replace(/^#+\s*/, ''));
+    const h1 = lines
+      .filter((line) => line.trim().startsWith('# '))
+      .map((line) => line.trim().replace(/^#+\s*/, ''));
+    const h2 = lines
+      .filter((line) => line.trim().startsWith('## '))
+      .map((line) => line.trim().replace(/^#+\s*/, ''));
+    const h3 = lines
+      .filter((line) => line.trim().startsWith('### '))
+      .map((line) => line.trim().replace(/^#+\s*/, ''));
 
     return {
       h1: h1.slice(0, 10),
       h2: h2.slice(0, 10),
-      h3: h3.slice(0, 10)
+      h3: h3.slice(0, 10),
     };
   }
 }

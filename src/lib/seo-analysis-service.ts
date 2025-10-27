@@ -14,7 +14,11 @@ export class SEOAnalysisService {
   private targetKeywords: string[];
   private competitorUrls: string[];
 
-  constructor(url: string, targetKeywords: string[] = [], competitorUrls: string[] = []) {
+  constructor(
+    url: string,
+    targetKeywords: string[] = [],
+    competitorUrls: string[] = []
+  ) {
     this.url = url;
     this.targetKeywords = targetKeywords;
     this.competitorUrls = competitorUrls;
@@ -56,10 +60,12 @@ export class SEOAnalysisService {
         keywordResearch: {
           targetKeywords: keywordResearch.targetKeywords,
           contentGaps: keywordResearch.contentGaps,
-          trendingKeywords: Array.isArray(trendingAnalysis) ? trendingAnalysis : []
+          trendingKeywords: Array.isArray(trendingAnalysis)
+            ? trendingAnalysis
+            : [],
         },
         competitiveAnalysis,
-        recommendations
+        recommendations,
       };
     } catch (error) {
       console.error('SEO analysis failed:', error);
@@ -81,7 +87,7 @@ export class SEOAnalysisService {
 
     return {
       currentRankings,
-      topPerformingPages
+      topPerformingPages,
     };
   }
 
@@ -90,14 +96,16 @@ export class SEOAnalysisService {
    * Research search volume for current keywords + find new opportunities
    */
   private async performKeywordResearch() {
-    console.log('🔍 Step 2: Performing keyword research with search volume analysis...');
+    console.log(
+      '🔍 Step 2: Performing keyword research with search volume analysis...'
+    );
 
     const targetKeywords = await this.analyzeTargetKeywords();
     const contentGaps = await this.identifyContentGaps();
 
     return {
       targetKeywords,
-      contentGaps
+      contentGaps,
     };
   }
 
@@ -106,27 +114,37 @@ export class SEOAnalysisService {
    * Validate if keywords are trending up or down in the industry
    */
   private async analyzeTrendingKeywords() {
-    console.log('📈 Step 3: Validating keyword trends with REAL Google Trends...');
+    console.log(
+      '📈 Step 3: Validating keyword trends with REAL Google Trends...'
+    );
 
     try {
       // Import the real Google Trends service
-      const { RealGoogleTrendsService } = await import('./real-google-trends-service');
+      const { RealGoogleTrendsService } = await import(
+        './real-google-trends-service'
+      );
 
       // Initialize real Google Trends service
-      const trendsService = new RealGoogleTrendsService(this.url, this.targetKeywords);
+      const trendsService = new RealGoogleTrendsService(
+        this.url,
+        this.targetKeywords
+      );
 
       // Get real trends data for target keywords
-      const trendsData = await trendsService.getMultipleKeywordsTrends(this.targetKeywords.slice(0, 5));
+      const trendsData = await trendsService.getMultipleKeywordsTrends(
+        this.targetKeywords.slice(0, 5)
+      );
 
       // Get trending keywords in relevant categories
-      const trendingKeywords = await trendsService.getTrendingKeywords('business');
+      const trendingKeywords =
+        await trendsService.getTrendingKeywords('business');
 
       return {
         keywordTrends: trendsData,
         trendingKeywords: trendingKeywords,
         analysisMethod: 'Real Google Trends API',
         dataSource: 'google-trends-api',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       console.error('Real Google Trends analysis failed:', error);
@@ -142,14 +160,16 @@ export class SEOAnalysisService {
    * Compare new language against reference sites using the tools above
    */
   private async performCompetitiveAnalysis() {
-    console.log('🏆 Step 4: Performing competitive analysis against reference sites...');
+    console.log(
+      '🏆 Step 4: Performing competitive analysis against reference sites...'
+    );
 
     const _competitors = await this.analyzeCompetitors();
     const keywordComparison = await this.compareKeywordsWithCompetitors();
 
     return {
       competitors: _competitors,
-      keywordComparison
+      keywordComparison,
     };
   }
 
@@ -164,36 +184,36 @@ export class SEOAnalysisService {
         position: 15,
         impressions: 2400,
         clicks: 180,
-        ctr: 7.5
+        ctr: 7.5,
       },
       {
         keyword: 'salesforce implementation',
         position: 8,
         impressions: 1800,
         clicks: 220,
-        ctr: 12.2
+        ctr: 12.2,
       },
       {
         keyword: 'salesforce training',
         position: 22,
         impressions: 1200,
         clicks: 95,
-        ctr: 7.9
+        ctr: 7.9,
       },
       {
         keyword: 'crm consulting utah',
         position: 3,
         impressions: 800,
         clicks: 180,
-        ctr: 22.5
+        ctr: 22.5,
       },
       {
         keyword: 'salesforce migration',
         position: 18,
         impressions: 900,
         clicks: 65,
-        ctr: 7.2
-      }
+        ctr: 7.2,
+      },
     ];
   }
 
@@ -204,22 +224,22 @@ export class SEOAnalysisService {
         impressions: 4500,
         clicks: 380,
         ctr: 8.4,
-        position: 12
+        position: 12,
       },
       {
         page: '/services',
         impressions: 2800,
         clicks: 250,
         ctr: 8.9,
-        position: 15
+        position: 15,
       },
       {
         page: '/about',
         impressions: 1200,
         clicks: 95,
         ctr: 7.9,
-        position: 22
-      }
+        position: 22,
+      },
     ];
   }
 
@@ -231,34 +251,34 @@ export class SEOAnalysisService {
         searchVolume: 8900,
         competition: 'High' as const,
         opportunity: 7,
-        currentPosition: 15
+        currentPosition: 15,
       },
       {
         keyword: 'salesforce consulting services',
         searchVolume: 5400,
         competition: 'Medium' as const,
         opportunity: 8,
-        currentPosition: 8
+        currentPosition: 8,
       },
       {
         keyword: 'salesforce implementation partner',
         searchVolume: 3200,
         competition: 'Medium' as const,
-        opportunity: 9
+        opportunity: 9,
       },
       {
         keyword: 'salesforce training courses',
         searchVolume: 6800,
         competition: 'High' as const,
         opportunity: 6,
-        currentPosition: 22
+        currentPosition: 22,
       },
       {
         keyword: 'crm migration services',
         searchVolume: 2100,
         competition: 'Low' as const,
-        opportunity: 9
-      }
+        opportunity: 9,
+      },
     ];
   }
 
@@ -268,20 +288,20 @@ export class SEOAnalysisService {
         keyword: 'salesforce best practices',
         searchVolume: 4200,
         competition: 'Medium',
-        opportunity: 'High - No current content targeting this keyword'
+        opportunity: 'High - No current content targeting this keyword',
       },
       {
         keyword: 'salesforce automation tools',
         searchVolume: 5800,
         competition: 'High',
-        opportunity: 'Medium - Limited content coverage'
+        opportunity: 'Medium - Limited content coverage',
       },
       {
         keyword: 'salesforce integration services',
         searchVolume: 3100,
         competition: 'Medium',
-        opportunity: 'High - Missing dedicated service page'
-      }
+        opportunity: 'High - Missing dedicated service page',
+      },
     ];
   }
 
@@ -291,26 +311,26 @@ export class SEOAnalysisService {
         keyword: 'salesforce ai',
         trend: 'Up' as const,
         changePercentage: 45,
-        searchVolume: 8900
+        searchVolume: 8900,
       },
       {
         keyword: 'salesforce automation',
         trend: 'Up' as const,
         changePercentage: 23,
-        searchVolume: 12000
+        searchVolume: 12000,
       },
       {
         keyword: 'salesforce consulting',
         trend: 'Stable' as const,
         changePercentage: 2,
-        searchVolume: 8900
+        searchVolume: 8900,
       },
       {
         keyword: 'salesforce implementation',
         trend: 'Up' as const,
         changePercentage: 15,
-        searchVolume: 5400
-      }
+        searchVolume: 5400,
+      },
     ];
   }
 
@@ -324,13 +344,13 @@ export class SEOAnalysisService {
         contentGaps: [
           'Local market focus',
           'Personalized support messaging',
-          'Industry-specific case studies'
+          'Industry-specific case studies',
         ],
         opportunities: [
           'Target local markets more aggressively',
           'Create industry-specific content',
-          'Develop personalized service offerings'
-        ]
+          'Develop personalized service offerings',
+        ],
       },
       {
         domain: 'salesforce-partners.com',
@@ -339,14 +359,14 @@ export class SEOAnalysisService {
         contentGaps: [
           'Technical expertise messaging',
           'Certification highlights',
-          'ROI-focused content'
+          'ROI-focused content',
         ],
         opportunities: [
           'Emphasize technical certifications',
           'Create ROI-focused content',
-          'Develop technical case studies'
-        ]
-      }
+          'Develop technical case studies',
+        ],
+      },
     ];
   }
 
@@ -356,40 +376,40 @@ export class SEOAnalysisService {
         keyword: 'salesforce consulting',
         targetSite: {
           position: 15,
-          url: this.url
+          url: this.url,
         },
         competitors: [
           {
             domain: 'salesforce.com',
             position: 1,
-            url: 'https://salesforce.com'
+            url: 'https://salesforce.com',
           },
           {
             domain: 'salesforce-partners.com',
             position: 8,
-            url: 'https://salesforce-partners.com'
-          }
-        ]
+            url: 'https://salesforce-partners.com',
+          },
+        ],
       },
       {
         keyword: 'salesforce implementation',
         targetSite: {
           position: 8,
-          url: this.url
+          url: this.url,
         },
         competitors: [
           {
             domain: 'salesforce.com',
             position: 2,
-            url: 'https://salesforce.com'
+            url: 'https://salesforce.com',
           },
           {
             domain: 'salesforce-partners.com',
             position: 12,
-            url: 'https://salesforce-partners.com'
-          }
-        ]
-      }
+            url: 'https://salesforce-partners.com',
+          },
+        ],
+      },
     ];
   }
 
@@ -404,26 +424,26 @@ export class SEOAnalysisService {
         'Optimize existing high-traffic pages for better keyword targeting',
         'Create content for identified content gaps with high search volume',
         'Improve meta descriptions to increase CTR from search results',
-        'Target trending keywords like "salesforce ai" and "salesforce automation"'
+        'Target trending keywords like "salesforce ai" and "salesforce automation"',
       ],
       contentOpportunities: [
         'Develop comprehensive guide on "Salesforce Best Practices" (4,200 monthly searches)',
         'Create dedicated page for "Salesforce Integration Services" (3,100 monthly searches)',
         'Build content hub around "Salesforce AI" trending topic',
-        'Develop local market content for Utah, California regions'
+        'Develop local market content for Utah, California regions',
       ],
       technicalImprovements: [
         'Improve page loading speeds to enhance user experience',
         'Optimize images and implement proper alt text for better accessibility',
         'Fix crawl errors and improve site structure',
-        'Implement structured data for better search result appearance'
+        'Implement structured data for better search result appearance',
       ],
       competitiveAdvantages: [
         'Leverage local market expertise (Utah, California focus)',
         'Emphasize personalized support and local expertise',
         'Create industry-specific case studies and success stories',
-        'Develop unique content around DevPipeline partnership'
-      ]
+        'Develop unique content around DevPipeline partnership',
+      ],
     };
   }
 
@@ -431,28 +451,30 @@ export class SEOAnalysisService {
     return {
       searchConsole: {
         currentRankings: [],
-        topPerformingPages: []
+        topPerformingPages: [],
       },
       keywordResearch: {
         targetKeywords: [],
         contentGaps: [],
-        trendingKeywords: []
+        trendingKeywords: [],
       },
       competitiveAnalysis: {
         competitors: [],
-        keywordComparison: []
+        keywordComparison: [],
       },
       recommendations: {
         immediateActions: ['SEO analysis temporarily unavailable'],
         contentOpportunities: [],
         technicalImprovements: [],
-        competitiveAdvantages: []
-      }
+        competitiveAdvantages: [],
+      },
     };
   }
 }
 
-export async function performSEOAnalysis(request: SEOAnalysisRequest): Promise<SEOAnalysis> {
+export async function performSEOAnalysis(
+  request: SEOAnalysisRequest
+): Promise<SEOAnalysis> {
   const service = new SEOAnalysisService(
     request.url,
     request.targetKeywords,

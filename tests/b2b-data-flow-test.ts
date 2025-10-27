@@ -15,7 +15,7 @@ const mockB2BAnalysisResponse = {
     extractedKeywords: ['test', 'keywords'],
     headings: ['H1', 'H2'],
     cleanText: 'Test content...',
-    url: 'https://example.com'
+    url: 'https://example.com',
   },
   proposed: null,
   comparison: {
@@ -25,27 +25,39 @@ const mockB2BAnalysisResponse = {
       tableStakes: {
         score: 3,
         elements: [
-          { name: 'meeting_specifications', present: true, evidence: 'Evidence...' },
+          {
+            name: 'meeting_specifications',
+            present: true,
+            evidence: 'Evidence...',
+          },
           { name: 'acceptable_price', present: true, evidence: 'Evidence...' },
-          { name: 'regulatory_compliance', present: false, evidence: 'Missing...' },
-          { name: 'ethical_standards', present: true, evidence: 'Evidence...' }
-        ]
+          {
+            name: 'regulatory_compliance',
+            present: false,
+            evidence: 'Missing...',
+          },
+          { name: 'ethical_standards', present: true, evidence: 'Evidence...' },
+        ],
       },
       functional: {
         economic: {
           score: 1,
           elements: [
-            { name: 'improved_top_line', present: false, evidence: 'Missing...' },
-            { name: 'cost_reduction', present: true, evidence: 'Evidence...' }
-          ]
+            {
+              name: 'improved_top_line',
+              present: false,
+              evidence: 'Missing...',
+            },
+            { name: 'cost_reduction', present: true, evidence: 'Evidence...' },
+          ],
         },
         performance: {
           score: 2,
           elements: [
             { name: 'product_quality', present: true, evidence: 'Evidence...' },
             { name: 'scalability', present: true, evidence: 'Evidence...' },
-            { name: 'innovation', present: false, evidence: 'Missing...' }
-          ]
+            { name: 'innovation', present: false, evidence: 'Missing...' },
+          ],
         },
         strategic: {
           score: 1,
@@ -53,9 +65,13 @@ const mockB2BAnalysisResponse = {
             { name: 'risk_reduction', present: true, evidence: 'Evidence...' },
             { name: 'reach', present: false, evidence: 'Missing...' },
             { name: 'flexibility', present: false, evidence: 'Missing...' },
-            { name: 'component_quality', present: false, evidence: 'Missing...' }
-          ]
-        }
+            {
+              name: 'component_quality',
+              present: false,
+              evidence: 'Missing...',
+            },
+          ],
+        },
       },
       easeOfDoingBusiness: {
         productivity: {
@@ -63,10 +79,14 @@ const mockB2BAnalysisResponse = {
           elements: [
             { name: 'time_savings', present: true, evidence: 'Evidence...' },
             { name: 'reduced_effort', present: true, evidence: 'Evidence...' },
-            { name: 'decreased_hassles', present: false, evidence: 'Missing...' },
+            {
+              name: 'decreased_hassles',
+              present: false,
+              evidence: 'Missing...',
+            },
             { name: 'information', present: false, evidence: 'Missing...' },
-            { name: 'transparency', present: false, evidence: 'Missing...' }
-          ]
+            { name: 'transparency', present: false, evidence: 'Missing...' },
+          ],
         },
         operational: {
           score: 3,
@@ -74,8 +94,8 @@ const mockB2BAnalysisResponse = {
             { name: 'organization', present: true, evidence: 'Evidence...' },
             { name: 'simplification', present: true, evidence: 'Evidence...' },
             { name: 'connection', present: true, evidence: 'Evidence...' },
-            { name: 'integration', present: false, evidence: 'Missing...' }
-          ]
+            { name: 'integration', present: false, evidence: 'Missing...' },
+          ],
         },
         access: {
           score: 2,
@@ -83,8 +103,8 @@ const mockB2BAnalysisResponse = {
             { name: 'access', present: true, evidence: 'Evidence...' },
             { name: 'availability', present: true, evidence: 'Evidence...' },
             { name: 'variety', present: false, evidence: 'Missing...' },
-            { name: 'configurability', present: false, evidence: 'Missing...' }
-          ]
+            { name: 'configurability', present: false, evidence: 'Missing...' },
+          ],
         },
         relationship: {
           score: 4,
@@ -93,28 +113,48 @@ const mockB2BAnalysisResponse = {
             { name: 'expertise', present: true, evidence: 'Evidence...' },
             { name: 'commitment', present: true, evidence: 'Evidence...' },
             { name: 'stability', present: true, evidence: 'Evidence...' },
-            { name: 'cultural_fit', present: false, evidence: 'Missing...' }
-          ]
-        }
+            { name: 'cultural_fit', present: false, evidence: 'Missing...' },
+          ],
+        },
       },
       individual: {
         career: {
           score: 1,
           elements: [
-            { name: 'network_expansion', present: true, evidence: 'Evidence...' },
+            {
+              name: 'network_expansion',
+              present: true,
+              evidence: 'Evidence...',
+            },
             { name: 'marketability', present: false, evidence: 'Missing...' },
-            { name: 'reputational_assurance', present: false, evidence: 'Missing...' }
-          ]
+            {
+              name: 'reputational_assurance',
+              present: false,
+              evidence: 'Missing...',
+            },
+          ],
         },
         personal: {
           score: 2,
           elements: [
-            { name: 'design_aesthetics_b2b', present: true, evidence: 'Evidence...' },
-            { name: 'growth_development', present: true, evidence: 'Evidence...' },
-            { name: 'reduced_anxiety_b2b', present: false, evidence: 'Missing...' },
-            { name: 'fun_perks', present: false, evidence: 'Missing...' }
-          ]
-        }
+            {
+              name: 'design_aesthetics_b2b',
+              present: true,
+              evidence: 'Evidence...',
+            },
+            {
+              name: 'growth_development',
+              present: true,
+              evidence: 'Evidence...',
+            },
+            {
+              name: 'reduced_anxiety_b2b',
+              present: false,
+              evidence: 'Missing...',
+            },
+            { name: 'fun_perks', present: false, evidence: 'Missing...' },
+          ],
+        },
       },
       inspirational: {
         purpose: {
@@ -123,20 +163,24 @@ const mockB2BAnalysisResponse = {
             { name: 'purpose', present: true, evidence: 'Evidence...' },
             { name: 'vision', present: false, evidence: 'Missing...' },
             { name: 'hope_b2b', present: false, evidence: 'Missing...' },
-            { name: 'social_responsibility', present: false, evidence: 'Missing...' }
-          ]
-        }
-      }
+            {
+              name: 'social_responsibility',
+              present: false,
+              evidence: 'Missing...',
+            },
+          ],
+        },
+      },
     },
     presentElements: 18,
     missingElements: 24,
     recommendations: [
       'Add more content about innovation',
       'Emphasize regulatory compliance',
-      'Showcase vision and social responsibility'
-    ]
+      'Showcase vision and social responsibility',
+    ],
   },
-  message: 'B2B Elements analysis completed'
+  message: 'B2B Elements analysis completed',
 };
 
 describe('B2B Data Flow Test', () => {
@@ -149,7 +193,7 @@ describe('B2B Data Flow Test', () => {
 
   it('should have all 5 main categories with subcategories', () => {
     const categories = mockB2BAnalysisResponse.comparison.categories;
-    
+
     // Main categories
     expect(categories).toHaveProperty('tableStakes');
     expect(categories).toHaveProperty('functional');
@@ -160,15 +204,16 @@ describe('B2B Data Flow Test', () => {
 
   it('should have correct Functional subcategories', () => {
     const functional = mockB2BAnalysisResponse.comparison.categories.functional;
-    
+
     expect(functional).toHaveProperty('economic');
     expect(functional).toHaveProperty('performance');
     expect(functional).toHaveProperty('strategic');
   });
 
   it('should have correct Ease of Doing Business subcategories', () => {
-    const ease = mockB2BAnalysisResponse.comparison.categories.easeOfDoingBusiness;
-    
+    const ease =
+      mockB2BAnalysisResponse.comparison.categories.easeOfDoingBusiness;
+
     expect(ease).toHaveProperty('productivity');
     expect(ease).toHaveProperty('operational');
     expect(ease).toHaveProperty('access');
@@ -177,44 +222,52 @@ describe('B2B Data Flow Test', () => {
 
   it('should have correct Individual subcategories', () => {
     const individual = mockB2BAnalysisResponse.comparison.categories.individual;
-    
+
     expect(individual).toHaveProperty('career');
     expect(individual).toHaveProperty('personal');
   });
 
   it('should have correct Inspirational subcategories', () => {
-    const inspirational = mockB2BAnalysisResponse.comparison.categories.inspirational;
-    
+    const inspirational =
+      mockB2BAnalysisResponse.comparison.categories.inspirational;
+
     expect(inspirational).toHaveProperty('purpose');
   });
 
   it('should track all 42 elements', () => {
-    const { presentElements, missingElements } = mockB2BAnalysisResponse.comparison;
-    
+    const { presentElements, missingElements } =
+      mockB2BAnalysisResponse.comparison;
+
     expect(presentElements + missingElements).toBe(42);
   });
 
   it('should have scores at each level', () => {
     const categories = mockB2BAnalysisResponse.comparison.categories;
-    
+
     // Table Stakes should have score
     expect(typeof categories.tableStakes.score).toBe('number');
-    
+
     // Functional subcategories should have scores
     expect(typeof categories.functional.economic.score).toBe('number');
     expect(typeof categories.functional.performance.score).toBe('number');
     expect(typeof categories.functional.strategic.score).toBe('number');
-    
+
     // Ease subcategories should have scores
-    expect(typeof categories.easeOfDoingBusiness.productivity.score).toBe('number');
-    expect(typeof categories.easeOfDoingBusiness.operational.score).toBe('number');
+    expect(typeof categories.easeOfDoingBusiness.productivity.score).toBe(
+      'number'
+    );
+    expect(typeof categories.easeOfDoingBusiness.operational.score).toBe(
+      'number'
+    );
     expect(typeof categories.easeOfDoingBusiness.access.score).toBe('number');
-    expect(typeof categories.easeOfDoingBusiness.relationship.score).toBe('number');
-    
+    expect(typeof categories.easeOfDoingBusiness.relationship.score).toBe(
+      'number'
+    );
+
     // Individual subcategories should have scores
     expect(typeof categories.individual.career.score).toBe('number');
     expect(typeof categories.individual.personal.score).toBe('number');
-    
+
     // Inspirational subcategories should have scores
     expect(typeof categories.inspirational.purpose.score).toBe('number');
   });
@@ -222,15 +275,19 @@ describe('B2B Data Flow Test', () => {
   it('should include evidence for each element', () => {
     const categories = mockB2BAnalysisResponse.comparison.categories;
     const firstElement = categories.tableStakes.elements[0];
-    
+
     expect(firstElement).toHaveProperty('name');
     expect(firstElement).toHaveProperty('present');
     expect(firstElement).toHaveProperty('evidence');
   });
 
   it('should include recommendations', () => {
-    expect(mockB2BAnalysisResponse.comparison.recommendations).toBeInstanceOf(Array);
-    expect(mockB2BAnalysisResponse.comparison.recommendations.length).toBeGreaterThan(0);
+    expect(mockB2BAnalysisResponse.comparison.recommendations).toBeInstanceOf(
+      Array
+    );
+    expect(
+      mockB2BAnalysisResponse.comparison.recommendations.length
+    ).toBeGreaterThan(0);
   });
 });
 
@@ -241,25 +298,25 @@ export const B2B_ELEMENT_COUNTS = {
     economic: 2,
     performance: 3,
     strategic: 4,
-    total: 9
+    total: 9,
   },
   easeOfDoingBusiness: {
     productivity: 5,
     operational: 4,
     access: 4,
     relationship: 5,
-    total: 18
+    total: 18,
   },
   individual: {
     career: 3,
     personal: 4,
-    total: 7
+    total: 7,
   },
   inspirational: {
     purpose: 4,
-    total: 4
+    total: 4,
   },
-  grandTotal: 42
+  grandTotal: 42,
 };
 
 describe('B2B Element Counts', () => {
@@ -297,7 +354,3 @@ describe('B2B Element Counts', () => {
     expect(B2B_ELEMENT_COUNTS.grandTotal).toBe(42);
   });
 });
-
-
-
-

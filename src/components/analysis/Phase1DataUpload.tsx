@@ -3,7 +3,13 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 // import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -19,8 +25,14 @@ interface Phase1DataUploadProps {
   initialData?: any;
 }
 
-export function Phase1DataUpload({ onDataReceived, onContinue, initialData }: Phase1DataUploadProps) {
-  const [uploadMethod, setUploadMethod] = useState<'url' | 'paste' | 'upload'>('url');
+export function Phase1DataUpload({
+  onDataReceived,
+  onContinue,
+  initialData,
+}: Phase1DataUploadProps) {
+  const [uploadMethod, setUploadMethod] = useState<'url' | 'paste' | 'upload'>(
+    'url'
+  );
   const [url, setUrl] = useState('');
   const [pastedData, setPastedData] = useState('');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -41,7 +53,7 @@ export function Phase1DataUpload({ onDataReceived, onContinue, initialData }: Ph
       const response = await fetch('/api/scrape-content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: url.trim() })
+        body: JSON.stringify({ url: url.trim() }),
       });
 
       const data = await response.json();
@@ -53,7 +65,9 @@ export function Phase1DataUpload({ onDataReceived, onContinue, initialData }: Ph
         setValidationErrors([data.error || 'Failed to collect data from URL']);
       }
     } catch (error) {
-      setValidationErrors([`Error: ${error instanceof Error ? error.message : 'Unknown error'}`]);
+      setValidationErrors([
+        `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      ]);
     } finally {
       setIsProcessing(false);
     }
@@ -82,7 +96,7 @@ export function Phase1DataUpload({ onDataReceived, onContinue, initialData }: Ph
           images: [],
           internalLinks: [],
           externalLinks: [],
-          scrapedAt: new Date().toISOString()
+          scrapedAt: new Date().toISOString(),
         };
       }
 
@@ -90,7 +104,9 @@ export function Phase1DataUpload({ onDataReceived, onContinue, initialData }: Ph
       toast.success('Pasted data processed successfully');
       setValidationErrors([]);
     } catch (error) {
-      setValidationErrors([`Error processing pasted data: ${error instanceof Error ? error.message : 'Unknown error'}`]);
+      setValidationErrors([
+        `Error processing pasted data: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      ]);
     }
   };
 
@@ -126,25 +142,28 @@ export function Phase1DataUpload({ onDataReceived, onContinue, initialData }: Ph
           images: [],
           internalLinks: [],
           externalLinks: [],
-          scrapedAt: new Date().toISOString()
+          scrapedAt: new Date().toISOString(),
         };
         onDataReceived(processedData);
         toast.success('Text file uploaded and processed successfully');
       };
       reader.readAsText(file);
     } else {
-      setValidationErrors(['Unsupported file type. Please upload JSON, TXT, or HTML files.']);
+      setValidationErrors([
+        'Unsupported file type. Please upload JSON, TXT, or HTML files.',
+      ]);
     }
   };
 
   const extractKeywords = (text: string): string[] => {
-    const words = text.toLowerCase()
+    const words = text
+      .toLowerCase()
       .replace(/[^\w\s]/g, ' ')
       .split(/\s+/)
-      .filter(word => word.length > 3);
+      .filter((word) => word.length > 3);
 
     const wordFreq: Record<string, number> = {};
-    words.forEach(word => {
+    words.forEach((word) => {
       wordFreq[word] = (wordFreq[word] || 0) + 1;
     });
 
@@ -160,16 +179,16 @@ export function Phase1DataUpload({ onDataReceived, onContinue, initialData }: Ph
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <div className="mx-auto max-w-4xl space-y-6 p-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-2xl">
             <Upload className="h-6 w-6" />
             Phase 1 Data Collection
           </CardTitle>
           <CardDescription>
-            Choose how you want to provide content for analysis. You can collect from a new URL,
-            paste previous content, or upload a saved report.
+            Choose how you want to provide content for analysis. You can collect
+            from a new URL, paste previous content, or upload a saved report.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -203,8 +222,10 @@ export function Phase1DataUpload({ onDataReceived, onContinue, initialData }: Ph
             {/* Temporary replacement with select */}
             <select
               value={uploadMethod}
-              onChange={(e) => setUploadMethod(e.target.value as 'url' | 'paste' | 'upload')}
-              className="w-full p-2 border rounded-md"
+              onChange={(e) =>
+                setUploadMethod(e.target.value as 'url' | 'paste' | 'upload')
+              }
+              className="w-full rounded-md border p-2"
             >
               <option value="url">Collect from New URL</option>
               <option value="paste">Paste Previous Content</option>
@@ -217,7 +238,7 @@ export function Phase1DataUpload({ onDataReceived, onContinue, initialData }: Ph
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                <ul className="list-disc list-inside">
+                <ul className="list-inside list-disc">
                   {validationErrors.map((error, index) => (
                     <li key={index}>{error}</li>
                   ))}
@@ -265,15 +286,20 @@ export function Phase1DataUpload({ onDataReceived, onContinue, initialData }: Ph
                 />
               </div>
               <div className="flex gap-2">
-                <Button onClick={handlePasteSubmit} disabled={!pastedData.trim()}>
+                <Button
+                  onClick={handlePasteSubmit}
+                  disabled={!pastedData.trim()}
+                >
                   Process Pasted Content
                 </Button>
                 {initialData && (
                   <Button
                     variant="outline"
-                    onClick={() => copyToClipboard(JSON.stringify(initialData, null, 2))}
+                    onClick={() =>
+                      copyToClipboard(JSON.stringify(initialData, null, 2))
+                    }
                   >
-                    <Copy className="h-4 w-4 mr-2" />
+                    <Copy className="mr-2 h-4 w-4" />
                     Copy Current Data
                   </Button>
                 )}
@@ -291,14 +317,15 @@ export function Phase1DataUpload({ onDataReceived, onContinue, initialData }: Ph
                   type="file"
                   accept=".json,.txt,.html"
                   onChange={handleFileUpload}
-                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/80"
+                  className="file:mr-4 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-foreground hover:file:bg-primary/80"
                 />
-                <p className="text-sm text-muted-foreground mt-1">
-                  Supported formats: JSON (analysis reports), TXT (plain text), HTML (web content)
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Supported formats: JSON (analysis reports), TXT (plain text),
+                  HTML (web content)
                 </p>
               </div>
               {uploadedFile && (
-                <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
+                <div className="flex items-center gap-2 rounded-lg bg-muted p-3">
                   <FileText className="h-4 w-4" />
                   <span className="text-sm">{uploadedFile.name}</span>
                   <Badge variant="secondary">{uploadedFile.type}</Badge>
@@ -311,7 +338,7 @@ export function Phase1DataUpload({ onDataReceived, onContinue, initialData }: Ph
           {initialData && (
             <Card className="mt-6">
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-lg">
                   <CheckCircle className="h-5 w-5 text-green-500" />
                   Current Data Preview
                 </CardTitle>
@@ -327,44 +354,81 @@ export function Phase1DataUpload({ onDataReceived, onContinue, initialData }: Ph
 
                   <TabsContent value="summary" className="space-y-2">
                     <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div><strong>Title:</strong> {initialData.title || 'N/A'}</div>
-                      <div><strong>Word Count:</strong> {initialData.wordCount || 0}</div>
-                      <div><strong>Keywords:</strong> {initialData.extractedKeywords?.length || 0}</div>
-                      <div><strong>Images:</strong> {initialData.images?.length || 0}</div>
-                      <div><strong>Links:</strong> {(initialData.internalLinks?.length || 0) + (initialData.externalLinks?.length || 0)}</div>
-                      <div><strong>Scraped:</strong> {initialData.scrapedAt ? new Date(initialData.scrapedAt).toLocaleString() : 'N/A'}</div>
+                      <div>
+                        <strong>Title:</strong> {initialData.title || 'N/A'}
+                      </div>
+                      <div>
+                        <strong>Word Count:</strong>{' '}
+                        {initialData.wordCount || 0}
+                      </div>
+                      <div>
+                        <strong>Keywords:</strong>{' '}
+                        {initialData.extractedKeywords?.length || 0}
+                      </div>
+                      <div>
+                        <strong>Images:</strong>{' '}
+                        {initialData.images?.length || 0}
+                      </div>
+                      <div>
+                        <strong>Links:</strong>{' '}
+                        {(initialData.internalLinks?.length || 0) +
+                          (initialData.externalLinks?.length || 0)}
+                      </div>
+                      <div>
+                        <strong>Scraped:</strong>{' '}
+                        {initialData.scrapedAt
+                          ? new Date(initialData.scrapedAt).toLocaleString()
+                          : 'N/A'}
+                      </div>
                     </div>
                   </TabsContent>
 
                   <TabsContent value="content" className="space-y-2">
-                    <div className="max-h-40 overflow-y-auto text-sm bg-muted p-3 rounded">
-                      {initialData.cleanText?.substring(0, 1000) || 'No content available'}
+                    <div className="max-h-40 overflow-y-auto rounded bg-muted p-3 text-sm">
+                      {initialData.cleanText?.substring(0, 1000) ||
+                        'No content available'}
                       {initialData.cleanText?.length > 1000 && '...'}
                     </div>
                   </TabsContent>
 
                   <TabsContent value="seo" className="space-y-2">
                     <div className="space-y-2 text-sm">
-                      <div><strong>Meta Description:</strong> {initialData.metaDescription || 'N/A'}</div>
-                      <div><strong>H1 Tags:</strong> {initialData.headings?.h1?.length || 0}</div>
-                      <div><strong>H2 Tags:</strong> {initialData.headings?.h2?.length || 0}</div>
-                      <div><strong>Keywords:</strong> {initialData.extractedKeywords?.slice(0, 10).join(', ') || 'N/A'}</div>
+                      <div>
+                        <strong>Meta Description:</strong>{' '}
+                        {initialData.metaDescription || 'N/A'}
+                      </div>
+                      <div>
+                        <strong>H1 Tags:</strong>{' '}
+                        {initialData.headings?.h1?.length || 0}
+                      </div>
+                      <div>
+                        <strong>H2 Tags:</strong>{' '}
+                        {initialData.headings?.h2?.length || 0}
+                      </div>
+                      <div>
+                        <strong>Keywords:</strong>{' '}
+                        {initialData.extractedKeywords
+                          ?.slice(0, 10)
+                          .join(', ') || 'N/A'}
+                      </div>
                     </div>
                   </TabsContent>
 
                   <TabsContent value="raw" className="space-y-2">
-                    <div className="flex justify-between items-center">
+                    <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">Raw JSON Data</span>
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => copyToClipboard(JSON.stringify(initialData, null, 2))}
+                        onClick={() =>
+                          copyToClipboard(JSON.stringify(initialData, null, 2))
+                        }
                       >
-                        <Copy className="h-4 w-4 mr-2" />
+                        <Copy className="mr-2 h-4 w-4" />
                         Copy
                       </Button>
                     </div>
-                    <div className="max-h-40 overflow-y-auto text-xs bg-muted p-3 rounded font-mono">
+                    <div className="max-h-40 overflow-y-auto rounded bg-muted p-3 font-mono text-xs">
                       <pre>{JSON.stringify(initialData, null, 2)}</pre>
                     </div>
                   </TabsContent>

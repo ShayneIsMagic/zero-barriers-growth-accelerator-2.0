@@ -5,12 +5,12 @@ const path = require('path');
 const staticRoutes = [
   {
     from: 'src/app/api/analyze/website/route.static.ts',
-    to: 'src/app/api/analyze/website/route.ts'
+    to: 'src/app/api/analyze/website/route.ts',
   },
   {
     from: 'src/app/api/auth/me/route.static.ts',
-    to: 'src/app/api/auth/me/route.ts'
-  }
+    to: 'src/app/api/auth/me/route.ts',
+  },
 ];
 
 console.log('🔄 Preparing static routes for GitHub Pages deployment...');

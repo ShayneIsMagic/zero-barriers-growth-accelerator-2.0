@@ -12,6 +12,7 @@ A framework for communication and decision-making that explains how truly inspir
 ## 🔄 **The Four Layers (WHY → HOW → WHAT → WHO)**
 
 ### **Traditional Model**: 3 Circles (Why, How, What)
+
 ### **Enhanced Model**: 4 Circles (Why, How, What, Who) ⭐ **RECOMMENDED**
 
 Adding "WHO" provides a more profound understanding of purpose and motivates stronger connections and loyalty.
@@ -21,15 +22,19 @@ Adding "WHO" provides a more profound understanding of purpose and motivates str
 ## 💡 **1. WHY - Core Purpose**
 
 ### **Official Definition** (Simon Sinek):
+
 > "Very few people or companies can clearly articulate WHY they do what they do. When we ask WHY, we're not referring to making money—that's a result. Your WHY is your purpose, cause, or belief. WHY does your company exist? WHY do you get out of bed every morning? And WHY should anyone care about the work you do?"
 
 ### **Simon Sinek's Key Insight**:
+
 > "People don't buy WHAT you do, they buy WHY you do it."
 
 ### **Official Example** (The Optimism Company):
+
 > "The WHY of The Optimism Company is to inspire people to do the things that inspire them so that, together, each of us can change our world for the better."
 
 ### **Key Questions**:
+
 - Why does our organization exist?
 - Why do we get out of bed in the morning?
 - Why should anyone care?
@@ -37,6 +42,7 @@ Adding "WHO" provides a more profound understanding of purpose and motivates str
 - What drives us beyond making money?
 
 ### **Synonyms & Alternative Terms**:
+
 - Purpose
 - Mission
 - Core belief
@@ -49,6 +55,7 @@ Adding "WHO" provides a more profound understanding of purpose and motivates str
 - North star
 
 ### **What to Look For**:
+
 - Mission statements starting with "We believe..."
 - Purpose-driven language
 - Cause or belief statements
@@ -58,6 +65,7 @@ Adding "WHO" provides a more profound understanding of purpose and motivates str
 - Legacy and vision statements
 
 ### **Strong WHY Indicators**:
+
 - ✅ Clear, compelling purpose statement
 - ✅ Emotional resonance
 - ✅ Beyond profit motivation
@@ -67,12 +75,14 @@ Adding "WHO" provides a more profound understanding of purpose and motivates str
 - ✅ Creates movement, not just transactions
 
 ### **Examples of Great WHYs**:
+
 - **Apple**: "We believe in challenging the status quo and thinking differently."
 - **TOMS**: "We believe that everyone deserves a better tomorrow."
 - **Tesla**: "We believe in accelerating the world's transition to sustainable energy."
 - **Patagonia**: "We're in business to save our home planet."
 
 ### **Scoring Criteria** (1-10):
+
 - **9-10**: Crystal clear, emotionally compelling WHY with specific cause/belief
 - **7-8**: Clear purpose with good emotional connection
 - **5-6**: Identifiable purpose but somewhat generic
@@ -84,14 +94,17 @@ Adding "WHO" provides a more profound understanding of purpose and motivates str
 ## 🛠️ **2. HOW - Unique Process/Differentiator**
 
 ### **Official Definition** (Simon Sinek):
+
 > "Companies and people know HOW they do what they do and can typically communicate these processes clearly. HOWs are often utilized to explain that a product or service is better than a competitor's—but HOWs can be so much more than that.
 >
 > Our HOWs are the actions we take when we are at our natural best and are living out our WHY. It's HOW you bring your WHY to life that makes you and your company unique. As a result, the combination of your WHY and HOWs is like your organization's fingerprint."
 
 ### **Official Example** (The Optimism Company):
+
 > "These are the HOWs of The Optimism Company: keep our offerings simple, adopt an infinite mindset, try to see things from unconventional perspectives, and always find the silver lining."
 
 ### **Key Questions**:
+
 - How do we do what we do?
 - What makes our approach unique?
 - What are our values and principles?
@@ -100,6 +113,7 @@ Adding "WHO" provides a more profound understanding of purpose and motivates str
 - What's our secret sauce?
 
 ### **Synonyms & Alternative Terms**:
+
 - Methodology
 - Process
 - Approach
@@ -114,6 +128,7 @@ Adding "WHO" provides a more profound understanding of purpose and motivates str
 - Operating principles
 
 ### **What to Look For**:
+
 - Specific methodologies or frameworks
 - Named processes or systems
 - Value statements
@@ -124,6 +139,7 @@ Adding "WHO" provides a more profound understanding of purpose and motivates str
 - Step-by-step processes described
 
 ### **Strong HOW Indicators**:
+
 - ✅ Specific, named methodology
 - ✅ Clear differentiation from competitors
 - ✅ Unique approach or process
@@ -133,12 +149,14 @@ Adding "WHO" provides a more profound understanding of purpose and motivates str
 - ✅ Repeatable process
 
 ### **Examples of Great HOWs**:
+
 - **Apple**: "By making beautifully designed, simple-to-use products"
 - **Southwest Airlines**: "By putting employees first and having fun"
 - **Amazon**: "Through customer obsession and continuous innovation"
 - **Disney**: "Through creating magical experiences and attention to detail"
 
 ### **Scoring Criteria** (1-10):
+
 - **9-10**: Unique, specific methodology with clear differentiation
 - **7-8**: Clear approach with identifiable process
 - **5-6**: Some differentiators mentioned but not systematic
@@ -150,15 +168,19 @@ Adding "WHO" provides a more profound understanding of purpose and motivates str
 ## 📦 **3. WHAT - Products/Services**
 
 ### **Official Definition** (Simon Sinek):
+
 > "Every single company and organization on the planet knows WHAT they do. This is true no matter how big or small, and no matter what industry. Everyone is easily able to describe the products or services a company provides or the job function they have within that system. WHATs are easy to identify and important to have, but are less impactful than the WHY."
 
 ### **Simon Sinek's Key Insight**:
+
 > "WHAT you do serves as the tangible proof of your WHY."
 
 ### **Official Example** (The Optimism Company):
+
 > "The WHATs of The Optimism Company are our classes, courses, keynotes, podcast episodes (and so much more) that encourage people to learn and grow their human skills of leadership, communication, and trust."
 
 ### **Key Questions**:
+
 - What do we sell or offer?
 - What products or services do we provide?
 - What solutions do we deliver?
@@ -166,6 +188,7 @@ Adding "WHO" provides a more profound understanding of purpose and motivates str
 - What can people buy from us?
 
 ### **Synonyms & Alternative Terms**:
+
 - Products
 - Services
 - Solutions
@@ -179,6 +202,7 @@ Adding "WHO" provides a more profound understanding of purpose and motivates str
 - Catalog
 
 ### **What to Look For**:
+
 - Product names and descriptions
 - Service categories
 - Solution types
@@ -189,6 +213,7 @@ Adding "WHO" provides a more profound understanding of purpose and motivates str
 - Service descriptions
 
 ### **Strong WHAT Indicators**:
+
 - ✅ Clear product/service descriptions
 - ✅ Specific offerings listed
 - ✅ Tangible results defined
@@ -198,12 +223,14 @@ Adding "WHO" provides a more profound understanding of purpose and motivates str
 - ✅ Measurable outcomes
 
 ### **Examples of Clear WHATs**:
+
 - **Apple**: "Computers, phones, tablets, and wearables"
 - **Starbucks**: "Coffee, tea, food, and a third place between work and home"
 - **Nike**: "Athletic shoes, apparel, and equipment"
 - **Salesforce**: "Cloud-based CRM software"
 
 ### **Scoring Criteria** (1-10):
+
 - **9-10**: Crystal clear offerings with detailed descriptions
 - **7-8**: Clear products/services with good detail
 - **5-6**: Basic offerings described
@@ -215,9 +242,11 @@ Adding "WHO" provides a more profound understanding of purpose and motivates str
 ## 👥 **4. WHO - Target Audience/Identity** ⭐ **ENHANCED LAYER**
 
 ### **Definition**:
+
 The deepest layer of the Golden Circle analysis that focuses on understanding the people and relationships that give purpose its meaning. The WHO goes beyond the traditional Golden Circle to create deeper, more sustainable connections.
 
 ### **Why WHO Matters**:
+
 **Emotional Connection**: Leading with "Why" creates an emotional connection, and understanding the "WHO" helps to deepen that connection by framing the purpose in terms of specific people and relationships.
 
 **Sustainability**: An added "WHO" layer goes beyond just the "Why" to provide a more powerful and sustained motivation, especially in personal contexts or when facing challenges.
@@ -225,6 +254,7 @@ The deepest layer of the Golden Circle analysis that focuses on understanding th
 **Alignment**: It ensures that the organization's products and services ("What") truly align with the needs and beliefs of the people it aims to serve.
 
 ### **The WHO Framework**:
+
 The WHO operates on multiple levels to create comprehensive understanding of purpose and connection.
 
 ### **The Five Dimensions of WHO**:
@@ -235,6 +265,7 @@ The WHO operates on multiple levels to create comprehensive understanding of pur
 This focuses on understanding the customers, clients, or beneficiaries whose needs the "Why" addresses.
 
 **Key Questions**:
+
 - Who is our ideal customer?
 - Who benefits most from what we do?
 - Who are we trying to help?
@@ -246,6 +277,7 @@ This focuses on understanding the customers, clients, or beneficiaries whose nee
 This refers to the team members or audience whom the organization seeks to motivate and engage.
 
 **Key Questions**:
+
 - Who works with us?
 - Who believes what we believe?
 - Who is motivated by our WHY?
@@ -256,6 +288,7 @@ This refers to the team members or audience whom the organization seeks to motiv
 The "WHO" can refer to the leaders or authority figures within the organization whose vision drives the "Why".
 
 **Key Questions**:
+
 - Who sets the vision?
 - Who embodies our WHY?
 - Who drives our purpose forward?
@@ -268,6 +301,7 @@ The "WHO" can refer to the leaders or authority figures within the organization 
 The "WHO" emphasizes the importance of relationships and the identity derived from those connections, whether to colleagues, customers, or even a larger community or spiritual authority.
 
 **Key Questions**:
+
 - Who defines us?
 - Who do we partner with?
 - Who are our stakeholders?
@@ -279,6 +313,7 @@ The "WHO" emphasizes the importance of relationships and the identity derived fr
 The core idea is that our deepest purpose and work are often fueled by our connections to others.
 
 **Key Questions**:
+
 - Who is at the center of everything we do?
 - Whose needs drive our decisions?
 - Who would we never let down?
@@ -288,6 +323,7 @@ The core idea is that our deepest purpose and work are often fueled by our conne
 #### **C. Who We Serve** (Target Customers) - **PRACTICAL APPLICATION**
 
 **What to Look For**:
+
 - Customer personas
 - Target market descriptions
 - "For [specific audience]" language
@@ -297,6 +333,7 @@ The core idea is that our deepest purpose and work are often fueled by our conne
 - Specific industry or market focus
 
 **Synonyms**:
+
 - Target audience
 - Ideal customer profile (ICP)
 - Customer persona
@@ -308,6 +345,7 @@ The core idea is that our deepest purpose and work are often fueled by our conne
 #### **B. Who We Are** (Team/Culture/Identity)
 
 **Key Questions**:
+
 - Who are we as an organization?
 - What kind of people work here?
 - What's our culture?
@@ -315,6 +353,7 @@ The core idea is that our deepest purpose and work are often fueled by our conne
 - Who do we need to be to fulfill our WHY?
 
 **What to Look For**:
+
 - Team descriptions
 - Culture statements
 - "We are..." declarations
@@ -324,6 +363,7 @@ The core idea is that our deepest purpose and work are often fueled by our conne
 - Employee testimonials
 
 **Synonyms**:
+
 - Organizational identity
 - Company culture
 - Team DNA
@@ -334,12 +374,14 @@ The core idea is that our deepest purpose and work are often fueled by our conne
 #### **C. Who We Aspire to Be** (Aspirational Identity)
 
 **Key Questions**:
+
 - Who are we becoming?
 - What's our aspirational identity?
 - Who do we need to be for our customers?
 - What kind of organization are we building?
 
 **What to Look For**:
+
 - Vision statements
 - Growth aspirations
 - "We're building..." language
@@ -348,6 +390,7 @@ The core idea is that our deepest purpose and work are often fueled by our conne
 - Evolution statements
 
 ### **Strong WHO Indicators**:
+
 - ✅ Specific customer testimonials with names and companies
 - ✅ Clear target audience definition
 - ✅ Cultural values demonstrated
@@ -359,16 +402,19 @@ The core idea is that our deepest purpose and work are often fueled by our conne
 ### **Examples of Great WHOs**:
 
 **Who We Serve**:
+
 - **Peloton**: "Busy professionals who want fitness at home"
 - **HubSpot**: "Growing companies who want to scale inbound marketing"
 - **Slack**: "Teams who need to collaborate more effectively"
 
 **Who We Are**:
+
 - **Zappos**: "A company obsessed with delivering happiness"
 - **Google**: "A team of engineers solving the world's biggest problems"
 - **Patagonia**: "Environmental activists who happen to make clothing"
 
 ### **Scoring Criteria** (1-10):
+
 - **9-10**: Specific customer examples, clear cultural identity, strong connection
 - **7-8**: Good audience definition, some cultural indicators
 - **5-6**: Basic target market identified
@@ -380,15 +426,18 @@ The core idea is that our deepest purpose and work are often fueled by our conne
 ## 🎯 **The Complete Golden Circle Analysis Framework**
 
 ### **Analysis Order** (Inside Out):
+
 1. **Start with WHY** - The core purpose/belief
 2. **Define HOW** - The unique approach/values
 3. **Specify WHAT** - The tangible offerings
 4. **Identify WHO** - The people (served, serving, becoming)
 
 ### **Communication Order** (Inside Out):
+
 > "People don't buy WHAT you do, they buy WHY you do it. The WHAT is simply the proof of the WHY."
 
 **Inspiring Communication Structure**:
+
 1. Lead with WHY (Purpose/Belief) - "We believe..."
 2. Support with HOW (Process/Values) - "We do this by..."
 3. Prove with WHAT (Products/Services) - "What we offer is..."
@@ -407,6 +456,7 @@ The core idea is that our deepest purpose and work are often fueled by our conne
 **Total Score** (0-100)
 
 ### **Interpretation**:
+
 - **90-100**: World-class Golden Circle alignment
 - **80-89**: Excellent clarity and alignment
 - **70-79**: Good alignment with some gaps
@@ -419,6 +469,7 @@ The core idea is that our deepest purpose and work are often fueled by our conne
 ## 🔍 **What to Look For in Website Analysis**
 
 ### **WHY Evidence**:
+
 - [ ] Mission/purpose statement on homepage
 - [ ] "We believe..." statements
 - [ ] About page with origin story
@@ -427,6 +478,7 @@ The core idea is that our deepest purpose and work are often fueled by our conne
 - [ ] Cause or movement language
 
 ### **HOW Evidence**:
+
 - [ ] Named methodology or framework
 - [ ] Values or principles page
 - [ ] "Our approach" section
@@ -435,6 +487,7 @@ The core idea is that our deepest purpose and work are often fueled by our conne
 - [ ] "What makes us different" content
 
 ### **WHAT Evidence**:
+
 - [ ] Clear product/service descriptions
 - [ ] Pricing information
 - [ ] Features and benefits
@@ -443,6 +496,7 @@ The core idea is that our deepest purpose and work are often fueled by our conne
 - [ ] Portfolio or catalog
 
 ### **WHO Evidence**:
+
 - [ ] Customer testimonials with names
 - [ ] Target market descriptions
 - [ ] "For [audience]" language
@@ -455,6 +509,7 @@ The core idea is that our deepest purpose and work are often fueled by our conne
 ## 💡 **Best Practices for Golden Circle Analysis**
 
 ### **DO**:
+
 ✅ Start with finding the WHY - it's the hardest to identify  
 ✅ Look for emotional language and belief statements  
 ✅ Identify specific, named methodologies for HOW  
@@ -462,21 +517,23 @@ The core idea is that our deepest purpose and work are often fueled by our conne
 ✅ Note the source location (hero, about, services, etc.)  
 ✅ Look for alignment across all four circles  
 ✅ Extract customer names and companies for WHO  
-✅ Identify cultural values and team identity  
+✅ Identify cultural values and team identity
 
 ### **DON'T**:
+
 ❌ Confuse WHAT with WHY (products ≠ purpose)  
 ❌ Accept generic mission statements as WHY  
 ❌ Overlook implicit HOW in values or culture  
 ❌ Ignore testimonials - they reveal the WHO  
 ❌ Score based on assumptions - only use evidence  
-❌ Forget that WHO adds depth to the analysis  
+❌ Forget that WHO adds depth to the analysis
 
 ---
 
 ## 🎓 **The Power of the Golden Circle**
 
 ### **Why It Works**:
+
 The Golden Circle taps into human biology and decision-making:
 
 - **Limbic Brain** (WHY/HOW): Feelings, trust, loyalty, decision-making
@@ -485,7 +542,9 @@ The Golden Circle taps into human biology and decision-making:
 **People make decisions emotionally (WHY) and justify them rationally (WHAT).**
 
 ### **Business Impact**:
+
 Organizations that communicate from WHY:
+
 - ✅ Inspire loyalty, not just transactions
 - ✅ Attract customers who believe what they believe
 - ✅ Command premium pricing
@@ -499,12 +558,12 @@ Organizations that communicate from WHY:
 
 ### **The Four Circles at a Glance**:
 
-| Circle | Focus | Question | Output Type |
-|--------|-------|----------|-------------|
-| **WHY** | Purpose | Why do we exist? | Belief/Cause |
-| **HOW** | Process | How do we do it? | Values/Method |
-| **WHAT** | Product | What do we offer? | Products/Services |
-| **WHO** | People | Who are we serving/being? | Audience/Identity |
+| Circle   | Focus   | Question                  | Output Type       |
+| -------- | ------- | ------------------------- | ----------------- |
+| **WHY**  | Purpose | Why do we exist?          | Belief/Cause      |
+| **HOW**  | Process | How do we do it?          | Values/Method     |
+| **WHAT** | Product | What do we offer?         | Products/Services |
+| **WHO**  | People  | Who are we serving/being? | Audience/Identity |
 
 ### **Evidence Hierarchy** (Strongest to Weakest):
 
@@ -524,9 +583,10 @@ Organizations that communicate from WHY:
 **WHY** → The core purpose and belief that drives everything  
 **HOW** → The unique process and values that deliver the WHY  
 **WHAT** → The tangible products and services that prove the WHY  
-**WHO** → The people served, the team identity, and aspirational self  
+**WHO** → The people served, the team identity, and aspirational self
 
 **Together, these four circles create**:
+
 - Deeper understanding of purpose
 - Stronger customer connections
 - Greater loyalty and engagement
@@ -540,4 +600,3 @@ Organizations that communicate from WHY:
 **Framework Origin**: 2009  
 **Last Updated**: October 8, 2025  
 **Version**: 2.0 - Enhanced with WHO Circle
-

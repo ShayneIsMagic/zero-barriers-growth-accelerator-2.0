@@ -10,11 +10,13 @@
 ### 1️⃣ **Unit Testing: Vitest**
 
 **What It Does:**
+
 - Tests individual functions and components
 - Fast, modern test runner (Jest alternative)
 - Built for Vite/Next.js
 
 **Configuration:**
+
 ```typescript
 File: vitest.config.ts
 Environment: jsdom (browser simulation)
@@ -23,6 +25,7 @@ Coverage: Enabled
 ```
 
 **Commands:**
+
 ```bash
 npm run test              # Run all unit tests
 npm run test:watch        # Watch mode (auto-rerun)
@@ -37,11 +40,13 @@ npm run test:coverage     # Coverage report
 ### 2️⃣ **E2E Testing: Playwright**
 
 **What It Does:**
+
 - Tests complete user flows in real browser
 - Automates clicks, forms, navigation
 - Multi-browser testing (Chrome, Firefox, Safari)
 
 **Configuration:**
+
 ```typescript
 File: playwright.config.ts
 Browsers: Chromium, Firefox, WebKit
@@ -50,6 +55,7 @@ Screenshots: On failure
 ```
 
 **Commands:**
+
 ```bash
 npm run test:e2e          # Run E2E tests
 npm run test:e2e:ui       # Interactive UI mode
@@ -63,11 +69,13 @@ npm run test:all          # Unit + E2E together
 ### 3️⃣ **Component Testing: React Testing Library**
 
 **What It Does:**
+
 - Tests React components in isolation
 - Simulates user interactions
 - Queries DOM like a real user would
 
 **Configuration:**
+
 ```typescript
 File: src/test/utils/test-helpers.ts
 Helpers: renderWithProviders (for AuthContext)
@@ -75,8 +83,9 @@ Setup: src/test/setup.ts (mocks for router, images)
 ```
 
 **Example Test:**
+
 ```typescript
-src/test/example.test.tsx
+src / test / example.test.tsx;
 ```
 
 **Status:** ✅ **INSTALLED & CONFIGURED**
@@ -86,11 +95,13 @@ src/test/example.test.tsx
 ### 4️⃣ **Linting: ESLint**
 
 **What It Does:**
+
 - Catches code errors before runtime
 - Enforces code quality rules
 - Integrates with Next.js best practices
 
 **Configuration:**
+
 ```json
 File: .eslintrc.json
 Rules:
@@ -103,6 +114,7 @@ Rules:
 ```
 
 **Commands:**
+
 ```bash
 npm run lint              # Check for issues
 npm run lint:fix          # Auto-fix issues
@@ -116,11 +128,13 @@ npm run lint:check        # CI-friendly check
 ### 5️⃣ **Type Checking: TypeScript**
 
 **What It Does:**
+
 - Catches type errors at compile time
 - Ensures data structure consistency
 - IDE autocomplete and IntelliSense
 
 **Commands:**
+
 ```bash
 npm run type-check        # Check types (no build)
 ```
@@ -132,11 +146,13 @@ npm run type-check        # Check types (no build)
 ### 6️⃣ **Code Formatting: Prettier**
 
 **What It Does:**
+
 - Auto-formats code consistently
 - Integrated with ESLint
 - Runs on save (VS Code)
 
 **Configuration:**
+
 ```json
 File: .vscode/settings.json
 Format on save: Enabled
@@ -144,6 +160,7 @@ Default formatter: Prettier
 ```
 
 **Commands:**
+
 ```bash
 npm run format            # Format all files
 ```
@@ -157,11 +174,13 @@ npm run format            # Format all files
 ### 1️⃣ **VS Code Debugger**
 
 **What It Does:**
+
 - Set breakpoints in code
 - Step through execution line-by-line
 - Inspect variables in real-time
 
 **Configuration:**
+
 ```json
 File: .vscode/launch.json
 
@@ -176,6 +195,7 @@ Configurations:
 ```
 
 **How to Use:**
+
 1. Set breakpoint (click line number)
 2. Press F5 or click "Run and Debug"
 3. Choose configuration
@@ -188,17 +208,20 @@ Configurations:
 ### 2️⃣ **React DevTools**
 
 **What It Does:**
+
 - Inspect React component tree
 - View component props and state
 - Track re-renders and performance
 
 **Installation:**
+
 ```json
 File: .vscode/extensions.json
 Extension: React DevTools (browser extension)
 ```
 
 **How to Use:**
+
 1. Install browser extension
 2. Open DevTools (F12)
 3. Click "Components" tab
@@ -211,11 +234,13 @@ Extension: React DevTools (browser extension)
 ### 3️⃣ **Console Logging (Structured)**
 
 **What It Does:**
+
 - Strategic console.log statements
 - Color-coded by severity
 - Prefixed with emojis for easy scanning
 
 **Examples in Code:**
+
 ```typescript
 console.log('📊 Phase 1: Content Collection');
 console.log(`✅ Scraped ${wordCount} words`);
@@ -223,6 +248,7 @@ console.error('❌ Database save failed:', error);
 ```
 
 **ESLint Rule:**
+
 ```json
 "no-console": "warn"  // Warns but allows console.log
 ```
@@ -234,11 +260,13 @@ console.error('❌ Database save failed:', error);
 ### 4️⃣ **Network Debugging: Browser DevTools**
 
 **What It Does:**
+
 - Inspect API calls
 - View request/response payloads
 - Check status codes and timing
 
 **How to Use:**
+
 1. Open DevTools (F12)
 2. Click "Network" tab
 3. Filter by "Fetch/XHR"
@@ -251,11 +279,13 @@ console.error('❌ Database save failed:', error);
 ### 5️⃣ **Database Debugging: Prisma Studio**
 
 **What It Does:**
+
 - Visual database browser
 - View/edit table data
 - Run queries interactively
 
 **Command:**
+
 ```bash
 npm run db:studio
 ```
@@ -269,11 +299,13 @@ npm run db:studio
 ### 6️⃣ **API Testing: cURL (Command Line)**
 
 **What It Does:**
+
 - Test API endpoints directly
 - Bypass frontend completely
 - Get raw JSON responses
 
 **Example:**
+
 ```bash
 curl -X POST https://your-site.vercel.app/api/analyze/phase \
   -H "Content-Type: application/json" \
@@ -287,11 +319,13 @@ curl -X POST https://your-site.vercel.app/api/analyze/phase \
 ## 🧪 CUSTOM QA SCRIPTS
 
 **What They Do:**
+
 - Test specific app functionality
 - Integration tests for APIs
 - Stability checks
 
 **Scripts Available:**
+
 ```bash
 npm run qa:components       # Test individual components
 npm run qa:api              # Test API endpoints
@@ -402,6 +436,7 @@ npm run test:trends         # Google Trends integration
 ### **High Priority (Should Add):**
 
 1. **Write E2E Tests for Critical Flows**
+
    ```bash
    - Login flow
    - Phase 1 analysis
@@ -410,6 +445,7 @@ npm run test:trends         # Google Trends integration
    ```
 
 2. **Add Integration Tests**
+
    ```bash
    - API endpoint tests
    - Database operations
@@ -426,6 +462,7 @@ npm run test:trends         # Google Trends integration
 ### **Medium Priority (Nice to Have):**
 
 4. **Write Unit Tests for Utilities**
+
    ```bash
    - Content scraper
    - Markdown generator
@@ -453,6 +490,7 @@ npm run test:trends         # Google Trends integration
 ## ✅ SUMMARY
 
 **QA Tools Installed:**
+
 - ✅ Vitest (unit tests)
 - ✅ Playwright (E2E tests)
 - ✅ React Testing Library
@@ -461,6 +499,7 @@ npm run test:trends         # Google Trends integration
 - ✅ Prettier (formatting)
 
 **Debugging Tools Configured:**
+
 - ✅ VS Code Debugger
 - ✅ React DevTools (browser extension)
 - ✅ Console Logging (extensive)
@@ -469,6 +508,7 @@ npm run test:trends         # Google Trends integration
 - ✅ cURL (API testing)
 
 **Actually Being Used:**
+
 - ✅ Console Logging (primary)
 - ✅ ESLint (continuous)
 - ✅ TypeScript (compile-time)
@@ -476,12 +516,14 @@ npm run test:trends         # Google Trends integration
 - ✅ Browser DevTools (network/console)
 
 **Configured But Underused:**
+
 - ⚠️ Vitest (needs tests written)
 - ⚠️ Playwright (needs tests written)
 - ⚠️ VS Code Debugger (console preferred)
 - ⚠️ Custom QA scripts (may be outdated)
 
 **Missing/Needed:**
+
 - ❌ Automated CI/CD testing
 - ❌ Integration tests
 - ❌ Production error tracking
@@ -493,23 +535,27 @@ npm run test:trends         # Google Trends integration
 ## 🎯 CURRENT TESTING APPROACH
 
 **Manual Testing:**
+
 - Test on live site after deployment
 - Use browser DevTools
 - Check console logs
 - Test API endpoints with cURL
 
 **Code Quality:**
+
 - ESLint catches errors
 - TypeScript prevents type issues
 - Prettier ensures consistency
 
 **Debugging:**
+
 - Extensive console logging
 - Error messages with details
 - API testing with cURL
 - Database inspection with Prisma Studio
 
 **This is functional but could be improved with:**
+
 - Automated test suite
 - CI/CD integration
 - Production monitoring
@@ -518,4 +564,3 @@ npm run test:trends         # Google Trends integration
 ---
 
 **The tools are installed and ready - they just need to be actively used!** ✅
-

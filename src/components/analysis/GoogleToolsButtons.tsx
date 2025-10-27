@@ -2,7 +2,13 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { CheckCircle, Loader2, Play, XCircle } from 'lucide-react';
 import { useState } from 'react';
 
@@ -11,7 +17,10 @@ interface GoogleToolsButtonsProps {
   onToolComplete?: (tool: string, data: any) => void;
 }
 
-export function GoogleToolsButtons({ url, onToolComplete }: GoogleToolsButtonsProps) {
+export function GoogleToolsButtons({
+  url,
+  onToolComplete,
+}: GoogleToolsButtonsProps) {
   const [lighthouseRunning, setLighthouseRunning] = useState(false);
   const [lighthouseData, setLighthouseData] = useState<any>(null);
   const [lighthouseError, setLighthouseError] = useState<string | null>(null);
@@ -28,7 +37,7 @@ export function GoogleToolsButtons({ url, onToolComplete }: GoogleToolsButtonsPr
       const response = await fetch('/api/tools/lighthouse', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url })
+        body: JSON.stringify({ url }),
       });
 
       const data = await response.json();
@@ -54,7 +63,7 @@ export function GoogleToolsButtons({ url, onToolComplete }: GoogleToolsButtonsPr
       const response = await fetch('/api/tools/trends', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ keywords })
+        body: JSON.stringify({ keywords }),
       });
 
       const data = await response.json();
@@ -82,9 +91,13 @@ export function GoogleToolsButtons({ url, onToolComplete }: GoogleToolsButtonsPr
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-base">Google Lighthouse</CardTitle>
-              <CardDescription>Performance, Accessibility, SEO scores</CardDescription>
+              <CardDescription>
+                Performance, Accessibility, SEO scores
+              </CardDescription>
             </div>
-            {lighthouseData && <CheckCircle className="h-5 w-5 text-green-500" />}
+            {lighthouseData && (
+              <CheckCircle className="h-5 w-5 text-green-500" />
+            )}
             {lighthouseError && <XCircle className="h-5 w-5 text-red-500" />}
           </div>
         </CardHeader>
@@ -114,44 +127,70 @@ export function GoogleToolsButtons({ url, onToolComplete }: GoogleToolsButtonsPr
 
           {lighthouseData && (
             <div className="grid grid-cols-2 gap-2 text-sm">
-              <div className="p-2 border rounded">
+              <div className="rounded border p-2">
                 <div className="text-muted-foreground">Performance</div>
-                <div className="text-xl font-bold">{lighthouseData.scores.performance}/100</div>
+                <div className="text-xl font-bold">
+                  {lighthouseData.scores.performance}/100
+                </div>
               </div>
-              <div className="p-2 border rounded">
+              <div className="rounded border p-2">
                 <div className="text-muted-foreground">Accessibility</div>
-                <div className="text-xl font-bold">{lighthouseData.scores.accessibility}/100</div>
+                <div className="text-xl font-bold">
+                  {lighthouseData.scores.accessibility}/100
+                </div>
               </div>
-              <div className="p-2 border rounded">
+              <div className="rounded border p-2">
                 <div className="text-muted-foreground">Best Practices</div>
-                <div className="text-xl font-bold">{lighthouseData.scores.bestPractices}/100</div>
+                <div className="text-xl font-bold">
+                  {lighthouseData.scores.bestPractices}/100
+                </div>
               </div>
-              <div className="p-2 border rounded">
+              <div className="rounded border p-2">
                 <div className="text-muted-foreground">SEO</div>
-                <div className="text-xl font-bold">{lighthouseData.scores.seo}/100</div>
+                <div className="text-xl font-bold">
+                  {lighthouseData.scores.seo}/100
+                </div>
               </div>
             </div>
           )}
 
           {lighthouseError && (
             <div className="space-y-3">
-              <div className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 rounded text-sm text-red-900 dark:text-red-100">
+              <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-900 dark:bg-red-950 dark:text-red-100">
                 ❌ Automated failed: {lighthouseError}
               </div>
-              <div className="p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 rounded">
-                <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+              <div className="rounded border border-blue-200 bg-blue-50 p-4 dark:bg-blue-950">
+                <h4 className="mb-2 font-semibold text-blue-900 dark:text-blue-100">
                   ✋ Manual Fallback - Use This Instead:
                 </h4>
-                <ol className="text-sm text-blue-800 dark:text-blue-200 space-y-2 mb-3">
-                  <li>1. Go to: <a href="https://pagespeed.web.dev/" target="_blank" rel="noopener noreferrer" className="underline font-mono">https://pagespeed.web.dev/</a></li>
-                  <li>2. Enter your URL: <code className="bg-blue-100 dark:bg-blue-900 px-1">{url}</code></li>
+                <ol className="mb-3 space-y-2 text-sm text-blue-800 dark:text-blue-200">
+                  <li>
+                    1. Go to:{' '}
+                    <a
+                      href="https://pagespeed.web.dev/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-mono underline"
+                    >
+                      https://pagespeed.web.dev/
+                    </a>
+                  </li>
+                  <li>
+                    2. Enter your URL:{' '}
+                    <code className="bg-blue-100 px-1 dark:bg-blue-900">
+                      {url}
+                    </code>
+                  </li>
                   <li>3. Click &quot;Analyze&quot;</li>
-                  <li>4. Copy the 4 scores (Performance, Accessibility, Best Practices, SEO)</li>
+                  <li>
+                    4. Copy the 4 scores (Performance, Accessibility, Best
+                    Practices, SEO)
+                  </li>
                   <li>5. Paste into Gemini with this prompt:</li>
                 </ol>
-                <div className="bg-white dark:bg-gray-900 p-3 rounded border text-xs">
+                <div className="rounded border bg-white p-3 text-xs dark:bg-gray-900">
                   <pre className="whitespace-pre-wrap">
-{`Analyze these Lighthouse scores for ${url}:
+                    {`Analyze these Lighthouse scores for ${url}:
 - Performance: [YOUR_SCORE]/100
 - Accessibility: [YOUR_SCORE]/100
 - Best Practices: [YOUR_SCORE]/100
@@ -199,7 +238,9 @@ Provide:
           <Button
             onClick={() => {
               // Extract keywords from URL or use default
-              const domain = new URL(url).hostname.replace('www.', '').split('.')[0];
+              const domain = new URL(url).hostname
+                .replace('www.', '')
+                .split('.')[0];
               runTrends([domain, 'consulting', 'services']);
             }}
             disabled={trendsRunning || !!trendsData}
@@ -226,15 +267,27 @@ Provide:
           {trendsData && (
             <div className="space-y-2 text-sm">
               {trendsData.trends.map((trend: any, i: number) => (
-                <div key={i} className="p-2 border rounded">
+                <div key={i} className="rounded border p-2">
                   <div className="flex items-center justify-between">
                     <span className="font-medium">{trend.keyword}</span>
-                    <Badge variant={trend.trend === 'up' ? 'default' : trend.trend === 'down' ? 'destructive' : 'outline'}>
-                      {trend.trend === 'up' ? '📈 Trending Up' : trend.trend === 'down' ? '📉 Trending Down' : '➡️ Stable'}
+                    <Badge
+                      variant={
+                        trend.trend === 'up'
+                          ? 'default'
+                          : trend.trend === 'down'
+                            ? 'destructive'
+                            : 'outline'
+                      }
+                    >
+                      {trend.trend === 'up'
+                        ? '📈 Trending Up'
+                        : trend.trend === 'down'
+                          ? '📉 Trending Down'
+                          : '➡️ Stable'}
                     </Badge>
                   </div>
                   {trend.currentInterest && (
-                    <div className="text-muted-foreground mt-1">
+                    <div className="mt-1 text-muted-foreground">
                       Interest: {trend.currentInterest}/100
                     </div>
                   )}
@@ -245,23 +298,33 @@ Provide:
 
           {trendsError && (
             <div className="space-y-3">
-              <div className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 rounded text-sm text-red-900 dark:text-red-100">
+              <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-900 dark:bg-red-950 dark:text-red-100">
                 ❌ Automated failed: {trendsError}
               </div>
-              <div className="p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 rounded">
-                <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+              <div className="rounded border border-blue-200 bg-blue-50 p-4 dark:bg-blue-950">
+                <h4 className="mb-2 font-semibold text-blue-900 dark:text-blue-100">
                   ✋ Manual Fallback - Use This Instead:
                 </h4>
-                <ol className="text-sm text-blue-800 dark:text-blue-200 space-y-2 mb-3">
-                  <li>1. Go to: <a href="https://trends.google.com/trends/" target="_blank" rel="noopener noreferrer" className="underline font-mono">https://trends.google.com/trends/</a></li>
+                <ol className="mb-3 space-y-2 text-sm text-blue-800 dark:text-blue-200">
+                  <li>
+                    1. Go to:{' '}
+                    <a
+                      href="https://trends.google.com/trends/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-mono underline"
+                    >
+                      https://trends.google.com/trends/
+                    </a>
+                  </li>
                   <li>2. Enter your main keywords</li>
                   <li>3. Set region and time range (Past 12 months)</li>
                   <li>4. Note the trends and related queries</li>
                   <li>5. Paste into Gemini with this prompt:</li>
                 </ol>
-                <div className="bg-white dark:bg-gray-900 p-3 rounded border text-xs">
+                <div className="rounded border bg-white p-3 text-xs dark:bg-gray-900">
                   <pre className="whitespace-pre-wrap">
-{`Analyze Google Trends data for my keywords:
+                    {`Analyze Google Trends data for my keywords:
 
 Main Keywords Analyzed:
 1. [KEYWORD 1]
@@ -303,15 +366,16 @@ Provide:
       </Card>
 
       {/* Manual Tools Note */}
-      <Card className="bg-blue-50 dark:bg-blue-950 border-blue-200">
+      <Card className="border-blue-200 bg-blue-50 dark:bg-blue-950">
         <CardContent className="pt-6">
           <p className="text-sm text-blue-900 dark:text-blue-100">
-            <strong>Search Console, Analytics & Keyword Planner</strong> require manual setup (OAuth authentication).
-            See <code className="text-xs">MANUAL_GOOGLE_TOOLS_PROMPTS.md</code> for copy/paste prompts.
+            <strong>Search Console, Analytics & Keyword Planner</strong> require
+            manual setup (OAuth authentication). See{' '}
+            <code className="text-xs">MANUAL_GOOGLE_TOOLS_PROMPTS.md</code> for
+            copy/paste prompts.
           </p>
         </CardContent>
       </Card>
     </div>
   );
 }
-

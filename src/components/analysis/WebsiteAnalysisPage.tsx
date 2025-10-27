@@ -2,19 +2,25 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { WebsiteAnalysisResult } from '@/types/analysis';
 import {
-    ArrowRight,
-    Brain,
-    CheckCircle,
-    Globe,
-    Lightbulb,
-    RotateCcw,
-    Star,
-    Target,
-    TrendingUp,
-    Users
+  ArrowRight,
+  Brain,
+  CheckCircle,
+  Globe,
+  Lightbulb,
+  RotateCcw,
+  Star,
+  Target,
+  TrendingUp,
+  Users,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Phase2Button } from './Phase2Button';
@@ -22,7 +28,8 @@ import { WebsiteAnalysisForm } from './WebsiteAnalysisForm';
 import { WebsiteAnalysisResults } from './WebsiteAnalysisResults';
 
 export function WebsiteAnalysisPage() {
-  const [analysisResult, setAnalysisResult] = useState<WebsiteAnalysisResult | null>(null);
+  const [analysisResult, setAnalysisResult] =
+    useState<WebsiteAnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const handleAnalysisComplete = (result: WebsiteAnalysisResult) => {
@@ -41,17 +48,21 @@ export function WebsiteAnalysisPage() {
 
   if (analysisResult) {
     return (
-      <div className="container mx-auto py-8 space-y-8">
+      <div className="container mx-auto space-y-8 py-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-4xl font-bold text-transparent">
               Analysis Results
             </h1>
-            <p className="text-xl text-gray-600 mt-2">
+            <p className="mt-2 text-xl text-gray-600">
               Comprehensive analysis for {analysisResult.url}
             </p>
           </div>
-          <Button onClick={handleNewAnalysis} variant="outline" className="flex items-center gap-2">
+          <Button
+            onClick={handleNewAnalysis}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
             <RotateCcw className="h-4 w-4" />
             New Analysis
           </Button>
@@ -60,48 +71,52 @@ export function WebsiteAnalysisPage() {
         <WebsiteAnalysisResults result={analysisResult} />
 
         {/* Phase 2 Button - Show if Phase 1 is complete but Phase 2 is not */}
-        {(analysisResult as any)?.phase === 1 && (analysisResult as any)?.scrapedContent && (
-          <div className="mt-8">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Brain className="h-5 w-5 text-purple-600" />
-                  Ready for Phase 2: AI Analysis
-                </CardTitle>
-                <CardDescription>
-                  Phase 1 data collection is complete. Run AI analysis to get insights from Golden Circle, Elements of Value, and CliftonStrengths frameworks.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Phase2Button
-                  scrapedContent={(analysisResult as any).scrapedContent}
-                  url={analysisResult.url}
-                  industry="general"
-                  onPhase2Complete={handlePhase2Complete}
-                />
-              </CardContent>
-            </Card>
-          </div>
-        )}
+        {(analysisResult as any)?.phase === 1 &&
+          (analysisResult as any)?.scrapedContent && (
+            <div className="mt-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Brain className="h-5 w-5 text-purple-600" />
+                    Ready for Phase 2: AI Analysis
+                  </CardTitle>
+                  <CardDescription>
+                    Phase 1 data collection is complete. Run AI analysis to get
+                    insights from Golden Circle, Elements of Value, and
+                    CliftonStrengths frameworks.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Phase2Button
+                    scrapedContent={(analysisResult as any).scrapedContent}
+                    url={analysisResult.url}
+                    industry="general"
+                    onPhase2Complete={handlePhase2Complete}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          )}
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-8 space-y-8">
+    <div className="container mx-auto space-y-8 py-8">
       {/* Header */}
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+      <div className="space-y-4 text-center">
+        <h1 className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-4xl font-bold text-transparent">
           Website Analysis
         </h1>
-        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          Analyze any website using the Zero Barriers Growth Accelerator framework.
-          Get comprehensive insights and transformation recommendations.
+        <p className="mx-auto max-w-3xl text-xl text-gray-600">
+          Analyze any website using the Zero Barriers Growth Accelerator
+          framework. Get comprehensive insights and transformation
+          recommendations.
         </p>
       </div>
 
       {/* Framework Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
@@ -110,7 +125,7 @@ export function WebsiteAnalysisPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-600 mb-3">
+            <p className="mb-3 text-sm text-gray-600">
               Simon Sinek&apos;s Why → How → What analysis
             </p>
             <div className="space-y-2">
@@ -138,7 +153,7 @@ export function WebsiteAnalysisPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-600 mb-3">
+            <p className="mb-3 text-sm text-gray-600">
               Consumer and B2B value assessment
             </p>
             <div className="space-y-2">
@@ -166,7 +181,7 @@ export function WebsiteAnalysisPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-600 mb-3">
+            <p className="mb-3 text-sm text-gray-600">
               Strengths domains analysis
             </p>
             <div className="space-y-2">
@@ -194,7 +209,7 @@ export function WebsiteAnalysisPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-600 mb-3">
+            <p className="mb-3 text-sm text-gray-600">
               Messaging and strategy analysis
             </p>
             <div className="space-y-2">
@@ -216,14 +231,15 @@ export function WebsiteAnalysisPage() {
       </div>
 
       {/* Analysis Form */}
-      <Card className="max-w-4xl mx-auto">
+      <Card className="mx-auto max-w-4xl">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Globe className="h-5 w-5" />
             Analyze a Website
           </CardTitle>
           <CardDescription>
-            Enter a website URL to get a comprehensive analysis using proven frameworks
+            Enter a website URL to get a comprehensive analysis using proven
+            frameworks
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -232,7 +248,7 @@ export function WebsiteAnalysisPage() {
       </Card>
 
       {/* Example Analysis */}
-      <div className="max-w-4xl mx-auto">
+      <div className="mx-auto max-w-4xl">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -245,7 +261,7 @@ export function WebsiteAnalysisPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between rounded-lg bg-gray-50 p-4">
                 <div>
                   <h4 className="font-medium">salesforceconsultants.io</h4>
                   <p className="text-sm text-gray-600">Overall Score: 6.2/10</p>
@@ -256,7 +272,7 @@ export function WebsiteAnalysisPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between rounded-lg bg-gray-50 p-4">
                 <div>
                   <h4 className="font-medium">zerobarriers.io</h4>
                   <p className="text-sm text-gray-600">Overall Score: 7.1/10</p>
@@ -272,7 +288,7 @@ export function WebsiteAnalysisPage() {
       </div>
 
       {/* Features */}
-      <div className="max-w-4xl mx-auto">
+      <div className="mx-auto max-w-4xl">
         <Card>
           <CardHeader>
             <CardTitle>What You Get</CardTitle>
@@ -281,9 +297,11 @@ export function WebsiteAnalysisPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div className="space-y-4">
-                <h4 className="font-medium text-green-600">Analysis Includes:</h4>
+                <h4 className="font-medium text-green-600">
+                  Analysis Includes:
+                </h4>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500" />

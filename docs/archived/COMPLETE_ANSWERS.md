@@ -12,6 +12,7 @@
 **Coverage**: Provides 70-80% of all 8 tools combined
 
 **Minimal Stack (90% coverage)**:
+
 1. Google Search Console (40% of data)
 2. Google Lighthouse (30% of data) ← ✅ You have this
 3. Google Trends (20% of data) ← ✅ You have this
@@ -29,6 +30,7 @@
 ### **Answer**: ✅ **YES - 90% Sequential (Safe)**
 
 **Execution Pattern**:
+
 ```typescript
 // CORRECT (what your app does):
 Step 1: Scrape website     (await) → wait for completion
@@ -40,6 +42,7 @@ Total: 3-4 minutes (spread out)
 ```
 
 **Rate Limit Safety**:
+
 - Gemini limit: 60 calls/minute
 - Your usage: 5-9 calls per analysis
 - Spacing: 10-30 seconds between calls
@@ -60,6 +63,7 @@ Total: 3-4 minutes (spread out)
 **Format**: Ranked by urgency and impact
 
 **Example Output**:
+
 ```
 🔴 CRITICAL (Week 1):
   □ Strengthen vision statement (4h)
@@ -90,6 +94,7 @@ Total: 3-4 minutes (spread out)
 **See**: `APP_DEVELOPMENT_BACKLOG.md`
 
 **Top 5 Tasks**:
+
 1. 🔴 Create users in Supabase (5 min) - **DO FIRST**
 2. 🔴 Verify Vercel DATABASE_URL (2 min)
 3. 🟡 Add client backlog to reports (1 hour)
@@ -100,26 +105,29 @@ Total: 3-4 minutes (spread out)
 
 ## 🎯 **SIMPLIFIED ANSWERS**
 
-| Question | Short Answer |
-|----------|--------------|
-| **Need all 8 Google tools?** | ❌ NO - Only need 3 (you have 2) |
-| **Executed separately?** | ✅ YES - Sequential, safe from timeouts |
-| **Prioritized backlog?** | ✅ YES - Created both (app + client) |
+| Question                     | Short Answer                            |
+| ---------------------------- | --------------------------------------- |
+| **Need all 8 Google tools?** | ❌ NO - Only need 3 (you have 2)        |
+| **Executed separately?**     | ✅ YES - Sequential, safe from timeouts |
+| **Prioritized backlog?**     | ✅ YES - Created both (app + client)    |
 
 ---
 
 ## 🚀 **IMMEDIATE NEXT STEPS**
 
 ### **Critical (Do Now - 7 minutes)**:
+
 1. Run `FIX_LOGIN_NOW.sql` in Supabase (5 min)
 2. Verify Vercel DATABASE_URL (2 min)
 
 ### **High Value (This Week - 3 hours)**:
+
 3. Add client-facing backlog to reports (1 hour)
 4. Ensure all AI calls sequential (45 min)
 5. Add analysis history page (1 hour)
 
 ### **Optional (When Ready)**:
+
 6. Google Search Console OAuth (3 hours)
 7. Competitor analysis (4 hours)
 
@@ -130,6 +138,7 @@ Total: 3-4 minutes (spread out)
 **Forget the 8 tools!**
 
 **Just focus on 3:**
+
 1. ✅ Lighthouse (you have it)
 2. ✅ Google Trends (you have it)
 3. 🔧 Search Console (optional - adds 40% more data)
@@ -139,4 +148,3 @@ Total: 3-4 minutes (spread out)
 ---
 
 **Your app is already well-designed for sequential execution! Just need to create the users and you're good to go!** 🎉
-

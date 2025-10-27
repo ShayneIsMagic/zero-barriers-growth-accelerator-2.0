@@ -84,23 +84,26 @@ export class RevenueTrendsAnalysisService {
 
       // Step 3: Run revenue-focused trends analysis
       console.log('🤖 Step 3: Running Revenue-Focused Trends AI analysis...');
-      const analysisResult = await this.runRevenueTrendsAnalysis(scrapedData, coreKeywords, url);
+      const analysisResult = await this.runRevenueTrendsAnalysis(
+        scrapedData,
+        coreKeywords,
+        url
+      );
 
       console.log(`✅ Revenue-Focused Trends analysis completed for: ${url}`);
 
       return {
         success: true,
         url,
-        data: analysisResult
+        data: analysisResult,
       };
-
     } catch (error) {
       console.error('Revenue-Focused Trends analysis failed:', error);
       return {
         success: false,
         url,
         data: {} as any,
-        error: error instanceof Error ? error.message : 'Analysis failed'
+        error: error instanceof Error ? error.message : 'Analysis failed',
       };
     }
   }
@@ -113,10 +116,11 @@ export class RevenueTrendsAnalysisService {
 
     // Extract from title
     if (scrapedData.title) {
-      const titleWords = scrapedData.title.toLowerCase()
+      const titleWords = scrapedData.title
+        .toLowerCase()
         .replace(/[^\w\s]/g, '')
         .split(/\s+/)
-        .filter(word => word.length > 3);
+        .filter((word) => word.length > 3);
       keywords.push(...titleWords);
     }
 
@@ -127,7 +131,7 @@ export class RevenueTrendsAnalysisService {
         .toLowerCase()
         .replace(/[^\w\s]/g, '')
         .split(/\s+/)
-        .filter(word => word.length > 3);
+        .filter((word) => word.length > 3);
       keywords.push(...headingWords);
     }
 
@@ -137,7 +141,7 @@ export class RevenueTrendsAnalysisService {
         .toLowerCase()
         .replace(/[^\w\s]/g, '')
         .split(/\s+/)
-        .filter(word => word.length > 4);
+        .filter((word) => word.length > 4);
       keywords.push(...contentWords);
     }
 
@@ -149,14 +153,22 @@ export class RevenueTrendsAnalysisService {
   /**
    * Run revenue-focused trends analysis using Gemini AI
    */
-  private static async runRevenueTrendsAnalysis(scrapedData: any, coreKeywords: string[], url: string): Promise<any> {
+  private static async runRevenueTrendsAnalysis(
+    scrapedData: any,
+    coreKeywords: string[],
+    url: string
+  ): Promise<any> {
     if (!this.genAI) {
       this.initialize();
     }
 
     const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
 
-    const prompt = this.buildRevenueTrendsPrompt(scrapedData, coreKeywords, url);
+    const prompt = this.buildRevenueTrendsPrompt(
+      scrapedData,
+      coreKeywords,
+      url
+    );
 
     try {
       const result = await model.generateContent(prompt);
@@ -181,7 +193,11 @@ export class RevenueTrendsAnalysisService {
   /**
    * Build revenue-focused trends prompt
    */
-  private static buildRevenueTrendsPrompt(scrapedData: any, coreKeywords: string[], url: string): string {
+  private static buildRevenueTrendsPrompt(
+    scrapedData: any,
+    coreKeywords: string[],
+    url: string
+  ): string {
     return `
 You are a Senior Content Strategy Director. Your goal is to find underserved market demand for the client and identify revenue opportunities through content strategy.
 

@@ -2,11 +2,30 @@
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { BarChart3, Brain, Copy, Download, FileText, History, Loader2, Plus, Save, Target, TrendingUp, Users } from 'lucide-react';
+import {
+  BarChart3,
+  Brain,
+  Copy,
+  Download,
+  FileText,
+  History,
+  Loader2,
+  Plus,
+  Save,
+  Target,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
 import { useState } from 'react';
 
 export function B2CElementsPage() {
@@ -19,7 +38,9 @@ export function B2CElementsPage() {
 
   // Version control state
   const [snapshotId, setSnapshotId] = useState<string | null>(null);
-  const [proposedContentId, setProposedContentId] = useState<string | null>(null);
+  const [proposedContentId, setProposedContentId] = useState<string | null>(
+    null
+  );
   const [isSavingSnapshot, setIsSavingSnapshot] = useState(false);
   const [isCreatingProposed, setIsCreatingProposed] = useState(false);
 
@@ -45,16 +66,19 @@ export function B2CElementsPage() {
         }
       }
 
-      const response = await fetch('/api/analyze/elements-value-b2c-standalone', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          url: url.trim(),
-          proposedContent: proposedContent.trim(),
-          existingContent: existingContent, // Pass scraped content from content-comparison
-          analysisType: 'full'
-        })
-      });
+      const response = await fetch(
+        '/api/analyze/elements-value-b2c-standalone',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            url: url.trim(),
+            proposedContent: proposedContent.trim(),
+            existingContent: existingContent, // Pass scraped content from content-comparison
+            analysisType: 'full',
+          }),
+        }
+      );
 
       // Check if response is JSON
       const contentType = response.headers.get('content-type');
@@ -84,7 +108,10 @@ export function B2CElementsPage() {
 
   const copyAnalysis = () => {
     if (!result) return;
-    const analysisText = typeof result.comparison === 'string' ? result.comparison : JSON.stringify(result.comparison, null, 2);
+    const analysisText =
+      typeof result.comparison === 'string'
+        ? result.comparison
+        : JSON.stringify(result.comparison, null, 2);
     copyToClipboard(analysisText);
   };
 
@@ -124,10 +151,10 @@ export function B2CElementsPage() {
           metadata: {
             wordCount: result.existingData.wordCount,
             keywords: result.existingData.extractedKeywords,
-            headings: result.existingData.headings
+            headings: result.existingData.headings,
           },
-          userId: 'current-user'
-        })
+          userId: 'current-user',
+        }),
       });
 
       const data = await response.json();
@@ -162,8 +189,8 @@ export function B2CElementsPage() {
           snapshotId,
           content: proposedContent.trim(),
           createdBy: 'current-user',
-          status: 'draft'
-        })
+          status: 'draft',
+        }),
       });
 
       const data = await response.json();
@@ -175,7 +202,9 @@ export function B2CElementsPage() {
         setError(data.error || 'Failed to create proposed version');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create proposed version');
+      setError(
+        err instanceof Error ? err.message : 'Failed to create proposed version'
+      );
     } finally {
       setIsCreatingProposed(false);
     }
@@ -195,8 +224,8 @@ export function B2CElementsPage() {
           existingId: snapshotId,
           proposedId: proposedContentId,
           analysisResults: result?.comparison || null,
-          similarityScore: result?.similarityScore || null
-        })
+          similarityScore: result?.similarityScore || null,
+        }),
       });
 
       const data = await response.json();
@@ -207,26 +236,34 @@ export function B2CElementsPage() {
         setError(data.error || 'Failed to create version comparison');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create version comparison');
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Failed to create version comparison'
+      );
     }
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className="mx-auto max-w-7xl space-y-6 p-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-2xl">
             <Users className="h-6 w-6" />
             B2C Elements of Value Analysis
           </CardTitle>
           <CardDescription>
-            Analyze your website using B2C Elements of Value framework - perfect for consumer-focused businesses
+            Analyze your website using B2C Elements of Value framework - perfect
+            for consumer-focused businesses
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* URL Input */}
           <div>
-            <label htmlFor="website-url" className="text-sm font-medium mb-2 block">
+            <label
+              htmlFor="website-url"
+              className="mb-2 block text-sm font-medium"
+            >
               Website URL
             </label>
             <Input
@@ -242,14 +279,17 @@ export function B2CElementsPage() {
               autoComplete="url"
               required
             />
-            <p id="url-help" className="text-xs text-muted-foreground mt-1">
+            <p id="url-help" className="mt-1 text-xs text-muted-foreground">
               Enter the URL of the website you want to analyze
             </p>
           </div>
 
           {/* Proposed Content */}
           <div>
-            <label htmlFor="proposed-content" className="text-sm font-medium mb-2 block">
+            <label
+              htmlFor="proposed-content"
+              className="mb-2 block text-sm font-medium"
+            >
               Proposed New Content (Optional)
             </label>
             <Textarea
@@ -275,14 +315,18 @@ New compelling description that highlights our unique value proposition.
               aria-label="Enter proposed new content for B2C Elements analysis"
               aria-describedby="content-help"
             />
-            <p id="content-help" className="text-xs text-muted-foreground mt-2">
-              💡 Leave empty to just analyze existing content. Add proposed content to see side-by-side comparison.
+            <p id="content-help" className="mt-2 text-xs text-muted-foreground">
+              💡 Leave empty to just analyze existing content. Add proposed
+              content to see side-by-side comparison.
             </p>
           </div>
 
           {/* Paste Scraped Content (from Content-Comparison) */}
           <div>
-            <label htmlFor="scraped-content" className="text-sm font-medium mb-2 block">
+            <label
+              htmlFor="scraped-content"
+              className="mb-2 block text-sm font-medium"
+            >
               Paste Scraped Content (Optional - from Content-Comparison)
             </label>
             <Textarea
@@ -298,33 +342,36 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
               aria-label="Paste scraped content from content-comparison"
               aria-describedby="scraped-help"
             />
-            <p id="scraped-help" className="text-xs text-muted-foreground mt-2">
-              💡 Paste the "Copy Scraped Data" JSON from Content-Comparison page to reuse already-scraped content. This prevents re-scraping.
+            <p id="scraped-help" className="mt-2 text-xs text-muted-foreground">
+              💡 Paste the "Copy Scraped Data" JSON from Content-Comparison page
+              to reuse already-scraped content. This prevents re-scraping.
             </p>
           </div>
 
           {/* What You Get */}
-          <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
-            <h4 className="font-semibold mb-2 text-blue-900 dark:text-blue-100">What You Get:</h4>
-            <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+          <div className="rounded-lg bg-blue-50 p-4 dark:bg-blue-950">
+            <h4 className="mb-2 font-semibold text-blue-900 dark:text-blue-100">
+              What You Get:
+            </h4>
+            <ul className="space-y-1 text-sm text-blue-800 dark:text-blue-200">
               <li className="flex items-start gap-2">
-                <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
+                <span className="mt-1 text-blue-600 dark:text-blue-400">•</span>
                 <span>30 B2C Elements of Value analysis</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
+                <span className="mt-1 text-blue-600 dark:text-blue-400">•</span>
                 <span>Revenue opportunity identification</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
+                <span className="mt-1 text-blue-600 dark:text-blue-400">•</span>
                 <span>Premium pricing strategy recommendations</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
+                <span className="mt-1 text-blue-600 dark:text-blue-400">•</span>
                 <span>Customer satisfaction optimization insights</span>
               </li>
             </ul>
-            <div className="flex gap-4 mt-3 text-xs text-blue-700 dark:text-blue-300">
+            <div className="mt-3 flex gap-4 text-xs text-blue-700 dark:text-blue-300">
               <span>⏱️ 2-3 minutes</span>
               <span>📊 Beginner</span>
               <span>✅ None - just enter your website URL</span>
@@ -353,14 +400,16 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
             ) : (
               <>
                 <Users className="mr-2 h-4 w-4" />
-                {proposedContent ? 'Compare Existing vs. Proposed' : 'Analyze Existing Content'}
+                {proposedContent
+                  ? 'Compare Existing vs. Proposed'
+                  : 'Analyze Existing Content'}
               </>
             )}
           </Button>
 
           {/* Version Control Buttons */}
           {result && (
-            <div className="flex gap-2 pt-4 border-t">
+            <div className="flex gap-2 border-t pt-4">
               <Button
                 onClick={saveSnapshot}
                 disabled={isSavingSnapshot || !!snapshotId}
@@ -382,7 +431,12 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
 
               <Button
                 onClick={createProposedVersion}
-                disabled={isCreatingProposed || !snapshotId || !proposedContent.trim() || !!proposedContentId}
+                disabled={
+                  isCreatingProposed ||
+                  !snapshotId ||
+                  !proposedContent.trim() ||
+                  !!proposedContentId
+                }
                 variant="outline"
                 size="sm"
               >
@@ -394,7 +448,9 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                 ) : (
                   <>
                     <Plus className="mr-2 h-4 w-4" />
-                    {proposedContentId ? 'Version Created' : 'Create Proposed Version'}
+                    {proposedContentId
+                      ? 'Version Created'
+                      : 'Create Proposed Version'}
                   </>
                 )}
               </Button>
@@ -425,14 +481,20 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                     <Brain className="h-6 w-6 text-blue-600" />
                     B2C Elements of Value Analysis
                   </CardTitle>
-                  <CardDescription>30 B2C Elements framework analysis results</CardDescription>
+                  <CardDescription>
+                    30 B2C Elements framework analysis results
+                  </CardDescription>
                 </div>
                 <div className="flex gap-2">
                   <Button onClick={copyAnalysis} variant="outline" size="sm">
                     <Copy className="mr-2 h-4 w-4" />
                     Copy Analysis
                   </Button>
-                  <Button onClick={downloadMarkdown} variant="outline" size="sm">
+                  <Button
+                    onClick={downloadMarkdown}
+                    variant="outline"
+                    size="sm"
+                  >
                     <Download className="mr-2 h-4 w-4" />
                     Download Report
                   </Button>
@@ -442,7 +504,7 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
           </Card>
 
           {/* Side-by-Side Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Left Column - Existing Content */}
             <Card>
               <CardHeader>
@@ -454,15 +516,18 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="bg-muted p-4 rounded-lg">
-                    <h4 className="font-semibold mb-2">Content Summary</h4>
+                  <div className="rounded-lg bg-muted p-4">
+                    <h4 className="mb-2 font-semibold">Content Summary</h4>
                     <p className="text-sm text-muted-foreground">
-                      {result.existing?.wordCount ? `${result.existing.wordCount} words` : 'Content analysis available'}
+                      {result.existing?.wordCount
+                        ? `${result.existing.wordCount} words`
+                        : 'Content analysis available'}
                     </p>
                   </div>
                   <div className="max-h-96 overflow-y-auto">
-                    <pre className="text-xs bg-muted p-3 rounded whitespace-pre-wrap">
-                      {result.existing?.cleanText?.substring(0, 2000) || 'No existing content data available'}
+                    <pre className="whitespace-pre-wrap rounded bg-muted p-3 text-xs">
+                      {result.existing?.cleanText?.substring(0, 2000) ||
+                        'No existing content data available'}
                     </pre>
                   </div>
                 </div>
@@ -477,19 +542,23 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                   Proposed Content
                 </CardTitle>
                 <CardDescription>
-                  {proposedContent ? 'Your proposed new content' : 'No proposed content provided'}
+                  {proposedContent
+                    ? 'Your proposed new content'
+                    : 'No proposed content provided'}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="bg-muted p-4 rounded-lg">
-                    <h4 className="font-semibold mb-2">Content Summary</h4>
+                  <div className="rounded-lg bg-muted p-4">
+                    <h4 className="mb-2 font-semibold">Content Summary</h4>
                     <p className="text-sm text-muted-foreground">
-                      {proposedContent ? `${proposedContent.length} characters` : 'No proposed content provided'}
+                      {proposedContent
+                        ? `${proposedContent.length} characters`
+                        : 'No proposed content provided'}
                     </p>
                   </div>
                   <div className="max-h-96 overflow-y-auto">
-                    <pre className="text-xs bg-muted p-3 rounded whitespace-pre-wrap">
+                    <pre className="whitespace-pre-wrap rounded bg-muted p-3 text-xs">
                       {proposedContent || 'No proposed content provided'}
                     </pre>
                   </div>
@@ -505,26 +574,30 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                 <BarChart3 className="h-6 w-6 text-blue-600" />
                 AI Analysis Results
               </CardTitle>
-              <CardDescription>B2C Elements of Value framework analysis</CardDescription>
+              <CardDescription>
+                B2C Elements of Value framework analysis
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="overview" className="space-y-4">
                 <TabsList className="grid w-full grid-cols-4">
                   <TabsTrigger value="overview">Overview</TabsTrigger>
                   <TabsTrigger value="detailed">Detailed Analysis</TabsTrigger>
-                  <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
+                  <TabsTrigger value="recommendations">
+                    Recommendations
+                  </TabsTrigger>
                   <TabsTrigger value="raw">Raw Data</TabsTrigger>
                 </TabsList>
 
                 {/* Overview Tab */}
                 <TabsContent value="overview" className="space-y-4">
                   {result.comparison && (
-                    <div className="p-6 border rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950">
+                    <div className="rounded-lg border bg-gradient-to-r from-blue-50 to-indigo-50 p-6 dark:from-blue-950 dark:to-indigo-950">
                       <div className="text-center">
-                        <h3 className="text-2xl font-bold text-blue-900 dark:text-blue-100 mb-2">
+                        <h3 className="mb-2 text-2xl font-bold text-blue-900 dark:text-blue-100">
                           B2C Elements of Value Analysis
                         </h3>
-                        <div className="text-lg text-blue-700 dark:text-blue-300 mb-4">
+                        <div className="mb-4 text-lg text-blue-700 dark:text-blue-300">
                           Analysis completed successfully
                         </div>
                       </div>
@@ -534,13 +607,19 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                   {/* AI Analysis Results */}
                   {result.comparison && (
                     <div className="mt-6 space-y-4">
-                      <h3 className="text-xl font-semibold">AI Analysis Results</h3>
+                      <h3 className="text-xl font-semibold">
+                        AI Analysis Results
+                      </h3>
 
                       {/* Show analysis data */}
-                      <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-950">
-                        <h4 className="font-semibold mb-2">B2C Elements of Value Analysis</h4>
-                        <div className="text-sm whitespace-pre-wrap max-h-96 overflow-auto">
-                          {typeof result.comparison === 'string' ? result.comparison : JSON.stringify(result.comparison, null, 2)}
+                      <div className="rounded-lg border bg-blue-50 p-4 dark:bg-blue-950">
+                        <h4 className="mb-2 font-semibold">
+                          B2C Elements of Value Analysis
+                        </h4>
+                        <div className="max-h-96 overflow-auto whitespace-pre-wrap text-sm">
+                          {typeof result.comparison === 'string'
+                            ? result.comparison
+                            : JSON.stringify(result.comparison, null, 2)}
                         </div>
                       </div>
                     </div>
@@ -553,15 +632,20 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                     <CardHeader>
                       <CardTitle>Complete Analysis Data</CardTitle>
                       <CardDescription>
-                        Full analysis results including existing and proposed content
+                        Full analysis results including existing and proposed
+                        content
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        <div className="p-4 border rounded-lg bg-muted/50">
-                          <h4 className="font-semibold mb-2">Full Analysis Results</h4>
-                          <pre className="text-xs whitespace-pre-wrap overflow-auto max-h-96">
-                            {typeof result.comparison === 'string' ? result.comparison : JSON.stringify(result.comparison, null, 2)}
+                        <div className="rounded-lg border bg-muted/50 p-4">
+                          <h4 className="mb-2 font-semibold">
+                            Full Analysis Results
+                          </h4>
+                          <pre className="max-h-96 overflow-auto whitespace-pre-wrap text-xs">
+                            {typeof result.comparison === 'string'
+                              ? result.comparison
+                              : JSON.stringify(result.comparison, null, 2)}
                           </pre>
                         </div>
                       </div>
@@ -578,13 +662,15 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                         Recommendations
                       </CardTitle>
                       <CardDescription>
-                        Actionable insights and improvements based on B2C Elements of Value analysis
+                        Actionable insights and improvements based on B2C
+                        Elements of Value analysis
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
                         <p className="text-sm text-muted-foreground">
-                          Review the analysis results in the Overview tab for specific recommendations and improvements.
+                          Review the analysis results in the Overview tab for
+                          specific recommendations and improvements.
                         </p>
                       </div>
                     </CardContent>
@@ -602,13 +688,19 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        <div className="p-4 border rounded-lg bg-muted/50">
-                          <h4 className="font-semibold mb-2">Complete Raw Data</h4>
-                          <pre className="text-xs whitespace-pre-wrap overflow-auto max-h-96">
+                        <div className="rounded-lg border bg-muted/50 p-4">
+                          <h4 className="mb-2 font-semibold">
+                            Complete Raw Data
+                          </h4>
+                          <pre className="max-h-96 overflow-auto whitespace-pre-wrap text-xs">
                             {JSON.stringify(result, null, 2)}
                           </pre>
                         </div>
-                        <Button onClick={() => copyToClipboard(JSON.stringify(result, null, 2))}>
+                        <Button
+                          onClick={() =>
+                            copyToClipboard(JSON.stringify(result, null, 2))
+                          }
+                        >
                           <Copy className="mr-2 h-4 w-4" />
                           Copy Raw Data
                         </Button>
@@ -641,7 +733,9 @@ function generateB2CMarkdown(result: any): string {
 **Word Count:** ${result.existing?.wordCount || 0}
 **Keywords:** ${result.existing?.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
 
-${result.proposed ? `
+${
+  result.proposed
+    ? `
 ## Proposed Content
 
 **Title:** ${result.proposed?.title || 'N/A'}
@@ -654,7 +748,9 @@ ${result.proposed ? `
 ## B2C Elements Analysis Results
 
 ${typeof result.comparison === 'string' ? result.comparison : JSON.stringify(result.comparison, null, 2)}
-` : ''}
+`
+    : ''
+}
 
 ---
 

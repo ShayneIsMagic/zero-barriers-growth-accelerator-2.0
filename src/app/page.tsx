@@ -1,28 +1,44 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, BarChart3, Shield, Target, Users, Zap } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  ArrowRight,
+  BarChart3,
+  Shield,
+  Target,
+  Users,
+  Zap,
+} from 'lucide-react';
 import Link from 'next/link';
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-
       {/* Hero Section */}
-      <section className="py-20 px-4">
+      <section className="px-4 py-20">
         <div className="container mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white mb-6">
+          <h1 className="mb-6 text-5xl font-bold text-gray-900 dark:text-white md:text-7xl">
             Zero Barriers
             <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Growth Accelerator
             </span>
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-            AI-powered marketing optimization platform that systematically analyzes content
-            to identify growth barriers and provide actionable recommendations.
+          <p className="mx-auto mb-8 max-w-3xl text-xl text-gray-600 dark:text-gray-300">
+            AI-powered marketing optimization platform that systematically
+            analyzes content to identify growth barriers and provide actionable
+            recommendations.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Link href="/dashboard">
-              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              >
                 Start Analysis
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -37,20 +53,21 @@ export default function HomePage() {
       </section>
 
       {/* Features Grid */}
-      <section className="py-20 px-4 bg-white dark:bg-slate-800">
+      <section className="bg-white px-4 py-20 dark:bg-slate-800">
         <div className="container mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">
+          <h2 className="mb-12 text-center text-3xl font-bold text-gray-900 dark:text-white">
             Comprehensive Analysis Framework
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="hover:shadow-lg transition-shadow">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <Card className="transition-shadow hover:shadow-lg">
               <CardHeader>
-                <div className="h-12 w-12 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center mb-4">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-r from-blue-500 to-blue-600">
                   <Target className="h-6 w-6 text-white" />
                 </div>
                 <CardTitle>Golden Circle Analysis</CardTitle>
                 <CardDescription>
-                  Simon Sinek&apos;s framework to identify your Why, How, What, and Who
+                  Simon Sinek&apos;s framework to identify your Why, How, What,
+                  and Who
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -63,14 +80,15 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="transition-shadow hover:shadow-lg">
               <CardHeader>
-                <div className="h-12 w-12 rounded-lg bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center mb-4">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-r from-green-500 to-green-600">
                   <BarChart3 className="h-6 w-6 text-white" />
                 </div>
                 <CardTitle>Elements of Value</CardTitle>
                 <CardDescription>
-                  Harvard Business Review&apos;s 30 B2C and 40 B2B value elements framework
+                  Harvard Business Review&apos;s 30 B2C and 40 B2B value
+                  elements framework
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -83,14 +101,15 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="transition-shadow hover:shadow-lg">
               <CardHeader>
-                <div className="h-12 w-12 rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center mb-4">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-r from-purple-500 to-purple-600">
                   <Users className="h-6 w-6 text-white" />
                 </div>
                 <CardTitle>CliftonStrengths</CardTitle>
                 <CardDescription>
-                  Gallup&apos;s 34-theme strengths assessment for organizational excellence
+                  Gallup&apos;s 34-theme strengths assessment for organizational
+                  excellence
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -107,49 +126,57 @@ export default function HomePage() {
       </section>
 
       {/* Analysis Tools */}
-      <section className="py-20 px-4">
+      <section className="px-4 py-20">
         <div className="container mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">
+          <h2 className="mb-12 text-center text-3xl font-bold text-gray-900 dark:text-white">
             Integrated Analysis Tools
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="text-center hover:shadow-lg transition-shadow">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <Card className="text-center transition-shadow hover:shadow-lg">
               <CardContent className="pt-6">
-                <div className="h-16 w-16 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 flex items-center justify-center mx-auto mb-4">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-orange-600">
                   <Shield className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="font-semibold mb-2">Lighthouse Analysis</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">Performance, SEO, Accessibility, Best Practices</p>
+                <h3 className="mb-2 font-semibold">Lighthouse Analysis</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Performance, SEO, Accessibility, Best Practices
+                </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center hover:shadow-lg transition-shadow">
+            <Card className="text-center transition-shadow hover:shadow-lg">
               <CardContent className="pt-6">
-                <div className="h-16 w-16 rounded-full bg-gradient-to-r from-red-500 to-red-600 flex items-center justify-center mx-auto mb-4">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-red-500 to-red-600">
                   <Target className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="font-semibold mb-2">PageAudit Analysis</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">Technical SEO, Content Quality, User Experience</p>
+                <h3 className="mb-2 font-semibold">PageAudit Analysis</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Technical SEO, Content Quality, User Experience
+                </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center hover:shadow-lg transition-shadow">
+            <Card className="text-center transition-shadow hover:shadow-lg">
               <CardContent className="pt-6">
-                <div className="h-16 w-16 rounded-full bg-gradient-to-r from-teal-500 to-teal-600 flex items-center justify-center mx-auto mb-4">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-teal-500 to-teal-600">
                   <BarChart3 className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="font-semibold mb-2">SEO Analysis</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">Search Console, Keyword Planner, Google Trends</p>
+                <h3 className="mb-2 font-semibold">SEO Analysis</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Search Console, Keyword Planner, Google Trends
+                </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center hover:shadow-lg transition-shadow">
+            <Card className="text-center transition-shadow hover:shadow-lg">
               <CardContent className="pt-6">
-                <div className="h-16 w-16 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 flex items-center justify-center mx-auto mb-4">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600">
                   <Zap className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="font-semibold mb-2">AI Analysis</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">Gemini & Claude AI for content analysis</p>
+                <h3 className="mb-2 font-semibold">AI Analysis</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Gemini & Claude AI for content analysis
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -157,24 +184,32 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-blue-600 to-purple-600">
+      <section className="bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-20">
         <div className="container mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
+          <h2 className="mb-6 text-4xl font-bold text-white">
             Ready to Accelerate Your Growth?
           </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+          <p className="mx-auto mb-8 max-w-2xl text-xl text-blue-100">
             Get comprehensive analysis reports with actionable recommendations
             to eliminate growth barriers and optimize your marketing strategy.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Link href="/dashboard">
-              <Button size="lg" variant="secondary" className="bg-white text-blue-600 hover:bg-gray-100">
+              <Button
+                size="lg"
+                variant="secondary"
+                className="bg-white text-blue-600 hover:bg-gray-100"
+              >
                 Start Free Analysis
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <Link href="/dashboard/executive-reports">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-blue-600"
+              >
                 View Sample Reports
               </Button>
             </Link>

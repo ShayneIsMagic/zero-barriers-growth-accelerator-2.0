@@ -8,19 +8,25 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-    BarChart3,
-    Brain,
-    CheckCircle,
-    Lightbulb,
-    Loader2,
-    Target,
-    TrendingUp,
-    Users,
-    Zap
+  BarChart3,
+  Brain,
+  CheckCircle,
+  Lightbulb,
+  Loader2,
+  Target,
+  TrendingUp,
+  Users,
+  Zap,
 } from 'lucide-react';
 import { useState } from 'react';
 // import { ContentPreviewBox } from './ContentPreviewBox';
@@ -90,7 +96,9 @@ export function SimpleCliftonStrengthsPage() {
       }
     } catch (error) {
       console.error('❌ Content scraping failed:', error);
-      setError(error instanceof Error ? error.message : 'Failed to scrape content');
+      setError(
+        error instanceof Error ? error.message : 'Failed to scrape content'
+      );
     } finally {
       setIsScraping(false);
     }
@@ -106,16 +114,19 @@ export function SimpleCliftonStrengthsPage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/analyze/clifton-strengths-standalone', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          url,
-          scrapedContent
-        }),
-      });
+      const response = await fetch(
+        '/api/analyze/clifton-strengths-standalone',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            url,
+            scrapedContent,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -135,34 +146,45 @@ export function SimpleCliftonStrengthsPage() {
 
   const getDomainIcon = (domain: string) => {
     switch (domain) {
-      case 'Strategic Thinking': return <Brain className="h-5 w-5 text-blue-600" />;
-      case 'Executing': return <Zap className="h-5 w-5 text-green-600" />;
-      case 'Influencing': return <TrendingUp className="h-5 w-5 text-purple-600" />;
-      case 'Relationship Building': return <Users className="h-5 w-5 text-orange-600" />;
-      default: return <BarChart3 className="h-5 w-5 text-gray-600" />;
+      case 'Strategic Thinking':
+        return <Brain className="h-5 w-5 text-blue-600" />;
+      case 'Executing':
+        return <Zap className="h-5 w-5 text-green-600" />;
+      case 'Influencing':
+        return <TrendingUp className="h-5 w-5 text-purple-600" />;
+      case 'Relationship Building':
+        return <Users className="h-5 w-5 text-orange-600" />;
+      default:
+        return <BarChart3 className="h-5 w-5 text-gray-600" />;
     }
   };
 
   const getDomainColor = (domain: string) => {
     switch (domain) {
-      case 'Strategic Thinking': return 'border-blue-200 bg-blue-50 dark:bg-blue-900/10';
-      case 'Executing': return 'border-green-200 bg-green-50 dark:bg-green-900/10';
-      case 'Influencing': return 'border-purple-200 bg-purple-50 dark:bg-purple-900/10';
-      case 'Relationship Building': return 'border-orange-200 bg-orange-50 dark:bg-orange-900/10';
-      default: return 'border-gray-200 bg-gray-50 dark:bg-gray-900/10';
+      case 'Strategic Thinking':
+        return 'border-blue-200 bg-blue-50 dark:bg-blue-900/10';
+      case 'Executing':
+        return 'border-green-200 bg-green-50 dark:bg-green-900/10';
+      case 'Influencing':
+        return 'border-purple-200 bg-purple-50 dark:bg-purple-900/10';
+      case 'Relationship Building':
+        return 'border-orange-200 bg-orange-50 dark:bg-orange-900/10';
+      default:
+        return 'border-gray-200 bg-gray-50 dark:bg-gray-900/10';
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-      <div className="container mx-auto py-8 px-4 max-w-6xl">
+      <div className="container mx-auto max-w-6xl px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="mb-8 text-center">
+          <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-white">
             CliftonStrengths Analysis
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300">
-            Discover your organization's dominant strengths and cultural patterns
+            Discover your organization's dominant strengths and cultural
+            patterns
           </p>
         </div>
 
@@ -174,7 +196,8 @@ export function SimpleCliftonStrengthsPage() {
               Enter Website URL
             </CardTitle>
             <CardDescription>
-              Enter your website URL to analyze organizational strengths using the CliftonStrengths framework
+              Enter your website URL to analyze organizational strengths using
+              the CliftonStrengths framework
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -192,8 +215,9 @@ export function SimpleCliftonStrengthsPage() {
                 aria-describedby="url-help"
                 required
               />
-              <p id="url-help" className="text-xs text-muted-foreground mt-1">
-                Enter the URL of the website you want to analyze for organizational strengths
+              <p id="url-help" className="mt-1 text-xs text-muted-foreground">
+                Enter the URL of the website you want to analyze for
+                organizational strengths
               </p>
             </div>
 
@@ -254,7 +278,8 @@ export function SimpleCliftonStrengthsPage() {
               <CardHeader>
                 <CardTitle>Scraped Content Preview</CardTitle>
                 <CardDescription>
-                  Content successfully scraped from the website. Review the data before running CliftonStrengths analysis.
+                  Content successfully scraped from the website. Review the data
+                  before running CliftonStrengths analysis.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -281,32 +306,52 @@ export function SimpleCliftonStrengthsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                  <div className="text-center p-4 border rounded-lg bg-white dark:bg-gray-800">
-                    <p className="text-3xl font-bold text-green-600">{result.overall_score}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Overall Score</p>
+                <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                  <div className="rounded-lg border bg-white p-4 text-center dark:bg-gray-800">
+                    <p className="text-3xl font-bold text-green-600">
+                      {result.overall_score}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Overall Score
+                    </p>
                   </div>
-                  <div className="text-center p-4 border rounded-lg bg-white dark:bg-gray-800">
-                    <p className="text-3xl font-bold text-blue-600">{result.strategic_thinking_score}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Strategic Thinking</p>
+                  <div className="rounded-lg border bg-white p-4 text-center dark:bg-gray-800">
+                    <p className="text-3xl font-bold text-blue-600">
+                      {result.strategic_thinking_score}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Strategic Thinking
+                    </p>
                   </div>
-                  <div className="text-center p-4 border rounded-lg bg-white dark:bg-gray-800">
-                    <p className="text-3xl font-bold text-green-600">{result.executing_score}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Executing</p>
+                  <div className="rounded-lg border bg-white p-4 text-center dark:bg-gray-800">
+                    <p className="text-3xl font-bold text-green-600">
+                      {result.executing_score}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Executing
+                    </p>
                   </div>
-                  <div className="text-center p-4 border rounded-lg bg-white dark:bg-gray-800">
-                    <p className="text-3xl font-bold text-purple-600">{result.influencing_score}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Influencing</p>
+                  <div className="rounded-lg border bg-white p-4 text-center dark:bg-gray-800">
+                    <p className="text-3xl font-bold text-purple-600">
+                      {result.influencing_score}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Influencing
+                    </p>
                   </div>
                 </div>
 
-                <div className="text-center p-4 border rounded-lg bg-white dark:bg-gray-800">
-                  <p className="text-2xl font-bold text-orange-600">{result.relationship_building_score}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Relationship Building</p>
+                <div className="rounded-lg border bg-white p-4 text-center dark:bg-gray-800">
+                  <p className="text-2xl font-bold text-orange-600">
+                    {result.relationship_building_score}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Relationship Building
+                  </p>
                 </div>
 
                 <div className="mt-4 text-center">
-                  <Badge variant="outline" className="text-lg px-4 py-2">
+                  <Badge variant="outline" className="px-4 py-2 text-lg">
                     Dominant Domain: {result.dominant_domain}
                   </Badge>
                 </div>
@@ -327,29 +372,38 @@ export function SimpleCliftonStrengthsPage() {
               <CardContent>
                 <div className="space-y-4">
                   {result.top_5_themes.map((theme, index) => (
-                    <Card key={index} className={`border-l-4 ${getDomainColor(theme.domain)}`}>
+                    <Card
+                      key={index}
+                      className={`border-l-4 ${getDomainColor(theme.domain)}`}
+                    >
                       <CardContent className="pt-4">
-                        <div className="flex items-center justify-between mb-2">
+                        <div className="mb-2 flex items-center justify-between">
                           <div className="flex items-center space-x-2">
                             {getDomainIcon(theme.domain)}
-                            <h3 className="font-semibold text-lg">{theme.theme_name}</h3>
+                            <h3 className="text-lg font-semibold">
+                              {theme.theme_name}
+                            </h3>
                             <Badge variant="outline">{theme.domain}</Badge>
                           </div>
                           <div className="text-right">
-                            <p className="text-2xl font-bold text-blue-600">{theme.score}</p>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">Score</p>
+                            <p className="text-2xl font-bold text-blue-600">
+                              {theme.score}
+                            </p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">
+                              Score
+                            </p>
                           </div>
                         </div>
 
-                        <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+                        <p className="mb-3 text-sm text-gray-700 dark:text-gray-300">
                           {theme.manifestation}
                         </p>
 
                         <div>
-                          <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                          <p className="mb-1 text-sm font-medium text-gray-600 dark:text-gray-400">
                             Evidence from content:
                           </p>
-                          <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                          <ul className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
                             {theme.evidence.map((evidence, idx) => (
                               <li key={idx} className="flex items-start">
                                 <span className="mr-2">•</span>
@@ -374,25 +428,31 @@ export function SimpleCliftonStrengthsPage() {
                     Recommendations
                   </CardTitle>
                   <CardDescription>
-                    Actionable strategies to leverage your organizational strengths
+                    Actionable strategies to leverage your organizational
+                    strengths
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     {result.recommendations.map((rec, index) => (
-                      <Card key={index} className="border-l-4 border-l-yellow-500">
+                      <Card
+                        key={index}
+                        className="border-l-4 border-l-yellow-500"
+                      >
                         <CardContent className="pt-4">
                           <div className="flex items-start space-x-3">
                             <div className="flex-shrink-0">
-                              <div className="w-8 h-8 bg-yellow-100 dark:bg-yellow-900/20 rounded-full flex items-center justify-center">
-                                <span className="text-yellow-600 font-bold text-sm">{index + 1}</span>
+                              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow-100 dark:bg-yellow-900/20">
+                                <span className="text-sm font-bold text-yellow-600">
+                                  {index + 1}
+                                </span>
                               </div>
                             </div>
                             <div className="flex-1">
-                              <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                              <h4 className="mb-1 font-semibold text-gray-900 dark:text-white">
                                 {rec.theme}
                               </h4>
-                              <p className="text-gray-700 dark:text-gray-300 mb-2">
+                              <p className="mb-2 text-gray-700 dark:text-gray-300">
                                 {rec.action}
                               </p>
                               <p className="text-sm text-gray-600 dark:text-gray-400">

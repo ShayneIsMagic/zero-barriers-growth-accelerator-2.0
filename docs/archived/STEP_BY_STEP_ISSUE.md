@@ -18,7 +18,7 @@ const analyzer = new ThreePhaseAnalyzer(url, (phase, step, progress) => {
   console.log(`📊 ${phase}: ${step} - ${progress}%`);
 });
 
-const result = await analyzer.execute();  // ⚠️ RUNS ALL AT ONCE
+const result = await analyzer.execute(); // ⚠️ RUNS ALL AT ONCE
 ```
 
 ### The `execute()` Method:
@@ -97,6 +97,7 @@ Create three separate endpoints:
 ```
 
 **Flow:**
+
 1. User starts → Call Phase 1 endpoint
 2. Show Phase 1 results → User reviews
 3. User continues → Call Phase 2 endpoint (pass Phase 1 data)
@@ -144,7 +145,7 @@ eventSource.onmessage = (event) => {
     if (confirm('Continue to next phase?')) {
       fetch('/api/analyze/continue', {
         method: 'POST',
-        body: JSON.stringify({ sessionId: data.sessionId })
+        body: JSON.stringify({ sessionId: data.sessionId }),
       });
     }
   }
@@ -160,6 +161,7 @@ eventSource.onmessage = (event) => {
 Create these new files:
 
 #### 1. `/api/analyze/step-by-step/phase1/route.ts`
+
 ```typescript
 export async function POST(request: NextRequest) {
   const { url } = await request.json();
@@ -175,12 +177,13 @@ export async function POST(request: NextRequest) {
     sessionId,
     phase: 1,
     data: phase1,
-    nextPhase: '/api/analyze/step-by-step/phase2'
+    nextPhase: '/api/analyze/step-by-step/phase2',
   });
 }
 ```
 
 #### 2. `/api/analyze/step-by-step/phase2/route.ts`
+
 ```typescript
 export async function POST(request: NextRequest) {
   const { sessionId } = await request.json();
@@ -197,12 +200,13 @@ export async function POST(request: NextRequest) {
     sessionId,
     phase: 2,
     data: phase2,
-    nextPhase: '/api/analyze/step-by-step/phase3'
+    nextPhase: '/api/analyze/step-by-step/phase3',
   });
 }
 ```
 
 #### 3. `/api/analyze/step-by-step/phase3/route.ts`
+
 ```typescript
 export async function POST(request: NextRequest) {
   const { sessionId } = await request.json();
@@ -218,7 +222,7 @@ export async function POST(request: NextRequest) {
     success: true,
     phase: 3,
     data: phase3,
-    complete: true
+    complete: true,
   });
 }
 ```
@@ -236,7 +240,7 @@ const [phase2Data, setPhase2Data] = useState(null);
 const runPhase1 = async () => {
   const res = await fetch('/api/analyze/step-by-step/phase1', {
     method: 'POST',
-    body: JSON.stringify({ url })
+    body: JSON.stringify({ url }),
   });
   const data = await res.json();
   setSessionId(data.sessionId);
@@ -247,7 +251,7 @@ const runPhase1 = async () => {
 const continueToPhase2 = async () => {
   const res = await fetch('/api/analyze/step-by-step/phase2', {
     method: 'POST',
-    body: JSON.stringify({ sessionId })
+    body: JSON.stringify({ sessionId }),
   });
   const data = await res.json();
   setPhase2Data(data.data);
@@ -275,6 +279,7 @@ async execute() {
 ```
 
 There's no:
+
 - ❌ User confirmation between phases
 - ❌ Pause mechanism
 - ❌ State persistence between phases
@@ -283,11 +288,13 @@ There's no:
 ### It's "Batch" not "Step-by-Step"
 
 Current behavior is:
+
 ```
 Batch Analysis = Run everything, wait, get final result
 ```
 
 What you want:
+
 ```
 Step-by-Step = Run step 1, show result, wait for user, run step 2, etc.
 ```
@@ -323,13 +330,17 @@ Step-by-Step = Run step 1, show result, wait for user, run step 2, etc.
 ## Recommendation
 
 ### Short Term:
+
 Rename "Step-by-Step Execution" to "Comprehensive Analysis"
+
 - It's not actually step-by-step
 - It's a complete batch analysis
 - Sets correct expectations
 
 ### Long Term:
+
 Implement Option 1 (separate endpoints)
+
 - True step-by-step experience
 - Better user engagement
 - Allows review between phases
@@ -354,4 +365,3 @@ Implement Option 1 (separate endpoints)
    - Document the actual behavior
 
 **What would you like me to do?**
-

@@ -8,6 +8,7 @@
 ## ✅ YOU'RE RIGHT - I NEED TO FIX, NOT ADD FEATURES
 
 **I apologize for:**
+
 - Claiming things were "complete" without testing
 - Adding features instead of fixing core functionality
 - Not actually verifying Phase 1 works on live site
@@ -43,12 +44,14 @@
 **What Actually Matters:**
 
 ✅ **MUST WORK:**
+
 1. Login
 2. Phase 1: Scrape a website and show content
 3. Phase 2: Run AI analysis on that content
 4. Show results
 
 ❌ **NOT IMPORTANT RIGHT NOW:**
+
 1. Progressive display
 2. Individual tool buttons
 3. Fancy UIs
@@ -60,6 +63,7 @@
 ## 🔧 DEBUGGING PLAN
 
 ### **Step 1: Test Phase 1 API Directly**
+
 ```bash
 curl -X POST https://your-site.vercel.app/api/analyze/phase \
   -H "Content-Type: application/json" \
@@ -67,12 +71,15 @@ curl -X POST https://your-site.vercel.app/api/analyze/phase \
 ```
 
 ### **Step 2: Check Vercel Function Logs**
+
 - Go to Vercel dashboard
 - Find the function execution
 - Read actual error
 
 ### **Step 3: Simplify If Needed**
+
 If Puppeteer doesn't work on Vercel:
+
 - Use simple fetch() instead
 - Get basic content
 - At least something works
@@ -84,6 +91,7 @@ If Puppeteer doesn't work on Vercel:
 **Why isn't Phase 1 working?**
 
 Possible reasons:
+
 1. Puppeteer doesn't work on Vercel (even with chrome-aws-lambda)
 2. Function timeout (even with 60 sec)
 3. Memory limit exceeded

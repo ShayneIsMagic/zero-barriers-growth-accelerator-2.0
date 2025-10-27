@@ -18,12 +18,18 @@ export class FrameworkIntegrationService {
   /**
    * Load framework knowledge from JSON files
    */
-  static async loadFrameworkKnowledge(frameworkName: string): Promise<FrameworkKnowledge> {
+  static async loadFrameworkKnowledge(
+    frameworkName: string
+  ): Promise<FrameworkKnowledge> {
     try {
-      const framework = await import(`./framework-knowledge/${frameworkName}-framework.json`);
+      const framework = await import(
+        `./framework-knowledge/${frameworkName}-framework.json`
+      );
       return framework.default;
     } catch (error) {
-      throw new Error(`Failed to load framework knowledge for ${frameworkName}: ${error}`);
+      throw new Error(
+        `Failed to load framework knowledge for ${frameworkName}: ${error}`
+      );
     }
   }
 
@@ -45,7 +51,8 @@ export class FrameworkIntegrationService {
     // Build the enhanced prompt
     const context = this.buildContext(scrapedData, url);
     const frameworkGuidance = this.buildFrameworkGuidance(frameworkKnowledge);
-    const analysisInstructions = this.buildAnalysisInstructions(frameworkKnowledge);
+    const analysisInstructions =
+      this.buildAnalysisInstructions(frameworkKnowledge);
 
     return `${rules.persona}
 
@@ -70,7 +77,7 @@ ${rules.format}`;
       'elements-value-b2b': 'elements-value-b2b',
       'clifton-strengths': 'clifton-strengths',
       'content-comparison': 'content-comparison',
-      'google-tools': 'google-tools'
+      'google-tools': 'google-tools',
     };
 
     return frameworkMap[assessmentType] || assessmentType;
@@ -79,12 +86,18 @@ ${rules.format}`;
   /**
    * Load assessment rules
    */
-  private static async loadAssessmentRules(assessmentType: string): Promise<any> {
+  private static async loadAssessmentRules(
+    assessmentType: string
+  ): Promise<any> {
     try {
-      const rules = await import(`./assessment-rules/${assessmentType}-rules.json`);
+      const rules = await import(
+        `./assessment-rules/${assessmentType}-rules.json`
+      );
       return rules.default;
     } catch (error) {
-      throw new Error(`Failed to load assessment rules for ${assessmentType}: ${error}`);
+      throw new Error(
+        `Failed to load assessment rules for ${assessmentType}: ${error}`
+      );
     }
   }
 
@@ -103,7 +116,9 @@ Headings: ${JSON.stringify(scrapedData.headings || [])}`;
   /**
    * Build framework-specific guidance
    */
-  private static buildFrameworkGuidance(frameworkKnowledge: FrameworkKnowledge): string {
+  private static buildFrameworkGuidance(
+    frameworkKnowledge: FrameworkKnowledge
+  ): string {
     let guidance = `\nFRAMEWORK KNOWLEDGE: ${frameworkKnowledge.framework_name}
 Creator: ${frameworkKnowledge.creator}
 Core Concept: ${frameworkKnowledge.core_concept}
@@ -140,7 +155,9 @@ Description: ${frameworkKnowledge.description}\n`;
     // Add analysis criteria
     if (frameworkKnowledge.analysis_criteria) {
       guidance += `\nANALYSIS CRITERIA:\n`;
-      for (const [key, value] of Object.entries(frameworkKnowledge.analysis_criteria)) {
+      for (const [key, value] of Object.entries(
+        frameworkKnowledge.analysis_criteria
+      )) {
         if (Array.isArray(value)) {
           guidance += `${key}: ${value.join(', ')}\n`;
         }
@@ -150,7 +167,9 @@ Description: ${frameworkKnowledge.description}\n`;
     // Add revenue opportunities
     if (frameworkKnowledge.revenue_opportunities) {
       guidance += `\nREVENUE OPPORTUNITIES:\n`;
-      for (const [key, value] of Object.entries(frameworkKnowledge.revenue_opportunities)) {
+      for (const [key, value] of Object.entries(
+        frameworkKnowledge.revenue_opportunities
+      )) {
         if (Array.isArray(value)) {
           guidance += `${key}: ${value.join(', ')}\n`;
         }
@@ -163,28 +182,38 @@ Description: ${frameworkKnowledge.description}\n`;
   /**
    * Build analysis instructions based on framework
    */
-  private static buildAnalysisInstructions(frameworkKnowledge: FrameworkKnowledge): string {
+  private static buildAnalysisInstructions(
+    frameworkKnowledge: FrameworkKnowledge
+  ): string {
     let instructions = `\nANALYSIS INSTRUCTIONS:\n`;
 
     // Add methodology if available
     if (frameworkKnowledge.analysis_methodology) {
       if (frameworkKnowledge.analysis_methodology.identification_process) {
         instructions += `\nIDENTIFICATION PROCESS:\n`;
-        frameworkKnowledge.analysis_methodology.identification_process.forEach((step: string, index: number) => {
-          instructions += `${index + 1}. ${step}\n`;
-        });
+        frameworkKnowledge.analysis_methodology.identification_process.forEach(
+          (step: string, index: number) => {
+            instructions += `${index + 1}. ${step}\n`;
+          }
+        );
       }
 
       if (frameworkKnowledge.analysis_methodology.scoring_criteria) {
         instructions += `\nSCORING CRITERIA:\n`;
-        for (const [key, value] of Object.entries(frameworkKnowledge.analysis_methodology.scoring_criteria)) {
+        for (const [key, value] of Object.entries(
+          frameworkKnowledge.analysis_methodology.scoring_criteria
+        )) {
           instructions += `${key}: ${value} points\n`;
         }
       }
 
-      if (frameworkKnowledge.analysis_methodology.revenue_potential_assessment) {
+      if (
+        frameworkKnowledge.analysis_methodology.revenue_potential_assessment
+      ) {
         instructions += `\nREVENUE POTENTIAL ASSESSMENT:\n`;
-        for (const [key, value] of Object.entries(frameworkKnowledge.analysis_methodology.revenue_potential_assessment)) {
+        for (const [key, value] of Object.entries(
+          frameworkKnowledge.analysis_methodology.revenue_potential_assessment
+        )) {
           instructions += `${key}: ${value}\n`;
         }
       }
@@ -233,7 +262,9 @@ Description: ${frameworkKnowledge.description}\n`;
       isValid: true,
       score: 85,
       missingElements: [],
-      recommendations: ['Consider adding more specific revenue impact estimates']
+      recommendations: [
+        'Consider adding more specific revenue impact estimates',
+      ],
     };
   }
 }

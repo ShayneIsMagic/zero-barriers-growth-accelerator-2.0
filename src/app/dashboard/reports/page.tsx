@@ -1,18 +1,24 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 // import { Textarea } from '@/components/ui/textarea'; // Unused import
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  FileText, 
-  Search, 
-  Download, 
-  Eye, 
+import {
+  FileText,
+  Search,
+  Download,
+  Eye,
   // Calendar, // Unused import
   // Clock, // Unused import
   // CheckCircle, // Unused import
@@ -23,7 +29,7 @@ import {
   BarChart3,
   Target,
   Zap,
-  TrendingUp
+  TrendingUp,
 } from 'lucide-react';
 
 interface Phase1Report {
@@ -83,18 +89,24 @@ export default function ReportsPage() {
     try {
       setLoading(true);
       setIsLoadingReports(true);
-      
+
       // Fetch from database API
       const response = await fetch('/api/analysis');
       if (!response.ok) throw new Error('Failed to fetch analyses');
       const data = await response.json();
-      
+
       // Parse and categorize reports by phase
       const analyses = data.analyses || [];
-      const phase1 = analyses.filter((a: any) => a.contentType === 'phase1-complete');
-      const phase2 = analyses.filter((a: any) => a.contentType === 'phase2-complete');
-      const phase3 = analyses.filter((a: any) => a.contentType === 'phase3-complete');
-      
+      const phase1 = analyses.filter(
+        (a: any) => a.contentType === 'phase1-complete'
+      );
+      const phase2 = analyses.filter(
+        (a: any) => a.contentType === 'phase2-complete'
+      );
+      const phase3 = analyses.filter(
+        (a: any) => a.contentType === 'phase3-complete'
+      );
+
       setPhase1Reports(phase1);
       setPhase2Reports(phase2);
       setPhase3Reports(phase3);
@@ -106,19 +118,22 @@ export default function ReportsPage() {
     }
   };
 
-  const filteredPhase1Reports = phase1Reports.filter(report =>
-    report.url.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    report.id.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredPhase1Reports = phase1Reports.filter(
+    (report) =>
+      report.url.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.id.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredPhase2Reports = phase2Reports.filter(report =>
-    report.url.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    report.id.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredPhase2Reports = phase2Reports.filter(
+    (report) =>
+      report.url.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.id.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredPhase3Reports = phase3Reports.filter(report =>
-    report.url.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    report.id.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredPhase3Reports = phase3Reports.filter(
+    (report) =>
+      report.url.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.id.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getScoreColor = (score: number) => {
@@ -133,7 +148,7 @@ export default function ReportsPage() {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
@@ -168,13 +183,16 @@ export default function ReportsPage() {
   };
 
   const generateReportMarkdown = (report: any, phase: string) => {
-    const data = typeof report.content === 'string' ? JSON.parse(report.content) : report.content;
-    
+    const data =
+      typeof report.content === 'string'
+        ? JSON.parse(report.content)
+        : report.content;
+
     let markdown = `# ${phase.toUpperCase()} Analysis Report\n\n`;
     markdown += `**URL:** ${report.url}\n`;
     markdown += `**Generated:** ${formatDate(report.createdAt)}\n`;
     markdown += `**Analysis ID:** ${report.id}\n\n`;
-    
+
     if (phase === 'phase1' && data.summary) {
       markdown += `## Summary\n\n`;
       markdown += `- **Content Words:** ${data.summary.contentWords}\n`;
@@ -183,22 +201,25 @@ export default function ReportsPage() {
       markdown += `- **Accessibility Score:** ${data.summary.accessibilityScore}/100\n`;
       markdown += `- **QA Issues:** ${data.summary.qaIssues}\n\n`;
     }
-    
+
     markdown += `## Full Analysis Data\n\n`;
     markdown += `\`\`\`json\n${JSON.stringify(data, null, 2)}\n\`\`\`\n`;
-    
+
     return markdown;
   };
 
   const ReportCard = ({ report, phase }: { report: any; phase: string }) => {
-    const data = typeof report.content === 'string' ? JSON.parse(report.content) : report.content;
-    
+    const data =
+      typeof report.content === 'string'
+        ? JSON.parse(report.content)
+        : report.content;
+
     return (
-      <Card className="hover:shadow-md transition-shadow">
+      <Card className="transition-shadow hover:shadow-md">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
                 <FileText className="h-5 w-5" />
                 {report.url}
               </CardTitle>
@@ -218,23 +239,31 @@ export default function ReportsPage() {
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="text-gray-500">SEO Score:</span>
-                  <span className={`ml-2 font-semibold ${getScoreColor(data.summary.seoScore)}`}>
+                  <span
+                    className={`ml-2 font-semibold ${getScoreColor(data.summary.seoScore)}`}
+                  >
                     {data.summary.seoScore}/10
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">Performance:</span>
-                  <span className={`ml-2 font-semibold ${getScoreColor(data.summary.performanceScore / 10)}`}>
+                  <span
+                    className={`ml-2 font-semibold ${getScoreColor(data.summary.performanceScore / 10)}`}
+                  >
                     {data.summary.performanceScore}/100
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">Words:</span>
-                  <span className="ml-2 font-semibold">{data.summary.contentWords}</span>
+                  <span className="ml-2 font-semibold">
+                    {data.summary.contentWords}
+                  </span>
                 </div>
                 <div>
                   <span className="text-gray-500">Issues:</span>
-                  <span className="ml-2 font-semibold">{data.summary.qaIssues}</span>
+                  <span className="ml-2 font-semibold">
+                    {data.summary.qaIssues}
+                  </span>
                 </div>
               </div>
             )}
@@ -243,13 +272,17 @@ export default function ReportsPage() {
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="text-gray-500">Golden Circle:</span>
-                  <span className={`ml-2 font-semibold ${getScoreColor(data.goldenCircle.overallScore)}`}>
+                  <span
+                    className={`ml-2 font-semibold ${getScoreColor(data.goldenCircle.overallScore)}`}
+                  >
                     {data.goldenCircle.overallScore}/10
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">B2C Elements:</span>
-                  <span className={`ml-2 font-semibold ${getScoreColor(data.elementsOfValueB2C?.overallScore || 0)}`}>
+                  <span
+                    className={`ml-2 font-semibold ${getScoreColor(data.elementsOfValueB2C?.overallScore || 0)}`}
+                  >
                     {data.elementsOfValueB2C?.overallScore || 0}/10
                   </span>
                 </div>
@@ -259,7 +292,9 @@ export default function ReportsPage() {
             {phase === 'phase3' && data?.comprehensiveReport && (
               <div className="text-sm">
                 <span className="text-gray-500">Comprehensive Analysis:</span>
-                <span className="ml-2 font-semibold text-green-600">Complete</span>
+                <span className="ml-2 font-semibold text-green-600">
+                  Complete
+                </span>
               </div>
             )}
 
@@ -269,15 +304,17 @@ export default function ReportsPage() {
                 variant="outline"
                 onClick={() => setSelectedReport({ ...report, phase, data })}
               >
-                <Eye className="h-4 w-4 mr-1" />
+                <Eye className="mr-1 h-4 w-4" />
                 View
               </Button>
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => downloadReport(report, `${phase}-report-${Date.now()}.json`)}
+                onClick={() =>
+                  downloadReport(report, `${phase}-report-${Date.now()}.json`)
+                }
               >
-                <Download className="h-4 w-4 mr-1" />
+                <Download className="mr-1 h-4 w-4" />
                 JSON
               </Button>
               <Button
@@ -285,7 +322,7 @@ export default function ReportsPage() {
                 variant="outline"
                 onClick={() => downloadMarkdown(report, phase)}
               >
-                <FileText className="h-4 w-4 mr-1" />
+                <FileText className="mr-1 h-4 w-4" />
                 MD
               </Button>
             </div>
@@ -298,9 +335,9 @@ export default function ReportsPage() {
   if (selectedReport) {
     const data = selectedReport.data;
     const phase = selectedReport.phase;
-    
+
     return (
-      <div className="max-w-7xl mx-auto p-6 space-y-6">
+      <div className="mx-auto max-w-7xl space-y-6 p-6">
         <div className="flex items-center justify-between">
           <Button
             variant="outline"
@@ -310,9 +347,7 @@ export default function ReportsPage() {
             ← Back to Reports
           </Button>
           <div className="flex gap-2">
-            <Badge variant="outline">
-              {phase.toUpperCase()} Report
-            </Badge>
+            <Badge variant="outline">{phase.toUpperCase()} Report</Badge>
             <Button
               variant="outline"
               onClick={() => downloadMarkdown(selectedReport, phase)}
@@ -344,49 +379,61 @@ export default function ReportsPage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 {phase === 'phase1' && data?.summary && (
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="p-4 border rounded-lg">
-                      <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <div className="rounded-lg border p-4">
+                      <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold">
                         <Target className="h-5 w-5" />
                         Content Analysis
                       </h3>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                           <span>Content Words:</span>
-                          <span className="font-semibold">{data.summary.contentWords}</span>
+                          <span className="font-semibold">
+                            {data.summary.contentWords}
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span>Images:</span>
-                          <span className="font-semibold">{data.summary.contentImages}</span>
+                          <span className="font-semibold">
+                            {data.summary.contentImages}
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span>Links:</span>
-                          <span className="font-semibold">{data.summary.contentLinks}</span>
+                          <span className="font-semibold">
+                            {data.summary.contentLinks}
+                          </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="p-4 border rounded-lg">
-                      <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                    <div className="rounded-lg border p-4">
+                      <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold">
                         <TrendingUp className="h-5 w-5" />
                         Performance Metrics
                       </h3>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                           <span>SEO Score:</span>
-                          <span className={`font-semibold ${getScoreColor(data.summary.seoScore)}`}>
+                          <span
+                            className={`font-semibold ${getScoreColor(data.summary.seoScore)}`}
+                          >
                             {data.summary.seoScore}/10
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span>Performance:</span>
-                          <span className={`font-semibold ${getScoreColor(data.summary.performanceScore / 10)}`}>
+                          <span
+                            className={`font-semibold ${getScoreColor(data.summary.performanceScore / 10)}`}
+                          >
                             {data.summary.performanceScore}/100
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span>Accessibility:</span>
-                          <span className={`font-semibold ${getScoreColor(data.summary.accessibilityScore / 10)}`}>
+                          <span
+                            className={`font-semibold ${getScoreColor(data.summary.accessibilityScore / 10)}`}
+                          >
                             {data.summary.accessibilityScore}/100
                           </span>
                         </div>
@@ -396,49 +443,59 @@ export default function ReportsPage() {
                 )}
 
                 {phase === 'phase2' && data?.goldenCircle && (
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="p-4 border rounded-lg">
-                      <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <div className="rounded-lg border p-4">
+                      <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold">
                         <Target className="h-5 w-5" />
                         Golden Circle Analysis
                       </h3>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                           <span>Overall Score:</span>
-                          <span className={`font-semibold ${getScoreColor(data.goldenCircle.overallScore)}`}>
+                          <span
+                            className={`font-semibold ${getScoreColor(data.goldenCircle.overallScore)}`}
+                          >
                             {data.goldenCircle.overallScore}/10
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span>Clarity:</span>
-                          <span className={`font-semibold ${getScoreColor(data.goldenCircle.clarity_rating)}`}>
+                          <span
+                            className={`font-semibold ${getScoreColor(data.goldenCircle.clarity_rating)}`}
+                          >
                             {data.goldenCircle.clarity_rating}/10
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span>Authenticity:</span>
-                          <span className={`font-semibold ${getScoreColor(data.goldenCircle.authenticity_rating)}`}>
+                          <span
+                            className={`font-semibold ${getScoreColor(data.goldenCircle.authenticity_rating)}`}
+                          >
                             {data.goldenCircle.authenticity_rating}/10
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="p-4 border rounded-lg">
-                      <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                    <div className="rounded-lg border p-4">
+                      <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold">
                         <Zap className="h-5 w-5" />
                         Elements of Value
                       </h3>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                           <span>B2C Score:</span>
-                          <span className={`font-semibold ${getScoreColor(data.elementsOfValueB2C?.overallScore || 0)}`}>
+                          <span
+                            className={`font-semibold ${getScoreColor(data.elementsOfValueB2C?.overallScore || 0)}`}
+                          >
                             {data.elementsOfValueB2C?.overallScore || 0}/10
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span>B2B Score:</span>
-                          <span className={`font-semibold ${getScoreColor(data.elementsOfValueB2B?.overallScore || 0)}`}>
+                          <span
+                            className={`font-semibold ${getScoreColor(data.elementsOfValueB2B?.overallScore || 0)}`}
+                          >
                             {data.elementsOfValueB2B?.overallScore || 0}/10
                           </span>
                         </div>
@@ -448,13 +505,14 @@ export default function ReportsPage() {
                 )}
 
                 {phase === 'phase3' && data?.comprehensiveAnalysis && (
-                  <div className="p-4 border rounded-lg">
-                    <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                  <div className="rounded-lg border p-4">
+                    <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold">
                       <FileText className="h-5 w-5" />
                       Comprehensive Strategic Analysis
                     </h3>
                     <p className="text-sm text-gray-600">
-                      Complete strategic analysis with recommendations and insights.
+                      Complete strategic analysis with recommendations and
+                      insights.
                     </p>
                   </div>
                 )}
@@ -473,7 +531,7 @@ export default function ReportsPage() {
               </CardHeader>
               <CardContent>
                 <div className="prose dark:prose-invert max-w-none">
-                  <pre className="whitespace-pre-wrap text-sm bg-gray-100 dark:bg-gray-800 p-4 rounded-md max-h-96 overflow-auto">
+                  <pre className="max-h-96 overflow-auto whitespace-pre-wrap rounded-md bg-gray-100 p-4 text-sm dark:bg-gray-800">
                     {JSON.stringify(data, null, 2)}
                   </pre>
                 </div>
@@ -494,7 +552,9 @@ export default function ReportsPage() {
                   </div>
                   <Button
                     variant="outline"
-                    onClick={() => copyToClipboard(JSON.stringify(selectedReport, null, 2))}
+                    onClick={() =>
+                      copyToClipboard(JSON.stringify(selectedReport, null, 2))
+                    }
                   >
                     <Copy className="mr-2 h-4 w-4" />
                     Copy Data
@@ -502,7 +562,7 @@ export default function ReportsPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <pre className="whitespace-pre-wrap text-sm bg-gray-100 dark:bg-gray-800 p-4 rounded-md max-h-96 overflow-auto">
+                <pre className="max-h-96 overflow-auto whitespace-pre-wrap rounded-md bg-gray-100 p-4 text-sm dark:bg-gray-800">
                   {JSON.stringify(selectedReport, null, 2)}
                 </pre>
               </CardContent>
@@ -514,15 +574,16 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className="mx-auto max-w-7xl space-y-6 p-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-2xl">
             <FileText className="h-6 w-6" />
             Analysis Reports
           </CardTitle>
           <CardDescription>
-            View and manage all your website analysis reports by phase. Access detailed insights and download reports.
+            View and manage all your website analysis reports by phase. Access
+            detailed insights and download reports.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -531,7 +592,7 @@ export default function ReportsPage() {
               <label htmlFor="search-reports" className="sr-only">
                 Search reports by URL or report ID
               </label>
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
               <Input
                 id="search-reports"
                 name="search-reports"
@@ -543,8 +604,8 @@ export default function ReportsPage() {
                 aria-label="Search reports by URL or report ID"
               />
             </div>
-            <Button 
-              onClick={fetchReports} 
+            <Button
+              onClick={fetchReports}
               variant="outline"
               disabled={isLoadingReports}
             >
@@ -560,7 +621,7 @@ export default function ReportsPage() {
       {loading && (
         <Card>
           <CardContent className="flex items-center justify-center p-8">
-            <Loader2 className="animate-spin mr-2 h-6 w-6" />
+            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
             <p>Loading reports...</p>
           </CardContent>
         </Card>
@@ -592,12 +653,19 @@ export default function ReportsPage() {
               <Card>
                 <CardContent className="flex items-center justify-center p-8">
                   <div className="text-center">
-                    <FileText className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">No Phase 1 Reports</h3>
-                    <p className="text-gray-500 mb-4">
-                      Run Phase 1 analysis to collect website data, SEO metrics, and performance insights.
+                    <FileText className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                    <h3 className="mb-2 text-lg font-semibold">
+                      No Phase 1 Reports
+                    </h3>
+                    <p className="mb-4 text-gray-500">
+                      Run Phase 1 analysis to collect website data, SEO metrics,
+                      and performance insights.
                     </p>
-                    <Button onClick={() => window.location.href = '/dashboard/analysis'}>
+                    <Button
+                      onClick={() =>
+                        (window.location.href = '/dashboard/analysis')
+                      }
+                    >
                       Start Phase 1 Analysis
                     </Button>
                   </div>
@@ -617,12 +685,19 @@ export default function ReportsPage() {
               <Card>
                 <CardContent className="flex items-center justify-center p-8">
                   <div className="text-center">
-                    <FileText className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">No Phase 2 Reports</h3>
-                    <p className="text-gray-500 mb-4">
-                      Run Phase 2 analysis to perform framework analysis (Golden Circle, Elements of Value, CliftonStrengths).
+                    <FileText className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                    <h3 className="mb-2 text-lg font-semibold">
+                      No Phase 2 Reports
+                    </h3>
+                    <p className="mb-4 text-gray-500">
+                      Run Phase 2 analysis to perform framework analysis (Golden
+                      Circle, Elements of Value, CliftonStrengths).
                     </p>
-                    <Button onClick={() => window.location.href = '/dashboard/phase2'}>
+                    <Button
+                      onClick={() =>
+                        (window.location.href = '/dashboard/phase2')
+                      }
+                    >
                       Start Phase 2
                     </Button>
                   </div>
@@ -642,12 +717,19 @@ export default function ReportsPage() {
               <Card>
                 <CardContent className="flex items-center justify-center p-8">
                   <div className="text-center">
-                    <FileText className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">No Phase 3 Reports</h3>
-                    <p className="text-gray-500 mb-4">
-                      Run Phase 3 analysis to generate comprehensive strategic insights and recommendations.
+                    <FileText className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                    <h3 className="mb-2 text-lg font-semibold">
+                      No Phase 3 Reports
+                    </h3>
+                    <p className="mb-4 text-gray-500">
+                      Run Phase 3 analysis to generate comprehensive strategic
+                      insights and recommendations.
                     </p>
-                    <Button onClick={() => window.location.href = '/dashboard/phase3'}>
+                    <Button
+                      onClick={() =>
+                        (window.location.href = '/dashboard/phase3')
+                      }
+                    >
                       Start Phase 3
                     </Button>
                   </div>

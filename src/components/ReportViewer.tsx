@@ -3,20 +3,26 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-    BarChart3,
-    Clock,
-    Download,
-    ExternalLink,
-    Eye,
-    FileText,
-    Share2,
-    Target,
-    TrendingUp,
-    Users,
-    XCircle
+  BarChart3,
+  Clock,
+  Download,
+  ExternalLink,
+  Eye,
+  FileText,
+  Share2,
+  Target,
+  TrendingUp,
+  Users,
+  XCircle,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -60,14 +66,27 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
       const analysis = await analysisResponse.json();
 
       // Fetch all sub-analyses in parallel
-      const [goldenCircle, eovB2C, eovB2B, cliftonStrengths, lighthouse, seo] = await Promise.all([
-        fetch(`/api/analysis/golden-circle/${analysisId}`).then(r => r.ok ? r.json() : null).catch(() => null),
-        fetch(`/api/analysis/elements-value-b2c/${analysisId}`).then(r => r.ok ? r.json() : null).catch(() => null),
-        fetch(`/api/analysis/elements-value-b2b/${analysisId}`).then(r => r.ok ? r.json() : null).catch(() => null),
-        fetch(`/api/analysis/clifton-strengths/${analysisId}`).then(r => r.ok ? r.json() : null).catch(() => null),
-        fetch(`/api/analysis/lighthouse/${analysisId}`).then(r => r.ok ? r.json() : null).catch(() => null),
-        fetch(`/api/analysis/seo/${analysisId}`).then(r => r.ok ? r.json() : null).catch(() => null)
-      ]);
+      const [goldenCircle, eovB2C, eovB2B, cliftonStrengths, lighthouse, seo] =
+        await Promise.all([
+          fetch(`/api/analysis/golden-circle/${analysisId}`)
+            .then((r) => (r.ok ? r.json() : null))
+            .catch(() => null),
+          fetch(`/api/analysis/elements-value-b2c/${analysisId}`)
+            .then((r) => (r.ok ? r.json() : null))
+            .catch(() => null),
+          fetch(`/api/analysis/elements-value-b2b/${analysisId}`)
+            .then((r) => (r.ok ? r.json() : null))
+            .catch(() => null),
+          fetch(`/api/analysis/clifton-strengths/${analysisId}`)
+            .then((r) => (r.ok ? r.json() : null))
+            .catch(() => null),
+          fetch(`/api/analysis/lighthouse/${analysisId}`)
+            .then((r) => (r.ok ? r.json() : null))
+            .catch(() => null),
+          fetch(`/api/analysis/seo/${analysisId}`)
+            .then((r) => (r.ok ? r.json() : null))
+            .catch(() => null),
+        ]);
 
       setReport({
         id: analysisId,
@@ -79,9 +98,8 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
         elementsOfValueB2B: eovB2B,
         cliftonStrengths,
         lighthouse,
-        seo
+        seo,
       });
-
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load report');
     } finally {
@@ -112,10 +130,12 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
       elementsOfValueB2B: report?.elementsOfValueB2B,
       cliftonStrengths: report?.cliftonStrengths,
       lighthouse: report?.lighthouse,
-      seo: report?.seo
+      seo: report?.seo,
     };
 
-    const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(reportData, null, 2)], {
+      type: 'application/json',
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -130,7 +150,7 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center p-8">
-          <Clock className="animate-spin mr-2" />
+          <Clock className="mr-2 animate-spin" />
           <p>Loading report...</p>
         </CardContent>
       </Card>
@@ -141,9 +161,7 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
     return (
       <Alert variant="destructive">
         <XCircle className="h-4 w-4" />
-        <AlertDescription>
-          {error || 'Failed to load report'}
-        </AlertDescription>
+        <AlertDescription>{error || 'Failed to load report'}</AlertDescription>
       </Alert>
     );
   }
@@ -165,11 +183,11 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
             </div>
             <div className="flex space-x-2">
               <Button onClick={downloadReport} variant="outline">
-                <Download className="h-4 w-4 mr-2" />
+                <Download className="mr-2 h-4 w-4" />
                 Download
               </Button>
               <Button variant="outline">
-                <Share2 className="h-4 w-4 mr-2" />
+                <Share2 className="mr-2 h-4 w-4" />
                 Share
               </Button>
             </div>
@@ -192,20 +210,29 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
             {/* Golden Circle Score */}
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium flex items-center">
-                  <Target className="h-4 w-4 mr-1" />
+                <CardTitle className="flex items-center text-sm font-medium">
+                  <Target className="mr-1 h-4 w-4" />
                   Golden Circle
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {report.goldenCircle ? (
                   <div className="space-y-2">
-                    <div className={`text-2xl font-bold ${getScoreColor(report.goldenCircle.overall_score)}`}>
+                    <div
+                      className={`text-2xl font-bold ${getScoreColor(report.goldenCircle.overall_score)}`}
+                    >
                       {report.goldenCircle.overall_score.toFixed(1)}
                     </div>
-                    <Badge className={getScoreBadge(report.goldenCircle.overall_score)}>
-                      {report.goldenCircle.overall_score >= 80 ? 'Excellent' :
-                       report.goldenCircle.overall_score >= 60 ? 'Good' : 'Needs Work'}
+                    <Badge
+                      className={getScoreBadge(
+                        report.goldenCircle.overall_score
+                      )}
+                    >
+                      {report.goldenCircle.overall_score >= 80
+                        ? 'Excellent'
+                        : report.goldenCircle.overall_score >= 60
+                          ? 'Good'
+                          : 'Needs Work'}
                     </Badge>
                   </div>
                 ) : (
@@ -217,20 +244,29 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
             {/* Elements of Value Score */}
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium flex items-center">
-                  <BarChart3 className="h-4 w-4 mr-1" />
+                <CardTitle className="flex items-center text-sm font-medium">
+                  <BarChart3 className="mr-1 h-4 w-4" />
                   Elements of Value
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {report.elementsOfValueB2C ? (
                   <div className="space-y-2">
-                    <div className={`text-2xl font-bold ${getScoreColor(report.elementsOfValueB2C.overall_score)}`}>
+                    <div
+                      className={`text-2xl font-bold ${getScoreColor(report.elementsOfValueB2C.overall_score)}`}
+                    >
                       {report.elementsOfValueB2C.overall_score.toFixed(1)}
                     </div>
-                    <Badge className={getScoreBadge(report.elementsOfValueB2C.overall_score)}>
-                      {report.elementsOfValueB2C.overall_score >= 80 ? 'Excellent' :
-                       report.elementsOfValueB2C.overall_score >= 60 ? 'Good' : 'Needs Work'}
+                    <Badge
+                      className={getScoreBadge(
+                        report.elementsOfValueB2C.overall_score
+                      )}
+                    >
+                      {report.elementsOfValueB2C.overall_score >= 80
+                        ? 'Excellent'
+                        : report.elementsOfValueB2C.overall_score >= 60
+                          ? 'Good'
+                          : 'Needs Work'}
                     </Badge>
                   </div>
                 ) : (
@@ -242,20 +278,29 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
             {/* CliftonStrengths Score */}
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium flex items-center">
-                  <Users className="h-4 w-4 mr-1" />
+                <CardTitle className="flex items-center text-sm font-medium">
+                  <Users className="mr-1 h-4 w-4" />
                   CliftonStrengths
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {report.cliftonStrengths ? (
                   <div className="space-y-2">
-                    <div className={`text-2xl font-bold ${getScoreColor(report.cliftonStrengths.overall_score)}`}>
+                    <div
+                      className={`text-2xl font-bold ${getScoreColor(report.cliftonStrengths.overall_score)}`}
+                    >
                       {report.cliftonStrengths.overall_score.toFixed(1)}
                     </div>
-                    <Badge className={getScoreBadge(report.cliftonStrengths.overall_score)}>
-                      {report.cliftonStrengths.overall_score >= 80 ? 'Excellent' :
-                       report.cliftonStrengths.overall_score >= 60 ? 'Good' : 'Needs Work'}
+                    <Badge
+                      className={getScoreBadge(
+                        report.cliftonStrengths.overall_score
+                      )}
+                    >
+                      {report.cliftonStrengths.overall_score >= 80
+                        ? 'Excellent'
+                        : report.cliftonStrengths.overall_score >= 60
+                          ? 'Good'
+                          : 'Needs Work'}
                     </Badge>
                   </div>
                 ) : (
@@ -267,20 +312,27 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
             {/* Lighthouse Score */}
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium flex items-center">
-                  <TrendingUp className="h-4 w-4 mr-1" />
+                <CardTitle className="flex items-center text-sm font-medium">
+                  <TrendingUp className="mr-1 h-4 w-4" />
                   Performance
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {report.lighthouse ? (
                   <div className="space-y-2">
-                    <div className={`text-2xl font-bold ${getScoreColor(report.lighthouse.overall_score)}`}>
+                    <div
+                      className={`text-2xl font-bold ${getScoreColor(report.lighthouse.overall_score)}`}
+                    >
                       {report.lighthouse.overall_score.toFixed(1)}
                     </div>
-                    <Badge className={getScoreBadge(report.lighthouse.overall_score)}>
-                      {report.lighthouse.overall_score >= 80 ? 'Excellent' :
-                       report.lighthouse.overall_score >= 60 ? 'Good' : 'Needs Work'}
+                    <Badge
+                      className={getScoreBadge(report.lighthouse.overall_score)}
+                    >
+                      {report.lighthouse.overall_score >= 80
+                        ? 'Excellent'
+                        : report.lighthouse.overall_score >= 60
+                          ? 'Good'
+                          : 'Needs Work'}
                     </Badge>
                   </div>
                 ) : (
@@ -298,15 +350,15 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
             <CardContent>
               <div className="flex flex-wrap gap-2">
                 <Button variant="outline" size="sm">
-                  <Eye className="h-4 w-4 mr-2" />
+                  <Eye className="mr-2 h-4 w-4" />
                   View Full Report
                 </Button>
                 <Button variant="outline" size="sm">
-                  <ExternalLink className="h-4 w-4 mr-2" />
+                  <ExternalLink className="mr-2 h-4 w-4" />
                   Open Website
                 </Button>
                 <Button variant="outline" size="sm" onClick={downloadReport}>
-                  <Download className="h-4 w-4 mr-2" />
+                  <Download className="mr-2 h-4 w-4" />
                   Export Data
                 </Button>
               </div>
@@ -320,38 +372,59 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
               <CardHeader>
                 <CardTitle>Golden Circle Analysis</CardTitle>
                 <CardDescription>
-                  Overall Score: {report.goldenCircle.overall_score.toFixed(1)}/100
+                  Overall Score: {report.goldenCircle.overall_score.toFixed(1)}
+                  /100
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="grid gap-4 md:grid-cols-2">
                     <div>
-                      <h4 className="font-semibold mb-2">WHY - Purpose & Belief</h4>
-                      <p className="text-sm text-gray-600 mb-2">{report.goldenCircle.why?.statement}</p>
+                      <h4 className="mb-2 font-semibold">
+                        WHY - Purpose & Belief
+                      </h4>
+                      <p className="mb-2 text-sm text-gray-600">
+                        {report.goldenCircle.why?.statement}
+                      </p>
                       <div className="text-sm">
-                        <span className="font-medium">Clarity:</span> {report.goldenCircle.why?.clarity_rating}/10
+                        <span className="font-medium">Clarity:</span>{' '}
+                        {report.goldenCircle.why?.clarity_rating}/10
                       </div>
                     </div>
                     <div>
-                      <h4 className="font-semibold mb-2">HOW - Unique Process</h4>
-                      <p className="text-sm text-gray-600 mb-2">{report.goldenCircle.how?.statement}</p>
+                      <h4 className="mb-2 font-semibold">
+                        HOW - Unique Process
+                      </h4>
+                      <p className="mb-2 text-sm text-gray-600">
+                        {report.goldenCircle.how?.statement}
+                      </p>
                       <div className="text-sm">
-                        <span className="font-medium">Uniqueness:</span> {report.goldenCircle.how?.uniqueness_rating}/10
+                        <span className="font-medium">Uniqueness:</span>{' '}
+                        {report.goldenCircle.how?.uniqueness_rating}/10
                       </div>
                     </div>
                     <div>
-                      <h4 className="font-semibold mb-2">WHAT - Products/Services</h4>
-                      <p className="text-sm text-gray-600 mb-2">{report.goldenCircle.what?.statement}</p>
+                      <h4 className="mb-2 font-semibold">
+                        WHAT - Products/Services
+                      </h4>
+                      <p className="mb-2 text-sm text-gray-600">
+                        {report.goldenCircle.what?.statement}
+                      </p>
                       <div className="text-sm">
-                        <span className="font-medium">Clarity:</span> {report.goldenCircle.what?.clarity_rating}/10
+                        <span className="font-medium">Clarity:</span>{' '}
+                        {report.goldenCircle.what?.clarity_rating}/10
                       </div>
                     </div>
                     <div>
-                      <h4 className="font-semibold mb-2">WHO - Target Audience</h4>
-                      <p className="text-sm text-gray-600 mb-2">{report.goldenCircle.who?.statement}</p>
+                      <h4 className="mb-2 font-semibold">
+                        WHO - Target Audience
+                      </h4>
+                      <p className="mb-2 text-sm text-gray-600">
+                        {report.goldenCircle.who?.statement}
+                      </p>
                       <div className="text-sm">
-                        <span className="font-medium">Specificity:</span> {report.goldenCircle.who?.specificity_rating}/10
+                        <span className="font-medium">Specificity:</span>{' '}
+                        {report.goldenCircle.who?.specificity_rating}/10
                       </div>
                     </div>
                   </div>
@@ -374,27 +447,33 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
               <CardHeader>
                 <CardTitle>Elements of Value Analysis</CardTitle>
                 <CardDescription>
-                  B2C Score: {report.elementsOfValueB2C.overall_score.toFixed(1)}/100
+                  B2C Score:{' '}
+                  {report.elementsOfValueB2C.overall_score.toFixed(1)}/100
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {report.elementsOfValueB2C.elements?.slice(0, 6).map((element: any, index: number) => (
-                      <div key={index} className="border rounded-lg p-3">
-                        <div className="flex justify-between items-center mb-2">
-                          <h4 className="font-medium text-sm">
-                            {element.element_name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                          </h4>
-                          <Badge className={getScoreBadge(element.score)}>
-                            {element.score.toFixed(0)}
-                          </Badge>
+                    {report.elementsOfValueB2C.elements
+                      ?.slice(0, 6)
+                      .map((element: any, index: number) => (
+                        <div key={index} className="rounded-lg border p-3">
+                          <div className="mb-2 flex items-center justify-between">
+                            <h4 className="text-sm font-medium">
+                              {element.element_name
+                                .replace(/_/g, ' ')
+                                .replace(/\b\w/g, (l) => l.toUpperCase())}
+                            </h4>
+                            <Badge className={getScoreBadge(element.score)}>
+                              {element.score.toFixed(0)}
+                            </Badge>
+                          </div>
+                          <div className="text-xs text-gray-600">
+                            Category:{' '}
+                            {element.element_category.replace(/_/g, ' ')}
+                          </div>
                         </div>
-                        <div className="text-xs text-gray-600">
-                          Category: {element.element_category.replace(/_/g, ' ')}
-                        </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 </div>
               </CardContent>
@@ -415,25 +494,30 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
               <CardHeader>
                 <CardTitle>CliftonStrengths Analysis</CardTitle>
                 <CardDescription>
-                  Overall Score: {report.cliftonStrengths.overall_score.toFixed(1)}/100
+                  Overall Score:{' '}
+                  {report.cliftonStrengths.overall_score.toFixed(1)}/100
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {report.cliftonStrengths.themes?.slice(0, 6).map((theme: any, index: number) => (
-                      <div key={index} className="border rounded-lg p-3">
-                        <div className="flex justify-between items-center mb-2">
-                          <h4 className="font-medium text-sm">{theme.theme_name}</h4>
-                          <Badge className={getScoreBadge(theme.score)}>
-                            {theme.score.toFixed(0)}
-                          </Badge>
+                    {report.cliftonStrengths.themes
+                      ?.slice(0, 6)
+                      .map((theme: any, index: number) => (
+                        <div key={index} className="rounded-lg border p-3">
+                          <div className="mb-2 flex items-center justify-between">
+                            <h4 className="text-sm font-medium">
+                              {theme.theme_name}
+                            </h4>
+                            <Badge className={getScoreBadge(theme.score)}>
+                              {theme.score.toFixed(0)}
+                            </Badge>
+                          </div>
+                          <div className="text-xs text-gray-600">
+                            Domain: {theme.domain}
+                          </div>
                         </div>
-                        <div className="text-xs text-gray-600">
-                          Domain: {theme.domain}
-                        </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 </div>
               </CardContent>
@@ -454,35 +538,49 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
               <CardHeader>
                 <CardTitle>Technical Performance</CardTitle>
                 <CardDescription>
-                  Lighthouse Score: {report.lighthouse.overall_score.toFixed(1)}/100
+                  Lighthouse Score: {report.lighthouse.overall_score.toFixed(1)}
+                  /100
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <div className="text-center">
-                      <div className={`text-2xl font-bold ${getScoreColor(report.lighthouse.performance_score)}`}>
-                        {report.lighthouse.performance_score?.toFixed(0) || 'N/A'}
+                      <div
+                        className={`text-2xl font-bold ${getScoreColor(report.lighthouse.performance_score)}`}
+                      >
+                        {report.lighthouse.performance_score?.toFixed(0) ||
+                          'N/A'}
                       </div>
                       <div className="text-sm text-gray-600">Performance</div>
                     </div>
                     <div className="text-center">
-                      <div className={`text-2xl font-bold ${getScoreColor(report.lighthouse.accessibility_score)}`}>
-                        {report.lighthouse.accessibility_score?.toFixed(0) || 'N/A'}
+                      <div
+                        className={`text-2xl font-bold ${getScoreColor(report.lighthouse.accessibility_score)}`}
+                      >
+                        {report.lighthouse.accessibility_score?.toFixed(0) ||
+                          'N/A'}
                       </div>
                       <div className="text-sm text-gray-600">Accessibility</div>
                     </div>
                     <div className="text-center">
-                      <div className={`text-2xl font-bold ${getScoreColor(report.lighthouse.seo_score)}`}>
+                      <div
+                        className={`text-2xl font-bold ${getScoreColor(report.lighthouse.seo_score)}`}
+                      >
                         {report.lighthouse.seo_score?.toFixed(0) || 'N/A'}
                       </div>
                       <div className="text-sm text-gray-600">SEO</div>
                     </div>
                     <div className="text-center">
-                      <div className={`text-2xl font-bold ${getScoreColor(report.lighthouse.best_practices_score)}`}>
-                        {report.lighthouse.best_practices_score?.toFixed(0) || 'N/A'}
+                      <div
+                        className={`text-2xl font-bold ${getScoreColor(report.lighthouse.best_practices_score)}`}
+                      >
+                        {report.lighthouse.best_practices_score?.toFixed(0) ||
+                          'N/A'}
                       </div>
-                      <div className="text-sm text-gray-600">Best Practices</div>
+                      <div className="text-sm text-gray-600">
+                        Best Practices
+                      </div>
                     </div>
                   </div>
                 </div>

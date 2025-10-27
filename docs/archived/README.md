@@ -47,24 +47,28 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
 ### **Core Capabilities**
 
 ✅ **4 Working Analysis Tools**:
+
 1. Website Analysis (2-3 minutes)
 2. Comprehensive Analysis (5-7 minutes)
 3. SEO Analysis (3-5 minutes)
 4. Enhanced Analysis (5-10 minutes)
 
 ✅ **Real AI Analysis**:
+
 - Google Gemini API integration (free tier)
 - Anthropic Claude API integration (free tier)
 - No demo data or fallbacks
 - Real insights from actual website content
 
 ✅ **Auto-Saving Reports**:
+
 - All analyses save to localStorage automatically
 - View past analyses on dashboard
 - Export capabilities
 - No data loss
 
 ✅ **Modern UI/UX**:
+
 - Tailwind CSS with custom design system
 - Dark mode support
 - Responsive layout (mobile, tablet, desktop)
@@ -85,6 +89,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
 #### **What It Analyzes**:
 
 **Golden Circle Analysis** (Simon Sinek Framework):
+
 - **WHY**: Core purpose and beliefs
 - **HOW**: Unique approach and differentiators
 - **WHAT**: Products and services offered
@@ -93,6 +98,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
 - **Insights**: Specific recommendations for improvement
 
 **Elements of Value Analysis** (Bain & Company Framework):
+
 - **B2C Elements**: 30 consumer value elements across 4 pyramids:
   - Functional (saves time, reduces effort, etc.)
   - Emotional (reduces anxiety, provides hope, etc.)
@@ -108,6 +114,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
 - **Weighted Analysis**: Importance × delivery scores
 
 **CliftonStrengths Analysis** (Gallup Framework):
+
 - **34 Themes** across 4 domains:
   - Strategic Thinking (analytical, futuristic, ideation, etc.)
   - Executing (achiever, arranger, discipline, etc.)
@@ -118,6 +125,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
 - **Score**: 0-100 for each domain
 
 **Lighthouse Performance Analysis**:
+
 - **Performance**: Load times, Core Web Vitals
 - **Accessibility**: WCAG compliance, screen reader compatibility
 - **Best Practices**: Security, modern standards
@@ -125,6 +133,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
 - **Scores**: 0-100 for each category
 
 #### **Output Structure**:
+
 ```typescript
 {
   id: string;
@@ -132,7 +141,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
   timestamp: Date;
   overallScore: number; // 0-10
   executiveSummary: string;
-  
+
   goldenCircle: {
     why: { currentState, recommendations, evidence, score },
     how: { currentState, recommendations, evidence, score },
@@ -140,7 +149,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
     who: { currentState, recommendations, evidence, score },
     overallScore: number
   },
-  
+
   elementsOfValue: {
     functional: { [element: string]: number },
     emotional: { [element: string]: number },
@@ -149,7 +158,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
     overallScore: number,
     insights: string[]
   },
-  
+
   b2bElements: {
     tableStakes: { score, elements, recommendations },
     functional: { score, elements, recommendations },
@@ -158,7 +167,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
     inspirational: { score, elements, recommendations },
     overallScore: number
   },
-  
+
   cliftonStrengths: {
     strategicThinking: { score, themes, recommendations },
     executing: { score, themes, recommendations },
@@ -166,7 +175,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
     relationshipBuilding: { score, themes, recommendations },
     overallScore: number
   },
-  
+
   transformation: {
     currentState: string,
     desiredState: string,
@@ -174,13 +183,13 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
     opportunities: string[],
     roadmap: { phase, actions, timeline }[]
   },
-  
+
   recommendations: {
     immediate: string[], // Week 1-2
     shortTerm: string[], // Week 3-6
     longTerm: string[]   // Month 2-3
   },
-  
+
   lighthouseAnalysis: {
     scores: { performance, accessibility, bestPractices, seo },
     metrics: { FCP, LCP, TBT, CLS, SI },
@@ -203,6 +212,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
 **Everything from Website Analysis PLUS**:
 
 **PageAudit Technical SEO Audit**:
+
 - **40+ Technical Checks**:
   - Meta tags (title, description, keywords)
   - Header tags (H1-H6 structure)
@@ -216,6 +226,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
   - HTTPS and security
 
 **Google Trends Market Intelligence**:
+
 - **Keyword Trending Analysis**
 - **Seasonal Patterns**
 - **Geographic Interest**
@@ -223,12 +234,14 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
 - **Rising Topics**
 
 **All Pages Performance Analysis**:
+
 - **Multi-page Lighthouse Audits**
 - **Site-wide Performance Metrics**
 - **Consistency Checks**
 - **Navigation Analysis**
 
 **Gemini AI Insights**:
+
 - **Executive Summary**: High-level strategic overview
 - **Key Strengths**: Top 5 competitive advantages
 - **Critical Weaknesses**: Priority issues to address
@@ -237,11 +250,12 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
 - **Success Metrics**: KPIs to track
 
 #### **Output Structure**:
+
 ```typescript
 {
   // Includes all from Website Analysis
   ...websiteAnalysis,
-  
+
   pageAuditAnalysis: {
     technicalSeo: {
       titleTag: { present, length, optimized, recommendations },
@@ -256,7 +270,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
     criticalIssues: string[],
     recommendations: string[]
   },
-  
+
   googleTrends: {
     primaryKeywords: [{
       keyword, interestOverTime, relatedQueries, trending
@@ -265,7 +279,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
     geographicData: any,
     competitiveLandscape: any
   },
-  
+
   allPagesLighthouse: [{
     url: string,
     performance: number,
@@ -273,7 +287,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
     bestPractices: number,
     seo: number
   }],
-  
+
   geminiInsights: {
     executiveSummary: string,
     keyStrengths: string[],
@@ -306,6 +320,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
 #### **What It Analyzes**:
 
 **Google Search Console Integration** (requires setup):
+
 - Current keyword rankings
 - Impressions and clicks
 - CTR analysis
@@ -313,6 +328,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
 - Search queries driving traffic
 
 **Keyword Research** (Google Keyword Planner integration):
+
 - Target keyword identification
 - Search volume estimates
 - Competition analysis
@@ -320,6 +336,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
 - Related keyword opportunities
 
 **Google Trends Analysis**:
+
 - **Trending Keywords**: What's gaining interest
 - **Industry Trends**: Sector-specific insights
 - **Seasonal Patterns**: Time-based opportunities
@@ -327,12 +344,14 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
 - **Related Topics**: Content expansion ideas
 
 **Competitive Analysis**:
+
 - Competitor keyword comparison
 - Content gap analysis
 - Ranking opportunities
 - Differentiation strategies
 
 #### **Output Structure**:
+
 ```typescript
 {
   searchConsole: {
@@ -350,7 +369,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
       avgPosition: number
     }]
   },
-  
+
   keywordResearch: {
     targetKeywords: [{
       keyword: string,
@@ -371,7 +390,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
       searchVolume: number
     }]
   },
-  
+
   competitiveAnalysis: {
     competitors: [{
       url: string,
@@ -388,7 +407,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
     },
     contentGaps: string[]
   },
-  
+
   recommendations: [{
     priority: 'high' | 'medium' | 'low',
     category: string,
@@ -411,12 +430,14 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
 #### **What Makes It Enhanced**:
 
 **Real-Time Progress Tracking**:
+
 - **8 Analysis Steps** with individual progress
 - **Estimated Time Remaining** calculations
 - **Step-by-Step Status Updates**
 - **Error Handling** with retry capability
 
 **Comprehensive Content Collection**:
+
 - **Deep Content Scraping**: Headers, body, navigation, CTAs
 - **Metadata Extraction**: All meta tags, structured data
 - **Technical Analysis**: Scripts, stylesheets, third-party resources
@@ -424,6 +445,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
 - **Performance Data**: Load times, resource sizes
 
 **Actionable Deliverables**:
+
 - **Strategic Positioning Report**: How you're perceived vs. intended
 - **Value Proposition Analysis**: What value you deliver and how to amplify
 - **Competitive Differentiation**: What makes you unique
@@ -443,6 +465,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
 8. **Report Generation** (95-100%): Compile actionable deliverables
 
 #### **Output Structure**:
+
 ```typescript
 {
   id: string,
@@ -450,7 +473,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
   startTime: Date,
   endTime: Date,
   duration: string,
-  
+
   progress: {
     overall: number, // 0-100
     steps: [{
@@ -461,7 +484,7 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
       duration: string
     }]
   },
-  
+
   contentData: {
     title: string,
     metaDescription: string,
@@ -485,13 +508,13 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
       testimonials: [{ quote, author, company }]
     }
   },
-  
+
   // All analysis results from Website Analysis
   ...goldenCircle,
   ...elementsOfValue,
   ...cliftonStrengths,
   ...transformation,
-  
+
   deliverables: {
     strategicReport: {
       positioning: string,
@@ -520,12 +543,14 @@ Zero Barriers Growth Accelerator analyzes websites through multiple proven busin
 
 ### **Golden Circle Framework** (Simon Sinek)
 
-#### **Purpose**: 
+#### **Purpose**:
+
 Understand and articulate your core purpose, approach, and offerings.
 
 #### **Structure**:
 
 **WHY (Purpose & Belief)**:
+
 - Core mission and purpose
 - Belief system and values
 - Emotional connection
@@ -539,6 +564,7 @@ Understand and articulate your core purpose, approach, and offerings.
 - **Recommendations**: How to improve articulation
 
 **HOW (Process & Approach)**:
+
 - Unique methodology
 - Differentiating factors
 - Delivery approach
@@ -551,6 +577,7 @@ Understand and articulate your core purpose, approach, and offerings.
 - **Evidence**: Specific examples from content
 
 **WHAT (Products & Services)**:
+
 - Specific offerings
 - Features and benefits
 - Solutions provided
@@ -562,6 +589,7 @@ Understand and articulate your core purpose, approach, and offerings.
 - **Score Range**: 0-10
 
 **WHO (Target Audience)**:
+
 - Ideal customer profile
 - Pain points addressed
 - Customer journey mapping
@@ -573,6 +601,7 @@ Understand and articulate your core purpose, approach, and offerings.
 - **Score Range**: 0-10
 
 **Overall Assessment**:
+
 - Combined score: Average of WHY, HOW, WHAT, WHO
 - Alignment check: Are all four consistent?
 - Recommendations: Priority improvements
@@ -582,11 +611,13 @@ Understand and articulate your core purpose, approach, and offerings.
 ### **Elements of Value** (Bain & Company)
 
 #### **Purpose**:
+
 Quantify the specific value your business provides to customers across functional, emotional, life-changing, and social dimensions.
 
 #### **B2C Elements** (30 Elements):
 
 **Pyramid Level 1: Functional Value**
+
 - Saves time
 - Simplifies
 - Makes money
@@ -604,6 +635,7 @@ Quantify the specific value your business provides to customers across functiona
 - **Scoring**: 0-10 for each element based on prominence in content
 
 **Pyramid Level 2: Emotional Value**
+
 - Reduces anxiety
 - Rewards me
 - Nostalgia
@@ -617,6 +649,7 @@ Quantify the specific value your business provides to customers across functiona
 - **Scoring**: Weighted higher as emotional connection is harder to achieve
 
 **Pyramid Level 3: Life-Changing Value**
+
 - Provides hope
 - Self-actualization
 - Motivation
@@ -625,18 +658,21 @@ Quantify the specific value your business provides to customers across functiona
 - **Scoring**: Weighted highest as transformational value is rare
 
 **Pyramid Level 4: Social Impact**
+
 - Self-transcendence
 - **Scoring**: Maximum weight as societal impact is the pinnacle
 
 #### **B2B Elements** (40 Elements):
 
 **Category 1: Table Stakes** (Must-haves)
+
 - Meets specifications
 - Acceptable quality
 - Complies with regulations
 - **Scoring**: Binary (present/absent)
 
 **Category 2: Functional Value**
+
 - Improves top-line revenue
 - Reduces bottom-line cost
 - Improves productivity
@@ -646,6 +682,7 @@ Quantify the specific value your business provides to customers across functiona
 - **Scoring**: 0-10 based on quantifiable benefits
 
 **Category 3: Ease of Doing Business**
+
 - Saves time
 - Reduces effort
 - Reduces anxiety
@@ -655,6 +692,7 @@ Quantify the specific value your business provides to customers across functiona
 - **Scoring**: 0-10 based on friction reduction
 
 **Category 4: Individual Value** (Personal benefits to buyer)
+
 - Career advancement
 - Personal network growth
 - Reduces anxiety
@@ -663,6 +701,7 @@ Quantify the specific value your business provides to customers across functiona
 - **Scoring**: 0-10 based on personal benefits articulated
 
 **Category 5: Inspirational Value** (Highest level)
+
 - Vision/future orientation
 - Hope/optimism
 - Social responsibility
@@ -670,6 +709,7 @@ Quantify the specific value your business provides to customers across functiona
 - **Scoring**: 0-10 weighted highest
 
 #### **Calculation Methodology**:
+
 ```typescript
 // Element Score = Presence (0-10) × Importance Weight
 // Category Score = Average of element scores
@@ -686,11 +726,13 @@ Quantify the specific value your business provides to customers across functiona
 ### **CliftonStrengths Framework** (Gallup)
 
 #### **Purpose**:
+
 Identify organizational strengths and team composition based on 34 universal themes of talent.
 
 #### **34 Themes Across 4 Domains**:
 
 **Strategic Thinking Domain** (8 themes):
+
 1. **Analytical**: Logical reasoning, data-driven
 2. **Context**: Historical perspective, learns from past
 3. **Futuristic**: Visionary, forward-thinking
@@ -700,47 +742,23 @@ Identify organizational strengths and team composition based on 34 universal the
 7. **Learner**: Loves learning, continuous improvement
 8. **Strategic**: Finds alternative paths, anticipates obstacles
 
-**Executing Domain** (9 themes):
-9. **Achiever**: Works hard, productive
-10. **Arranger**: Organizes, coordinates
-11. **Belief**: Core values, meaning-driven
-12. **Consistency**: Fairness, balance, equality
-13. **Deliberative**: Careful, vigilant, private
-14. **Discipline**: Organized, structured, timely
-15. **Focus**: Sets direction, follows through
-16. **Responsibility**: Takes ownership, commitment
-17. **Restorative**: Problem-solving, troubleshooting
+**Executing Domain** (9 themes): 9. **Achiever**: Works hard, productive 10. **Arranger**: Organizes, coordinates 11. **Belief**: Core values, meaning-driven 12. **Consistency**: Fairness, balance, equality 13. **Deliberative**: Careful, vigilant, private 14. **Discipline**: Organized, structured, timely 15. **Focus**: Sets direction, follows through 16. **Responsibility**: Takes ownership, commitment 17. **Restorative**: Problem-solving, troubleshooting
 
-**Influencing Domain** (8 themes):
-18. **Activator**: Makes things happen, action-oriented
-19. **Command**: Takes charge, decisive
-20. **Communication**: Expresses ideas clearly
-21. **Competition**: Compares, measures against others
-22. **Maximizer**: Excellence-focused, strengths-based
-23. **Self-Assurance**: Confident in abilities
-24. **Significance**: Wants to make an impact
-25. **Woo**: Wins others over, networking
+**Influencing Domain** (8 themes): 18. **Activator**: Makes things happen, action-oriented 19. **Command**: Takes charge, decisive 20. **Communication**: Expresses ideas clearly 21. **Competition**: Compares, measures against others 22. **Maximizer**: Excellence-focused, strengths-based 23. **Self-Assurance**: Confident in abilities 24. **Significance**: Wants to make an impact 25. **Woo**: Wins others over, networking
 
-**Relationship Building Domain** (9 themes):
-26. **Adaptability**: Flexible, lives in the moment
-27. **Developer**: Sees potential in others
-28. **Connectedness**: Sees links, purpose in events
-29. **Empathy**: Senses others' feelings
-30. **Harmony**: Seeks consensus, avoids conflict
-31. **Includer**: Inclusive, accepting
-32. **Individualization**: Sees uniqueness in each person
-33. **Positivity**: Optimistic, enthusiastic
-34. **Relator**: Builds close relationships
+**Relationship Building Domain** (9 themes): 26. **Adaptability**: Flexible, lives in the moment 27. **Developer**: Sees potential in others 28. **Connectedness**: Sees links, purpose in events 29. **Empathy**: Senses others' feelings 30. **Harmony**: Seeks consensus, avoids conflict 31. **Includer**: Inclusive, accepting 32. **Individualization**: Sees uniqueness in each person 33. **Positivity**: Optimistic, enthusiastic 34. **Relator**: Builds close relationships
 
 #### **Analysis Methodology**:
 
 **Content Scanning**:
+
 - Look for language patterns matching each theme
 - Identify dominant communication style
 - Assess organizational culture signals
 - Evaluate team composition hints
 
 **Scoring System**:
+
 - **0-2**: Theme not evident
 - **3-5**: Theme somewhat present
 - **6-7**: Theme clearly present
@@ -748,6 +766,7 @@ Identify organizational strengths and team composition based on 34 universal the
 - **10**: Theme is core to identity
 
 **Domain Scoring**:
+
 ```typescript
 strategicThinkingScore = average(analytical, context, futuristic, ideation, input, intellection, learner, strategic)
 executingScore = average(9 executing themes)
@@ -757,6 +776,7 @@ overallScore = average(all 4 domains)
 ```
 
 **Insights Generated**:
+
 - **Dominant Themes**: Top 5 organizational strengths
 - **Team Composition**: Suggested team structure
 - **Communication Style**: How to communicate with this organization
@@ -768,11 +788,13 @@ overallScore = average(all 4 domains)
 ### **Lighthouse Performance Framework** (Google)
 
 #### **Purpose**:
+
 Measure technical performance, accessibility, SEO, and best practices.
 
 #### **Core Web Vitals**:
 
 **Performance Metrics**:
+
 - **FCP** (First Contentful Paint): Time to first content (Target: <1.8s)
 - **LCP** (Largest Contentful Paint): Time to main content (Target: <2.5s)
 - **TBT** (Total Blocking Time): Main thread blocking (Target: <200ms)
@@ -780,6 +802,7 @@ Measure technical performance, accessibility, SEO, and best practices.
 - **SI** (Speed Index): How quickly content is visually complete (Target: <3.4s)
 
 **Accessibility Checks** (WCAG 2.1):
+
 - Color contrast ratios
 - ARIA labels and roles
 - Keyboard navigation
@@ -790,6 +813,7 @@ Measure technical performance, accessibility, SEO, and best practices.
 - Focus indicators
 
 **SEO Factors**:
+
 - Meta description presence and length
 - Title tag optimization
 - Mobile-friendly design
@@ -799,6 +823,7 @@ Measure technical performance, accessibility, SEO, and best practices.
 - HTTPS usage
 
 **Best Practices**:
+
 - No browser errors in console
 - HTTPS usage
 - Image aspect ratios
@@ -808,6 +833,7 @@ Measure technical performance, accessibility, SEO, and best practices.
 - Document has a `<title>`
 
 #### **Scoring**:
+
 - Each category: 0-100
 - **0-49**: Poor (Red)
 - **50-89**: Needs improvement (Orange)
@@ -820,6 +846,7 @@ Measure technical performance, accessibility, SEO, and best practices.
 ### **Tech Stack**
 
 **Frontend**:
+
 - **Framework**: Next.js 14.0.4 (App Router)
 - **UI Library**: React 18.3.1
 - **Language**: TypeScript 5.x
@@ -831,6 +858,7 @@ Measure technical performance, accessibility, SEO, and best practices.
 - **Theme**: next-themes for dark mode
 
 **Backend**:
+
 - **Runtime**: Node.js 18-24
 - **API**: Next.js API Routes
 - **tRPC**: Type-safe API layer (optional)
@@ -838,11 +866,13 @@ Measure technical performance, accessibility, SEO, and best practices.
 - **Auth**: Custom JWT-based (demo + real options)
 
 **AI Services**:
+
 - **Google Gemini**: Primary AI (free tier)
 - **Anthropic Claude**: Fallback AI (free tier)
 - **OpenAI GPT-4**: Optional (paid)
 
 **Analysis Tools**:
+
 - **Lighthouse**: Performance and SEO audits
 - **PageAudit**: Technical SEO analysis
 - **Google Trends**: Market intelligence
@@ -996,16 +1026,19 @@ open http://localhost:3000
    - Copy the key
 
 2. **Add to `.env.local`**:
+
 ```env
 GEMINI_API_KEY=your-gemini-api-key-here
 ```
 
 3. **Test**:
+
 ```bash
 npm run setup:ai
 ```
 
-**Quota**: 
+**Quota**:
+
 - Free tier: 60 requests per minute
 - More than enough for analysis
 
@@ -1021,11 +1054,13 @@ npm run setup:ai
    - Copy the key
 
 2. **Add to `.env.local`**:
+
 ```env
 CLAUDE_API_KEY=your-claude-api-key-here
 ```
 
 **Quota**:
+
 - Free tier available
 - Good for testing and development
 
@@ -1040,6 +1075,7 @@ CLAUDE_API_KEY=your-claude-api-key-here
    - Create API key
 
 2. **Add to `.env.local`**:
+
 ```env
 OPENAI_API_KEY=your-openai-api-key-here
 ```
@@ -1088,27 +1124,32 @@ npm run test:trends          # Test Google Trends
 ### **Development Workflow**
 
 1. **Start Dev Server**:
+
 ```bash
 npm run dev
 ```
 
 2. **Make Changes**:
+
 - Edit files in `src/`
 - Hot reload automatically applies changes
 - Check browser for updates
 
 3. **Test Build**:
+
 ```bash
 npm run build
 ```
 
 4. **Format & Lint**:
+
 ```bash
 npm run format
 npm run lint
 ```
 
 5. **Commit**:
+
 ```bash
 git add .
 git commit -m "Description of changes"
@@ -1131,6 +1172,7 @@ git push
 Analyzes a website using Golden Circle, Elements of Value, and CliftonStrengths frameworks.
 
 **Request**:
+
 ```json
 {
   "url": "https://example.com",
@@ -1140,6 +1182,7 @@ Analyzes a website using Golden Circle, Elements of Value, and CliftonStrengths 
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -1172,6 +1215,7 @@ Analyzes a website using Golden Circle, Elements of Value, and CliftonStrengths 
 Full analysis including technical SEO, performance, and market intelligence.
 
 **Request**:
+
 ```json
 {
   "url": "https://example.com",
@@ -1183,13 +1227,14 @@ Full analysis including technical SEO, performance, and market intelligence.
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
   "data": {
     // All from website analysis
     ...websiteAnalysis,
-    
+
     // Plus comprehensive additions
     "pageAuditAnalysis": { ... },
     "googleTrends": { ... },
@@ -1210,6 +1255,7 @@ Full analysis including technical SEO, performance, and market intelligence.
 SEO-focused analysis with keyword research and trends.
 
 **Request**:
+
 ```json
 {
   "url": "https://example.com",
@@ -1222,6 +1268,7 @@ SEO-focused analysis with keyword research and trends.
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -1252,6 +1299,7 @@ SEO-focused analysis with keyword research and trends.
 Enhanced analysis with real-time progress tracking.
 
 **Request**:
+
 ```json
 {
   "url": "https://example.com",
@@ -1261,6 +1309,7 @@ Enhanced analysis with real-time progress tracking.
 ```
 
 **Response**: (Streaming or final)
+
 ```json
 {
   "success": true,
@@ -1300,6 +1349,7 @@ All APIs return consistent error format:
 ```
 
 **Common Error Codes**:
+
 - `AI_SERVICE_UNAVAILABLE`: No AI APIs configured
 - `VALIDATION_ERROR`: Invalid request data
 - `ANALYSIS_FAILED`: AI analysis error
@@ -1343,10 +1393,11 @@ NODE_ENV=development  # development | production | test
 ### **TypeScript Configuration**
 
 `tsconfig.json`:
+
 ```json
 {
   "compilerOptions": {
-    "strict": false,  // Disabled for faster development
+    "strict": false, // Disabled for faster development
     "skipLibCheck": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -1364,18 +1415,19 @@ NODE_ENV=development  # development | production | test
 ### **Next.js Configuration**
 
 `next.config.js`:
+
 ```javascript
 {
   // Skip type checking during build (for speed)
   typescript: {
     ignoreBuildErrors: true
   },
-  
+
   // Skip linting during build
   eslint: {
     ignoreDuringBuilds: true
   },
-  
+
   // Image optimization
   images: {
     remotePatterns: [
@@ -1383,7 +1435,7 @@ NODE_ENV=development  # development | production | test
       { protocol: 'https', hostname: 'www.google.com' }
     ]
   },
-  
+
   // Performance
   compress: true,
   poweredByHeader: false
@@ -1398,18 +1450,18 @@ NODE_ENV=development  # development | production | test
 
 ```json
 {
-  "@anthropic-ai/sdk": "^0.65.0",        // Claude AI
-  "@google/generative-ai": "^0.24.1",    // Gemini AI
-  "next": "14.0.4",                       // React framework
-  "react": "^18.3.1",                     // UI library
-  "typescript": "^5",                     // Type safety
-  "tailwindcss": "^3.3.0",               // CSS framework
-  "lucide-react": "^0.294.0",            // Icons
-  "zod": "^3.22.4",                      // Schema validation
-  "cheerio": "^1.1.2",                   // HTML parsing
-  "puppeteer": "^24.22.0",               // Web scraping
-  "google-trends-api": "^4.9.2",         // Trends data
-  "@radix-ui/*": "latest"                // UI primitives (28 packages)
+  "@anthropic-ai/sdk": "^0.65.0", // Claude AI
+  "@google/generative-ai": "^0.24.1", // Gemini AI
+  "next": "14.0.4", // React framework
+  "react": "^18.3.1", // UI library
+  "typescript": "^5", // Type safety
+  "tailwindcss": "^3.3.0", // CSS framework
+  "lucide-react": "^0.294.0", // Icons
+  "zod": "^3.22.4", // Schema validation
+  "cheerio": "^1.1.2", // HTML parsing
+  "puppeteer": "^24.22.0", // Web scraping
+  "google-trends-api": "^4.9.2", // Trends data
+  "@radix-ui/*": "latest" // UI primitives (28 packages)
 }
 ```
 
@@ -1421,9 +1473,9 @@ NODE_ENV=development  # development | production | test
   "@types/react": "^18",
   "eslint": "^8",
   "prettier": "^3",
-  "lighthouse": "^12.8.2",              // Performance auditing
-  "playwright": "^1.55.0",              // E2E testing
-  "vitest": "^1.0.0"                    // Unit testing
+  "lighthouse": "^12.8.2", // Performance auditing
+  "playwright": "^1.55.0", // E2E testing
+  "vitest": "^1.0.0" // Unit testing
 }
 ```
 
@@ -1439,17 +1491,12 @@ NODE_ENV=development  # development | production | test
 
 ```css
 /* Primary Colors */
---growth-500: #0ea5e9  /* Primary brand color */
---success-500: #22c55e  /* Success states */
---warning-500: #f59e0b  /* Warnings */
---barrier-500: #ef4444  /* Errors/barriers */
-
-/* Semantic Colors */
---primary: hsl(199 89% 48%)
---background: hsl(0 0% 100%)  /* Light mode */
---background-dark: hsl(222.2 84% 4.9%)  /* Dark mode */
---foreground: hsl(222.2 84% 4.9%)
---muted: hsl(210 40% 96%)
+--growth-500: #0ea5e9 /* Primary brand color */ --success-500: #22c55e
+  /* Success states */ --warning-500: #f59e0b /* Warnings */
+  --barrier-500: #ef4444 /* Errors/barriers */ /* Semantic Colors */
+  --primary: hsl(199 89% 48%) --background: hsl(0 0% 100%) /* Light mode */
+  --background-dark: hsl(222.2 84% 4.9%) /* Dark mode */
+  --foreground: hsl(222.2 84% 4.9%) --muted: hsl(210 40% 96%);
 ```
 
 ### **Typography**
@@ -1462,12 +1509,14 @@ NODE_ENV=development  # development | production | test
 ### **Components**
 
 All components built with **Radix UI primitives** (shadcn/ui):
+
 - Accessible by default
 - Keyboard navigable
 - Screen reader compatible
 - Customizable with Tailwind
 
 **Available Components** (28):
+
 - Button, Card, Input, Select, Textarea
 - Alert, Badge, Dialog, Dropdown, Tabs
 - Progress, Tooltip, Accordion, Separator
@@ -1610,12 +1659,13 @@ node --version  # Should be 18.x, 20.x, 22.x, or 24.x
 ```
 
 **Fix**:
+
 ```javascript
 // Clear localStorage
-localStorage.clear()
+localStorage.clear();
 
 // Check quota
-console.log(JSON.stringify(localStorage).length)
+console.log(JSON.stringify(localStorage).length);
 ```
 
 ---
@@ -1661,11 +1711,13 @@ This project is private and proprietary.
 ## 🙏 Acknowledgments
 
 ### **Frameworks**:
+
 - **Simon Sinek** - Golden Circle framework
 - **Bain & Company** - Elements of Value methodology
 - **Gallup** - CliftonStrengths assessment
 
 ### **Technologies**:
+
 - **Vercel** - Next.js framework and hosting
 - **Google** - Gemini AI, Lighthouse, Trends
 - **Anthropic** - Claude AI
@@ -1712,5 +1764,6 @@ This project is private and proprietary.
 **Version**: 2.0.0  
 **Status**: ✅ Production Ready  
 **Repository**: https://github.com/ShayneIsMagic/zero-barriers-growth-accelerator-v2
+
 <!-- Preview deploy test - Mon Oct 13 16:18:25 MDT 2025 -->
 <!-- Force deployment - Mon Oct 13 17:04:35 MDT 2025 -->

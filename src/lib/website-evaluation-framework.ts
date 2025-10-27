@@ -1,7 +1,7 @@
 /**
  * Website Evaluation Framework 2025
  * A Comprehensive Standard for Judging Web Performance
- * 
+ *
  * Based on the comprehensive judging worksheet provided by the user
  */
 
@@ -23,7 +23,13 @@ export interface WebsiteEvaluationResult {
   priorityRecommendations: string[];
   quickWins: string[];
   criticalIssues: string[];
-  rating: 'World-class' | 'Excellent' | 'Good' | 'Acceptable' | 'Below Average' | 'Critical';
+  rating:
+    | 'World-class'
+    | 'Excellent'
+    | 'Good'
+    | 'Acceptable'
+    | 'Below Average'
+    | 'Critical';
 }
 
 export interface CategoryScore {
@@ -47,7 +53,12 @@ export class WebsiteEvaluationFramework {
   private lighthouseData: any;
   private pageAuditData: any;
 
-  constructor(url: string, scrapedContent: any, lighthouseData: any, pageAuditData: any) {
+  constructor(
+    url: string,
+    scrapedContent: any,
+    lighthouseData: any,
+    pageAuditData: any
+  ) {
     this.url = url;
     this.scrapedContent = scrapedContent;
     this.lighthouseData = lighthouseData;
@@ -70,14 +81,17 @@ export class WebsiteEvaluationFramework {
       userExperience: await this.evaluateUserExperience(),
       socialPresence: await this.evaluateSocialPresence(),
       analyticsTracking: await this.evaluateAnalyticsTracking(),
-      securityCompliance: await this.evaluateSecurityCompliance()
+      securityCompliance: await this.evaluateSecurityCompliance(),
     };
 
     const bonusPoints = await this.evaluateBonusFeatures();
-    const overallScore = this.calculateOverallScore(categoryScores, bonusPoints);
+    const overallScore = this.calculateOverallScore(
+      categoryScores,
+      bonusPoints
+    );
     const rating = this.getRating(overallScore);
-    
-    const { priorityRecommendations, quickWins, criticalIssues } = 
+
+    const { priorityRecommendations, quickWins, criticalIssues } =
       this.generateRecommendations(overallScore, categoryScores);
 
     return {
@@ -87,7 +101,7 @@ export class WebsiteEvaluationFramework {
       priorityRecommendations,
       quickWins,
       criticalIssues,
-      rating
+      rating,
     };
   }
 
@@ -96,8 +110,8 @@ export class WebsiteEvaluationFramework {
    */
   private async evaluateFirstImpression(): Promise<CategoryScore> {
     const maxScore = 10;
-    const weight = 0.20;
-    
+    const weight = 0.2;
+
     const checks = {
       valuePropositionClear: this.checkValuePropositionClarity(),
       primaryCTAVisible: this.checkPrimaryCTA(),
@@ -105,11 +119,13 @@ export class WebsiteEvaluationFramework {
       trustSignalPresent: this.checkTrustSignals(),
       pageLoadSpeed: this.checkPageLoadSpeed(),
       noIntrusivePopups: this.checkForPopups(),
-      heroImageQuality: this.checkHeroImageQuality()
+      heroImageQuality: this.checkHeroImageQuality(),
     };
 
-    const score = Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) / Object.keys(checks).length;
-    
+    const score =
+      Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) /
+      Object.keys(checks).length;
+
     return {
       score: Math.round(score),
       maxScore,
@@ -119,8 +135,8 @@ export class WebsiteEvaluationFramework {
         criticalIssues: this.getFirstImpressionIssues(checks),
         improvements: this.getFirstImpressionImprovements(checks),
         strengths: this.getFirstImpressionStrengths(checks),
-        specificRecommendations: this.getFirstImpressionRecommendations(checks)
-      }
+        specificRecommendations: this.getFirstImpressionRecommendations(checks),
+      },
     };
   }
 
@@ -130,16 +146,18 @@ export class WebsiteEvaluationFramework {
   private async evaluateCoreMessaging(): Promise<CategoryScore> {
     const maxScore = 10;
     const weight = 0.15;
-    
+
     const checks = {
       whyClear: this.checkWhyClarity(),
       howDifferentiated: this.checkHowDifferentiation(),
       whatClear: this.checkWhatClarity(),
-      whoIdentified: this.checkWhoIdentification()
+      whoIdentified: this.checkWhoIdentification(),
     };
 
-    const score = Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) / Object.keys(checks).length;
-    
+    const score =
+      Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) /
+      Object.keys(checks).length;
+
     return {
       score: Math.round(score),
       maxScore,
@@ -149,8 +167,8 @@ export class WebsiteEvaluationFramework {
         criticalIssues: this.getCoreMessagingIssues(checks),
         improvements: this.getCoreMessagingImprovements(checks),
         strengths: this.getCoreMessagingStrengths(checks),
-        specificRecommendations: this.getCoreMessagingRecommendations(checks)
-      }
+        specificRecommendations: this.getCoreMessagingRecommendations(checks),
+      },
     };
   }
 
@@ -160,17 +178,19 @@ export class WebsiteEvaluationFramework {
   private async evaluateTechnicalPerformance(): Promise<CategoryScore> {
     const maxScore = 10;
     const weight = 0.15;
-    
+
     const checks = {
       mobilePageSpeed: this.checkMobilePageSpeed(),
       desktopPageSpeed: this.checkDesktopPageSpeed(),
       coreWebVitals: this.checkCoreWebVitals(),
       mobileResponsive: this.checkMobileResponsiveness(),
-      technicalSEO: this.checkTechnicalSEO()
+      technicalSEO: this.checkTechnicalSEO(),
     };
 
-    const score = Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) / Object.keys(checks).length;
-    
+    const score =
+      Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) /
+      Object.keys(checks).length;
+
     return {
       score: Math.round(score),
       maxScore,
@@ -180,8 +200,9 @@ export class WebsiteEvaluationFramework {
         criticalIssues: this.getTechnicalPerformanceIssues(checks),
         improvements: this.getTechnicalPerformanceImprovements(checks),
         strengths: this.getTechnicalPerformanceStrengths(checks),
-        specificRecommendations: this.getTechnicalPerformanceRecommendations(checks)
-      }
+        specificRecommendations:
+          this.getTechnicalPerformanceRecommendations(checks),
+      },
     };
   }
 
@@ -190,18 +211,20 @@ export class WebsiteEvaluationFramework {
    */
   private async evaluateAccessibility(): Promise<CategoryScore> {
     const maxScore = 10;
-    const weight = 0.10;
-    
+    const weight = 0.1;
+
     const checks = {
       colorContrast: this.checkColorContrast(),
       keyboardNavigation: this.checkKeyboardNavigation(),
       screenReaderFriendly: this.checkScreenReaderCompatibility(),
       formLabels: this.checkFormLabels(),
-      focusIndicators: this.checkFocusIndicators()
+      focusIndicators: this.checkFocusIndicators(),
     };
 
-    const score = Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) / Object.keys(checks).length;
-    
+    const score =
+      Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) /
+      Object.keys(checks).length;
+
     return {
       score: Math.round(score),
       maxScore,
@@ -211,8 +234,8 @@ export class WebsiteEvaluationFramework {
         criticalIssues: this.getAccessibilityIssues(checks),
         improvements: this.getAccessibilityImprovements(checks),
         strengths: this.getAccessibilityStrengths(checks),
-        specificRecommendations: this.getAccessibilityRecommendations(checks)
-      }
+        specificRecommendations: this.getAccessibilityRecommendations(checks),
+      },
     };
   }
 
@@ -221,17 +244,19 @@ export class WebsiteEvaluationFramework {
    */
   private async evaluateConversionOptimization(): Promise<CategoryScore> {
     const maxScore = 10;
-    const weight = 0.20;
-    
+    const weight = 0.2;
+
     const checks = {
       leadCaptureSystems: this.checkLeadCaptureSystems(),
       callsToAction: this.checkCallsToAction(),
       trustSignals: this.checkTrustSignals(),
-      valueDemonstration: this.checkValueDemonstration()
+      valueDemonstration: this.checkValueDemonstration(),
     };
 
-    const score = Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) / Object.keys(checks).length;
-    
+    const score =
+      Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) /
+      Object.keys(checks).length;
+
     return {
       score: Math.round(score),
       maxScore,
@@ -241,8 +266,9 @@ export class WebsiteEvaluationFramework {
         criticalIssues: this.getConversionOptimizationIssues(checks),
         improvements: this.getConversionOptimizationImprovements(checks),
         strengths: this.getConversionOptimizationStrengths(checks),
-        specificRecommendations: this.getConversionOptimizationRecommendations(checks)
-      }
+        specificRecommendations:
+          this.getConversionOptimizationRecommendations(checks),
+      },
     };
   }
 
@@ -251,17 +277,19 @@ export class WebsiteEvaluationFramework {
    */
   private async evaluateContentQuality(): Promise<CategoryScore> {
     const maxScore = 10;
-    const weight = 0.10;
-    
+    const weight = 0.1;
+
     const checks = {
       homepageContent: this.checkHomepageContent(),
       supportingPages: this.checkSupportingPages(),
       contentDepth: this.checkContentDepth(),
-      contentFreshness: this.checkContentFreshness()
+      contentFreshness: this.checkContentFreshness(),
     };
 
-    const score = Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) / Object.keys(checks).length;
-    
+    const score =
+      Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) /
+      Object.keys(checks).length;
+
     return {
       score: Math.round(score),
       maxScore,
@@ -271,8 +299,8 @@ export class WebsiteEvaluationFramework {
         criticalIssues: this.getContentQualityIssues(checks),
         improvements: this.getContentQualityImprovements(checks),
         strengths: this.getContentQualityStrengths(checks),
-        specificRecommendations: this.getContentQualityRecommendations(checks)
-      }
+        specificRecommendations: this.getContentQualityRecommendations(checks),
+      },
     };
   }
 
@@ -282,16 +310,18 @@ export class WebsiteEvaluationFramework {
   private async evaluateUserExperience(): Promise<CategoryScore> {
     const maxScore = 10;
     const weight = 0.15;
-    
+
     const checks = {
       navigation: this.checkNavigation(),
       visualDesign: this.checkVisualDesign(),
       engagementElements: this.checkEngagementElements(),
-      clarityScannability: this.checkClarityScannability()
+      clarityScannability: this.checkClarityScannability(),
     };
 
-    const score = Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) / Object.keys(checks).length;
-    
+    const score =
+      Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) /
+      Object.keys(checks).length;
+
     return {
       score: Math.round(score),
       maxScore,
@@ -301,8 +331,8 @@ export class WebsiteEvaluationFramework {
         criticalIssues: this.getUserExperienceIssues(checks),
         improvements: this.getUserExperienceImprovements(checks),
         strengths: this.getUserExperienceStrengths(checks),
-        specificRecommendations: this.getUserExperienceRecommendations(checks)
-      }
+        specificRecommendations: this.getUserExperienceRecommendations(checks),
+      },
     };
   }
 
@@ -312,16 +342,18 @@ export class WebsiteEvaluationFramework {
   private async evaluateSocialPresence(): Promise<CategoryScore> {
     const maxScore = 10;
     const weight = 0.05;
-    
+
     const checks = {
       socialMediaLinks: this.checkSocialMediaLinks(),
       socialActivity: this.checkSocialActivity(),
       googleBusinessProfile: this.checkGoogleBusinessProfile(),
-      reviewStrategy: this.checkReviewStrategy()
+      reviewStrategy: this.checkReviewStrategy(),
     };
 
-    const score = Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) / Object.keys(checks).length;
-    
+    const score =
+      Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) /
+      Object.keys(checks).length;
+
     return {
       score: Math.round(score),
       maxScore,
@@ -331,8 +363,8 @@ export class WebsiteEvaluationFramework {
         criticalIssues: this.getSocialPresenceIssues(checks),
         improvements: this.getSocialPresenceImprovements(checks),
         strengths: this.getSocialPresenceStrengths(checks),
-        specificRecommendations: this.getSocialPresenceRecommendations(checks)
-      }
+        specificRecommendations: this.getSocialPresenceRecommendations(checks),
+      },
     };
   }
 
@@ -342,16 +374,18 @@ export class WebsiteEvaluationFramework {
   private async evaluateAnalyticsTracking(): Promise<CategoryScore> {
     const maxScore = 10;
     const weight = 0.05;
-    
+
     const checks = {
       googleAnalytics: this.checkGoogleAnalytics(),
       conversionGoals: this.checkConversionGoals(),
       eventTracking: this.checkEventTracking(),
-      privacyCompliance: this.checkPrivacyCompliance()
+      privacyCompliance: this.checkPrivacyCompliance(),
     };
 
-    const score = Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) / Object.keys(checks).length;
-    
+    const score =
+      Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) /
+      Object.keys(checks).length;
+
     return {
       score: Math.round(score),
       maxScore,
@@ -361,8 +395,9 @@ export class WebsiteEvaluationFramework {
         criticalIssues: this.getAnalyticsTrackingIssues(checks),
         improvements: this.getAnalyticsTrackingImprovements(checks),
         strengths: this.getAnalyticsTrackingStrengths(checks),
-        specificRecommendations: this.getAnalyticsTrackingRecommendations(checks)
-      }
+        specificRecommendations:
+          this.getAnalyticsTrackingRecommendations(checks),
+      },
     };
   }
 
@@ -372,16 +407,18 @@ export class WebsiteEvaluationFramework {
   private async evaluateSecurityCompliance(): Promise<CategoryScore> {
     const maxScore = 10;
     const weight = 0.05;
-    
+
     const checks = {
       httpsEnabled: this.checkHTTPS(),
       privacyPolicy: this.checkPrivacyPolicy(),
       cookieConsent: this.checkCookieConsent(),
-      securityUpdates: this.checkSecurityUpdates()
+      securityUpdates: this.checkSecurityUpdates(),
     };
 
-    const score = Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) / Object.keys(checks).length;
-    
+    const score =
+      Object.values(checks).reduce((sum, check) => sum + (check ? 10 : 0), 0) /
+      Object.keys(checks).length;
+
     return {
       score: Math.round(score),
       maxScore,
@@ -391,8 +428,9 @@ export class WebsiteEvaluationFramework {
         criticalIssues: this.getSecurityComplianceIssues(checks),
         improvements: this.getSecurityComplianceImprovements(checks),
         strengths: this.getSecurityComplianceStrengths(checks),
-        specificRecommendations: this.getSecurityComplianceRecommendations(checks)
-      }
+        specificRecommendations:
+          this.getSecurityComplianceRecommendations(checks),
+      },
     };
   }
 
@@ -408,10 +446,12 @@ export class WebsiteEvaluationFramework {
       crmIntegration: this.checkCRMIntegration(),
       marketingAutomation: this.checkMarketingAutomation(),
       abTesting: this.checkABTesting(),
-      personalization: this.checkPersonalization()
+      personalization: this.checkPersonalization(),
     };
 
-    const bonusScore = Object.values(bonusChecks).filter(check => check).length;
+    const bonusScore = Object.values(bonusChecks).filter(
+      (check) => check
+    ).length;
     return Math.min(bonusScore * 2, 20); // Max 20 bonus points
   }
 
@@ -419,23 +459,46 @@ export class WebsiteEvaluationFramework {
   private checkValuePropositionClarity(): boolean {
     const content = this.scrapedContent?.content?.toLowerCase() || '';
     const title = this.scrapedContent?.title?.toLowerCase() || '';
-    const metaDescription = this.scrapedContent?.metaDescription?.toLowerCase() || '';
-    
+    const metaDescription =
+      this.scrapedContent?.metaDescription?.toLowerCase() || '';
+
     // Look for clear value proposition indicators
-    const valueWords = ['transform', 'grow', 'increase', 'improve', 'optimize', 'maximize', 'achieve', 'succeed'];
-    const hasValueWords = valueWords.some(word => content.includes(word) || title.includes(word) || metaDescription.includes(word));
-    
+    const valueWords = [
+      'transform',
+      'grow',
+      'increase',
+      'improve',
+      'optimize',
+      'maximize',
+      'achieve',
+      'succeed',
+    ];
+    const hasValueWords = valueWords.some(
+      (word) =>
+        content.includes(word) ||
+        title.includes(word) ||
+        metaDescription.includes(word)
+    );
+
     // Check if value proposition is in first 200 characters
     const firstContent = content.substring(0, 200);
     const hasClearPurpose = firstContent.length > 50 && hasValueWords;
-    
+
     return hasClearPurpose;
   }
 
   private checkPrimaryCTA(): boolean {
     const content = this.scrapedContent?.content || '';
-    const ctaWords = ['get started', 'contact us', 'learn more', 'free consultation', 'book now', 'call now', 'email us'];
-    return ctaWords.some(cta => content.toLowerCase().includes(cta));
+    const ctaWords = [
+      'get started',
+      'contact us',
+      'learn more',
+      'free consultation',
+      'book now',
+      'call now',
+      'email us',
+    ];
+    return ctaWords.some((cta) => content.toLowerCase().includes(cta));
   }
 
   private checkVisualHierarchy(): boolean {
@@ -446,8 +509,17 @@ export class WebsiteEvaluationFramework {
 
   private checkTrustSignals(): boolean {
     const content = this.scrapedContent?.content?.toLowerCase() || '';
-    const trustWords = ['certified', 'award', 'client', 'testimonial', 'review', 'experience', 'years', 'trusted'];
-    return trustWords.some(word => content.includes(word));
+    const trustWords = [
+      'certified',
+      'award',
+      'client',
+      'testimonial',
+      'review',
+      'experience',
+      'years',
+      'trusted',
+    ];
+    return trustWords.some((word) => content.includes(word));
   }
 
   private checkPageLoadSpeed(): boolean {
@@ -468,26 +540,58 @@ export class WebsiteEvaluationFramework {
   // Golden Circle checks
   private checkWhyClarity(): boolean {
     const content = this.scrapedContent?.content?.toLowerCase() || '';
-    const whyWords = ['mission', 'purpose', 'why', 'believe', 'passion', 'values', 'vision'];
-    return whyWords.some(word => content.includes(word));
+    const whyWords = [
+      'mission',
+      'purpose',
+      'why',
+      'believe',
+      'passion',
+      'values',
+      'vision',
+    ];
+    return whyWords.some((word) => content.includes(word));
   }
 
   private checkHowDifferentiation(): boolean {
     const content = this.scrapedContent?.content?.toLowerCase() || '';
-    const howWords = ['unique', 'different', 'specialized', 'expertise', 'methodology', 'approach', 'proven'];
-    return howWords.some(word => content.includes(word));
+    const howWords = [
+      'unique',
+      'different',
+      'specialized',
+      'expertise',
+      'methodology',
+      'approach',
+      'proven',
+    ];
+    return howWords.some((word) => content.includes(word));
   }
 
   private checkWhatClarity(): boolean {
     const content = this.scrapedContent?.content?.toLowerCase() || '';
-    const whatWords = ['services', 'products', 'solutions', 'offerings', 'help', 'provide', 'deliver'];
-    return whatWords.some(word => content.includes(word));
+    const whatWords = [
+      'services',
+      'products',
+      'solutions',
+      'offerings',
+      'help',
+      'provide',
+      'deliver',
+    ];
+    return whatWords.some((word) => content.includes(word));
   }
 
   private checkWhoIdentification(): boolean {
     const content = this.scrapedContent?.content?.toLowerCase() || '';
-    const whoWords = ['clients', 'customers', 'businesses', 'companies', 'organizations', 'individuals', 'target'];
-    return whoWords.some(word => content.includes(word));
+    const whoWords = [
+      'clients',
+      'customers',
+      'businesses',
+      'companies',
+      'organizations',
+      'individuals',
+      'target',
+    ];
+    return whoWords.some((word) => content.includes(word));
   }
 
   // Technical Performance checks
@@ -555,8 +659,16 @@ export class WebsiteEvaluationFramework {
 
   private checkValueDemonstration(): boolean {
     const content = this.scrapedContent?.content?.toLowerCase() || '';
-    const valueWords = ['roi', 'results', 'success', 'case study', 'testimonial', 'before after', 'metrics'];
-    return valueWords.some(word => content.includes(word));
+    const valueWords = [
+      'roi',
+      'results',
+      'success',
+      'case study',
+      'testimonial',
+      'before after',
+      'metrics',
+    ];
+    return valueWords.some((word) => content.includes(word));
   }
 
   // Content Quality checks
@@ -622,7 +734,7 @@ export class WebsiteEvaluationFramework {
   private checkReviewStrategy(): boolean {
     const content = this.scrapedContent?.content?.toLowerCase() || '';
     const reviewWords = ['review', 'rating', 'testimonial', 'feedback'];
-    return reviewWords.some(word => content.includes(word));
+    return reviewWords.some((word) => content.includes(word));
   }
 
   // Analytics & Tracking checks
@@ -644,7 +756,7 @@ export class WebsiteEvaluationFramework {
   private checkPrivacyCompliance(): boolean {
     const content = this.scrapedContent?.content?.toLowerCase() || '';
     const privacyWords = ['privacy policy', 'cookie policy', 'gdpr', 'ccpa'];
-    return privacyWords.some(word => content.includes(word));
+    return privacyWords.some((word) => content.includes(word));
   }
 
   // Security & Compliance checks
@@ -686,7 +798,7 @@ export class WebsiteEvaluationFramework {
   private checkAppointmentScheduling(): boolean {
     const content = this.scrapedContent?.content?.toLowerCase() || '';
     const schedulingWords = ['book', 'schedule', 'appointment', 'calendar'];
-    return schedulingWords.some(word => content.includes(word));
+    return schedulingWords.some((word) => content.includes(word));
   }
 
   private checkCRMIntegration(): boolean {
@@ -710,14 +822,26 @@ export class WebsiteEvaluationFramework {
   }
 
   // Helper methods for generating recommendations
-  private calculateOverallScore(categoryScores: any, bonusPoints: number): number {
+  private calculateOverallScore(
+    categoryScores: any,
+    bonusPoints: number
+  ): number {
     const totalWeightedScore = Object.values(categoryScores).reduce(
-      (sum: number, category: any) => sum + (category.weightedScore || 0), 0
+      (sum: number, category: any) => sum + (category.weightedScore || 0),
+      0
     ) as number;
-    return Math.round(totalWeightedScore + (bonusPoints / 100));
+    return Math.round(totalWeightedScore + bonusPoints / 100);
   }
 
-  private getRating(score: number): 'World-class' | 'Excellent' | 'Good' | 'Acceptable' | 'Below Average' | 'Critical' {
+  private getRating(
+    score: number
+  ):
+    | 'World-class'
+    | 'Excellent'
+    | 'Good'
+    | 'Acceptable'
+    | 'Below Average'
+    | 'Critical' {
     if (score >= 90) return 'World-class';
     if (score >= 80) return 'Excellent';
     if (score >= 70) return 'Good';
@@ -733,142 +857,231 @@ export class WebsiteEvaluationFramework {
 
     // Priority framework based on score
     if (overallScore >= 60 && overallScore <= 69) {
-      priorityRecommendations.push('Focus on First Impression (above-fold clarity)');
-      priorityRecommendations.push('Optimize Conversion Optimization (lead capture)');
+      priorityRecommendations.push(
+        'Focus on First Impression (above-fold clarity)'
+      );
+      priorityRecommendations.push(
+        'Optimize Conversion Optimization (lead capture)'
+      );
       priorityRecommendations.push('Improve Technical Performance (speed)');
     } else if (overallScore >= 70 && overallScore <= 79) {
-      priorityRecommendations.push('Strengthen Core Messaging (differentiation)');
+      priorityRecommendations.push(
+        'Strengthen Core Messaging (differentiation)'
+      );
       priorityRecommendations.push('Enhance Trust Signals (social proof)');
       priorityRecommendations.push('Improve Content Quality (depth)');
     } else if (overallScore >= 80 && overallScore <= 89) {
       priorityRecommendations.push('Implement Advanced engagement features');
       priorityRecommendations.push('Add Personalization capabilities');
-      priorityRecommendations.push('Start Continuous optimization (A/B testing)');
+      priorityRecommendations.push(
+        'Start Continuous optimization (A/B testing)'
+      );
     }
 
     // Generate specific recommendations from category scores
-    Object.entries(categoryScores).forEach(([category, score]: [string, any]) => {
-      if (score.score < 60) {
-        criticalIssues.push(`${category}: Score ${score.score}/100 - Immediate attention required`);
-      } else if (score.score < 80) {
-        quickWins.push(`${category}: Score ${score.score}/100 - Optimization opportunity`);
+    Object.entries(categoryScores).forEach(
+      ([category, score]: [string, any]) => {
+        if (score.score < 60) {
+          criticalIssues.push(
+            `${category}: Score ${score.score}/100 - Immediate attention required`
+          );
+        } else if (score.score < 80) {
+          quickWins.push(
+            `${category}: Score ${score.score}/100 - Optimization opportunity`
+          );
+        }
       }
-    });
+    );
 
     return { priorityRecommendations, quickWins, criticalIssues };
   }
 
   // Category-specific recommendation methods
-  private getFirstImpressionIssues(checks: any): string[] {
+  private getFirstImpressionIssues(_checks: any): string[] {
     const issues = [];
-    if (!checks.valuePropositionClear) issues.push('Value proposition not immediately clear');
-    if (!checks.primaryCTAVisible) issues.push('Primary CTA not visible above fold');
-    if (!checks.trustSignalPresent) issues.push('No trust signals visible');
+    if (!_checks.valuePropositionClear)
+      issues.push('Value proposition not immediately clear');
+    if (!_checks.primaryCTAVisible)
+      issues.push('Primary CTA not visible above fold');
+    if (!_checks.trustSignalPresent) issues.push('No trust signals visible');
     return issues;
   }
 
-  private getFirstImpressionImprovements(checks: any): string[] {
+  private getFirstImpressionImprovements(_checks: any): string[] {
     const improvements = [];
-    if (!checks.valuePropositionClear) improvements.push('Add clear value proposition above fold');
-    if (!checks.primaryCTAVisible) improvements.push('Move primary CTA above fold');
-    if (!checks.trustSignalPresent) improvements.push('Add trust signals (testimonials, certifications)');
+    if (!_checks.valuePropositionClear)
+      improvements.push('Add clear value proposition above fold');
+    if (!_checks.primaryCTAVisible)
+      improvements.push('Move primary CTA above fold');
+    if (!_checks.trustSignalPresent)
+      improvements.push('Add trust signals (testimonials, certifications)');
     return improvements;
   }
 
-  private getFirstImpressionStrengths(checks: any): string[] {
+  private getFirstImpressionStrengths(_checks: any): string[] {
     const strengths = [];
-    if (checks.valuePropositionClear) strengths.push('Clear value proposition');
-    if (checks.primaryCTAVisible) strengths.push('Visible primary CTA');
-    if (checks.trustSignalPresent) strengths.push('Trust signals present');
+    if (_checks.valuePropositionClear) strengths.push('Clear value proposition');
+    if (_checks.primaryCTAVisible) strengths.push('Visible primary CTA');
+    if (_checks.trustSignalPresent) strengths.push('Trust signals present');
     return strengths;
   }
 
-  private getFirstImpressionRecommendations(checks: any): string[] {
+  private getFirstImpressionRecommendations(_checks: any): string[] {
     return [
       'Ensure value proposition is clear within 3 seconds',
       'Place primary CTA above the fold',
       'Add trust signals (client logos, testimonials)',
       'Optimize hero image/video quality',
-      'Ensure page loads in under 3 seconds'
+      'Ensure page loads in under 3 seconds',
     ];
   }
 
   // Similar methods for other categories...
-  private getCoreMessagingIssues(checks: any): string[] {
+  private getCoreMessagingIssues(_checks: any): string[] {
     const issues = [];
-    if (!checks.whyClear) issues.push('WHY (purpose) not clearly articulated');
-    if (!checks.howDifferentiated) issues.push('HOW (differentiation) not clear');
-    if (!checks.whatClear) issues.push('WHAT (offerings) not clearly listed');
-    if (!checks.whoIdentified) issues.push('WHO (target audience) not identified');
+    if (!_checks.whyClear) issues.push('WHY (purpose) not clearly articulated');
+    if (!_checks.howDifferentiated)
+      issues.push('HOW (differentiation) not clear');
+    if (!_checks.whatClear) issues.push('WHAT (offerings) not clearly listed');
+    if (!_checks.whoIdentified)
+      issues.push('WHO (target audience) not identified');
     return issues;
   }
 
-  private getCoreMessagingImprovements(checks: any): string[] {
+  private getCoreMessagingImprovements(_checks: any): string[] {
     const improvements = [];
-    if (!checks.whyClear) improvements.push('Clarify your WHY (mission/purpose)');
-    if (!checks.howDifferentiated) improvements.push('Explain your HOW (unique approach)');
-    if (!checks.whatClear) improvements.push('List your WHAT (products/services) clearly');
-    if (!checks.whoIdentified) improvements.push('Identify your WHO (target audience)');
+    if (!_checks.whyClear)
+      improvements.push('Clarify your WHY (mission/purpose)');
+    if (!_checks.howDifferentiated)
+      improvements.push('Explain your HOW (unique approach)');
+    if (!_checks.whatClear)
+      improvements.push('List your WHAT (products/services) clearly');
+    if (!_checks.whoIdentified)
+      improvements.push('Identify your WHO (target audience)');
     return improvements;
   }
 
-  private getCoreMessagingStrengths(checks: any): string[] {
+  private getCoreMessagingStrengths(_checks: any): string[] {
     const strengths = [];
-    if (checks.whyClear) strengths.push('Clear purpose/mission');
-    if (checks.howDifferentiated) strengths.push('Clear differentiation');
-    if (checks.whatClear) strengths.push('Clear offerings');
-    if (checks.whoIdentified) strengths.push('Clear target audience');
+    if (_checks.whyClear) strengths.push('Clear purpose/mission');
+    if (_checks.howDifferentiated) strengths.push('Clear differentiation');
+    if (_checks.whatClear) strengths.push('Clear offerings');
+    if (_checks.whoIdentified) strengths.push('Clear target audience');
     return strengths;
   }
 
-  private getCoreMessagingRecommendations(checks: any): string[] {
+  private getCoreMessagingRecommendations(_checks: any): string[] {
     return [
       'Ensure WHY (purpose) is inspiring and clear',
       'Explain HOW you are different from competitors',
       'List WHAT you offer with benefit-focused descriptions',
       'Clearly identify WHO your ideal client is',
-      'Use the Golden Circle framework throughout'
+      'Use the Golden Circle framework throughout',
     ];
   }
 
   // Placeholder methods for other categories (implement as needed)
-  private getTechnicalPerformanceIssues(checks: any): string[] { return []; }
-  private getTechnicalPerformanceImprovements(checks: any): string[] { return []; }
-  private getTechnicalPerformanceStrengths(checks: any): string[] { return []; }
-  private getTechnicalPerformanceRecommendations(checks: any): string[] { return []; }
+  private getTechnicalPerformanceIssues(_checks: any): string[] {
+    return [];
+  }
+  private getTechnicalPerformanceImprovements(_checks: any): string[] {
+    return [];
+  }
+  private getTechnicalPerformanceStrengths(_checks: any): string[] {
+    return [];
+  }
+  private getTechnicalPerformanceRecommendations(_checks: any): string[] {
+    return [];
+  }
 
-  private getAccessibilityIssues(checks: any): string[] { return []; }
-  private getAccessibilityImprovements(checks: any): string[] { return []; }
-  private getAccessibilityStrengths(checks: any): string[] { return []; }
-  private getAccessibilityRecommendations(checks: any): string[] { return []; }
+  private getAccessibilityIssues(_checks: any): string[] {
+    return [];
+  }
+  private getAccessibilityImprovements(_checks: any): string[] {
+    return [];
+  }
+  private getAccessibilityStrengths(_checks: any): string[] {
+    return [];
+  }
+  private getAccessibilityRecommendations(_checks: any): string[] {
+    return [];
+  }
 
-  private getConversionOptimizationIssues(checks: any): string[] { return []; }
-  private getConversionOptimizationImprovements(checks: any): string[] { return []; }
-  private getConversionOptimizationStrengths(checks: any): string[] { return []; }
-  private getConversionOptimizationRecommendations(checks: any): string[] { return []; }
+  private getConversionOptimizationIssues(_checks: any): string[] {
+    return [];
+  }
+  private getConversionOptimizationImprovements(_checks: any): string[] {
+    return [];
+  }
+  private getConversionOptimizationStrengths(_checks: any): string[] {
+    return [];
+  }
+  private getConversionOptimizationRecommendations(_checks: any): string[] {
+    return [];
+  }
 
-  private getContentQualityIssues(checks: any): string[] { return []; }
-  private getContentQualityImprovements(checks: any): string[] { return []; }
-  private getContentQualityStrengths(checks: any): string[] { return []; }
-  private getContentQualityRecommendations(checks: any): string[] { return []; }
+  private getContentQualityIssues(_checks: any): string[] {
+    return [];
+  }
+  private getContentQualityImprovements(_checks: any): string[] {
+    return [];
+  }
+  private getContentQualityStrengths(_checks: any): string[] {
+    return [];
+  }
+  private getContentQualityRecommendations(_checks: any): string[] {
+    return [];
+  }
 
-  private getUserExperienceIssues(checks: any): string[] { return []; }
-  private getUserExperienceImprovements(checks: any): string[] { return []; }
-  private getUserExperienceStrengths(checks: any): string[] { return []; }
-  private getUserExperienceRecommendations(checks: any): string[] { return []; }
+  private getUserExperienceIssues(_checks: any): string[] {
+    return [];
+  }
+  private getUserExperienceImprovements(_checks: any): string[] {
+    return [];
+  }
+  private getUserExperienceStrengths(_checks: any): string[] {
+    return [];
+  }
+  private getUserExperienceRecommendations(_checks: any): string[] {
+    return [];
+  }
 
-  private getSocialPresenceIssues(checks: any): string[] { return []; }
-  private getSocialPresenceImprovements(checks: any): string[] { return []; }
-  private getSocialPresenceStrengths(checks: any): string[] { return []; }
-  private getSocialPresenceRecommendations(checks: any): string[] { return []; }
+  private getSocialPresenceIssues(_checks: any): string[] {
+    return [];
+  }
+  private getSocialPresenceImprovements(_checks: any): string[] {
+    return [];
+  }
+  private getSocialPresenceStrengths(_checks: any): string[] {
+    return [];
+  }
+  private getSocialPresenceRecommendations(_checks: any): string[] {
+    return [];
+  }
 
-  private getAnalyticsTrackingIssues(checks: any): string[] { return []; }
-  private getAnalyticsTrackingImprovements(checks: any): string[] { return []; }
-  private getAnalyticsTrackingStrengths(checks: any): string[] { return []; }
-  private getAnalyticsTrackingRecommendations(checks: any): string[] { return []; }
+  private getAnalyticsTrackingIssues(_checks: any): string[] {
+    return [];
+  }
+  private getAnalyticsTrackingImprovements(_checks: any): string[] {
+    return [];
+  }
+  private getAnalyticsTrackingStrengths(_checks: any): string[] {
+    return [];
+  }
+  private getAnalyticsTrackingRecommendations(_checks: any): string[] {
+    return [];
+  }
 
-  private getSecurityComplianceIssues(checks: any): string[] { return []; }
-  private getSecurityComplianceImprovements(checks: any): string[] { return []; }
-  private getSecurityComplianceStrengths(checks: any): string[] { return []; }
-  private getSecurityComplianceRecommendations(checks: any): string[] { return []; }
+  private getSecurityComplianceIssues(_checks: any): string[] {
+    return [];
+  }
+  private getSecurityComplianceImprovements(_checks: any): string[] {
+    return [];
+  }
+  private getSecurityComplianceStrengths(_checks: any): string[] {
+    return [];
+  }
+  private getSecurityComplianceRecommendations(_checks: any): string[] {
+    return [];
+  }
 }

@@ -14,24 +14,33 @@ export async function POST(request: NextRequest) {
     const { _url, scrapedData, assessmentType } = body;
 
     if (!_url) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL is required',
+        },
+        { status: 400 }
+      );
     }
 
     if (!scrapedData) {
-      return NextResponse.json({
-        success: false,
-        error: 'Scraped data is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Scraped data is required',
+        },
+        { status: 400 }
+      );
     }
 
     if (!assessmentType) {
-      return NextResponse.json({
-        success: false,
-        error: 'Assessment type is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Assessment type is required',
+        },
+        { status: 400 }
+      );
     }
 
     console.log(`🧠 Starting enhanced analysis for: ${_url}`);
@@ -56,30 +65,36 @@ export async function POST(request: NextRequest) {
         frameworkUsed: result.frameworkUsed,
         analysis: result.analysis,
         validation: result.validation,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     } else {
       console.error(`❌ Enhanced analysis failed for: ${_url}`, result.error);
 
-      return NextResponse.json({
-        success: false,
-        _url,
-        assessmentType,
-        frameworkUsed: result.frameworkUsed,
-        error: result.error,
-        validation: result.validation,
-        timestamp: new Date().toISOString()
-      }, { status: 500 });
+      return NextResponse.json(
+        {
+          success: false,
+          _url,
+          assessmentType,
+          frameworkUsed: result.frameworkUsed,
+          error: result.error,
+          validation: result.validation,
+          timestamp: new Date().toISOString(),
+        },
+        { status: 500 }
+      );
     }
-
   } catch (error) {
     console.error('Enhanced analysis API error:', error);
 
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Enhanced analysis failed',
-      details: 'Failed to run enhanced analysis with framework knowledge'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Enhanced analysis failed',
+        details: 'Failed to run enhanced analysis with framework knowledge',
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -89,24 +104,29 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const assessmentType = searchParams.get('assessmentType') || 'golden-circle';
+    const assessmentType =
+      searchParams.get('assessmentType') || 'golden-circle';
 
     console.log(`🧪 Testing framework integration for: ${assessmentType}`);
 
-    const testResult = await EnhancedAnalysisService.testFrameworkIntegration(assessmentType);
+    const testResult =
+      await EnhancedAnalysisService.testFrameworkIntegration(assessmentType);
 
     return NextResponse.json({
       success: true,
       assessmentType,
       ...testResult,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     console.error('Framework integration test failed:', error);
 
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Framework test failed'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Framework test failed',
+      },
+      { status: 500 }
+    );
   }
 }

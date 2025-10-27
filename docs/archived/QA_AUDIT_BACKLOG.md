@@ -15,6 +15,7 @@
 #### **Error 1-6: Unescaped Quote Characters**
 
 **Location:** `src/app/dashboard/page.tsx` (Lines 312-316)
+
 ```
 312:55  Error: `'` can be escaped with `&apos;`
 314:25  Error: `"` can be escaped with `&quot;`
@@ -30,6 +31,7 @@
 **Priority:** 🔴 **CRITICAL**
 
 **Location:** `src/components/analysis/GoogleToolsButtons.tsx` (Lines 148)
+
 ```
 148:32  Error: `"` can be escaped with `&quot;`
 148:40  Error: `"` can be escaped with `&quot;`
@@ -52,11 +54,13 @@
 **Count:** ~50 unused imports
 
 **Examples:**
+
 - `src/app/dashboard/analysis/page.tsx` - 10 unused imports
 - `src/components/analysis/AIProviderSelector.tsx` - 5 unused imports
 - `src/components/analysis/AnalysisVisualization.tsx` - 4 unused imports
 
 **Fix:**
+
 ```bash
 npm run lint:fix
 # Or manually remove unused imports
@@ -71,6 +75,7 @@ npm run lint:fix
 **Count:** ~300 `any` types
 
 **Most Critical Files:**
+
 - `src/lib/enhanced-controlled-analysis.ts` - 62 `any` types
 - `src/app/api/analyze/comprehensive/route.ts` - 17 `any` types
 - `src/components/analysis/EnhancedAnalysisWithProgress.tsx` - 24 `any` types
@@ -88,6 +93,7 @@ npm run lint:fix
 **Count:** ~150 console statements
 
 **Options:**
+
 1. Remove non-essential logs
 2. Replace with proper logger (`src/lib/logger.ts`)
 3. Add conditional: `if (process.env.NODE_ENV === 'development') console.log()`
@@ -97,6 +103,7 @@ npm run lint:fix
 ### **Priority 5: Fix React Hooks Dependencies**
 
 **Location:** `src/app/dashboard/page.tsx`
+
 ```
 26:6  Warning: React Hook useEffect has missing dependency
 ```
@@ -145,6 +152,7 @@ Bundle Size: ⚠️  Could be smaller (unused imports)
    - GoogleToolsButtons.tsx
 
 2. **Run automated lint fix** (5 min)
+
    ```bash
    npm run lint:fix
    ```
@@ -154,6 +162,7 @@ Bundle Size: ⚠️  Could be smaller (unused imports)
    - Dashboard pages
 
 4. **Test build** (5 min)
+
    ```bash
    npm run build
    ```
@@ -189,6 +198,7 @@ Bundle Size: ⚠️  Could be smaller (unused imports)
 **File:** `src/app/dashboard/page.tsx` (around line 312-316)
 
 **Find lines with quotes in JSX and escape them:**
+
 ```typescript
 // BEFORE:
 <p>Let's analyze your website's performance</p>
@@ -216,6 +226,7 @@ npm run lint:fix
 ```
 
 This auto-fixes:
+
 - ✅ Removes some unused imports
 - ✅ Fixes quote formatting
 - ✅ Applies Prettier formatting
@@ -241,22 +252,26 @@ git push origin main
 ## 📋 BACKLOG (Prioritized)
 
 ### **NOW (Critical - 30 min):**
+
 - [ ] Fix 8 quote escaping errors
 - [ ] Run `npm run lint:fix`
 - [ ] Test build passes
 - [ ] Deploy to Vercel
 
 ### **THIS WEEK (High - 2 hrs):**
+
 - [ ] Replace `any` types in API routes (security/stability)
 - [ ] Fix unused React Hook dependencies
 - [ ] Remove unused imports in components
 
 ### **THIS MONTH (Medium - 4 hrs):**
+
 - [ ] Replace console.log with proper logger
 - [ ] Add TypeScript interfaces for all data structures
 - [ ] Improve error handling
 
 ### **FUTURE (Low - 8 hrs):**
+
 - [ ] Add JSDoc comments
 - [ ] Remove dead code
 - [ ] Code cleanup and refactoring
@@ -266,18 +281,21 @@ git push origin main
 ## 🎯 What You Should Do RIGHT NOW
 
 **Option A: Quick Fix (30 minutes)**
+
 1. I can fix the 8 critical errors
 2. Run lint:fix
 3. Commit and deploy
 4. Your app is production-ready
 
 **Option B: Comprehensive Fix (2 hours)**
+
 1. Fix all errors
 2. Fix high-priority warnings
 3. Improve type safety
 4. Deploy cleaner codebase
 
 **Option C: Just Deploy (0 minutes)**
+
 1. Deploy as-is (warnings don't break production)
 2. Fix issues incrementally later
 3. App works fine with warnings
@@ -289,6 +307,7 @@ git push origin main
 **Do Option A (30 minutes):**
 
 The warnings are mostly:
+
 - Console.log (fine for debugging)
 - `any` types (not ideal, but works)
 - Unused imports (minor bundle impact)
@@ -300,4 +319,3 @@ Fix those, run lint:fix, deploy. Done! ✅
 ---
 
 **Want me to fix the 8 critical errors now?**
-

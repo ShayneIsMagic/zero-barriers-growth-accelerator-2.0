@@ -10,19 +10,22 @@ export async function GET() {
       services: {
         api: 'healthy',
         database: 'unknown', // Could add database health check here
-        ai: 'unknown' // Could add AI service health check here
+        ai: 'unknown', // Could add AI service health check here
       },
       uptime: process.uptime(),
       memory: process.memoryUsage(),
-      environment: process.env.NODE_ENV || 'development'
+      environment: process.env.NODE_ENV || 'development',
     };
 
     return NextResponse.json(healthStatus, { status: 200 });
   } catch (error) {
-    return NextResponse.json({
-      status: 'unhealthy',
-      timestamp: new Date().toISOString(),
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        status: 'unhealthy',
+        timestamp: new Date().toISOString(),
+        error: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

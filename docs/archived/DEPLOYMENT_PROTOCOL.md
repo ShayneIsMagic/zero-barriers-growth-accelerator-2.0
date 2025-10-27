@@ -7,6 +7,7 @@ Always update database schema BEFORE code changes to prevent conflicts.
 ## 📋 **STEP-BY-STEP PROTOCOL**
 
 ### **Phase 1: Database Schema Updates (Supabase)**
+
 ```bash
 # 1. Create migration files
 npx prisma migrate dev --name "fix-prisma-queryraw-calls"
@@ -21,6 +22,7 @@ npx prisma db push
 ```
 
 ### **Phase 2: Code Changes (GitHub)**
+
 ```bash
 # 1. Create feature branch
 git checkout -b fix/prisma-client-methods
@@ -42,12 +44,14 @@ git push origin fix/prisma-client-methods
 ```
 
 ### **Phase 3: Auto-Deploy (Vercel)**
+
 ```bash
 # Vercel automatically deploys on main branch push
 # No manual intervention needed
 ```
 
 ### **Phase 4: Verification**
+
 ```bash
 # 1. Check Vercel deployment
 curl https://zero-barriers-growth-accelerator-20.vercel.app/api/health
@@ -64,6 +68,7 @@ curl -X POST "https://zero-barriers-growth-accelerator-20.vercel.app/api/analyze
 ## 🔧 **CONFLICT PREVENTION STRATEGIES**
 
 ### **1. Environment Variable Management**
+
 ```bash
 # .env.local (Local Development)
 DATABASE_URL="postgresql://..."
@@ -78,6 +83,7 @@ vercel env add GEMINI_API_KEY
 ```
 
 ### **2. Prisma Client Generation**
+
 ```bash
 # Always generate client after schema changes
 npx prisma generate
@@ -88,6 +94,7 @@ git commit -m "chore: update Prisma client"
 ```
 
 ### **3. Database Connection Pooling**
+
 ```typescript
 // prisma/schema.prisma
 generator client {
@@ -106,51 +113,60 @@ datasource db {
 ## 🚨 **COMMON CONFLICTS & SOLUTIONS**
 
 ### **1. "Prepared Statement Already Exists" Error**
+
 **Cause:** `prisma.$queryRaw` in serverless environments
 **Solution:** Use Prisma client methods (what we just fixed)
 
 ### **2. Database Schema Mismatch**
+
 **Cause:** Code expects different schema than database
 **Solution:** Database-first deployment protocol
 
 ### **3. Environment Variable Conflicts**
+
 **Cause:** Different values between environments
 **Solution:** Centralized environment management
 
 ### **4. Prisma Client Version Mismatch**
+
 **Cause:** Different Prisma versions between environments
 **Solution:** Lock Prisma version in package.json
 
 ## 📊 **MONITORING & VERIFICATION**
 
 ### **1. Health Checks**
+
 ```typescript
 // api/health/route.ts
 export async function GET() {
   try {
     // Test database connection
-    await prisma.$queryRaw`SELECT 1`
-    
+    await prisma.$queryRaw`SELECT 1`;
+
     // Test Gemini API
-    const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
-    await gemini.getGenerativeModel({ model: "gemini-1.5-pro" })
-    
-    return Response.json({ 
+    const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+    await gemini.getGenerativeModel({ model: 'gemini-1.5-pro' });
+
+    return Response.json({
       status: 'healthy',
       database: 'connected',
       ai: 'connected',
-      timestamp: new Date().toISOString()
-    })
+      timestamp: new Date().toISOString(),
+    });
   } catch (error) {
-    return Response.json({ 
-      status: 'unhealthy',
-      error: error.message 
-    }, { status: 500 })
+    return Response.json(
+      {
+        status: 'unhealthy',
+        error: error.message,
+      },
+      { status: 500 }
+    );
   }
 }
 ```
 
 ### **2. Deployment Status Dashboard**
+
 ```typescript
 // api/status/route.ts
 export async function GET() {
@@ -158,16 +174,17 @@ export async function GET() {
     github: await checkGitHubStatus(),
     vercel: await checkVercelStatus(),
     supabase: await checkSupabaseStatus(),
-    prisma: await checkPrismaStatus()
-  }
-  
-  return Response.json(status)
+    prisma: await checkPrismaStatus(),
+  };
+
+  return Response.json(status);
 }
 ```
 
 ## 🔄 **AUTOMATED WORKFLOWS**
 
 ### **1. GitHub Actions (Optional)**
+
 ```yaml
 # .github/workflows/deploy.yml
 name: Deploy
@@ -190,6 +207,7 @@ jobs:
 ```
 
 ### **2. Vercel Integration**
+
 ```json
 // vercel.json
 {
@@ -206,6 +224,7 @@ jobs:
 ## 🎯 **BEST PRACTICES**
 
 ### **1. Always Test Locally First**
+
 ```bash
 # 1. Test database changes
 npx prisma db push
@@ -220,6 +239,7 @@ curl localhost:3000/api/health
 ```
 
 ### **2. Use Feature Branches**
+
 ```bash
 # Never push directly to main
 git checkout -b feature/your-feature
@@ -230,6 +250,7 @@ git push origin feature/your-feature
 ```
 
 ### **3. Environment Parity**
+
 ```bash
 # Keep all environments in sync
 # Same Prisma version
@@ -238,6 +259,7 @@ git push origin feature/your-feature
 ```
 
 ### **4. Rollback Strategy**
+
 ```bash
 # If deployment fails
 # 1. Revert code changes
@@ -253,6 +275,7 @@ git push origin main
 ## 🚀 **QUICK DEPLOYMENT COMMANDS**
 
 ### **Full Deployment**
+
 ```bash
 # 1. Update database
 npx prisma db push && npx prisma generate
@@ -266,6 +289,7 @@ curl https://zero-barriers-growth-accelerator-20.vercel.app/api/health
 ```
 
 ### **Emergency Fix**
+
 ```bash
 # Quick fix and deploy
 git add . && git commit -m "hotfix: emergency fix" && git push origin main

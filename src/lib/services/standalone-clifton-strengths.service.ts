@@ -16,12 +16,29 @@ export interface CliftonStrengthsResult {
     influencing_score: number;
     relationship_building_score: number;
     themes: {
-      strategic_thinking: Record<string, { present: boolean; strength: number; evidence: string[] }>;
-      executing: Record<string, { present: boolean; strength: number; evidence: string[] }>;
-      influencing: Record<string, { present: boolean; strength: number; evidence: string[] }>;
-      relationship_building: Record<string, { present: boolean; strength: number; evidence: string[] }>;
+      strategic_thinking: Record<
+        string,
+        { present: boolean; strength: number; evidence: string[] }
+      >;
+      executing: Record<
+        string,
+        { present: boolean; strength: number; evidence: string[] }
+      >;
+      influencing: Record<
+        string,
+        { present: boolean; strength: number; evidence: string[] }
+      >;
+      relationship_building: Record<
+        string,
+        { present: boolean; strength: number; evidence: string[] }
+      >;
     };
-    top_themes: Array<{ theme: string; domain: string; strength: number; evidence: string[] }>;
+    top_themes: Array<{
+      theme: string;
+      domain: string;
+      strength: number;
+      evidence: string[];
+    }>;
     recommendations: string[];
   };
   error?: string;
@@ -51,23 +68,25 @@ export class StandaloneCliftonStrengthsService {
 
       // Step 2: Run AI analysis (like Content-Comparison)
       console.log('🤖 Step 2: Running CliftonStrengths AI analysis...');
-      const analysisResult = await this.runCliftonStrengthsAnalysis(scrapedData, url);
+      const analysisResult = await this.runCliftonStrengthsAnalysis(
+        scrapedData,
+        url
+      );
 
       console.log(`✅ CliftonStrengths analysis completed for: ${url}`);
 
       return {
         success: true,
         url,
-        data: analysisResult
+        data: analysisResult,
       };
-
     } catch (error) {
       console.error('CliftonStrengths analysis failed:', error);
       return {
         success: false,
         url,
         data: {} as any,
-        error: error instanceof Error ? error.message : 'Analysis failed'
+        error: error instanceof Error ? error.message : 'Analysis failed',
       };
     }
   }
@@ -75,7 +94,10 @@ export class StandaloneCliftonStrengthsService {
   /**
    * Run CliftonStrengths analysis using Gemini AI
    */
-  private static async runCliftonStrengthsAnalysis(scrapedData: any, url: string): Promise<any> {
+  private static async runCliftonStrengthsAnalysis(
+    scrapedData: any,
+    url: string
+  ): Promise<any> {
     if (!this.genAI) {
       this.initialize();
     }
@@ -107,7 +129,10 @@ export class StandaloneCliftonStrengthsService {
   /**
    * Build comprehensive CliftonStrengths prompt
    */
-  private static buildCliftonStrengthsPrompt(scrapedData: any, url: string): string {
+  private static buildCliftonStrengthsPrompt(
+    scrapedData: any,
+    url: string
+  ): string {
     return `
 Analyze this website to identify the dominant CliftonStrengths themes (34 themes across 4 domains) of the organization or individual represented.
 

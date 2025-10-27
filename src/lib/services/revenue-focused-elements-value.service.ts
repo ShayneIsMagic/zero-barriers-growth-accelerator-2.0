@@ -84,33 +84,46 @@ export class RevenueFocusedElementsOfValueService {
   /**
    * Analyze website for revenue opportunities using Elements of Value frameworks
    */
-  static async analyzeWebsite(url: string): Promise<RevenueElementsOfValueResult> {
+  static async analyzeWebsite(
+    url: string
+  ): Promise<RevenueElementsOfValueResult> {
     try {
-      console.log(`💰 Starting Revenue-Focused Elements of Value analysis for: ${url}`);
+      console.log(
+        `💰 Starting Revenue-Focused Elements of Value analysis for: ${url}`
+      );
 
       // Step 1: Scrape website content
       console.log('📊 Step 1: Scraping website content...');
       const scrapedData = await scrapeWebsiteContent(url);
 
       // Step 2: Run revenue-focused AI analysis
-      console.log('🤖 Step 2: Running Revenue-Focused Elements of Value AI analysis...');
-      const analysisResult = await this.runRevenueElementsOfValueAnalysis(scrapedData, url);
+      console.log(
+        '🤖 Step 2: Running Revenue-Focused Elements of Value AI analysis...'
+      );
+      const analysisResult = await this.runRevenueElementsOfValueAnalysis(
+        scrapedData,
+        url
+      );
 
-      console.log(`✅ Revenue-Focused Elements of Value analysis completed for: ${url}`);
+      console.log(
+        `✅ Revenue-Focused Elements of Value analysis completed for: ${url}`
+      );
 
       return {
         success: true,
         url,
-        data: analysisResult
+        data: analysisResult,
       };
-
     } catch (error) {
-      console.error('Revenue-Focused Elements of Value analysis failed:', error);
+      console.error(
+        'Revenue-Focused Elements of Value analysis failed:',
+        error
+      );
       return {
         success: false,
         url,
         data: {} as any,
-        error: error instanceof Error ? error.message : 'Analysis failed'
+        error: error instanceof Error ? error.message : 'Analysis failed',
       };
     }
   }
@@ -118,12 +131,19 @@ export class RevenueFocusedElementsOfValueService {
   /**
    * Analyze website using pre-scraped content
    */
-  static async analyzeWithScrapedContent(url: string, scrapedData: any): Promise<RevenueElementsOfValueResult> {
+  static async analyzeWithScrapedContent(
+    url: string,
+    scrapedData: any
+  ): Promise<RevenueElementsOfValueResult> {
     try {
-      console.log(`💰 Starting Revenue-Focused Elements of Value analysis with framework knowledge for: ${url}`);
+      console.log(
+        `💰 Starting Revenue-Focused Elements of Value analysis with framework knowledge for: ${url}`
+      );
 
       // Use enhanced analysis with framework integration
-      console.log('🧠 Running enhanced analysis with B2C Elements of Value framework...');
+      console.log(
+        '🧠 Running enhanced analysis with B2C Elements of Value framework...'
+      );
       const enhancedResult = await EnhancedAnalysisService.analyzeWithFramework(
         'elements-value-b2c',
         scrapedData,
@@ -134,23 +154,27 @@ export class RevenueFocusedElementsOfValueService {
         throw new Error(enhancedResult.error || 'Enhanced analysis failed');
       }
 
-      console.log(`✅ Revenue-Focused Elements of Value analysis completed for: ${url}`);
+      console.log(
+        `✅ Revenue-Focused Elements of Value analysis completed for: ${url}`
+      );
       console.log(`🎯 Framework used: ${enhancedResult.frameworkUsed}`);
       console.log(`📊 Validation score: ${enhancedResult.validation.score}`);
 
       return {
         success: true,
         url,
-        data: enhancedResult.analysis
+        data: enhancedResult.analysis,
       };
-
     } catch (error) {
-      console.error('Revenue-Focused Elements of Value analysis failed:', error);
+      console.error(
+        'Revenue-Focused Elements of Value analysis failed:',
+        error
+      );
       return {
         success: false,
         url,
         data: {} as any,
-        error: error instanceof Error ? error.message : 'Analysis failed'
+        error: error instanceof Error ? error.message : 'Analysis failed',
       };
     }
   }
@@ -158,7 +182,10 @@ export class RevenueFocusedElementsOfValueService {
   /**
    * Run revenue-focused Elements of Value analysis using Gemini AI
    */
-  private static async runRevenueElementsOfValueAnalysis(scrapedData: any, url: string): Promise<any> {
+  private static async runRevenueElementsOfValueAnalysis(
+    scrapedData: any,
+    url: string
+  ): Promise<any> {
     if (!this.genAI) {
       this.initialize();
     }
@@ -182,7 +209,10 @@ export class RevenueFocusedElementsOfValueService {
 
       return JSON.parse(jsonText);
     } catch (error) {
-      console.error('Gemini Revenue-Focused Elements of Value analysis failed:', error);
+      console.error(
+        'Gemini Revenue-Focused Elements of Value analysis failed:',
+        error
+      );
       throw new Error('AI analysis failed');
     }
   }
@@ -190,7 +220,10 @@ export class RevenueFocusedElementsOfValueService {
   /**
    * Build revenue-focused Elements of Value prompt
    */
-  private static buildRevenueElementsOfValuePrompt(scrapedData: any, url: string): string {
+  private static buildRevenueElementsOfValuePrompt(
+    scrapedData: any,
+    url: string
+  ): string {
     return `
 You are a Senior Revenue Strategy Director. Your goal is to identify revenue opportunities and calculate potential ROI by analyzing which value elements this business can leverage for growth.
 

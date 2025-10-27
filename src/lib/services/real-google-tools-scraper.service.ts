@@ -77,8 +77,8 @@ export class RealGoogleToolsScraperService {
           '--disable-accelerated-2d-canvas',
           '--no-first-run',
           '--no-zygote',
-          '--disable-gpu'
-        ]
+          '--disable-gpu',
+        ],
       });
     }
     return this.browser;
@@ -97,7 +97,9 @@ export class RealGoogleToolsScraperService {
   /**
    * Scrape real Google Trends data
    */
-  static async scrapeRealTrendsData(keywords: string[]): Promise<RealGoogleTrendsData> {
+  static async scrapeRealTrendsData(
+    keywords: string[]
+  ): Promise<RealGoogleTrendsData> {
     const browser = await this.getBrowser();
     const page = await browser.newPage();
 
@@ -109,7 +111,7 @@ export class RealGoogleToolsScraperService {
       await page.goto(trendsUrl, { waitUntil: 'networkidle2', timeout: 30000 });
 
       // Wait for the page to fully load
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      await new Promise((resolve) => setTimeout(resolve, 5000));
 
       // Extract data using multiple strategies
       const trendsData = await page.evaluate(() => {
@@ -118,7 +120,7 @@ export class RealGoogleToolsScraperService {
           relatedTopics: [],
           interestOverTime: [],
           geoData: [],
-          searchVolume: { average: 0, peak: 0, trend: 'stable' as const }
+          searchVolume: { average: 0, peak: 0, trend: 'stable' as const },
         };
 
         // Strategy 1: Look for related queries in common selectors
@@ -128,7 +130,7 @@ export class RealGoogleToolsScraperService {
           '.trends-related-queries-item',
           '[jsname="C4s9Ed"]',
           '.mdl-list__item',
-          '.trends-widget-item'
+          '.trends-widget-item',
         ];
 
         for (const selector of querySelectors) {
@@ -139,7 +141,7 @@ export class RealGoogleToolsScraperService {
               data.relatedQueries.push({
                 query: text,
                 value: Math.floor(Math.random() * 100) + 10,
-                type: 'top'
+                type: 'top',
               });
             }
           });
@@ -149,7 +151,7 @@ export class RealGoogleToolsScraperService {
         const topicSelectors = [
           '[data-topic]',
           '.related-topics-item',
-          '.trends-related-topics-item'
+          '.trends-related-topics-item',
         ];
 
         for (const selector of topicSelectors) {
@@ -160,7 +162,7 @@ export class RealGoogleToolsScraperService {
               data.relatedTopics.push({
                 topic: text,
                 value: Math.floor(Math.random() * 100) + 10,
-                type: 'top'
+                type: 'top',
               });
             }
           });
@@ -172,26 +174,30 @@ export class RealGoogleToolsScraperService {
 
         allTextElements.forEach((element) => {
           const text = element.textContent?.trim();
-          if (text &&
-              text.length > 3 &&
-              text.length < 30 &&
-              !text.includes('Google') &&
-              !text.includes('Trends') &&
-              !text.includes('Search') &&
-              !text.includes('Explore') &&
-              /^[a-zA-Z\s]+$/.test(text)) {
+          if (
+            text &&
+            text.length > 3 &&
+            text.length < 30 &&
+            !text.includes('Google') &&
+            !text.includes('Trends') &&
+            !text.includes('Search') &&
+            !text.includes('Explore') &&
+            /^[a-zA-Z\s]+$/.test(text)
+          ) {
             potentialQueries.add(text);
           }
         });
 
         // Add potential queries to related queries
-        Array.from(potentialQueries).slice(0, 10).forEach(query => {
-          data.relatedQueries.push({
-            query,
-            value: Math.floor(Math.random() * 100) + 10,
-            type: 'top'
+        Array.from(potentialQueries)
+          .slice(0, 10)
+          .forEach((query) => {
+            data.relatedQueries.push({
+              query,
+              value: Math.floor(Math.random() * 100) + 10,
+              type: 'top',
+            });
           });
-        });
 
         // Generate some sample interest over time data
         for (let i = 11; i >= 0; i--) {
@@ -199,16 +205,22 @@ export class RealGoogleToolsScraperService {
           date.setMonth(date.getMonth() - i);
           data.interestOverTime.push({
             date: date.toISOString().split('T')[0],
-            value: Math.floor(Math.random() * 100) + 10
+            value: Math.floor(Math.random() * 100) + 10,
           });
         }
 
         // Generate geo data
-        const locations = ['United States', 'Canada', 'United Kingdom', 'Australia', 'Germany'];
-        locations.forEach(location => {
+        const locations = [
+          'United States',
+          'Canada',
+          'United Kingdom',
+          'Australia',
+          'Germany',
+        ];
+        locations.forEach((location) => {
           data.geoData.push({
             location,
-            value: Math.floor(Math.random() * 100) + 10
+            value: Math.floor(Math.random() * 100) + 10,
           });
         });
 
@@ -216,16 +228,17 @@ export class RealGoogleToolsScraperService {
         data.searchVolume = {
           average: Math.floor(Math.random() * 10000) + 1000,
           peak: Math.floor(Math.random() * 50000) + 5000,
-          trend: Math.random() > 0.5 ? 'rising' : 'stable'
+          trend: Math.random() > 0.5 ? 'rising' : 'stable',
         };
 
         return data;
       });
 
-      console.log(`✅ Google Trends data extracted: ${trendsData.relatedQueries.length} queries, ${trendsData.relatedTopics.length} topics`);
+      console.log(
+        `✅ Google Trends data extracted: ${trendsData.relatedQueries.length} queries, ${trendsData.relatedTopics.length} topics`
+      );
 
       return trendsData;
-
     } catch (error) {
       console.error('Error scraping Google Trends:', error);
       throw error;
@@ -237,7 +250,9 @@ export class RealGoogleToolsScraperService {
   /**
    * Scrape real PageSpeed Insights data
    */
-  static async scrapeRealPageSpeedData(url: string): Promise<RealPageSpeedData> {
+  static async scrapeRealPageSpeedData(
+    url: string
+  ): Promise<RealPageSpeedData> {
     const browser = await this.getBrowser();
     const page = await browser.newPage();
 
@@ -245,10 +260,13 @@ export class RealGoogleToolsScraperService {
       const pageSpeedUrl = `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(url)}&form_factor=desktop`;
 
       console.log(`⚡ Scraping PageSpeed Insights for: ${url}`);
-      await page.goto(pageSpeedUrl, { waitUntil: 'networkidle2', timeout: 30000 });
+      await page.goto(pageSpeedUrl, {
+        waitUntil: 'networkidle2',
+        timeout: 30000,
+      });
 
       // Wait for the page to fully load
-      await new Promise(resolve => setTimeout(resolve, 8000));
+      await new Promise((resolve) => setTimeout(resolve, 8000));
 
       const pageSpeedData = await page.evaluate(() => {
         const data: any = {
@@ -263,8 +281,8 @@ export class RealGoogleToolsScraperService {
             firstContentfulPaint: 0,
             largestContentfulPaint: 0,
             cumulativeLayoutShift: 0,
-            speedIndex: 0
-          }
+            speedIndex: 0,
+          },
         };
 
         // Look for score elements
@@ -273,7 +291,7 @@ export class RealGoogleToolsScraperService {
           '.lh-score__value',
           '.score',
           '[class*="score"]',
-          '[class*="performance"]'
+          '[class*="performance"]',
         ];
 
         let scoresFound = 0;
@@ -305,21 +323,25 @@ export class RealGoogleToolsScraperService {
           '[data-testid="opportunity"]',
           '.lh-audit',
           '.audit',
-          '[class*="opportunity"]'
+          '[class*="opportunity"]',
         ];
 
         for (const selector of opportunitySelectors) {
           const elements = document.querySelectorAll(selector);
           elements.forEach((element) => {
-            const title = element.querySelector('h3, .title, [class*="title"]')?.textContent?.trim();
-            const description = element.querySelector('p, .description, [class*="description"]')?.textContent?.trim();
+            const title = element
+              .querySelector('h3, .title, [class*="title"]')
+              ?.textContent?.trim();
+            const description = element
+              .querySelector('p, .description, [class*="description"]')
+              ?.textContent?.trim();
 
             if (title && description) {
               data.opportunities.push({
                 title,
                 description,
                 impact: 'Medium',
-                savings: `${Math.floor(Math.random() * 2000) + 500}ms`
+                savings: `${Math.floor(Math.random() * 2000) + 500}ms`,
               });
             }
           });
@@ -330,16 +352,17 @@ export class RealGoogleToolsScraperService {
           data.opportunities = [
             {
               title: 'Eliminate render-blocking resources',
-              description: 'Remove unused CSS and JavaScript to improve page load speed',
+              description:
+                'Remove unused CSS and JavaScript to improve page load speed',
               impact: 'High',
-              savings: '2.5s'
+              savings: '2.5s',
             },
             {
               title: 'Optimize images',
               description: 'Compress and resize images to reduce file sizes',
               impact: 'Medium',
-              savings: '1.2s'
-            }
+              savings: '1.2s',
+            },
           ];
         }
 
@@ -347,7 +370,7 @@ export class RealGoogleToolsScraperService {
         data.coreWebVitals = {
           lcp: Math.random() * 2.5 + 1.0,
           fid: Math.random() * 100 + 10,
-          cls: Math.random() * 0.25 + 0.05
+          cls: Math.random() * 0.25 + 0.05,
         };
 
         // Generate metrics
@@ -355,16 +378,17 @@ export class RealGoogleToolsScraperService {
           firstContentfulPaint: Math.random() * 2000 + 500,
           largestContentfulPaint: Math.random() * 3000 + 1000,
           cumulativeLayoutShift: Math.random() * 0.25 + 0.05,
-          speedIndex: Math.random() * 3000 + 1000
+          speedIndex: Math.random() * 3000 + 1000,
         };
 
         return data;
       });
 
-      console.log(`✅ PageSpeed data extracted: Performance ${pageSpeedData.performanceScore}, ${pageSpeedData.opportunities.length} opportunities`);
+      console.log(
+        `✅ PageSpeed data extracted: Performance ${pageSpeedData.performanceScore}, ${pageSpeedData.opportunities.length} opportunities`
+      );
 
       return pageSpeedData;
-
     } catch (error) {
       console.error('Error scraping PageSpeed Insights:', error);
       throw error;
@@ -376,11 +400,15 @@ export class RealGoogleToolsScraperService {
   /**
    * Scrape all real Google Tools data
    */
-  static async scrapeAllRealGoogleToolsData(url: string, keywords: string[] = []): Promise<{
+  static async scrapeAllRealGoogleToolsData(
+    url: string,
+    keywords: string[] = []
+  ): Promise<{
     trends?: RealGoogleTrendsData;
     pageSpeed?: RealPageSpeedData;
   }> {
-    const keywordArray = keywords.length > 0 ? keywords : this.extractKeywordsFromUrl(url);
+    const keywordArray =
+      keywords.length > 0 ? keywords : this.extractKeywordsFromUrl(url);
 
     try {
       console.log(`🌐 Starting real Google Tools scraping for: ${url}`);
@@ -389,7 +417,7 @@ export class RealGoogleToolsScraperService {
       // Scrape accessible tools in parallel
       const [trendsResult, pageSpeedResult] = await Promise.allSettled([
         this.scrapeRealTrendsData(keywordArray),
-        this.scrapeRealPageSpeedData(url)
+        this.scrapeRealPageSpeedData(url),
       ]);
 
       const result: any = {};
@@ -408,10 +436,11 @@ export class RealGoogleToolsScraperService {
         console.error('❌ PageSpeed failed:', pageSpeedResult.reason);
       }
 
-      console.log('ℹ️ Focus: Only useful tools (Trends + PageSpeed) - Search Console, Analytics, GTmetrix removed');
+      console.log(
+        'ℹ️ Focus: Only useful tools (Trends + PageSpeed) - Search Console, Analytics, GTmetrix removed'
+      );
 
       return result;
-
     } catch (error) {
       console.error('Error in real Google Tools scraping:', error);
       throw error;
@@ -425,7 +454,7 @@ export class RealGoogleToolsScraperService {
     try {
       const urlObj = new URL(url);
       const domain = urlObj.hostname.replace(/\.(com|org|net|co|io)$/, '');
-      return domain.split(/[.-]/).filter(word => word.length > 2);
+      return domain.split(/[.-]/).filter((word) => word.length > 2);
     } catch {
       return ['website', 'business', 'online'];
     }

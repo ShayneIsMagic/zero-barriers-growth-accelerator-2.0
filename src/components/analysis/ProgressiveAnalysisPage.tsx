@@ -3,9 +3,23 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { CheckCircle, Clock, Download, FileText, Loader2, Play, XCircle } from 'lucide-react';
+import {
+  CheckCircle,
+  Clock,
+  Download,
+  FileText,
+  Loader2,
+  Play,
+  XCircle,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { IndividualReportsView } from './IndividualReportsView';
 import { MarkdownReportGenerator } from '@/lib/markdown-report-generator';
@@ -43,7 +57,9 @@ export function ProgressiveAnalysisPage() {
 
     const pollStatus = async () => {
       try {
-        const response = await fetch(`/api/analyze/progressive/status?id=${analysisId}`);
+        const response = await fetch(
+          `/api/analyze/progressive/status?id=${analysisId}`
+        );
         const data = await response.json();
 
         if (data.success) {
@@ -90,7 +106,7 @@ export function ProgressiveAnalysisPage() {
       const response = await fetch('/api/analyze/progressive', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: url.trim() })
+        body: JSON.stringify({ url: url.trim() }),
       });
 
       const data = await response.json();
@@ -111,9 +127,12 @@ export function ProgressiveAnalysisPage() {
   const downloadMarkdown = () => {
     if (!status?.result) return;
 
-    const markdown = MarkdownReportGenerator.generateComprehensiveReport(status.url, status.result);
+    const markdown = MarkdownReportGenerator.generateComprehensiveReport(
+      status.url,
+      status.result
+    );
     const blob = new Blob([markdown], {
-      type: 'text/markdown'
+      type: 'text/markdown',
     });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -129,7 +148,7 @@ export function ProgressiveAnalysisPage() {
     if (!status?.result) return;
 
     const blob = new Blob([JSON.stringify(status.result, null, 2)], {
-      type: 'application/json'
+      type: 'application/json',
     });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -146,7 +165,7 @@ export function ProgressiveAnalysisPage() {
       case 'completed':
         return <CheckCircle className="h-5 w-5 text-green-500" />;
       case 'running':
-        return <Loader2 className="h-5 w-5 text-blue-500 animate-spin" />;
+        return <Loader2 className="h-5 w-5 animate-spin text-blue-500" />;
       case 'failed':
         return <XCircle className="h-5 w-5 text-red-500" />;
       default:
@@ -157,9 +176,17 @@ export function ProgressiveAnalysisPage() {
   const getStepBadge = (status: string) => {
     switch (status) {
       case 'completed':
-        return <Badge variant="default" className="bg-green-500">Completed</Badge>;
+        return (
+          <Badge variant="default" className="bg-green-500">
+            Completed
+          </Badge>
+        );
       case 'running':
-        return <Badge variant="default" className="bg-blue-500">Running...</Badge>;
+        return (
+          <Badge variant="default" className="bg-blue-500">
+            Running...
+          </Badge>
+        );
       case 'failed':
         return <Badge variant="destructive">Failed</Badge>;
       default:
@@ -173,10 +200,12 @@ export function ProgressiveAnalysisPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <div className="max-w-4xl mx-auto">
+      <div className="mx-auto max-w-4xl">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Progressive Website Analysis</CardTitle>
+            <CardTitle className="text-2xl">
+              Progressive Website Analysis
+            </CardTitle>
             <CardDescription>
               Watch your analysis complete step-by-step in real-time
             </CardDescription>
@@ -188,12 +217,21 @@ export function ProgressiveAnalysisPage() {
                 placeholder="Enter website URL (e.g., https://example.com)"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                disabled={!!analysisId && status?.status !== 'COMPLETED' && status?.status !== 'FAILED'}
+                disabled={
+                  !!analysisId &&
+                  status?.status !== 'COMPLETED' &&
+                  status?.status !== 'FAILED'
+                }
                 className="flex-1"
               />
               <Button
                 onClick={startAnalysis}
-                disabled={isStarting || (!!analysisId && status?.status !== 'COMPLETED' && status?.status !== 'FAILED')}
+                disabled={
+                  isStarting ||
+                  (!!analysisId &&
+                    status?.status !== 'COMPLETED' &&
+                    status?.status !== 'FAILED')
+                }
                 className="min-w-[120px]"
               >
                 {isStarting ? (
@@ -241,9 +279,9 @@ export function ProgressiveAnalysisPage() {
             </CardHeader>
             <CardContent>
               {/* Progress Bar */}
-              <div className="w-full bg-gray-200 rounded-full h-3 mb-6">
+              <div className="mb-6 h-3 w-full rounded-full bg-gray-200">
                 <div
-                  className="bg-blue-600 h-3 rounded-full transition-all duration-500"
+                  className="h-3 rounded-full bg-blue-600 transition-all duration-500"
                   style={{ width: `${progressPercentage}%` }}
                 />
               </div>
@@ -253,14 +291,14 @@ export function ProgressiveAnalysisPage() {
                 {status.steps.map((step, index) => (
                   <div
                     key={step.id}
-                    className={`flex items-center justify-between p-4 border rounded-lg transition-all ${
+                    className={`flex items-center justify-between rounded-lg border p-4 transition-all ${
                       step.status === 'running'
                         ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
                         : step.status === 'completed'
-                        ? 'border-green-200 bg-green-50 dark:bg-green-950'
-                        : step.status === 'failed'
-                        ? 'border-red-200 bg-red-50 dark:bg-red-950'
-                        : 'border-gray-200'
+                          ? 'border-green-200 bg-green-50 dark:bg-green-950'
+                          : step.status === 'failed'
+                            ? 'border-red-200 bg-red-50 dark:bg-red-950'
+                            : 'border-gray-200'
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -287,14 +325,16 @@ export function ProgressiveAnalysisPage() {
               {/* Completion Actions */}
               {status.completed && (
                 <div className="mt-6 space-y-4">
-                  <div className="p-4 bg-green-50 dark:bg-green-950 border border-green-200 rounded-lg">
+                  <div className="rounded-lg border border-green-200 bg-green-50 p-4 dark:bg-green-950">
                     <div className="flex flex-col gap-3">
                       <div>
                         <div className="font-medium text-green-900 dark:text-green-100">
                           Analysis Complete!
                         </div>
-                        <div className="text-sm text-green-700 dark:text-green-300 mt-1">
-                          Overall Score: {status.score}/100 • {(status as any).individualReports?.length || 0} Individual Reports Generated
+                        <div className="mt-1 text-sm text-green-700 dark:text-green-300">
+                          Overall Score: {status.score}/100 •{' '}
+                          {(status as any).individualReports?.length || 0}{' '}
+                          Individual Reports Generated
                         </div>
                       </div>
                       <div className="flex gap-2">
@@ -311,32 +351,33 @@ export function ProgressiveAnalysisPage() {
                   </div>
 
                   {/* Individual Reports View */}
-                  {(status as any).individualReports && (status as any).individualReports.length > 0 && (
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Individual Assessment Reports</CardTitle>
-                        <CardDescription>
-                          View each assessment separately with its AI prompt
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <IndividualReportsView
-                          reports={(status as any).individualReports}
-                          url={status.url}
-                        />
-                      </CardContent>
-                    </Card>
-                  )}
+                  {(status as any).individualReports &&
+                    (status as any).individualReports.length > 0 && (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Individual Assessment Reports</CardTitle>
+                          <CardDescription>
+                            View each assessment separately with its AI prompt
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <IndividualReportsView
+                            reports={(status as any).individualReports}
+                            url={status.url}
+                          />
+                        </CardContent>
+                      </Card>
+                    )}
                 </div>
               )}
 
               {/* Error State */}
               {status.status === 'FAILED' && (
-                <div className="mt-6 p-4 bg-red-50 dark:bg-red-950 border border-red-200 rounded-lg">
+                <div className="mt-6 rounded-lg border border-red-200 bg-red-50 p-4 dark:bg-red-950">
                   <div className="font-medium text-red-900 dark:text-red-100">
                     Analysis Failed
                   </div>
-                  <div className="text-sm text-red-700 dark:text-red-300 mt-1">
+                  <div className="mt-1 text-sm text-red-700 dark:text-red-300">
                     Please try again or contact support if the issue persists.
                   </div>
                 </div>
@@ -353,19 +394,25 @@ export function ProgressiveAnalysisPage() {
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-muted-foreground">
               <p>
-                ✅ <strong>Real-Time Updates:</strong> Watch each assessment complete as it happens
+                ✅ <strong>Real-Time Updates:</strong> Watch each assessment
+                complete as it happens
               </p>
               <p>
-                ✅ <strong>No Frozen Screen:</strong> See exactly which step is running
+                ✅ <strong>No Frozen Screen:</strong> See exactly which step is
+                running
               </p>
               <p>
-                ✅ <strong>Database Saved:</strong> Reports stored permanently, no 404 errors
+                ✅ <strong>Database Saved:</strong> Reports stored permanently,
+                no 404 errors
               </p>
               <p>
-                ✅ <strong>Progressive Results:</strong> View completed sections while others run
+                ✅ <strong>Progressive Results:</strong> View completed sections
+                while others run
               </p>
-              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 rounded">
-                <strong className="text-blue-900 dark:text-blue-100">Analysis includes:</strong>
+              <div className="mt-4 rounded border border-blue-200 bg-blue-50 p-3 dark:bg-blue-950">
+                <strong className="text-blue-900 dark:text-blue-100">
+                  Analysis includes:
+                </strong>
                 <ul className="mt-2 space-y-1 text-blue-800 dark:text-blue-200">
                   <li>• Content & SEO Scraping</li>
                   <li>• PageAudit Technical Analysis</li>
@@ -385,4 +432,3 @@ export function ProgressiveAnalysisPage() {
     </div>
   );
 }
-

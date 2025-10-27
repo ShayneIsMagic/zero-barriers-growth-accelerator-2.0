@@ -25,7 +25,7 @@ export function AnalysisNotification({
   message,
   details,
   action,
-  onDismiss
+  onDismiss,
 }: AnalysisNotificationProps) {
   const [isVisible, setIsVisible] = useState(true);
 
@@ -76,9 +76,13 @@ export function AnalysisNotification({
           {getIcon()}
           <div className="flex-1">
             <h4 className={`font-semibold ${getTextClass()}`}>{title}</h4>
-            <p className={`text-sm ${getTextClass()} opacity-80 mt-1`}>{message}</p>
+            <p className={`text-sm ${getTextClass()} mt-1 opacity-80`}>
+              {message}
+            </p>
             {details && (
-              <p className={`text-xs ${getTextClass()} opacity-60 mt-2`}>{details}</p>
+              <p className={`text-xs ${getTextClass()} mt-2 opacity-60`}>
+                {details}
+              </p>
             )}
             {action && (
               <div className="mt-3">
@@ -114,7 +118,10 @@ interface SiteIdentificationProps {
   isAnalyzing?: boolean;
 }
 
-export function SiteIdentification({ url, isAnalyzing = false }: SiteIdentificationProps) {
+export function SiteIdentification({
+  url,
+  isAnalyzing = false,
+}: SiteIdentificationProps) {
   const [siteInfo, setSiteInfo] = useState<{
     title: string;
     favicon: string;
@@ -130,13 +137,13 @@ export function SiteIdentification({ url, isAnalyzing = false }: SiteIdentificat
         setSiteInfo({
           title: domain.replace('www.', ''),
           favicon: `https://www.google.com/s2/favicons?domain=${domain}`,
-          domain: domain
+          domain: domain,
         });
       } catch (error) {
         setSiteInfo({
           title: url,
           favicon: '',
-          domain: url
+          domain: url,
         });
       }
     }
@@ -154,7 +161,7 @@ export function SiteIdentification({ url, isAnalyzing = false }: SiteIdentificat
               alt={`${siteInfo.domain} favicon`}
               width={24}
               height={24}
-              className="rounded-sm w-6 h-6"
+              className="h-6 w-6 rounded-sm"
               style={{ width: 'auto', height: 'auto' }}
               onError={(e) => {
                 e.currentTarget.style.display = 'none';

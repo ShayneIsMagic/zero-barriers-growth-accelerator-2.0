@@ -1,6 +1,7 @@
 # 🔄 What Updates Automatically When Vercel Deploys?
 
 **Quick Answer:**
+
 - ✅ **Prisma Client:** YES - Auto-updates on every Vercel build
 - ❌ **Supabase Database:** NO - Requires manual SQL execution
 
@@ -91,16 +92,18 @@ git push origin main
 ```
 
 **Vercel automatically:**
+
 - ✅ Detects the push
 - ✅ Runs `prisma generate`
 - ✅ Updates Prisma Client with new field
 - ✅ Your code can now use `user.newField` with full TypeScript support
 
 **Example:**
+
 ```typescript
 // This code works immediately after deployment:
 const user = await prisma.user.findUnique({
-  where: { email: 'test@example.com' }
+  where: { email: 'test@example.com' },
 });
 
 console.log(user.newField); // ✅ TypeScript knows about this!
@@ -141,6 +144,7 @@ Your Database (Supabase):
 ```
 
 **Think of it like:**
+
 - Vercel = Your restaurant staff (can use the kitchen)
 - Supabase = The kitchen itself (only the owner can renovate)
 
@@ -173,6 +177,7 @@ git push origin main
 ```
 
 **Result:**
+
 - ✅ Local Supabase updated
 - ✅ Migration files in repo
 - ✅ Can replay on production
@@ -197,6 +202,7 @@ npx prisma db push
 ```
 
 **Use when:**
+
 - ✅ Quick prototyping
 - ✅ Development only
 - ❌ NOT for production (use migrate instead)
@@ -226,6 +232,7 @@ CREATE TABLE individual_reports (
 ```
 
 **Use when:**
+
 - ✅ One-time setup
 - ✅ Complex SQL that Prisma can't generate
 - ✅ Adding functions, triggers, views
@@ -349,21 +356,28 @@ https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/sql
 ## ⚠️ Common Misconceptions
 
 ### **Myth 1: "Prisma auto-updates Supabase"**
+
 **Reality:**
+
 - ✅ Prisma generates TypeScript client code
 - ❌ Prisma does NOT modify database (unless you run migrate/push)
 
 ### **Myth 2: "Vercel deployment updates database"**
+
 **Reality:**
+
 - ✅ Vercel updates your app code
 - ❌ Vercel does NOT touch your database
 
 ### **Myth 3: "Push to GitHub = Database updated"**
+
 **Reality:**
+
 - ✅ GitHub stores your code
 - ❌ GitHub does NOT run database migrations
 
 ### **The Truth:**
+
 ```
 Code Changes → Automatic (via Git/Vercel)
 Schema Changes → Manual (via Prisma CLI or SQL)
@@ -373,23 +387,24 @@ Schema Changes → Manual (via Prisma CLI or SQL)
 
 ## 📊 Summary Table
 
-| What | Auto-Updates? | How? | When? |
-|------|---------------|------|-------|
-| **Frontend Code** | ✅ Yes | Git push → Vercel build | Every push |
-| **API Routes** | ✅ Yes | Git push → Vercel build | Every push |
-| **Prisma Client** | ✅ Yes | `prisma generate` on build | Every push |
-| **Dependencies** | ✅ Yes | `npm install` on build | Every push |
-| **Env Variables** | ✅ Yes | Stored in Vercel | On Vercel change |
-| **Supabase Schema** | ❌ No | Manual: `prisma migrate` or SQL | When you run it |
-| **Supabase Tables** | ❌ No | Manual: SQL in dashboard | When you run it |
-| **Supabase Functions** | ❌ No | Manual: SQL in dashboard | When you run it |
-| **Supabase Data** | ❌ No | Via your app or SQL | When inserted |
+| What                   | Auto-Updates? | How?                            | When?            |
+| ---------------------- | ------------- | ------------------------------- | ---------------- |
+| **Frontend Code**      | ✅ Yes        | Git push → Vercel build         | Every push       |
+| **API Routes**         | ✅ Yes        | Git push → Vercel build         | Every push       |
+| **Prisma Client**      | ✅ Yes        | `prisma generate` on build      | Every push       |
+| **Dependencies**       | ✅ Yes        | `npm install` on build          | Every push       |
+| **Env Variables**      | ✅ Yes        | Stored in Vercel                | On Vercel change |
+| **Supabase Schema**    | ❌ No         | Manual: `prisma migrate` or SQL | When you run it  |
+| **Supabase Tables**    | ❌ No         | Manual: SQL in dashboard        | When you run it  |
+| **Supabase Functions** | ❌ No         | Manual: SQL in dashboard        | When you run it  |
+| **Supabase Data**      | ❌ No         | Via your app or SQL             | When inserted    |
 
 ---
 
 ## ✅ Quick Reference
 
 ### **To update Prisma Client (TypeScript types):**
+
 ```bash
 # Automatic on every Vercel build
 # Just push to GitHub!
@@ -397,6 +412,7 @@ git push origin main
 ```
 
 ### **To update Supabase schema:**
+
 ```bash
 # Manual - Run locally:
 npx prisma db push
@@ -407,6 +423,7 @@ https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/sql
 ```
 
 ### **To verify everything is in sync:**
+
 ```bash
 # Check Prisma schema
 cat prisma/schema.prisma
@@ -422,6 +439,7 @@ https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/editor
 ## 🚀 Best Practice Workflow
 
 **For Development:**
+
 ```bash
 1. Update prisma/schema.prisma
 2. Run: npx prisma db push (updates Supabase)
@@ -432,6 +450,7 @@ https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/editor
 ```
 
 **For Production:**
+
 ```bash
 1. Update prisma/schema.prisma
 2. Run: npx prisma migrate dev --name description
@@ -445,6 +464,7 @@ https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/editor
 ---
 
 **TL;DR:**
+
 - ✅ **Prisma Client:** Auto-updates on Vercel builds
 - ❌ **Supabase Schema:** Manual updates required
 - 🎯 **Push to GitHub:** Updates code, NOT database
@@ -455,4 +475,3 @@ https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/editor
 **Last Updated:** October 10, 2025
 **Status:** Complete explanation
 **Next Step:** Deploy to Vercel, then manually update Supabase if needed
-

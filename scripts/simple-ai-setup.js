@@ -11,7 +11,7 @@ const readline = require('readline');
 
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 });
 
 function askQuestion(question) {
@@ -22,13 +22,13 @@ function askQuestion(question) {
 
 async function main() {
   console.log('🚀 Zero Barriers Growth Accelerator - AI Setup');
-  console.log('=' .repeat(50));
+  console.log('='.repeat(50));
   console.log('This will help you set up FREE AI analysis for your app.\n');
 
   // Check if .env.local already exists
   const envPath = path.join(process.cwd(), '.env.local');
   const envExists = fs.existsSync(envPath);
-  
+
   if (envExists) {
     console.log('✅ Found existing .env.local file');
     const overwrite = await askQuestion('Do you want to update it? (y/n): ');
@@ -39,22 +39,27 @@ async function main() {
     }
   }
 
-  console.log('\n📝 Let\'s get your free AI API keys...\n');
+  console.log("\n📝 Let's get your free AI API keys...\n");
 
   // Get Gemini API key
   console.log('1. Google Gemini API (Recommended - more generous free tier)');
   console.log('   Go to: https://makersuite.google.com/app/apikey');
   console.log('   Sign in → Create API Key → Copy the key');
-  const geminiKey = await askQuestion('   Enter your Gemini API key (or press Enter to skip): ');
+  const geminiKey = await askQuestion(
+    '   Enter your Gemini API key (or press Enter to skip): '
+  );
 
   console.log('\n2. Anthropic Claude API (Backup option)');
   console.log('   Go to: https://console.anthropic.com/');
   console.log('   Sign up → API Keys → Create Key → Copy the key');
-  const claudeKey = await askQuestion('   Enter your Claude API key (or press Enter to skip): ');
+  const claudeKey = await askQuestion(
+    '   Enter your Claude API key (or press Enter to skip): '
+  );
 
   // Create .env.local content
   let envContent = '# Zero Barriers Growth Accelerator - AI API Keys\n';
-  envContent += '# Get these free at: https://makersuite.google.com/app/apikey (Gemini)\n';
+  envContent +=
+    '# Get these free at: https://makersuite.google.com/app/apikey (Gemini)\n';
   envContent += '# And: https://console.anthropic.com/ (Claude)\n\n';
 
   if (geminiKey.trim()) {
@@ -81,7 +86,7 @@ async function main() {
 
   // Test the setup
   console.log('\n🧪 Testing your setup...');
-  
+
   if (geminiKey.trim() || claudeKey.trim()) {
     console.log('✅ API keys configured');
     console.log('🎉 Your app will now use REAL AI analysis!');
@@ -102,7 +107,7 @@ async function main() {
   console.log('• Claude: Varies by account');
   console.log('• Both: More than enough for testing and personal use');
 
-  console.log('\n🎯 What You\'ll Get:');
+  console.log("\n🎯 What You'll Get:");
   console.log('• Real marketing framework analysis');
   console.log('• Trustworthy scores (1-10 scale)');
   console.log('• Actionable recommendations');
@@ -111,7 +116,7 @@ async function main() {
   rl.close();
 }
 
-main().catch(error => {
+main().catch((error) => {
   console.error('❌ Setup failed:', error.message);
   rl.close();
   process.exit(1);

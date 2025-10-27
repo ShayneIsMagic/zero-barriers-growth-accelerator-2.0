@@ -6,7 +6,10 @@ export async function POST(request: NextRequest) {
     const { analysis } = await request.json();
 
     if (!analysis) {
-      return NextResponse.json({ error: 'Analysis data is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Analysis data is required' },
+        { status: 400 }
+      );
     }
 
     // For now, we'll return a simple text-based PDF
@@ -19,13 +22,15 @@ export async function POST(request: NextRequest) {
         'Content-Disposition': `attachment; filename="analysis-${analysis.url.replace(/[^a-zA-Z0-9]/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf"`,
       },
     });
-
   } catch (error) {
     console.error('PDF generation error:', error);
-    return NextResponse.json({ 
-      error: 'PDF generation failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: 'PDF generation failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -98,18 +103,30 @@ BT
 (CLIFTONSTRENGTHS SCORE: ${analysis.cliftonStrengths.overallScore}/100) Tj
 0 -40 Td
 (RECOMMENDATIONS) Tj
-${analysis.recommendations.highPriority.map((rec, index) => `0 -20 Td
+${analysis.recommendations.highPriority
+  .map(
+    (rec, index) => `0 -20 Td
 (HIGH PRIORITY ${index + 1}. ${rec.title}) Tj
 0 -15 Td
-(${rec.description}) Tj`).join('\n')}
-${analysis.recommendations.mediumPriority.map((rec, index) => `0 -20 Td
+(${rec.description}) Tj`
+  )
+  .join('\n')}
+${analysis.recommendations.mediumPriority
+  .map(
+    (rec, index) => `0 -20 Td
 (MEDIUM PRIORITY ${index + 1}. ${rec.title}) Tj
 0 -15 Td
-(${rec.description}) Tj`).join('\n')}
-${analysis.recommendations.lowPriority.map((rec, index) => `0 -20 Td
+(${rec.description}) Tj`
+  )
+  .join('\n')}
+${analysis.recommendations.lowPriority
+  .map(
+    (rec, index) => `0 -20 Td
 (LOW PRIORITY ${index + 1}. ${rec.title}) Tj
 0 -15 Td
-(${rec.description}) Tj`).join('\n')}
+(${rec.description}) Tj`
+  )
+  .join('\n')}
 0 -40 Td
 (PAGE-SPECIFIC INSIGHTS) Tj
 0 -20 Td

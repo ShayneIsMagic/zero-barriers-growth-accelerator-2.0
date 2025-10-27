@@ -7,6 +7,7 @@
 ## 📊 What You Should See in Supabase
 
 **Table Editor should show:**
+
 ```
 Tables (4 total):
 ├── User                    (empty or has users)
@@ -35,11 +36,13 @@ Tables (4 total):
 ### **Step 2: Run Your First Real Analysis**
 
 1. **Open:**
+
    ```
    https://zero-barriers-growth-accelerator-20-shayne-roys-projects.vercel.app/dashboard/phased-analysis
    ```
 
 2. **Enter test URL:**
+
    ```
    https://example.com
    ```
@@ -60,6 +63,7 @@ Tables (4 total):
 4. **You should see NEW rows!** ✅
 
 **Expected:**
+
 ```
 id                  | name                | phase    | analysis_id
 --------------------|---------------------|----------|-------------
@@ -74,6 +78,7 @@ lighthouse-fallback | Lighthouse Perfor...| Phase 1  | analysis-...
 ## 📋 Expected Behavior
 
 ### **After Phase 1:**
+
 ```
 Supabase individual_reports table:
 ├── Row 1: Content Collection Report
@@ -83,6 +88,7 @@ Total rows: 2
 ```
 
 ### **After Phase 2:**
+
 ```
 Supabase individual_reports table:
 ├── Row 1: Content Collection Report (Phase 1)
@@ -96,6 +102,7 @@ Total rows: 6
 ```
 
 ### **After Phase 3:**
+
 ```
 Supabase individual_reports table:
 ├── Rows 1-6 (from Phase 1 & 2)
@@ -123,10 +130,10 @@ Run this in Supabase SQL Editor to verify tables are ready:
 
 ```sql
 -- Check table structure
-SELECT 
+SELECT
   table_name,
-  (SELECT COUNT(*) 
-   FROM information_schema.columns 
+  (SELECT COUNT(*)
+   FROM information_schema.columns
    WHERE columns.table_name = tables.table_name) as column_count
 FROM information_schema.tables
 WHERE table_schema = 'public'

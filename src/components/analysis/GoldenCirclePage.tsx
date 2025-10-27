@@ -2,11 +2,25 @@
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { Copy, Download, History, Loader2, Plus, Save, Target } from 'lucide-react';
+import {
+  Copy,
+  Download,
+  History,
+  Loader2,
+  Plus,
+  Save,
+  Target,
+} from 'lucide-react';
 import { useState } from 'react';
 
 export function GoldenCirclePage() {
@@ -19,7 +33,9 @@ export function GoldenCirclePage() {
 
   // Version control state
   const [snapshotId, setSnapshotId] = useState<string | null>(null);
-  const [proposedContentId, setProposedContentId] = useState<string | null>(null);
+  const [proposedContentId, setProposedContentId] = useState<string | null>(
+    null
+  );
   const [isSavingSnapshot, setIsSavingSnapshot] = useState(false);
   const [isCreatingProposed, setIsCreatingProposed] = useState(false);
 
@@ -52,8 +68,8 @@ export function GoldenCirclePage() {
           url: url.trim(),
           proposedContent: proposedContent.trim(),
           existingContent: existingContent, // Pass scraped content from content-comparison
-          analysisType: 'full'
-        })
+          analysisType: 'full',
+        }),
       });
 
       // Check if response is JSON
@@ -84,7 +100,10 @@ export function GoldenCirclePage() {
 
   const copyAnalysis = () => {
     if (!result) return;
-    const analysisText = typeof result.analysis === 'string' ? result.analysis : JSON.stringify(result.analysis, null, 2);
+    const analysisText =
+      typeof result.analysis === 'string'
+        ? result.analysis
+        : JSON.stringify(result.analysis, null, 2);
     copyToClipboard(analysisText);
   };
 
@@ -124,10 +143,10 @@ export function GoldenCirclePage() {
           metadata: {
             wordCount: result.existingData.wordCount,
             keywords: result.existingData.extractedKeywords,
-            headings: result.existingData.headings
+            headings: result.existingData.headings,
           },
-          userId: 'current-user'
-        })
+          userId: 'current-user',
+        }),
       });
 
       const data = await response.json();
@@ -162,8 +181,8 @@ export function GoldenCirclePage() {
           snapshotId,
           content: proposedContent.trim(),
           createdBy: 'current-user',
-          status: 'draft'
-        })
+          status: 'draft',
+        }),
       });
 
       const data = await response.json();
@@ -175,7 +194,9 @@ export function GoldenCirclePage() {
         setError(data.error || 'Failed to create proposed version');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create proposed version');
+      setError(
+        err instanceof Error ? err.message : 'Failed to create proposed version'
+      );
     } finally {
       setIsCreatingProposed(false);
     }
@@ -195,8 +216,8 @@ export function GoldenCirclePage() {
           existingId: snapshotId,
           proposedId: proposedContentId,
           analysisResults: result?.comparison || null,
-          similarityScore: result?.similarityScore || null
-        })
+          similarityScore: result?.similarityScore || null,
+        }),
       });
 
       const data = await response.json();
@@ -207,26 +228,34 @@ export function GoldenCirclePage() {
         setError(data.error || 'Failed to create version comparison');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create version comparison');
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Failed to create version comparison'
+      );
     }
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className="mx-auto max-w-7xl space-y-6 p-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-2xl">
             <Target className="h-6 w-6" />
             Golden Circle Analysis
           </CardTitle>
           <CardDescription>
-            Analyze your website using Simon Sinek's Golden Circle framework - discover your WHY, HOW, and WHAT
+            Analyze your website using Simon Sinek's Golden Circle framework -
+            discover your WHY, HOW, and WHAT
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* URL Input */}
           <div>
-            <label htmlFor="website-url" className="text-sm font-medium mb-2 block">
+            <label
+              htmlFor="website-url"
+              className="mb-2 block text-sm font-medium"
+            >
               Website URL
             </label>
             <Input
@@ -242,14 +271,17 @@ export function GoldenCirclePage() {
               autoComplete="url"
               required
             />
-            <p id="url-help" className="text-xs text-muted-foreground mt-1">
+            <p id="url-help" className="mt-1 text-xs text-muted-foreground">
               Enter the URL of the website you want to analyze
             </p>
           </div>
 
           {/* Proposed Content */}
           <div>
-            <label htmlFor="proposed-content" className="text-sm font-medium mb-2 block">
+            <label
+              htmlFor="proposed-content"
+              className="mb-2 block text-sm font-medium"
+            >
               Proposed New Content (Optional)
             </label>
             <Textarea
@@ -279,14 +311,18 @@ Comprehensive marketing optimization tools and insights.
               aria-label="Enter proposed new content for Golden Circle analysis"
               aria-describedby="content-help"
             />
-            <p id="content-help" className="text-xs text-muted-foreground mt-2">
-              💡 Leave empty to just analyze existing content. Add proposed content to see side-by-side comparison.
+            <p id="content-help" className="mt-2 text-xs text-muted-foreground">
+              💡 Leave empty to just analyze existing content. Add proposed
+              content to see side-by-side comparison.
             </p>
           </div>
 
           {/* Paste Scraped Content (from Content-Comparison) */}
           <div>
-            <label htmlFor="scraped-content" className="text-sm font-medium mb-2 block">
+            <label
+              htmlFor="scraped-content"
+              className="mb-2 block text-sm font-medium"
+            >
               Paste Scraped Content (Optional - from Content-Comparison)
             </label>
             <Textarea
@@ -302,33 +338,36 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
               aria-label="Paste scraped content from content-comparison"
               aria-describedby="scraped-help"
             />
-            <p id="scraped-help" className="text-xs text-muted-foreground mt-2">
-              💡 Paste the "Copy Scraped Data" JSON from Content-Comparison page to reuse already-scraped content. This prevents re-scraping.
+            <p id="scraped-help" className="mt-2 text-xs text-muted-foreground">
+              💡 Paste the "Copy Scraped Data" JSON from Content-Comparison page
+              to reuse already-scraped content. This prevents re-scraping.
             </p>
           </div>
 
           {/* What You Get */}
-          <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
-            <h4 className="font-semibold mb-2 text-blue-900 dark:text-blue-100">What You Get:</h4>
-            <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+          <div className="rounded-lg bg-blue-50 p-4 dark:bg-blue-950">
+            <h4 className="mb-2 font-semibold text-blue-900 dark:text-blue-100">
+              What You Get:
+            </h4>
+            <ul className="space-y-1 text-sm text-blue-800 dark:text-blue-200">
               <li className="flex items-start gap-2">
-                <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
+                <span className="mt-1 text-blue-600 dark:text-blue-400">•</span>
                 <span>WHY analysis - your core purpose and beliefs</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
+                <span className="mt-1 text-blue-600 dark:text-blue-400">•</span>
                 <span>HOW analysis - your unique processes and methods</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
+                <span className="mt-1 text-blue-600 dark:text-blue-400">•</span>
                 <span>WHAT analysis - your products and services</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
+                <span className="mt-1 text-blue-600 dark:text-blue-400">•</span>
                 <span>WHO analysis - your target audience identification</span>
               </li>
             </ul>
-            <div className="flex gap-4 mt-3 text-xs text-blue-700 dark:text-blue-300">
+            <div className="mt-3 flex gap-4 text-xs text-blue-700 dark:text-blue-300">
               <span>⏱️ 2-3 minutes</span>
               <span>📊 Beginner</span>
               <span>✅ None - just enter your website URL</span>
@@ -357,14 +396,16 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
             ) : (
               <>
                 <Target className="mr-2 h-4 w-4" />
-                {proposedContent ? 'Compare Existing vs. Proposed' : 'Analyze Existing Content'}
+                {proposedContent
+                  ? 'Compare Existing vs. Proposed'
+                  : 'Analyze Existing Content'}
               </>
             )}
           </Button>
 
           {/* Version Control Buttons */}
           {result && (
-            <div className="flex gap-2 pt-4 border-t">
+            <div className="flex gap-2 border-t pt-4">
               <Button
                 onClick={saveSnapshot}
                 disabled={isSavingSnapshot || !!snapshotId}
@@ -386,7 +427,12 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
 
               <Button
                 onClick={createProposedVersion}
-                disabled={isCreatingProposed || !snapshotId || !proposedContent.trim() || !!proposedContentId}
+                disabled={
+                  isCreatingProposed ||
+                  !snapshotId ||
+                  !proposedContent.trim() ||
+                  !!proposedContentId
+                }
                 variant="outline"
                 size="sm"
               >
@@ -398,7 +444,9 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                 ) : (
                   <>
                     <Plus className="mr-2 h-4 w-4" />
-                    {proposedContentId ? 'Version Created' : 'Create Proposed Version'}
+                    {proposedContentId
+                      ? 'Version Created'
+                      : 'Create Proposed Version'}
                   </>
                 )}
               </Button>
@@ -423,7 +471,9 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="analysis">Analysis Results</TabsTrigger>
             <TabsTrigger value="existing">Existing Content</TabsTrigger>
-            {result.proposed && <TabsTrigger value="proposed">Proposed Content</TabsTrigger>}
+            {result.proposed && (
+              <TabsTrigger value="proposed">Proposed Content</TabsTrigger>
+            )}
           </TabsList>
 
           {/* Analysis Tab */}
@@ -433,7 +483,9 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle>Golden Circle Analysis</CardTitle>
-                    <CardDescription>Simon Sinek's Golden Circle framework analysis</CardDescription>
+                    <CardDescription>
+                      Simon Sinek's Golden Circle framework analysis
+                    </CardDescription>
                   </div>
                   <Button onClick={downloadMarkdown} variant="outline">
                     <Download className="mr-2 h-4 w-4" />
@@ -445,23 +497,32 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                 {/* AI Analysis Results */}
                 {result.analysis && (
                   <div className="mt-6 space-y-4">
-                    <h3 className="text-xl font-semibold">AI Analysis Results</h3>
+                    <h3 className="text-xl font-semibold">
+                      AI Analysis Results
+                    </h3>
 
                     {/* Show analysis data */}
-                    <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-950">
-                      <h4 className="font-semibold mb-2">Golden Circle Analysis</h4>
-                      <div className="text-sm whitespace-pre-wrap">
+                    <div className="rounded-lg border bg-blue-50 p-4 dark:bg-blue-950">
+                      <h4 className="mb-2 font-semibold">
+                        Golden Circle Analysis
+                      </h4>
+                      <div className="whitespace-pre-wrap text-sm">
                         {JSON.stringify(result.analysis, null, 2)}
                       </div>
                     </div>
 
-                    <Button onClick={() => copyToClipboard(JSON.stringify(result.analysis, null, 2))}>
+                    <Button
+                      onClick={() =>
+                        copyToClipboard(
+                          JSON.stringify(result.analysis, null, 2)
+                        )
+                      }
+                    >
                       <Copy className="mr-2 h-4 w-4" />
                       Copy Analysis
                     </Button>
                   </div>
                 )}
-
 
                 {/* Why/How/What Analysis */}
                 {result.why && result.how && result.what && (
@@ -475,46 +536,55 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                     <CardContent>
                       <div className="space-y-6">
                         {/* WHY */}
-                        <div className="p-4 border rounded-lg bg-orange-50 dark:bg-orange-950">
-                          <h4 className="text-lg font-semibold text-orange-900 dark:text-orange-100 mb-2">
+                        <div className="rounded-lg border bg-orange-50 p-4 dark:bg-orange-950">
+                          <h4 className="mb-2 text-lg font-semibold text-orange-900 dark:text-orange-100">
                             WHY - Your Purpose
                           </h4>
                           <div className="text-sm text-orange-800 dark:text-orange-200">
-                            {result.why.evidence || result.why.description || 'No clear WHY identified'}
+                            {result.why.evidence ||
+                              result.why.description ||
+                              'No clear WHY identified'}
                           </div>
                           {result.why.recommendations && (
-                            <div className="text-xs text-orange-700 dark:text-orange-300 mt-2">
-                              <strong>Recommendations:</strong> {result.why.recommendations}
+                            <div className="mt-2 text-xs text-orange-700 dark:text-orange-300">
+                              <strong>Recommendations:</strong>{' '}
+                              {result.why.recommendations}
                             </div>
                           )}
                         </div>
 
                         {/* HOW */}
-                        <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-950">
-                          <h4 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                        <div className="rounded-lg border bg-blue-50 p-4 dark:bg-blue-950">
+                          <h4 className="mb-2 text-lg font-semibold text-blue-900 dark:text-blue-100">
                             HOW - Your Process
                           </h4>
                           <div className="text-sm text-blue-800 dark:text-blue-200">
-                            {result.how.evidence || result.how.description || 'No clear HOW identified'}
+                            {result.how.evidence ||
+                              result.how.description ||
+                              'No clear HOW identified'}
                           </div>
                           {result.how.recommendations && (
-                            <div className="text-xs text-blue-700 dark:text-blue-300 mt-2">
-                              <strong>Recommendations:</strong> {result.how.recommendations}
+                            <div className="mt-2 text-xs text-blue-700 dark:text-blue-300">
+                              <strong>Recommendations:</strong>{' '}
+                              {result.how.recommendations}
                             </div>
                           )}
                         </div>
 
                         {/* WHAT */}
-                        <div className="p-4 border rounded-lg bg-green-50 dark:bg-green-950">
-                          <h4 className="text-lg font-semibold text-green-900 dark:text-green-100 mb-2">
+                        <div className="rounded-lg border bg-green-50 p-4 dark:bg-green-950">
+                          <h4 className="mb-2 text-lg font-semibold text-green-900 dark:text-green-100">
                             WHAT - Your Product/Service
                           </h4>
                           <div className="text-sm text-green-800 dark:text-green-200">
-                            {result.what.evidence || result.what.description || 'No clear WHAT identified'}
+                            {result.what.evidence ||
+                              result.what.description ||
+                              'No clear WHAT identified'}
                           </div>
                           {result.what.recommendations && (
-                            <div className="text-xs text-green-700 dark:text-green-300 mt-2">
-                              <strong>Recommendations:</strong> {result.what.recommendations}
+                            <div className="mt-2 text-xs text-green-700 dark:text-green-300">
+                              <strong>Recommendations:</strong>{' '}
+                              {result.what.recommendations}
                             </div>
                           )}
                         </div>
@@ -533,13 +603,17 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div className="p-4 border rounded-lg bg-muted/50">
-                        <h4 className="font-semibold mb-2">Analysis Results</h4>
-                        <pre className="text-xs whitespace-pre-wrap overflow-auto max-h-96">
+                      <div className="rounded-lg border bg-muted/50 p-4">
+                        <h4 className="mb-2 font-semibold">Analysis Results</h4>
+                        <pre className="max-h-96 overflow-auto whitespace-pre-wrap text-xs">
                           {JSON.stringify(result, null, 2)}
                         </pre>
                       </div>
-                      <Button onClick={() => copyToClipboard(JSON.stringify(result, null, 2))}>
+                      <Button
+                        onClick={() =>
+                          copyToClipboard(JSON.stringify(result, null, 2))
+                        }
+                      >
                         <Copy className="mr-2 h-4 w-4" />
                         Copy Full Analysis
                       </Button>
@@ -555,28 +629,42 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
             <Card>
               <CardHeader>
                 <CardTitle>Existing Website Content</CardTitle>
-                <CardDescription>Current live content from {url}</CardDescription>
+                <CardDescription>
+                  Current live content from {url}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="p-3 border rounded-lg">
-                    <h4 className="font-semibold mb-2">Meta Information</h4>
+                  <div className="rounded-lg border p-3">
+                    <h4 className="mb-2 font-semibold">Meta Information</h4>
                     <div className="space-y-2 text-sm">
-                      <div><strong>Title:</strong> {result.existing?.title || 'N/A'}</div>
-                      <div><strong>Description:</strong> {result.existing?.metaDescription || 'N/A'}</div>
-                      <div><strong>Keywords:</strong> {result.existing?.metaKeywords?.join(', ') || 'None'}</div>
+                      <div>
+                        <strong>Title:</strong>{' '}
+                        {result.existing?.title || 'N/A'}
+                      </div>
+                      <div>
+                        <strong>Description:</strong>{' '}
+                        {result.existing?.metaDescription || 'N/A'}
+                      </div>
+                      <div>
+                        <strong>Keywords:</strong>{' '}
+                        {result.existing?.metaKeywords?.join(', ') || 'None'}
+                      </div>
                     </div>
                   </div>
 
-                  <div className="p-3 border rounded-lg">
-                    <h4 className="font-semibold mb-2">Content Preview</h4>
+                  <div className="rounded-lg border p-3">
+                    <h4 className="mb-2 font-semibold">Content Preview</h4>
                     <div className="max-h-96 overflow-y-auto">
-                      <pre className="text-xs whitespace-pre-wrap bg-gray-50 dark:bg-gray-900 p-3 rounded">
+                      <pre className="whitespace-pre-wrap rounded bg-gray-50 p-3 text-xs dark:bg-gray-900">
                         {result.existing?.cleanText || 'No content available'}
                       </pre>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      📊 Total content length: {result.existing?.cleanText?.length?.toLocaleString() || 0} characters
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      📊 Total content length:{' '}
+                      {result.existing?.cleanText?.length?.toLocaleString() ||
+                        0}{' '}
+                      characters
                     </p>
                   </div>
                 </div>
@@ -590,21 +678,30 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
               <Card>
                 <CardHeader>
                   <CardTitle>Proposed New Content</CardTitle>
-                  <CardDescription>Your suggested content changes</CardDescription>
+                  <CardDescription>
+                    Your suggested content changes
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="p-3 border rounded-lg">
-                      <h4 className="font-semibold mb-2">Proposed Meta Information</h4>
+                    <div className="rounded-lg border p-3">
+                      <h4 className="mb-2 font-semibold">
+                        Proposed Meta Information
+                      </h4>
                       <div className="space-y-2 text-sm">
-                        <div><strong>Title:</strong> {result.proposed.title}</div>
-                        <div><strong>Description:</strong> {result.proposed.metaDescription}</div>
+                        <div>
+                          <strong>Title:</strong> {result.proposed.title}
+                        </div>
+                        <div>
+                          <strong>Description:</strong>{' '}
+                          {result.proposed.metaDescription}
+                        </div>
                       </div>
                     </div>
 
-                    <div className="p-3 border rounded-lg">
-                      <h4 className="font-semibold mb-2">Proposed Content</h4>
-                      <pre className="text-xs whitespace-pre-wrap bg-gray-50 dark:bg-gray-900 p-3 rounded">
+                    <div className="rounded-lg border p-3">
+                      <h4 className="mb-2 font-semibold">Proposed Content</h4>
+                      <pre className="whitespace-pre-wrap rounded bg-gray-50 p-3 text-xs dark:bg-gray-900">
                         {result.proposed.cleanText}
                       </pre>
                     </div>
@@ -635,7 +732,9 @@ function generateGoldenCircleMarkdown(result: any): string {
 **Word Count:** ${result.existing?.wordCount || 'N/A'}
 **Keywords:** ${result.existing?.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
 
-${result.proposed ? `
+${
+  result.proposed
+    ? `
 ## Proposed Content
 
 **Title:** ${result.proposed.title}
@@ -648,7 +747,9 @@ ${result.proposed ? `
 ## Golden Circle Analysis Results
 
 ${JSON.stringify(result.data, null, 2)}
-` : ''}
+`
+    : ''
+}
 
 ---
 

@@ -13,10 +13,13 @@ export async function POST(request: NextRequest) {
     const { url } = await request.json();
 
     if (!url) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL is required',
+        },
+        { status: 400 }
+      );
     }
 
     // Check if content already exists in the content-comparison API
@@ -29,27 +32,26 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Use the scraped content from content-comparison API',
-      instruction: 'Call /api/analyze/compare with the URL to get scraped content',
+      instruction:
+        'Call /api/analyze/compare with the URL to get scraped content',
       url,
       usage: {
         endpoint: '/api/analyze/compare',
         method: 'POST',
         body: {
           url,
-          proposedContent: '' // Empty string if no proposed content
-        }
-      }
+          proposedContent: '', // Empty string if no proposed content
+        },
+      },
     });
-
   } catch (error) {
     console.error('Get content error:', error);
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Failed to get content'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to get content',
+      },
+      { status: 500 }
+    );
   }
 }
-
-
-
-

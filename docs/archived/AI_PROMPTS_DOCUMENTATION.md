@@ -1,4 +1,5 @@
 # AI PROMPTS DOCUMENTATION
+
 ## Zero Barriers Growth Accelerator V2
 
 This document catalogs all AI prompts used in the system, their purposes, and expected outputs.
@@ -13,6 +14,7 @@ This document catalogs all AI prompts used in the system, their purposes, and ex
 **Output**: Complete analysis with all frameworks
 
 ### **Prompt Structure**:
+
 ```
 Analyze the following website content using proven marketing frameworks. Provide specific scores (1-10) and actionable insights.
 
@@ -23,7 +25,7 @@ ANALYSIS FRAMEWORKS:
 
 1. SIMON SINEK'S GOLDEN CIRCLE (INCLUDING WHO):
    - WHY: What is the purpose, cause, or belief? (Score 1-10)
-   - HOW: What is the unique methodology or approach? (Score 1-10)  
+   - HOW: What is the unique methodology or approach? (Score 1-10)
    - WHAT: What are the specific products/services offered? (Score 1-10)
    - WHO: Who is the target audience and how does the brand connect emotionally? (Score 1-10)
 
@@ -53,44 +55,73 @@ ANALYSIS FRAMEWORKS:
 ```
 
 ### **Expected Output Format**:
+
 ```json
 {
   "overallScore": 0,
   "executiveSummary": "Your analysis summary here",
   "goldenCircle": {
-    "why": {"score": 0, "insights": []},
-    "how": {"score": 0, "insights": []},
-    "what": {"score": 0, "insights": []},
-    "who": {"score": 0, "targetAudience": [], "emotionalConnection": "", "insights": []},
+    "why": { "score": 0, "insights": [] },
+    "how": { "score": 0, "insights": [] },
+    "what": { "score": 0, "insights": [] },
+    "who": {
+      "score": 0,
+      "targetAudience": [],
+      "emotionalConnection": "",
+      "insights": []
+    },
     "overallScore": 0,
     "recommendations": []
   },
   "elementsOfValue": {
-    "functional": {"score": 0, "elements": {}, "recommendations": []},
-    "emotional": {"score": 0, "elements": {}, "recommendations": []},
-    "lifeChanging": {"score": 0, "elements": {}, "recommendations": []},
-    "socialImpact": {"score": 0, "elements": {}, "recommendations": []},
+    "functional": { "score": 0, "elements": {}, "recommendations": [] },
+    "emotional": { "score": 0, "elements": {}, "recommendations": [] },
+    "lifeChanging": { "score": 0, "elements": {}, "recommendations": [] },
+    "socialImpact": { "score": 0, "elements": {}, "recommendations": [] },
     "overallScore": 0
   },
   "b2bElements": {
-    "tableStakes": {"score": 0, "elements": {}, "recommendations": []},
-    "functional": {"score": 0, "elements": {}, "recommendations": []},
-    "easeOfDoingBusiness": {"score": 0, "elements": {}, "recommendations": []},
-    "individual": {"score": 0, "elements": {}, "recommendations": []},
-    "inspirational": {"score": 0, "elements": {}, "recommendations": []},
+    "tableStakes": { "score": 0, "elements": {}, "recommendations": [] },
+    "functional": { "score": 0, "elements": {}, "recommendations": [] },
+    "easeOfDoingBusiness": {
+      "score": 0,
+      "elements": {},
+      "recommendations": []
+    },
+    "individual": { "score": 0, "elements": {}, "recommendations": [] },
+    "inspirational": { "score": 0, "elements": {}, "recommendations": [] },
     "overallScore": 0
   },
   "cliftonStrengths": {
-    "strategicThinking": {"score": 0, "elements": {}, "recommendations": []},
-    "executing": {"score": 0, "elements": {}, "recommendations": []},
-    "influencing": {"score": 0, "elements": {}, "recommendations": []},
-    "relationshipBuilding": {"score": 0, "elements": {}, "recommendations": []},
+    "strategicThinking": { "score": 0, "elements": {}, "recommendations": [] },
+    "executing": { "score": 0, "elements": {}, "recommendations": [] },
+    "influencing": { "score": 0, "elements": {}, "recommendations": [] },
+    "relationshipBuilding": {
+      "score": 0,
+      "elements": {},
+      "recommendations": []
+    },
     "overallScore": 0
   },
   "transformationAnalysis": {
-    "messaging": {"current": "", "recommended": "", "score": 0, "insights": []},
-    "socialMedia": {"current": "", "recommended": "", "score": 0, "insights": []},
-    "competitive": {"current": "", "recommended": "", "score": 0, "insights": []},
+    "messaging": {
+      "current": "",
+      "recommended": "",
+      "score": 0,
+      "insights": []
+    },
+    "socialMedia": {
+      "current": "",
+      "recommended": "",
+      "score": 0,
+      "insights": []
+    },
+    "competitive": {
+      "current": "",
+      "recommended": "",
+      "score": 0,
+      "insights": []
+    },
     "overallScore": 0,
     "recommendations": []
   }
@@ -102,6 +133,7 @@ ANALYSIS FRAMEWORKS:
 ## 🎯 **FOCUSED ANALYSIS PROMPTS** (`src/lib/services/focused-analysis.service.ts`)
 
 ### **1. WHY Analysis Prompt**
+
 **Purpose**: Focused Golden Circle WHY dimension analysis
 **Input**: Website content
 **Output**: WHY statement with ratings and evidence
@@ -125,6 +157,7 @@ Give 3-5 recommendations for improvement.
 ```
 
 ### **2. Functional Elements Analysis Prompt**
+
 **Purpose**: Focused B2C Functional Elements analysis (14 elements)
 **Input**: Website content
 **Output**: Functional elements scores and evidence
@@ -158,6 +191,7 @@ For each element:
 ```
 
 ### **3. Strategic Thinking Analysis Prompt**
+
 **Purpose**: Focused CliftonStrengths Strategic Thinking domain (8 themes)
 **Input**: Website content + themes from database
 **Output**: Strategic Thinking themes scores and manifestations
@@ -179,6 +213,7 @@ For each theme:
 ```
 
 ### **4. Table Stakes Analysis Prompt**
+
 **Purpose**: Focused B2B Table Stakes analysis (4 elements)
 **Input**: Website content
 **Output**: Table Stakes elements scores and evidence
@@ -206,32 +241,40 @@ For each element:
 ## 🎯 **SERVICE-SPECIFIC PROMPTS**
 
 ### **Golden Circle Detailed Service** (`src/lib/services/golden-circle-detailed.service.ts`)
+
 **Purpose**: Complete Golden Circle analysis with all 4 dimensions
-**Features**: 
+**Features**:
+
 - WHY, HOW, WHAT, WHO analysis
 - Evidence-based scoring
 - Industry context integration
 - Pattern matching from database
 
 ### **CliftonStrengths Detailed Service** (`src/lib/services/clifton-strengths-detailed.service.ts`)
+
 **Purpose**: Complete CliftonStrengths analysis with all 34 themes
 **Features**:
+
 - All 34 themes from database
 - Organized by 4 domains
 - Evidence-based scoring
 - Manifestation identification
 
 ### **Elements of Value B2C Service** (`src/lib/services/elements-value-b2c.service.ts`)
+
 **Purpose**: Complete B2C Elements of Value analysis (30 elements)
 **Features**:
+
 - All 30 elements properly categorized
 - Pyramid level organization
 - Evidence-based scoring
 - Pattern matching integration
 
 ### **Elements of Value B2B Service** (`src/lib/services/elements-value-b2b.service.ts`)
+
 **Purpose**: Complete B2B Elements of Value analysis (40 elements)
 **Features**:
+
 - All 40 elements with proper categories
 - Subcategory organization
 - Evidence-based scoring
@@ -242,6 +285,7 @@ For each element:
 ## 🔧 **PROMPT ENHANCEMENT FEATURES**
 
 ### **Synonym Detection Integration**
+
 - **Service**: `src/lib/services/synonym-detection.service.ts`
 - **Purpose**: Enhances prompts with industry-specific context
 - **Features**:
@@ -251,6 +295,7 @@ For each element:
   - Evidence integration
 
 ### **Industry Context Enhancement**
+
 - **Method**: `buildEnhancedPrompt()`
 - **Purpose**: Adds industry-specific patterns to prompts
 - **Features**:
@@ -263,18 +308,21 @@ For each element:
 ## 📊 **PROMPT QUALITY METRICS**
 
 ### **Template Elimination** ✅
+
 - ❌ Removed hard-coded example values
 - ❌ Removed template JSON structures
 - ✅ Empty placeholders force genuine analysis
 - ✅ Evidence-based scoring required
 
 ### **Framework Completeness** ✅
+
 - ✅ All 34 CliftonStrengths themes
 - ✅ All 30 B2C Elements of Value
 - ✅ All 40 B2B Elements of Value
 - ✅ Complete Golden Circle (including WHO)
 
 ### **Evidence Requirements** ✅
+
 - ✅ Specific citations required
 - ✅ Pattern matching integration
 - ✅ Industry context inclusion
@@ -285,16 +333,18 @@ For each element:
 ## 🚀 **USAGE EXAMPLES**
 
 ### **Complete Analysis**
+
 ```javascript
-POST /api/analyze/phase-new
-{
-  "url": "https://example.com",
-  "phase": 1,
-  "industry": "technology"
-}
+POST / api / analyze / phase -
+  new {
+    url: 'https://example.com',
+    phase: 1,
+    industry: 'technology',
+  }();
 ```
 
 ### **Focused Analysis**
+
 ```javascript
 POST /api/analyze/focused
 {
@@ -305,15 +355,22 @@ POST /api/analyze/focused
 ```
 
 ### **Service-Specific Analysis**
+
 ```javascript
 // Golden Circle
 const result = await GoldenCircleDetailedService.analyze(
-  analysisId, content, industry, patterns
+  analysisId,
+  content,
+  industry,
+  patterns
 );
 
 // CliftonStrengths
 const result = await CliftonStrengthsService.analyze(
-  analysisId, content, industry, patterns
+  analysisId,
+  content,
+  industry,
+  patterns
 );
 ```
 

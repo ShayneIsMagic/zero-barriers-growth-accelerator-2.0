@@ -27,6 +27,7 @@ Step 5: VERCEL (Auto-deploys automatically)
 **What:** Run the SQL to create all 80+ tables
 
 **How:**
+
 ```
 1. Go to: https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/sql
 
@@ -50,6 +51,7 @@ Step 5: VERCEL (Auto-deploys automatically)
 **What:** Tell Prisma about the new tables so TypeScript knows they exist
 
 **Option A: Auto-Pull (Recommended)**
+
 ```bash
 # Prisma reads Supabase and generates schema
 npx prisma db pull
@@ -60,6 +62,7 @@ npx prisma generate
 ```
 
 **Option B: Manual (If auto-pull has issues)**
+
 ```bash
 # Manually add models to prisma/schema.prisma
 # Then run:
@@ -75,6 +78,7 @@ npx prisma generate
 **What:** Create service layers to interact with new tables
 
 **Files I'll create:**
+
 ```
 src/lib/services/
 ├── synonym-detection.service.ts       (pattern matching)
@@ -87,6 +91,7 @@ src/lib/services/
 ```
 
 **What these do:**
+
 - Query the new detailed tables
 - Provide type-safe data access
 - Used by API routes
@@ -100,6 +105,7 @@ src/lib/services/
 **What:** Modify API routes to use new services
 
 **Files to update:**
+
 ```
 src/app/api/analyze/phase/route.ts
 ├── Phase 1: Add synonym detection
@@ -120,6 +126,7 @@ Changes:
 **What:** Mark deprecated code, keep for reference
 
 **Approach:**
+
 ```typescript
 // === DEPRECATED: Using JSON blob storage ===
 // Keeping for backward compatibility
@@ -145,6 +152,7 @@ export function newAnalysisMethod() {
 **What:** Verify everything works before pushing
 
 **Tests:**
+
 ```bash
 # 1. Test database connection
 npx prisma studio
@@ -211,6 +219,7 @@ git push origin feature/advanced-schema
 **What:** Vercel automatically deploys the feature branch
 
 **How:**
+
 ```
 1. Vercel detects push to feature/advanced-schema
 2. Auto-creates preview deployment
@@ -221,6 +230,7 @@ git push origin feature/advanced-schema
 ```
 
 **Configuration Needed in Vercel:**
+
 ```
 ✅ Already done! You connected GitHub 47min ago
 ✅ Auto-deploy enabled
@@ -235,15 +245,15 @@ No additional config needed!
 
 ## 🎯 WHAT UPDATES AUTOMATICALLY
 
-| Component | Updates? | How? | Action Needed |
-|-----------|----------|------|---------------|
-| **Supabase** | ❌ Manual | Run SQL in dashboard | ✅ You do this |
-| **Prisma** | ⚠️ Semi-Auto | `npx prisma db pull` | ✅ You run command |
-| **TypeScript** | ✅ Auto | `npx prisma generate` | ✅ Auto after db pull |
-| **Code/Services** | ❌ Manual | Write new services | ✅ I'll do this |
-| **API Routes** | ❌ Manual | Update to use new tables | ✅ I'll do this |
-| **GitHub** | ❌ Manual | `git push` | ✅ You do this |
-| **Vercel** | ✅ Auto | Detects GitHub push | ✅ Automatic |
+| Component         | Updates?     | How?                     | Action Needed         |
+| ----------------- | ------------ | ------------------------ | --------------------- |
+| **Supabase**      | ❌ Manual    | Run SQL in dashboard     | ✅ You do this        |
+| **Prisma**        | ⚠️ Semi-Auto | `npx prisma db pull`     | ✅ You run command    |
+| **TypeScript**    | ✅ Auto      | `npx prisma generate`    | ✅ Auto after db pull |
+| **Code/Services** | ❌ Manual    | Write new services       | ✅ I'll do this       |
+| **API Routes**    | ❌ Manual    | Update to use new tables | ✅ I'll do this       |
+| **GitHub**        | ❌ Manual    | `git push`               | ✅ You do this        |
+| **Vercel**        | ✅ Auto      | Detects GitHub push      | ✅ Automatic          |
 
 ---
 
@@ -252,6 +262,7 @@ No additional config needed!
 ### **Today (Setup Phase):**
 
 **1. Update Supabase (5 min):**
+
 ```
 → Run SQL in Supabase dashboard
 → Creates all 80+ tables
@@ -260,12 +271,14 @@ No additional config needed!
 ```
 
 **2. Update Prisma (5 min):**
+
 ```bash
 npx prisma db pull    # Reads Supabase, updates schema.prisma
 npx prisma generate   # Creates TypeScript types
 ```
 
 **3. Verify (2 min):**
+
 ```bash
 npx prisma studio     # Browse tables visually
 # Should see all 80+ tables
@@ -276,6 +289,7 @@ npx prisma studio     # Browse tables visually
 ### **Next Session (Code Implementation):**
 
 **I'll create** (8-12 hours total):
+
 - Synonym detection service
 - Detailed tracking services
 - Updated API routes
@@ -284,6 +298,7 @@ npx prisma studio     # Browse tables visually
 - Evidence citation system
 
 **Then:**
+
 - Test locally
 - Commit to feature branch
 - Push to GitHub (no size limits)
@@ -335,11 +350,13 @@ npx prisma studio     # Browse tables visually
 **Do this RIGHT NOW (10 minutes):**
 
 1. **Go to Supabase:**
+
    ```
    https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/sql
    ```
 
 2. **Open the SQL file:**
+
    ```bash
    cat supabase-advanced-schema-prisma-compatible.sql
    ```
@@ -355,6 +372,7 @@ npx prisma studio     # Browse tables visually
 7. **Verify in Table Editor - should see 80+ tables**
 
 **Then I'll continue with:**
+
 - Updating Prisma
 - Creating services
 - Updating API routes
@@ -366,12 +384,14 @@ npx prisma studio     # Browse tables visually
 ### **Option B: Let Me Finish Everything First**
 
 **I continue working (8-12 hours) to:**
+
 - Create all service layers
 - Update all API routes
 - Write tests
 - Create documentation
 
 **Then you:**
+
 - Run ONE command to deploy everything
 - Schema + Code together
 
@@ -392,6 +412,7 @@ npx prisma studio     # Browse tables visually
 6. **Vercel auto-deploys preview** (automatic)
 
 **This way:**
+
 - ✅ Database is ready immediately
 - ✅ I can build code against real schema
 - ✅ You can see tables populate in real-time
@@ -416,4 +437,3 @@ cat supabase-advanced-schema-prisma-compatible.sql | pbcopy
 ---
 
 **Ready to install the schema in Supabase?**
-

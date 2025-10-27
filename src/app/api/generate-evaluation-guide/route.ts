@@ -5,39 +5,48 @@ import path from 'path';
 export async function GET(_request: NextRequest) {
   try {
     // Read the evaluation guide markdown file
-    const guidePath = path.join(process.cwd(), 'WEBSITE_EVALUATION_WORKSHEET_INTEGRATION.md');
-    
+    const guidePath = path.join(
+      process.cwd(),
+      'WEBSITE_EVALUATION_WORKSHEET_INTEGRATION.md'
+    );
+
     if (!fs.existsSync(guidePath)) {
-      return NextResponse.json({
-        success: false,
-        error: 'Evaluation guide not found'
-      }, { status: 404 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Evaluation guide not found',
+        },
+        { status: 404 }
+      );
     }
 
     const guideContent = fs.readFileSync(guidePath, 'utf-8');
-    
+
     // Convert markdown to HTML for better formatting
     const htmlContent = convertMarkdownToHTML(guideContent);
-    
+
     return NextResponse.json({
       success: true,
       content: guideContent,
       htmlContent: htmlContent,
       metadata: {
         title: 'Website Evaluation Worksheet Integration Guide',
-        description: 'Complete guide showing how the system captures actual language and evidence matching',
+        description:
+          'Complete guide showing how the system captures actual language and evidence matching',
         generatedAt: new Date().toISOString(),
-        version: '1.0.0'
-      }
+        version: '1.0.0',
+      },
     });
-
   } catch (error) {
     console.error('Error generating evaluation guide:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to generate evaluation guide',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to generate evaluation guide',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -51,24 +60,24 @@ function convertMarkdownToHTML(markdown: string): string {
     .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
     .replace(/^##### (.*$)/gim, '<h5>$1</h5>')
     .replace(/^###### (.*$)/gim, '<h6>$1</h6>')
-    
+
     // Bold and italic
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    
+
     // Code blocks
     .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
     .replace(/`(.*?)`/g, '<code>$1</code>')
-    
+
     // Lists
     .replace(/^- (.*$)/gim, '<li>$1</li>')
     .replace(/^\* (.*$)/gim, '<li>$1</li>')
     .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
-    
+
     // Line breaks
     .replace(/\n\n/g, '</p><p>')
     .replace(/\n/g, '<br>')
-    
+
     // Horizontal rules
     .replace(/^---$/gim, '<hr>')
     .replace(/^___$/gim, '<hr>')

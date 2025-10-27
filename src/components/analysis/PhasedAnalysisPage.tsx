@@ -3,7 +3,13 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ArrowRight, CheckCircle, Loader2, Play } from 'lucide-react';
 import { useState } from 'react';
@@ -36,8 +42,8 @@ export function PhasedAnalysisPage() {
         body: JSON.stringify({
           url: url.trim(),
           phase,
-          analysisId: analysisId
-        })
+          analysisId: analysisId,
+        }),
       });
 
       const data = await response.json();
@@ -55,7 +61,9 @@ export function PhasedAnalysisPage() {
           setPhase1Reports(data.individualReports || []);
         } else if (phase === 2) {
           setPhase2Data(data.data);
-          setPhase2Reports(data.individualReports.filter((r: any) => r.phase === 'Phase 2'));
+          setPhase2Reports(
+            data.individualReports.filter((r: any) => r.phase === 'Phase 2')
+          );
 
           // Show recommendations if Phase 1 was skipped
           if (data.recommendations && data.recommendations.length > 0) {
@@ -64,7 +72,9 @@ export function PhasedAnalysisPage() {
           }
         } else if (phase === 3) {
           setPhase3Data(data.data);
-          setPhase3Reports(data.individualReports.filter((r: any) => r.phase === 'Phase 3'));
+          setPhase3Reports(
+            data.individualReports.filter((r: any) => r.phase === 'Phase 3')
+          );
 
           // Show recommendations if prior phases were skipped
           if (data.recommendations && data.recommendations.length > 0) {
@@ -80,12 +90,13 @@ export function PhasedAnalysisPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className="mx-auto max-w-7xl space-y-6 p-6">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Phased Website Analysis</CardTitle>
           <CardDescription>
-            Run each phase separately. Review results before proceeding to the next phase.
+            Run each phase separately. Review results before proceeding to the
+            next phase.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -107,18 +118,20 @@ export function PhasedAnalysisPage() {
           )}
 
           {/* Phase Progress */}
-          <div className="grid grid-cols-3 gap-4 mt-6">
+          <div className="mt-6 grid grid-cols-3 gap-4">
             {/* Phase 1 */}
             <Card className={currentPhase >= 1 ? 'border-green-500' : ''}>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">Phase 1</CardTitle>
-                  {currentPhase >= 1 && <CheckCircle className="h-5 w-5 text-green-500" />}
+                  {currentPhase >= 1 && (
+                    <CheckCircle className="h-5 w-5 text-green-500" />
+                  )}
                 </div>
                 <CardDescription>Data Collection</CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="text-sm space-y-1 text-muted-foreground mb-3">
+                <ul className="mb-3 space-y-1 text-sm text-muted-foreground">
                   <li>• Collect website content & metadata</li>
                   <li>• Extract keywords & topics</li>
                   <li>• Prepare data for AI analysis</li>
@@ -149,23 +162,33 @@ export function PhasedAnalysisPage() {
             </Card>
 
             {/* Phase 2 */}
-            <Card className={currentPhase >= 2 ? 'border-green-500' : currentPhase === 1 ? 'border-blue-500' : ''}>
+            <Card
+              className={
+                currentPhase >= 2
+                  ? 'border-green-500'
+                  : currentPhase === 1
+                    ? 'border-blue-500'
+                    : ''
+              }
+            >
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">Phase 2</CardTitle>
-                  {currentPhase >= 2 && <CheckCircle className="h-5 w-5 text-green-500" />}
+                  {currentPhase >= 2 && (
+                    <CheckCircle className="h-5 w-5 text-green-500" />
+                  )}
                 </div>
                 <CardDescription>Framework Analysis</CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="text-sm space-y-1 text-muted-foreground mb-3">
+                <ul className="mb-3 space-y-1 text-sm text-muted-foreground">
                   <li>• Golden Circle (Gemini AI)</li>
                   <li>• Elements of Value (Gemini AI)</li>
                   <li>• B2B Elements (Gemini AI)</li>
                   <li>• CliftonStrengths (Gemini AI)</li>
                 </ul>
                 {currentPhase === 1 && (
-                  <div className="mb-3 p-2 bg-green-50 dark:bg-green-950 border border-green-200 rounded text-xs text-green-800 dark:text-green-200">
+                  <div className="mb-3 rounded border border-green-200 bg-green-50 p-2 text-xs text-green-800 dark:bg-green-950 dark:text-green-200">
                     ✅ Ready! Will analyze content from Phase 1
                   </div>
                 )}
@@ -201,16 +224,26 @@ export function PhasedAnalysisPage() {
             </Card>
 
             {/* Phase 3 */}
-            <Card className={currentPhase >= 3 ? 'border-green-500' : currentPhase === 2 ? 'border-blue-500' : ''}>
+            <Card
+              className={
+                currentPhase >= 3
+                  ? 'border-green-500'
+                  : currentPhase === 2
+                    ? 'border-blue-500'
+                    : ''
+              }
+            >
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">Phase 3</CardTitle>
-                  {currentPhase >= 3 && <CheckCircle className="h-5 w-5 text-green-500" />}
+                  {currentPhase >= 3 && (
+                    <CheckCircle className="h-5 w-5 text-green-500" />
+                  )}
                 </div>
                 <CardDescription>Strategic Analysis</CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="text-sm space-y-1 text-muted-foreground mb-3">
+                <ul className="mb-3 space-y-1 text-sm text-muted-foreground">
                   <li>• Comprehensive insights (Gemini AI)</li>
                   <li>• Priority recommendations</li>
                   <li>• Quick wins & long-term strategy</li>
@@ -259,7 +292,8 @@ export function PhasedAnalysisPage() {
                       ✅ Content Successfully Collected
                     </CardTitle>
                     <CardDescription>
-                      Review the content, meta tags, and keywords we extracted. This is what AI will analyze in Phase 2.
+                      Review the content, meta tags, and keywords we extracted.
+                      This is what AI will analyze in Phase 2.
                     </CardDescription>
                   </div>
                   <Badge variant="default" className="bg-blue-500">
@@ -270,21 +304,32 @@ export function PhasedAnalysisPage() {
               <CardContent>
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-semibold mb-2">Title:</h4>
-                    <p className="text-sm text-muted-foreground">{phase1Data.scrapedContent.title || 'No title found'}</p>
+                    <h4 className="mb-2 font-semibold">Title:</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {phase1Data.scrapedContent.title || 'No title found'}
+                    </p>
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-2">Meta Description:</h4>
-                    <p className="text-sm text-muted-foreground">{phase1Data.scrapedContent.metaDescription || 'No meta description found'}</p>
+                    <h4 className="mb-2 font-semibold">Meta Description:</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {phase1Data.scrapedContent.metaDescription ||
+                        'No meta description found'}
+                    </p>
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-2">Keywords:</h4>
-                    <p className="text-sm text-muted-foreground">{phase1Data.scrapedContent.extractedKeywords?.join(', ') || 'No keywords found'}</p>
+                    <h4 className="mb-2 font-semibold">Keywords:</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {phase1Data.scrapedContent.extractedKeywords?.join(
+                        ', '
+                      ) || 'No keywords found'}
+                    </p>
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-2">Content Preview:</h4>
-                    <p className="text-sm text-muted-foreground max-h-32 overflow-y-auto">
-                      {phase1Data.scrapedContent.cleanText?.substring(0, 500) || 'No content found'}...
+                    <h4 className="mb-2 font-semibold">Content Preview:</h4>
+                    <p className="max-h-32 overflow-y-auto text-sm text-muted-foreground">
+                      {phase1Data.scrapedContent.cleanText?.substring(0, 500) ||
+                        'No content found'}
+                      ...
                     </p>
                   </div>
                 </div>
@@ -299,7 +344,8 @@ export function PhasedAnalysisPage() {
                 <div>
                   <CardTitle>Phase 1: Data Collection Reports</CardTitle>
                   <CardDescription>
-                    {phase1Reports.length} reports • Download individually or all at once
+                    {phase1Reports.length} reports • Download individually or
+                    all at once
                   </CardDescription>
                 </div>
                 <Badge variant="default" className="bg-green-500">
@@ -356,28 +402,40 @@ export function PhasedAnalysisPage() {
             <IndividualReportsView reports={phase3Reports} url={url} />
 
             {phase3Data && (
-              <div className="mt-6 p-4 bg-green-50 dark:bg-green-950 border border-green-200 rounded-lg">
-                <h3 className="text-lg font-semibold text-green-900 dark:text-green-100 mb-2">
+              <div className="mt-6 rounded-lg border border-green-200 bg-green-50 p-4 dark:bg-green-950">
+                <h3 className="mb-2 text-lg font-semibold text-green-900 dark:text-green-100">
                   🎉 All Phases Complete!
                 </h3>
-                <p className="text-sm text-green-700 dark:text-green-300 mb-4">
-                  Your comprehensive website analysis is ready. You have {phase1Reports.length + phase2Reports.length + phase3Reports.length} individual reports to review.
+                <p className="mb-4 text-sm text-green-700 dark:text-green-300">
+                  Your comprehensive website analysis is ready. You have{' '}
+                  {phase1Reports.length +
+                    phase2Reports.length +
+                    phase3Reports.length}{' '}
+                  individual reports to review.
                 </p>
                 <div className="flex gap-2">
-                  <Button onClick={() => {
-                    // Download all reports logic
-                    [...phase1Reports, ...phase2Reports, ...phase3Reports].forEach(report => {
-                      const blob = new Blob([report.markdown], { type: 'text/markdown' });
-                      const url = URL.createObjectURL(blob);
-                      const a = document.createElement('a');
-                      a.href = url;
-                      a.download = `${report.id}-${new Date().toISOString().split('T')[0]}.md`;
-                      document.body.appendChild(a);
-                      a.click();
-                      document.body.removeChild(a);
-                      URL.revokeObjectURL(url);
-                    });
-                  }}>
+                  <Button
+                    onClick={() => {
+                      // Download all reports logic
+                      [
+                        ...phase1Reports,
+                        ...phase2Reports,
+                        ...phase3Reports,
+                      ].forEach((report) => {
+                        const blob = new Blob([report.markdown], {
+                          type: 'text/markdown',
+                        });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${report.id}-${new Date().toISOString().split('T')[0]}.md`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                      });
+                    }}
+                  >
                     Download All Reports
                   </Button>
                 </div>
@@ -389,4 +447,3 @@ export function PhasedAnalysisPage() {
     </div>
   );
 }
-

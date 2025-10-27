@@ -10,6 +10,7 @@
 ## 🚨 THE PROBLEM
 
 **Error:**
+
 ```
 Error occurred during query execution:
 ConnectorError: prepared statement "s3" already exists
@@ -17,6 +18,7 @@ PostgresError: code "42P05"
 ```
 
 **What This Means:**
+
 - Supabase uses PgBouncer for connection pooling
 - Prisma creates prepared statements for queries
 - Connection pooler reuses connections across requests
@@ -24,6 +26,7 @@ PostgresError: code "42P05"
 - Database writes FAIL
 
 **Impact:**
+
 - ❌ Phase 1 cannot save results
 - ❌ Phase 2 cannot save results
 - ❌ Phase 3 cannot save results
@@ -37,11 +40,13 @@ PostgresError: code "42P05"
 ### **What Needs to Change:**
 
 **Current DATABASE_URL:**
+
 ```
 postgresql://postgres.xxx:password@aws-1-us-west-1.pooler.supabase.com:5432/postgres
 ```
 
 **Fixed DATABASE_URL:**
+
 ```
 postgresql://postgres.xxx:password@aws-1-us-west-1.pooler.supabase.com:5432/postgres?pgbouncer=true
 ```
@@ -49,6 +54,7 @@ postgresql://postgres.xxx:password@aws-1-us-west-1.pooler.supabase.com:5432/post
 **Change:** Add `?pgbouncer=true` to the end
 
 **What This Does:**
+
 - Tells Prisma to use "transaction mode"
 - Disables prepared statements
 - Makes Prisma compatible with PgBouncer
@@ -72,6 +78,7 @@ https://vercel.com/shayne-roys-projects/zero-barriers-growth-accelerator-2.0/set
 Look for the variable named `DATABASE_URL`
 
 It should show:
+
 - Development
 - Preview
 - Production
@@ -91,11 +98,13 @@ For **Development**, **Preview**, AND **Production**:
 **Example:**
 
 **Before:**
+
 ```
 postgresql://postgres.chkwezsyopfciibifmxx:go2ArBwdewM3M80e@aws-1-us-west-1.pooler.supabase.com:5432/postgres
 ```
 
 **After:**
+
 ```
 postgresql://postgres.chkwezsyopfciibifmxx:go2ArBwdewM3M80e@aws-1-us-west-1.pooler.supabase.com:5432/postgres?pgbouncer=true
 ```
@@ -105,11 +114,13 @@ postgresql://postgres.chkwezsyopfciibifmxx:go2ArBwdewM3M80e@aws-1-us-west-1.pool
 ### **Step 4: Redeploy**
 
 **Option A: Auto-deploy (5 minutes)**
+
 - Vercel will detect the change
 - Will redeploy automatically
 - Wait 5 minutes
 
 **Option B: Manual redeploy (Immediate)**
+
 - Go to Deployments tab
 - Click "Redeploy" on latest deployment
 - Or push a small commit to GitHub
@@ -119,6 +130,7 @@ postgresql://postgres.chkwezsyopfciibifmxx:go2ArBwdewM3M80e@aws-1-us-west-1.pool
 ### **Step 5: Test!**
 
 After redeployment, test Phase 1:
+
 ```bash
 # Test that it works
 curl -X POST https://zero-barriers-growth-accelerator-20.vercel.app/api/analyze/phase \
@@ -135,16 +147,19 @@ curl -X POST https://zero-barriers-growth-accelerator-20.vercel.app/api/analyze/
 ### **The Technical Explanation:**
 
 **PgBouncer (Supabase's pooler) has 3 modes:**
+
 1. **Session mode** - Keeps connections per session (default)
 2. **Transaction mode** - Reuses connections per transaction
 3. **Statement mode** - Reuses connections per statement
 
 **Prisma by default:**
+
 - Creates prepared statements
 - Expects session mode
 - Breaks with transaction/statement mode
 
 **Adding `?pgbouncer=true`:**
+
 - Tells Prisma: "Hey, we're using a pooler!"
 - Prisma switches to transaction mode
 - Disables prepared statements
@@ -191,6 +206,7 @@ curl -X POST https://zero-barriers-growth-accelerator-20.vercel.app/api/analyze/
 ## 🚨 WHY THIS IS CRITICAL
 
 **Current State:**
+
 ```
 ✅ Code: Perfect
 ✅ Schema: Correct
@@ -201,6 +217,7 @@ curl -X POST https://zero-barriers-growth-accelerator-20.vercel.app/api/analyze/
 ```
 
 **After Fix:**
+
 ```
 ✅ Code: Perfect
 ✅ Schema: Correct
@@ -219,6 +236,7 @@ curl -X POST https://zero-barriers-growth-accelerator-20.vercel.app/api/analyze/
 ### **How to Confirm It's Fixed:**
 
 **Test 1: Simple Phase 1**
+
 ```bash
 curl -X POST https://your-site.vercel.app/api/analyze/phase \
   -H "Content-Type: application/json" \
@@ -226,6 +244,7 @@ curl -X POST https://your-site.vercel.app/api/analyze/phase \
 ```
 
 **Expected:**
+
 ```json
 {
   "success": true,
@@ -235,11 +254,13 @@ curl -X POST https://your-site.vercel.app/api/analyze/phase \
 ```
 
 **Test 2: Check Database**
+
 ```bash
 curl https://your-site.vercel.app/api/test-db
 ```
 
 **Expected:**
+
 ```json
 {
   "status": "SUCCESS",
@@ -305,4 +326,3 @@ At the end of DATABASE_URL (all 3 environments)
 
 **Then:**
 ✅ Everything works!
-

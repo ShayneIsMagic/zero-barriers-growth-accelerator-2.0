@@ -11,24 +11,29 @@
 ### **TASK 1: Copy SQL to Clipboard** (30 seconds)
 
 **Step 1.1:** Open Terminal (if not already open)
+
 - Mac: Cmd+Space → Type "Terminal" → Enter
 
 **Step 1.2:** Navigate to project directory
+
 ```bash
 cd /Users/shayneroy/zero-barriers-growth-accelerator-2.0
 ```
 
 **Step 1.3:** Copy SQL file to clipboard
+
 ```bash
 cat supabase-advanced-schema-prisma-compatible.sql | pbcopy
 ```
 
 **Expected output:**
+
 ```
 (No output means success - SQL is in your clipboard)
 ```
 
 **Verify:**
+
 - ✅ Command ran without errors
 - ✅ No error messages appeared
 - ✅ SQL is now in your clipboard (ready to paste)
@@ -38,19 +43,23 @@ cat supabase-advanced-schema-prisma-compatible.sql | pbcopy
 ### **TASK 2: Open Supabase SQL Editor** (1 minute)
 
 **Step 2.1:** Open your web browser
+
 - Chrome, Firefox, Safari, or Edge
 
 **Step 2.2:** Go to this EXACT URL
+
 ```
 https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/sql
 ```
 
 **Step 2.3:** Verify you see the SQL Editor
+
 - Big text box in the middle
 - "RUN" button at top right (green)
 - Left sidebar shows "SQL Editor"
 
 **If you don't see this:**
+
 - Log into Supabase first
 - Then navigate to the URL again
 
@@ -59,15 +68,18 @@ https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/sql
 ### **TASK 3: Paste SQL and Run** (5 minutes)
 
 **Step 3.1:** Clear the SQL Editor (if anything is there)
+
 - Click in the big text box
 - Select all: Cmd+A (Mac) or Ctrl+A (Windows)
 - Delete (if there's anything there)
 
 **Step 3.2:** Paste the SQL
+
 - Click in the text box
 - Paste: Cmd+V (Mac) or Ctrl+V (Windows)
 
 **Step 3.3:** Verify SQL pasted correctly
+
 - Scroll to top - should start with:
   ```sql
   -- =====================================================
@@ -76,20 +88,24 @@ https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/sql
 - Scroll to bottom - should have INSERT statements for industries
 
 **Step 3.4:** Click the green "RUN" button
+
 - Top right corner of SQL Editor
 - Big green button
 
 **Step 3.5:** Wait for execution (2-3 minutes)
+
 - You'll see "Executing..." message
 - May take 2-3 minutes (it's a lot of SQL)
 - Be patient - don't refresh!
 
 **Step 3.6:** Check for results
+
 - Scroll down below the SQL editor
 - Should see: "Success" messages (many of them)
 - Or: Multiple result tables
 
 **Expected results:**
+
 ```
 Success, no rows returned (for CREATE TABLE statements)
 Success, 27 rows affected (for value_element_reference inserts)
@@ -99,12 +115,14 @@ Success, 250+ rows affected (for industry terms)
 ```
 
 **If you see errors:**
+
 - Take a screenshot
 - Copy the error message
 - Tell me exactly what it says
 - I'll fix it immediately
 
 **If you see "Success":**
+
 - ✅ Schema installed!
 - Continue to next task
 
@@ -113,13 +131,16 @@ Success, 250+ rows affected (for industry terms)
 ### **TASK 4: Verify Tables Created** (2 minutes)
 
 **Step 4.1:** Click "Table Editor" in left sidebar
+
 - Or go to: https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/editor
 
 **Step 4.2:** Look at the table list (left side)
+
 - Scroll through the tables
 - Should see MANY new tables
 
 **Step 4.3:** Count tables (quick verification)
+
 - Look for these NEW tables:
   - ✅ `websites`
   - ✅ `golden_circle_analyses`
@@ -148,27 +169,33 @@ Success, 250+ rows affected (for industry terms)
 **Step 4.4:** Spot check a few tables
 
 **Click on `value_element_reference`:**
+
 - Should have ~27 rows
 - Columns: id, element_name, element_category, display_name, etc.
 - Look for: "saves_time", "reduces_cost", "simplifies"
 
 **Click on `value_element_patterns`:**
+
 - Should have 150+ rows
 - Look for patterns like: "lightning-fast", "affordable", "easy"
 
 **Click on `industry_terminology`:**
+
 - Should have 250+ rows
 - Look for industries: technology, consulting, agriculture, nonprofit
 
 **Click on `clifton_themes_reference`:**
+
 - Should have 34 rows
 - Look for: "Achiever", "Strategic", "Empathy"
 
 **If you see data in these tables:**
+
 - ✅ Schema AND seed data installed successfully!
 - Continue to next task
 
 **If tables are empty:**
+
 - ⚠️ Schema created but seed data failed
 - Tell me - I'll provide just the INSERT statements
 
@@ -179,32 +206,38 @@ Success, 250+ rows affected (for industry terms)
 **Step 5.1:** Go back to Terminal
 
 **Step 5.2:** Make sure you're in project directory
+
 ```bash
 pwd
 ```
 
 **Expected output:**
+
 ```
 /Users/shayneroy/zero-barriers-growth-accelerator-2.0
 ```
 
 **If not, navigate there:**
+
 ```bash
 cd /Users/shayneroy/zero-barriers-growth-accelerator-2.0
 ```
 
 **Step 5.3:** Pull schema from Supabase
+
 ```bash
 npx prisma db pull
 ```
 
 **What this does:**
+
 - Connects to your Supabase database
 - Reads all table structures
 - Updates `prisma/schema.prisma` automatically
 - Takes 10-30 seconds
 
 **Expected output:**
+
 ```
 Prisma schema loaded from prisma/schema.prisma
 Datasource "db": PostgreSQL database "postgres"
@@ -217,32 +250,38 @@ Run prisma generate to generate Prisma Client.
 ```
 
 **Key numbers to check:**
+
 - Should say "82 models" (or similar - 80+)
 - Should say "wrote them into prisma/schema.prisma"
 
 **If you see errors:**
+
 - Check DATABASE_URL in .env.local
 - Make sure Supabase is accessible
 - Tell me the error
 
 **If successful:**
+
 - ✅ Prisma schema updated
 - Continue to next step
 
 ---
 
 **Step 5.4:** Generate TypeScript types
+
 ```bash
 npx prisma generate
 ```
 
 **What this does:**
+
 - Reads prisma/schema.prisma
 - Generates TypeScript types and query builders
 - Creates Prisma Client with all 80+ tables
 - Takes 10-30 seconds
 
 **Expected output:**
+
 ```
 ✔ Generated Prisma Client (v5.22.0) to ./node_modules/@prisma/client in XXXms
 
@@ -253,6 +292,7 @@ const prisma = new PrismaClient()
 ```
 
 **If successful:**
+
 - ✅ TypeScript types generated
 - ✅ Can now use new tables in code
 - Continue to next step
@@ -262,25 +302,30 @@ const prisma = new PrismaClient()
 ### **TASK 6: Verify Prisma Knows About Tables** (2 minutes)
 
 **Step 6.1:** Open Prisma Studio (visual database browser)
+
 ```bash
 npx prisma studio
 ```
 
 **What this does:**
+
 - Opens web interface at http://localhost:5555
 - Shows all tables visually
 - Takes 5-10 seconds to start
 
 **Expected output:**
+
 ```
 Prisma Studio is up on http://localhost:5555
 ```
 
 **Step 6.2:** Browser opens automatically
+
 - Should open to: http://localhost:5555
 - If not, manually open that URL
 
 **Step 6.3:** Verify tables appear in left sidebar
+
 - Look for all the new tables:
   - websites ✅
   - golden_circle_analyses ✅
@@ -292,24 +337,29 @@ Prisma Studio is up on http://localhost:5555
   - (and 70+ more...)
 
 **Step 6.4:** Click on `value_element_reference`
+
 - Should show 27 records
 - See: saves_time, reduces_cost, simplifies, etc.
 
 **Step 6.5:** Click on `industry_terminology`
+
 - Should show 250+ records
 - See: technology, consulting, agriculture, nonprofit
 
 **Step 6.6:** Click on `clifton_themes_reference`
+
 - Should show 34 records
 - See: Achiever, Strategic, Empathy, etc.
 
 **If you see all this data:**
+
 - ✅ Prisma is connected
 - ✅ Tables are accessible
 - ✅ Seed data loaded
 - **SUCCESS!** Continue to next task
 
 **Step 6.7:** Close Prisma Studio
+
 - Press Ctrl+C in terminal where prisma studio is running
 - Or just close the terminal tab
 
@@ -318,11 +368,13 @@ Prisma Studio is up on http://localhost:5555
 ### **TASK 7: Test Database Connection** (1 minute)
 
 **Step 7.1:** Test the connection from code
+
 ```bash
 npm run dev
 ```
 
 **Step 7.2:** Wait for dev server to start
+
 ```
 Expected:
 ✓ Ready in 2.1s
@@ -330,11 +382,13 @@ Expected:
 ```
 
 **Step 7.3:** Open browser to test endpoint
+
 ```
 http://localhost:3000/api/test-db
 ```
 
 **Expected response:**
+
 ```json
 {
   "status": "SUCCESS",
@@ -347,10 +401,12 @@ http://localhost:3000/api/test-db
 ```
 
 **If you see SUCCESS:**
+
 - ✅ Database connection works
 - ✅ Ready for code implementation
 
 **Step 7.4:** Stop dev server
+
 - Go back to terminal
 - Press Ctrl+C
 
@@ -359,11 +415,13 @@ http://localhost:3000/api/test-db
 ### **TASK 8: Commit Your Changes** (2 minutes)
 
 **Step 8.1:** Check what changed
+
 ```bash
 git status
 ```
 
 **Should show:**
+
 ```
 modified: prisma/schema.prisma (Prisma pulled new schema)
 new file: supabase-advanced-schema-prisma-compatible.sql
@@ -373,11 +431,13 @@ new file: top-4-industries-seed.sql
 ```
 
 **Step 8.2:** Stage all changes
+
 ```bash
 git add -A
 ```
 
 **Step 8.3:** Commit with descriptive message
+
 ```bash
 git commit -m "feat: Add 80-table advanced schema with 24 industries and 250+ term mappings
 
@@ -397,11 +457,13 @@ Next: Implement TypeScript service layers
 ```
 
 **Step 8.4:** Verify commit worked
+
 ```bash
 git log -1 --oneline
 ```
 
 **Expected:**
+
 ```
 abc1234 feat: Add 80-table advanced schema with 24 industries...
 ```
@@ -413,6 +475,7 @@ abc1234 feat: Add 80-table advanced schema with 24 industries...
 **Just say:** "Schema installed, Prisma updated, committed!"
 
 **Then I'll:**
+
 - ✅ Start building TypeScript services (this session)
 - ✅ Create synonym detection engine
 - ✅ Update API routes
@@ -429,6 +492,7 @@ abc1234 feat: Add 80-table advanced schema with 24 industries...
 **Automatic sequence:**
 
 **1. GitHub receives push** (instant)
+
 ```
 ✅ Code uploaded to GitHub
 ✅ Visible at: github.com/ShayneIsMagic/zero-barriers-growth-accelerator-2.0
@@ -436,6 +500,7 @@ abc1234 feat: Add 80-table advanced schema with 24 industries...
 ```
 
 **2. Vercel detects push** (5-10 seconds)
+
 ```
 ✅ Webhook triggered
 ✅ Vercel queues build
@@ -443,6 +508,7 @@ abc1234 feat: Add 80-table advanced schema with 24 industries...
 ```
 
 **3. Vercel builds** (2-3 minutes)
+
 ```
 ✅ npm install
 ✅ npx prisma generate (uses your new schema!)
@@ -451,6 +517,7 @@ abc1234 feat: Add 80-table advanced schema with 24 industries...
 ```
 
 **4. Preview URL created** (instant after build)
+
 ```
 ✅ URL: https://your-app-git-feature-advanced-schema-[hash].vercel.app
 ✅ Environment: Preview (not production)
@@ -458,6 +525,7 @@ abc1234 feat: Add 80-table advanced schema with 24 industries...
 ```
 
 **5. You test preview** (your time)
+
 ```
 ✅ Visit preview URL
 ✅ Test Phase 1 → 2 → 3
@@ -466,6 +534,7 @@ abc1234 feat: Add 80-table advanced schema with 24 industries...
 ```
 
 **6. If good: Merge to main** (via GitHub UI)
+
 ```
 ✅ Create Pull Request
 ✅ Review changes
@@ -474,6 +543,7 @@ abc1234 feat: Add 80-table advanced schema with 24 industries...
 ```
 
 **7. Production updated** (2-3 minutes after merge)
+
 ```
 ✅ Main branch deployed
 ✅ Live site updated
@@ -526,6 +596,7 @@ git push origin feature/advanced-schema
 ## 🎯 CHECKPOINTS (Verify At Each Step)
 
 ### **Checkpoint 1: After Supabase SQL**
+
 ```
 ✅ SQL Editor shows "Success" messages
 ✅ Table Editor shows 80+ tables
@@ -539,6 +610,7 @@ git push origin feature/advanced-schema
 ---
 
 ### **Checkpoint 2: After Prisma Pull**
+
 ```
 ✅ Command output says "Introspected 82 models"
 ✅ File prisma/schema.prisma is much larger
@@ -546,6 +618,7 @@ git push origin feature/advanced-schema
 ```
 
 **Verify file size:**
+
 ```bash
 wc -l prisma/schema.prisma
 ```
@@ -557,6 +630,7 @@ wc -l prisma/schema.prisma
 ---
 
 ### **Checkpoint 3: After Prisma Generate**
+
 ```
 ✅ Command output says "Generated Prisma Client"
 ✅ No error messages
@@ -564,6 +638,7 @@ wc -l prisma/schema.prisma
 ```
 
 **Test TypeScript knows about new tables:**
+
 ```bash
 # Quick test - should NOT error
 npx tsc --noEmit
@@ -574,6 +649,7 @@ npx tsc --noEmit
 ---
 
 ### **Checkpoint 4: After Prisma Studio**
+
 ```
 ✅ Browser opens to http://localhost:5555
 ✅ Left sidebar shows 80+ tables
@@ -587,6 +663,7 @@ npx tsc --noEmit
 ---
 
 ### **Checkpoint 5: After Test Connection**
+
 ```
 ✅ Dev server starts without errors
 ✅ /api/test-db returns SUCCESS
@@ -598,6 +675,7 @@ npx tsc --noEmit
 ---
 
 ### **Checkpoint 6: After Commit**
+
 ```
 ✅ git log shows your commit
 ✅ git status shows "working tree clean"
@@ -605,6 +683,7 @@ npx tsc --noEmit
 ```
 
 **Verify:**
+
 ```bash
 git log -1
 git status
@@ -617,6 +696,7 @@ git status
 ### **Problem: SQL fails in Supabase**
 
 **Error:** "relation 'users' already exists"
+
 ```
 Solution: This is OK!
 The schema tries to create users/analyses tables that exist.
@@ -625,6 +705,7 @@ As long as the NEW tables create successfully.
 ```
 
 **Error:** "syntax error at or near"
+
 ```
 Solution: SQL might be corrupted.
 Run: cat supabase-advanced-schema-prisma-compatible.sql | pbcopy
@@ -632,6 +713,7 @@ Try pasting again.
 ```
 
 **Error:** "permission denied"
+
 ```
 Solution: You're not authenticated to Supabase.
 Log out and log back in.
@@ -642,6 +724,7 @@ Log out and log back in.
 ### **Problem: Prisma db pull fails**
 
 **Error:** "Environment variable not found: DATABASE_URL"
+
 ```
 Solution:
 1. Check .env.local exists:
@@ -655,6 +738,7 @@ Solution:
 ```
 
 **Error:** "Can't reach database server"
+
 ```
 Solution:
 1. Check Supabase is online
@@ -667,6 +751,7 @@ Solution:
 ### **Problem: Prisma generate fails**
 
 **Error:** "Schema parsing error"
+
 ```
 Solution:
 The pulled schema might have issues.
@@ -678,10 +763,12 @@ Tell me the error and I'll fix the schema.
 ### **Problem: Prisma Studio shows no tables**
 
 **This means:**
+
 - DATABASE_URL not set correctly
 - Or pointing to wrong database
 
 **Fix:**
+
 ```bash
 cat .env.local | grep DATABASE_URL
 # Verify it contains: chkwezsyopfciibifmxx
@@ -694,6 +781,7 @@ cat .env.local | grep DATABASE_URL
 **Git might warn about large commits**
 
 **Solution:**
+
 ```bash
 # Git can handle it! Just force if needed:
 git config http.postBuffer 524288000
@@ -726,15 +814,19 @@ git commit -m "feat: Advanced schema"
 **After each task, report:**
 
 **After TASK 3 (Supabase SQL):**
+
 - "SQL ran successfully" or "Got error: [paste error]"
 
 **After TASK 5 (Prisma):**
+
 - "Prisma pulled 82 models" or "Got error: [paste error]"
 
 **After TASK 6 (Verify):**
+
 - "Prisma Studio shows all tables with data" or "Tables empty"
 
 **After TASK 8 (Commit):**
+
 - "Committed successfully" or "Git error: [paste error]"
 
 ---
@@ -744,6 +836,7 @@ git commit -m "feat: Advanced schema"
 **Start with TASK 1:**
 
 Run this command NOW:
+
 ```bash
 cd /Users/shayneroy/zero-barriers-growth-accelerator-2.0
 cat supabase-advanced-schema-prisma-compatible.sql | pbcopy
@@ -751,4 +844,3 @@ echo "✅ SQL copied to clipboard! Now paste in Supabase SQL Editor."
 ```
 
 **Then tell me when SQL finishes running in Supabase!**
-

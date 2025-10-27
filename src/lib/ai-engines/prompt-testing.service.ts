@@ -33,19 +33,29 @@ export class PromptTestingService {
   /**
    * Load assessment rules from JSON file
    */
-  static async loadAssessmentRules(assessmentType: string): Promise<AssessmentRules> {
+  static async loadAssessmentRules(
+    assessmentType: string
+  ): Promise<AssessmentRules> {
     try {
-      const rules = await import(`./assessment-rules/${assessmentType}-rules.json`);
+      const rules = await import(
+        `./assessment-rules/${assessmentType}-rules.json`
+      );
       return rules.default;
     } catch (error) {
-      throw new Error(`Failed to load assessment rules for ${assessmentType}: ${error}`);
+      throw new Error(
+        `Failed to load assessment rules for ${assessmentType}: ${error}`
+      );
     }
   }
 
   /**
    * Build prompt from rules and data
    */
-  static buildPrompt(rules: AssessmentRules, scrapedData: any, url: string): string {
+  static buildPrompt(
+    rules: AssessmentRules,
+    scrapedData: any,
+    url: string
+  ): string {
     const context = rules.context_template
       .replace('{url}', url)
       .replace('{title}', scrapedData.title || '')
@@ -56,7 +66,10 @@ export class PromptTestingService {
       .replace('{keywords}', scrapedData.keywords || '')
       .replace('{trendsData}', JSON.stringify(scrapedData.trends || {}))
       .replace('{pageSpeedData}', JSON.stringify(scrapedData.pageSpeed || {}))
-      .replace('{searchConsoleData}', JSON.stringify(scrapedData.searchConsole || {}))
+      .replace(
+        '{searchConsoleData}',
+        JSON.stringify(scrapedData.searchConsole || {})
+      )
       .replace('{analyticsData}', JSON.stringify(scrapedData.analytics || {}));
 
     return `${rules.persona}\n\n${rules.task}\n\n${context}\n\n${rules.format}`;
@@ -85,10 +98,18 @@ export class PromptTestingService {
     console.log(`🧪 Testing ${assessmentType} prompt with both engines...`);
 
     // Test Gemini
-    const geminiResult = await this.testWithEngine('gemini', prompt, assessmentType);
+    const geminiResult = await this.testWithEngine(
+      'gemini',
+      prompt,
+      assessmentType
+    );
 
     // Test Claude (placeholder - would need Claude API integration)
-    const claudeResult = await this.testWithEngine('claude', prompt, assessmentType);
+    const claudeResult = await this.testWithEngine(
+      'claude',
+      prompt,
+      assessmentType
+    );
 
     // Compare results
     const comparison = this.compareResults(geminiResult, claudeResult);
@@ -96,7 +117,7 @@ export class PromptTestingService {
     return {
       gemini: geminiResult,
       claude: claudeResult,
-      comparison
+      comparison,
     };
   }
 
@@ -124,7 +145,7 @@ export class PromptTestingService {
         // In real implementation, this would call Claude API
         analysis = {
           error: 'Claude integration not yet implemented',
-          placeholder: true
+          placeholder: true,
         };
       }
 
@@ -137,7 +158,7 @@ export class PromptTestingService {
         success: true,
         responseTime,
         qualityScore,
-        analysis
+        analysis,
       };
     } catch (error) {
       const responseTime = Date.now() - startTime;
@@ -148,7 +169,7 @@ export class PromptTestingService {
         success: false,
         responseTime,
         qualityScore: 0,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -156,7 +177,10 @@ export class PromptTestingService {
   /**
    * Calculate quality score based on analysis completeness
    */
-  private static calculateQualityScore(analysis: any, assessmentType: string): number {
+  private static calculateQualityScore(
+    analysis: any,
+    assessmentType: string
+  ): number {
     if (!analysis || analysis.placeholder) return 0;
 
     let score = 0;
@@ -249,18 +273,21 @@ export class PromptTestingService {
     // Generate recommendation
     let recommendation = '';
     if (winner === 'gemini') {
-      recommendation = 'Gemini shows better performance for this assessment type. Consider using Gemini as the primary engine.';
+      recommendation =
+        'Gemini shows better performance for this assessment type. Consider using Gemini as the primary engine.';
     } else if (winner === 'claude') {
-      recommendation = 'Claude shows better performance for this assessment type. Consider using Claude as the primary engine.';
+      recommendation =
+        'Claude shows better performance for this assessment type. Consider using Claude as the primary engine.';
     } else {
-      recommendation = 'Both engines perform similarly. Consider using Gemini for reliability or Claude for specific use cases.';
+      recommendation =
+        'Both engines perform similarly. Consider using Gemini for reliability or Claude for specific use cases.';
     }
 
     return {
       winner,
       geminiAdvantages,
       claudeAdvantages,
-      recommendation
+      recommendation,
     };
   }
 
@@ -283,7 +310,7 @@ export class PromptTestingService {
       'elements-value-b2b',
       'clifton-strengths',
       'content-comparison',
-      'google-tools'
+      'google-tools',
     ];
 
     const results: any = {};
@@ -291,11 +318,15 @@ export class PromptTestingService {
     for (const assessmentType of assessmentTypes) {
       try {
         console.log(`🧪 Testing ${assessmentType}...`);
-        results[assessmentType] = await this.testPrompt(assessmentType, scrapedData, url);
+        results[assessmentType] = await this.testPrompt(
+          assessmentType,
+          scrapedData,
+          url
+        );
       } catch (error) {
         console.error(`❌ Failed to test ${assessmentType}:`, error);
         results[assessmentType] = {
-          error: error instanceof Error ? error.message : 'Test failed'
+          error: error instanceof Error ? error.message : 'Test failed',
         };
       }
     }

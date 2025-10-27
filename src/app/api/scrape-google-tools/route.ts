@@ -14,10 +14,13 @@ export async function POST(request: NextRequest) {
     const { url, keywords = [] } = body;
 
     if (!url) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL is required',
+        },
+        { status: 400 }
+      );
     }
 
     console.log(`🤖 Starting Google Tools data extraction for: ${url}`);
@@ -28,8 +31,13 @@ export async function POST(request: NextRequest) {
 
     try {
       // Use the IMPROVED Puppeteer scraping (REAL DATA)
-      console.log('🕷️ Starting REAL Google Tools scraping with improved selectors...');
-      scrapedData = await PuppeteerGoogleToolsService.scrapeAllGoogleToolsData(url, keywords);
+      console.log(
+        '🕷️ Starting REAL Google Tools scraping with improved selectors...'
+      );
+      scrapedData = await PuppeteerGoogleToolsService.scrapeAllGoogleToolsData(
+        url,
+        keywords
+      );
       dataSource = 'puppeteer-real';
       console.log('✅ REAL Puppeteer scraping successful');
     } catch (puppeteerError) {
@@ -37,13 +45,21 @@ export async function POST(request: NextRequest) {
       console.log('Puppeteer error:', puppeteerError);
 
       try {
-        scrapedData = await RealGoogleToolsScraperService.scrapeAllRealGoogleToolsData(url, keywords);
+        scrapedData =
+          await RealGoogleToolsScraperService.scrapeAllRealGoogleToolsData(
+            url,
+            keywords
+          );
         dataSource = 'real-alternative';
         console.log('✅ Alternative real scraping successful');
       } catch (realError) {
-        console.log('❌ All real scraping failed - no fallback to mock data allowed');
+        console.log(
+          '❌ All real scraping failed - no fallback to mock data allowed'
+        );
         console.log('Real scraping error:', realError);
-        throw new Error(`Real Google Tools scraping failed: ${realError instanceof Error ? realError.message : 'Unknown error'}`);
+        throw new Error(
+          `Real Google Tools scraping failed: ${realError instanceof Error ? realError.message : 'Unknown error'}`
+        );
       }
     }
 
@@ -56,17 +72,22 @@ export async function POST(request: NextRequest) {
       keywords,
       data: scrapedData,
       dataSource,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('Google Tools data extraction failed:', error);
 
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Google Tools data extraction failed',
-      details: 'Real scraping failed - no mock data fallback available'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Google Tools data extraction failed',
+        details: 'Real scraping failed - no mock data fallback available',
+      },
+      { status: 500 }
+    );
   } finally {
     // Clean up browser instance if it was used
     try {

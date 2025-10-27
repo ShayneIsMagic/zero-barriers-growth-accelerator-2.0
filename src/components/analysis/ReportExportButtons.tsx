@@ -3,19 +3,13 @@
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import {
-    copyToClipboard,
-    downloadHTML,
-    downloadMarkdown,
-    emailReport,
-    exportAsPDF
+  copyToClipboard,
+  downloadHTML,
+  downloadMarkdown,
+  emailReport,
+  exportAsPDF,
 } from '@/lib/report-export';
-import {
-    Copy,
-    Download,
-    FileCode,
-    FileText,
-    Mail
-} from 'lucide-react';
+import { Copy, Download, FileCode, FileText, Mail } from 'lucide-react';
 import { useState } from 'react';
 
 interface ReportExportButtonsProps {
@@ -27,7 +21,10 @@ interface ReportExportButtonsProps {
  * Export buttons for analysis reports
  * Allows downloading as PDF, Markdown, or HTML
  */
-export function ReportExportButtons({ analysis, className = '' }: ReportExportButtonsProps) {
+export function ReportExportButtons({
+  analysis,
+  className = '',
+}: ReportExportButtonsProps) {
   const [isExporting, setIsExporting] = useState(false);
 
   const handleDownloadMarkdown = () => {
@@ -140,4 +137,3 @@ export function ReportExportButtons({ analysis, className = '' }: ReportExportBu
     </div>
   );
 }
-

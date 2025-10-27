@@ -34,13 +34,16 @@ SET search_path = public;
    - Click "Save" or "Update Function"
 
 ### Why This is Needed:
+
 - The function has triggers depending on it
 - We can't drop it with CASCADE without breaking existing functionality
 - Manual update is the safest approach
 - This fixes the "Function Search Path Mutable" warning
 
 ### Verification:
+
 After updating, the Supabase Security Advisor should show:
+
 - ✅ 0 RLS errors
 - ✅ 0 Function Search Path warnings
 
@@ -56,11 +59,13 @@ If you prefer to recreate the function completely:
    - `update_value_element_ref_updated_at`
 
 2. **Drop the function with CASCADE:**
+
 ```sql
 DROP FUNCTION update_updated_at_column() CASCADE;
 ```
 
 3. **Recreate the function:**
+
 ```sql
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$

@@ -10,21 +10,25 @@
 ### **Step 1: Wait for Deployment** (2 minutes)
 
 Check Vercel deployment status:
+
 ```
 https://vercel.com/dashboard
 ```
 
 **Look for:**
+
 - ✅ Status: "Ready" (green checkmark)
 - ✅ Latest commit: "fix: Pin Node version..."
 - ✅ Build time: ~30-60 seconds
 - ✅ No red errors
 
 **If still "Building":**
+
 - Wait 1-2 more minutes
 - Refresh the page
 
 **If "Failed":**
+
 - Click on the failed deployment
 - Check error logs
 - Most common: Missing environment variables
@@ -34,11 +38,13 @@ https://vercel.com/dashboard
 ### **Step 2: Test Database Connection** (30 seconds)
 
 **Visit this URL:**
+
 ```
 https://zero-barriers-growth-accelerator-20.vercel.app/api/test-db
 ```
 
 **Expected Response (GOOD):**
+
 ```json
 {
   "status": "SUCCESS",
@@ -52,6 +58,7 @@ https://zero-barriers-growth-accelerator-20.vercel.app/api/test-db
 ```
 
 **If You See:**
+
 - ✅ `"connectionSuccessful": true` → Database works! Continue to Step 3
 - ❌ `"connectionSuccessful": false` → See "Fix Database Connection" below
 - ❌ Error 500 → DATABASE_URL not set in Vercel
@@ -61,11 +68,13 @@ https://zero-barriers-growth-accelerator-20.vercel.app/api/test-db
 ### **Step 3: Test Phased Analysis** (3 minutes)
 
 **Visit this URL:**
+
 ```
 https://zero-barriers-growth-accelerator-20.vercel.app/dashboard/phased-analysis
 ```
 
 **What You Should See:**
+
 ```
 ┌─────────────────────────────────────────┐
 │ Phased Website Analysis                 │
@@ -76,9 +85,11 @@ https://zero-barriers-growth-accelerator-20.vercel.app/dashboard/phased-analysis
 ```
 
 **Enter Test URL:**
+
 ```
 https://example.com
 ```
+
 (Or any website you want to test)
 
 **Click "Start Phase 1"**
@@ -113,6 +124,7 @@ Phase 1: Data Collection Reports
 ```
 
 **What to Check:**
+
 - ✅ "Phase 1 Complete" badge shows
 - ✅ Content preview shows real data (not empty)
 - ✅ Two report cards visible
@@ -128,6 +140,7 @@ Phase 1: Data Collection Reports
 ### Problem 1: Database Connection Fails
 
 **Symptom:**
+
 ```json
 {
   "status": "ERROR",
@@ -136,6 +149,7 @@ Phase 1: Data Collection Reports
 ```
 
 **Fix:**
+
 ```bash
 # 1. Go to Vercel Dashboard
 # Settings → Environment Variables
@@ -156,6 +170,7 @@ DATABASE_URL="postgresql://postgres.chkwezsyopfciibifmxx:[PASSWORD]@aws-0-us-eas
 ### Problem 2: Phase 1 Returns Empty Content
 
 **Symptom:**
+
 ```
 ✓ Phase 1 Complete
 Content: [empty or "Failed to scrape"]
@@ -163,12 +178,14 @@ Word Count: 0
 ```
 
 **Cause:**
+
 - Website blocks scraping
 - CORS protection
 - React/Vue site (client-side rendered)
 
 **Fix:**
 Try a different test URL:
+
 ```
 ✅ Good test URLs:
 - https://example.com (simple, always works)
@@ -186,10 +203,12 @@ Try a different test URL:
 ### Problem 3: Phase 1 Takes Forever
 
 **Symptom:**
+
 - "Running Phase 1..." for 2+ minutes
 - No progress
 
 **Fix:**
+
 ```bash
 # 1. Check browser console (F12)
 # Look for errors
@@ -206,6 +225,7 @@ https://example.com
 ### Problem 4: Still See Google Tools After Phase 1
 
 **Symptom:**
+
 ```
 After Phase 1, you see:
 "Optional: Additional Google Tools"
@@ -213,6 +233,7 @@ After Phase 1, you see:
 ```
 
 **Fix:**
+
 ```bash
 # This means old version is cached
 
@@ -251,11 +272,13 @@ After Phase 1, you see:
 ### **Phase 1: Data Collection**
 
 **Input:**
+
 ```
 URL: https://example.com
 ```
 
 **Expected Output:**
+
 ```
 Reports Generated: 2
   1. Content Collection Report
@@ -301,6 +324,7 @@ npm run dev
 ```
 
 **Expected:**
+
 - ✅ Runs without errors
 - ✅ Phase 1 completes successfully
 - ✅ Shows 2 reports
@@ -311,16 +335,19 @@ npm run dev
 ## 📋 Test Checklist
 
 ### Before Testing:
+
 - [ ] Vercel deployment shows "Ready"
 - [ ] Latest commit is visible
 - [ ] No build errors in logs
 
 ### Database Test:
+
 - [ ] Visit `/api/test-db`
 - [ ] Response shows "SUCCESS"
 - [ ] `connectionSuccessful: true`
 
 ### Phase 1 Test:
+
 - [ ] Page loads without errors
 - [ ] Can enter URL
 - [ ] "Start Phase 1" button works
@@ -334,6 +361,7 @@ npm run dev
 - [ ] "Start Phase 2" button is enabled
 
 ### Optional - Phase 2 Test:
+
 - [ ] Click "Start Phase 2"
 - [ ] Wait 1-2 minutes
 - [ ] Shows 4 AI reports
@@ -345,11 +373,13 @@ npm run dev
 ## 🚀 Quick Test Commands
 
 ### Test 1: Database
+
 ```bash
 curl https://zero-barriers-growth-accelerator-20.vercel.app/api/test-db
 ```
 
 ### Test 2: Check Deployment
+
 ```bash
 # Visit Vercel dashboard
 open https://vercel.com/dashboard
@@ -359,6 +389,7 @@ vercel ls zero-barriers-growth-accelerator-20
 ```
 
 ### Test 3: Local Test
+
 ```bash
 cd /Users/shayneroy/zero-barriers-growth-accelerator-2.0
 npm run dev
@@ -430,12 +461,14 @@ Step 4: ✅ Phase 1 Works
 **Right now, do these 3 things:**
 
 1. **Check Vercel:**
+
    ```
    https://vercel.com/dashboard
    Status: Should be "Ready" ✅
    ```
 
 2. **Test Database:**
+
    ```
    https://zero-barriers-growth-accelerator-20.vercel.app/api/test-db
    Expected: {"status": "SUCCESS", ...}
@@ -451,6 +484,7 @@ Step 4: ✅ Phase 1 Works
    ```
 
 **Then tell me:**
+
 - ✅ Which steps worked
 - ❌ Which steps failed
 - 📋 What errors you saw
@@ -461,4 +495,3 @@ Step 4: ✅ Phase 1 Works
 **Your Goal:** Get a successful Phase 1 test
 **Time Needed:** 5 minutes
 **Let's do this!** 🚀
-

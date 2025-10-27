@@ -14,11 +14,16 @@ interface SimpleProgressTrackerProps {
   currentStep?: string | undefined;
 }
 
-export default function SimpleProgressTracker({ steps, currentStep }: SimpleProgressTrackerProps) {
+export default function SimpleProgressTracker({
+  steps,
+  currentStep,
+}: SimpleProgressTrackerProps) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const completed = steps.filter(step => step.status === 'completed').length;
+    const completed = steps.filter(
+      (step) => step.status === 'completed'
+    ).length;
     const total = steps.length;
     setProgress(Math.round((completed / total) * 100));
   }, [steps]);
@@ -28,7 +33,7 @@ export default function SimpleProgressTracker({ steps, currentStep }: SimpleProg
       case 'completed':
         return <CheckCircle className="h-5 w-5 text-green-500" />;
       case 'running':
-        return <Clock className="h-5 w-5 text-blue-500 animate-spin" />;
+        return <Clock className="h-5 w-5 animate-spin text-blue-500" />;
       case 'failed':
         return <AlertCircle className="h-5 w-5 text-red-500" />;
       case 'skipped':
@@ -54,16 +59,16 @@ export default function SimpleProgressTracker({ steps, currentStep }: SimpleProg
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="mx-auto w-full max-w-md">
       {/* Progress Bar */}
       <div className="mb-6">
-        <div className="flex justify-between text-sm text-gray-600 mb-2">
+        <div className="mb-2 flex justify-between text-sm text-gray-600">
           <span>Progress</span>
           <span>{progress}%</span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div 
-            className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-300"
+        <div className="h-2 w-full rounded-full bg-gray-200">
+          <div
+            className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -78,23 +83,25 @@ export default function SimpleProgressTracker({ steps, currentStep }: SimpleProg
               {step.name}
             </span>
             {step.status === 'completed' && (
-              <span className="text-xs text-green-600 ml-auto">✓ Done</span>
+              <span className="ml-auto text-xs text-green-600">✓ Done</span>
             )}
             {step.status === 'running' && (
-              <span className="text-xs text-blue-600 ml-auto">Running...</span>
+              <span className="ml-auto text-xs text-blue-600">Running...</span>
             )}
             {step.status === 'failed' && (
-              <span className="text-xs text-red-600 ml-auto">Failed</span>
+              <span className="ml-auto text-xs text-red-600">Failed</span>
             )}
           </div>
         ))}
       </div>
 
       {/* Summary */}
-      <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+      <div className="mt-4 rounded-lg bg-gray-50 p-3">
         <div className="text-sm text-gray-600">
-          <span className="font-medium">{steps.filter(s => s.status === 'completed').length}</span> of{' '}
-          <span className="font-medium">{steps.length}</span> steps completed
+          <span className="font-medium">
+            {steps.filter((s) => s.status === 'completed').length}
+          </span>{' '}
+          of <span className="font-medium">{steps.length}</span> steps completed
         </div>
       </div>
     </div>

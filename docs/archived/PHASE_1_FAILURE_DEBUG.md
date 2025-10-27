@@ -21,11 +21,13 @@
 **If:** Analysis runs for 30+ seconds then fails
 
 **Cause:**
+
 - Website too slow to load
 - Puppeteer timeout
 - Chrome-aws-lambda memory limit
 
 **Fix:**
+
 - Try a faster-loading website first
 - Increase timeout in reliable-content-scraper
 
@@ -36,11 +38,13 @@
 **If:** Fails immediately (< 5 seconds)
 
 **Cause:**
+
 - Puppeteer not installed
 - chrome-aws-lambda missing
 - Build issue on Vercel
 
 **Fix:**
+
 - Check Vercel build logs
 - Verify packages in package.json
 
@@ -51,10 +55,12 @@
 **If:** Fails after exactly 10 seconds
 
 **Cause:**
+
 - Vercel free tier has 10-second timeout
 - Phase 1 might take longer
 
 **Fix:**
+
 - Add `export const maxDuration = 60;` to API route
 - OR upgrade Vercel plan
 
@@ -65,11 +71,13 @@
 **If:** Error mentions "database" or "Prisma"
 
 **Cause:**
+
 - DATABASE_URL not set
 - Prisma client not generated
 - Supabase connection issue
 
 **Fix:**
+
 - Verify DATABASE_URL in Vercel
 - Check Supabase is accessible
 
@@ -84,9 +92,11 @@
 3. **Static site:** `https://google.com`
 
 **If these work:**
+
 - The original URL might be the problem (too complex, too slow)
 
 **If these also fail:**
+
 - There's a code/dependency issue
 - Need to check Vercel logs
 
@@ -95,6 +105,7 @@
 ## 🔧 IMMEDIATE DEBUG STEPS
 
 ### **1. Check Browser Console:**
+
 ```
 1. Open browser DevTools (F12)
 2. Go to Console tab
@@ -103,6 +114,7 @@
 ```
 
 ### **2. Check Network Tab:**
+
 ```
 1. Open browser DevTools (F12)
 2. Go to Network tab
@@ -112,6 +124,7 @@
 ```
 
 ### **3. Check Vercel Logs:**
+
 ```
 1. Go to: https://vercel.com/shayne-roys-projects/zero-barriers-growth-accelerator-2.0
 2. Click "Deployments"
@@ -127,6 +140,7 @@
 ### **Fix 1: Increase Timeout**
 
 Add to `/api/analyze/phase/route.ts`:
+
 ```typescript
 export const maxDuration = 60; // 60 seconds for Phase 1
 ```
@@ -134,6 +148,7 @@ export const maxDuration = 60; // 60 seconds for Phase 1
 ### **Fix 2: Simplify Phase 1**
 
 Remove complex scraping, use simple fetch:
+
 ```typescript
 // Quick content extraction
 const response = await fetch(url);
@@ -143,6 +158,7 @@ const html = await response.text();
 ### **Fix 3: Check Dependencies**
 
 Verify in `package.json`:
+
 ```json
 {
   "puppeteer": "latest",
@@ -168,16 +184,17 @@ Verify in `package.json`:
 ## 🎯 MEANWHILE
 
 **Site is LIVE:**
+
 - ✅ https://zero-barriers-growth-accelerator-20.vercel.app/
 - ✅ Login working
 - ✅ Dashboard working
 - ⚠️ Phase 1 needs debugging
 
 **Try:**
+
 - Content Comparison tool (might work)
 - Dashboard (view any existing analyses)
 
 ---
 
 **Please share the error details so I can fix Phase 1 specifically!**
-

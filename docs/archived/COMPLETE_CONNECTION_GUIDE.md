@@ -1,8 +1,9 @@
 # 🔗 Complete Connection Guide - Supabase → Prisma → Vercel
 
 **The Connection Chain:**
+
 ```
-Supabase (Database) 
+Supabase (Database)
     ↓ DATABASE_URL
 Prisma (ORM/TypeScript)
     ↓ Import & Use
@@ -21,11 +22,13 @@ Vercel (Frontend)
 **Where:** `.env.local` file (local) and Vercel Dashboard (production)
 
 **Connection String Format:**
+
 ```
 DATABASE_URL="postgresql://postgres.PROJECT_ID:PASSWORD@aws-0-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
 ```
 
 **Your Supabase Project:**
+
 - Project ID: `chkwezsyopfciibifmxx`
 - Connection pooler enabled (6543)
 
@@ -37,6 +40,7 @@ DATABASE_URL="postgresql://postgres.PROJECT_ID:PASSWORD@aws-0-us-east-1.pooler.s
 **How:** `npx prisma db pull` + `npx prisma generate`
 
 **Flow:**
+
 ```
 1. prisma db pull → Reads Supabase → Updates prisma/schema.prisma
 2. prisma generate → Reads schema.prisma → Creates @prisma/client types
@@ -51,14 +55,15 @@ DATABASE_URL="postgresql://postgres.PROJECT_ID:PASSWORD@aws-0-us-east-1.pooler.s
 **Where:** `src/app/api/**/*.ts` files
 
 **Example:**
+
 ```typescript
-import { prisma } from '@/lib/prisma'
+import { prisma } from '@/lib/prisma';
 
 // Now you can use all 60+ new tables!
-const websites = await prisma.websites.findMany()
+const websites = await prisma.websites.findMany();
 const goldenCircle = await prisma.golden_circle_analyses.findUnique({
-  where: { analysis_id: 'abc123' }
-})
+  where: { analysis_id: 'abc123' },
+});
 ```
 
 ---
@@ -69,6 +74,7 @@ const goldenCircle = await prisma.golden_circle_analyses.findUnique({
 **Where:** Vercel Dashboard → Project Settings → Environment Variables
 
 **Auto-update:**
+
 - Vercel runs `npx prisma generate` during build
 - Uses DATABASE_URL from environment variables
 - Creates production Prisma Client with all new tables
@@ -91,6 +97,7 @@ echo 'DATABASE_URL="postgresql://postgres.chkwezsyopfciibifmxx:[YOUR_PASSWORD]@a
 ```
 
 **Where to get your password:**
+
 1. Go to Supabase: https://supabase.com/dashboard/project/chkwezsyopfciibifmxx
 2. Click "Project Settings" (gear icon)
 3. Click "Database"
@@ -107,11 +114,13 @@ npx prisma db pull
 ```
 
 **Expected output:**
+
 ```
 ✔ Introspected 82 models and wrote them into prisma/schema.prisma
 ```
 
 **What this does:**
+
 - Connects to Supabase using DATABASE_URL
 - Reads all table structures
 - Writes TypeScript-compatible schema to `prisma/schema.prisma`
@@ -127,11 +136,13 @@ npx prisma generate
 ```
 
 **Expected output:**
+
 ```
 ✔ Generated Prisma Client to ./node_modules/@prisma/client
 ```
 
 **What this does:**
+
 - Reads `prisma/schema.prisma`
 - Generates full TypeScript types
 - Creates autocomplete for all tables/columns
@@ -149,6 +160,7 @@ npx prisma studio
 **Opens:** http://localhost:5555
 
 **You should see:**
+
 - All 60+ tables in left sidebar
 - Click `websites` → see empty table
 - Click `clifton_themes_reference` → see 34 themes
@@ -166,6 +178,7 @@ npx prisma studio
 **Go to:** https://vercel.com/dashboard
 
 **Navigate to:**
+
 1. Your project: `zero-barriers-growth-accelerator-2.0`
 2. Click "Settings"
 3. Click "Environment Variables"
@@ -181,6 +194,7 @@ npx prisma studio
 ### **STEP 6: Trigger Vercel Rebuild**
 
 **Option A: Push to GitHub**
+
 ```bash
 git add .
 git commit -m "feat: Add advanced schema with 60+ tables"
@@ -188,12 +202,14 @@ git push origin feature/advanced-schema
 ```
 
 **Option B: Manual Redeploy**
+
 1. Go to Vercel Dashboard
 2. Click "Deployments"
 3. Click "..." next to latest deployment
 4. Click "Redeploy"
 
 **During build, Vercel automatically:**
+
 1. Reads `DATABASE_URL` from environment variables
 2. Runs `npm install`
 3. Runs `npx prisma generate` (creates Prisma Client)
@@ -205,15 +221,16 @@ git push origin feature/advanced-schema
 ## 🔌 **HOW EACH TOOL CONNECTS**
 
 ### **Prisma Connection:**
+
 ```typescript
 // lib/prisma.ts
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient }
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-export const prisma = globalForPrisma.prisma || new PrismaClient()
+export const prisma = globalForPrisma.prisma || new PrismaClient();
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 ```
 
 **Uses:** `DATABASE_URL` from environment  
@@ -226,28 +243,28 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
 ```typescript
 // app/api/analysis/golden-circle/route.ts
-import { prisma } from '@/lib/prisma'
-import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma';
+import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
-  const { analysisId, content } = await req.json()
-  
+  const { analysisId, content } = await req.json();
+
   // Use the NEW tables!
   const goldenCircle = await prisma.golden_circle_analyses.create({
     data: {
       analysis_id: analysisId,
       overall_score: 85,
       alignment_score: 90,
-      clarity_score: 80
-    }
-  })
-  
+      clarity_score: 80,
+    },
+  });
+
   // Use the pattern matching function!
   const patterns = await prisma.$queryRaw`
     SELECT * FROM find_value_patterns(${content}, 'saas')
-  `
-  
-  return NextResponse.json({ goldenCircle, patterns })
+  `;
+
+  return NextResponse.json({ goldenCircle, patterns });
 }
 ```
 
@@ -267,20 +284,20 @@ import { useEffect, useState } from 'react'
 
 export default function Dashboard() {
   const [analysis, setAnalysis] = useState(null)
-  
+
   useEffect(() => {
     // Call your API route
     fetch('/api/analysis/golden-circle', {
       method: 'POST',
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         analysisId: '123',
-        content: 'Save time with our automation...' 
+        content: 'Save time with our automation...'
       })
     })
       .then(res => res.json())
       .then(data => setAnalysis(data))
   }, [])
-  
+
   return <div>{/* Render analysis */}</div>
 }
 ```
@@ -323,16 +340,19 @@ npm run dev
 ### **✅ Vercel Production:**
 
 **Check 1: Environment Variable Set**
+
 - Go to Vercel → Settings → Environment Variables
 - Verify `DATABASE_URL` exists for all environments
 
 **Check 2: Build Logs**
+
 - Go to Vercel → Deployments → Click latest
 - Click "Building"
 - Search for "prisma generate"
 - Should see: "✔ Generated Prisma Client"
 
 **Check 3: Runtime**
+
 - Visit deployed URL
 - Open DevTools → Network
 - Make API call to `/api/analysis/*`
@@ -347,6 +367,7 @@ npm run dev
 **Cause:** `.env.local` missing or DATABASE_URL not set
 
 **Fix:**
+
 ```bash
 # Create .env.local with correct connection string
 echo 'DATABASE_URL="postgresql://postgres.chkwezsyopfciibifmxx:[PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true"' > .env.local
@@ -361,6 +382,7 @@ echo 'DATABASE_URL="postgresql://postgres.chkwezsyopfciibifmxx:[PASSWORD]@aws-0-
 **Cause:** Supabase project paused or wrong connection string
 
 **Fix:**
+
 1. Go to Supabase dashboard
 2. Check project is not paused
 3. Get fresh connection string from Project Settings → Database
@@ -373,6 +395,7 @@ echo 'DATABASE_URL="postgresql://postgres.chkwezsyopfciibifmxx:[PASSWORD]@aws-0-
 **Cause:** Prisma hasn't pulled latest schema
 
 **Fix:**
+
 ```bash
 # Pull fresh schema
 npx prisma db pull
@@ -391,6 +414,7 @@ npm run dev
 **Cause:** TypeScript hasn't reloaded types
 
 **Fix:**
+
 ```bash
 # Regenerate Prisma Client
 npx prisma generate
@@ -473,10 +497,12 @@ cat .env.local
 **If you see DATABASE_URL:** ✅ Skip to Step 2
 
 **If file doesn't exist or DATABASE_URL missing:**
+
 1. Go to Supabase: https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/settings/database
 2. Scroll to "Connection string" → "URI" tab
 3. Copy the connection pooling string
 4. Run:
+
 ```bash
 echo 'DATABASE_URL="[PASTE_CONNECTION_STRING_HERE]"' > .env.local
 ```
@@ -505,6 +531,7 @@ npx prisma studio
 **Opens:** http://localhost:5555
 
 **Check:**
+
 - ✅ See 60+ tables in left sidebar
 - ✅ Click `clifton_themes_reference` → see 34 rows
 - ✅ Click `value_element_reference` → see 28 rows
@@ -533,6 +560,7 @@ I'll create a test API route to verify everything works!
 ## 📝 **SUMMARY**
 
 **Connection Chain:**
+
 1. ✅ Supabase has all 60+ tables (DONE - you ran all 4 SQL parts)
 2. ⏳ Set DATABASE_URL in `.env.local` (DO THIS NEXT)
 3. ⏳ Run `npx prisma db pull` (pulls schema)
@@ -542,6 +570,7 @@ I'll create a test API route to verify everything works!
 7. ✅ Everything connected!
 
 **Tools Auto-Connect:**
+
 - ✅ Prisma → Uses DATABASE_URL → Connects to Supabase
 - ✅ Next.js → Uses Prisma Client → Auto-connects
 - ✅ Vercel → Runs prisma generate → Auto-connects
@@ -552,4 +581,3 @@ I'll create a test API route to verify everything works!
 ---
 
 **Ready to set DATABASE_URL and connect everything?**
-

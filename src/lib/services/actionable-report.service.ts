@@ -82,13 +82,25 @@ export class ActionableReportService {
   static async generateComprehensiveReport(
     url: string,
     scrapedContent: any,
-    analysisType: 'golden-circle' | 'elements-value-b2c' | 'elements-value-b2b' | 'clifton-strengths' | 'seo-analysis'
+    analysisType:
+      | 'golden-circle'
+      | 'elements-value-b2c'
+      | 'elements-value-b2b'
+      | 'clifton-strengths'
+      | 'seo-analysis'
   ): Promise<ActionableReportResult> {
     try {
       console.log(`📊 Generating actionable report for: ${url}`);
 
-      const prompt = this.buildActionablePrompt(url, scrapedContent, analysisType);
-      const aiResponse = await analyzeWithGemini(prompt, `actionable-${analysisType}`);
+      const prompt = this.buildActionablePrompt(
+        url,
+        scrapedContent,
+        analysisType
+      );
+      const aiResponse = await analyzeWithGemini(
+        prompt,
+        `actionable-${analysisType}`
+      );
 
       if (!aiResponse.success) {
         throw new Error(aiResponse.error || 'AI analysis failed');
@@ -99,21 +111,25 @@ export class ActionableReportService {
       return {
         success: true,
         url,
-        report: aiResponse.analysis
+        report: aiResponse.analysis,
       };
-
     } catch (error) {
       console.error('Actionable report generation failed:', error);
       return {
         success: false,
         url,
         report: {} as any,
-        error: error instanceof Error ? error.message : 'Report generation failed'
+        error:
+          error instanceof Error ? error.message : 'Report generation failed',
       };
     }
   }
 
-  private static buildActionablePrompt(url: string, scrapedContent: any, analysisType: string): string {
+  private static buildActionablePrompt(
+    url: string,
+    scrapedContent: any,
+    analysisType: string
+  ): string {
     const basePrompt = `
 You are a world-class business consultant and marketing strategist. Generate a comprehensive, actionable report for this website that includes specific recommendations, copy-paste content, and implementation roadmaps.
 

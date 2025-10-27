@@ -115,6 +115,7 @@ END $$;
 ```
 
 **Then re-run in order:**
+
 1. Part 1 (Core Framework)
 2. Part 2 (Performance & Content)
 3. Part 3 (Functions & Seed Data)
@@ -228,6 +229,7 @@ WHERE id NOT IN (
 **Cause:** Ran Part 3 or Part 4 multiple times
 
 **Fix:**
+
 ```sql
 -- Clear seed data and re-run once
 DELETE FROM clifton_themes_reference;
@@ -244,6 +246,7 @@ DELETE FROM industry_terminology;
 **Cause:** Ran Part 1 or Part 2 multiple times
 
 **Fix:**
+
 ```sql
 -- All tables in Parts 1-2 use IF NOT EXISTS
 -- So this shouldn't happen
@@ -257,6 +260,7 @@ DELETE FROM industry_terminology;
 **Cause:** Trying to insert data before parent table exists
 
 **Fix:**
+
 ```sql
 -- Make sure you ran parts IN ORDER:
 -- 1. Part 1 (creates base tables)
@@ -272,6 +276,7 @@ DELETE FROM industry_terminology;
 **Cause:** Ran Part 3 multiple times
 
 **Fix:**
+
 ```sql
 -- All functions use CREATE OR REPLACE
 -- So this is just a warning, not an error
@@ -497,6 +502,7 @@ Copy the "COMPLETE CLEANUP AND VERIFICATION" block and run it in Supabase SQL Ed
 **Part 3:** (Functions + CliftonStrengths themes + Value Elements)
 
 **Wait for:** Verification message showing:
+
 - 34 themes loaded
 - 28 value elements loaded
 
@@ -505,6 +511,7 @@ Copy the "COMPLETE CLEANUP AND VERIFICATION" block and run it in Supabase SQL Ed
 **Part 4:** (Pattern matching data)
 
 **Wait for:** Verification message showing:
+
 - 100+ patterns loaded
 - 80+ industry terms loaded
 
@@ -541,4 +548,3 @@ SELECT
 ---
 
 **Want me to create optimized SQL files that prevent these errors?**
-

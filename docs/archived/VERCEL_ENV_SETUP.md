@@ -17,21 +17,25 @@ Your Vercel deployment is failing because environment variables aren't set. Here
 ## 🔧 **STEP 2: Add These 4 Variables**
 
 ### **Variable 1: DATABASE_URL**
+
 - **Name:** `DATABASE_URL`
 - **Value:** `postgresql://postgres.[YOUR-PROJECT-REF]:[YOUR-PASSWORD]@aws-1-us-west-1.pooler.supabase.com:5432/postgres`
 - **Environments:** ✅ Production, ✅ Preview, ✅ Development
 
 ### **Variable 2: NEXTAUTH_SECRET**
+
 - **Name:** `NEXTAUTH_SECRET`
 - **Value:** `[YOUR-SECRET-FROM-ENV-LOCAL]`
 - **Environments:** ✅ Production, ✅ Preview, ✅ Development
 
 ### **Variable 3: NEXTAUTH_URL**
+
 - **Name:** `NEXTAUTH_URL`
 - **Value:** `https://zero-barriers-growth-accelerator-20.vercel.app`
 - **Environments:** ✅ Production, ✅ Preview, ✅ Development
 
 ### **Variable 4: GEMINI_API_KEY**
+
 - **Name:** `GEMINI_API_KEY`
 - **Value:** `[YOUR-GEMINI-KEY-FROM-ENV-LOCAL]`
 - **Environments:** ✅ Production, ✅ Preview, ✅ Development
@@ -41,12 +45,14 @@ Your Vercel deployment is failing because environment variables aren't set. Here
 ## 🔍 **STEP 3: Get Your Values**
 
 ### **To get DATABASE_URL:**
+
 1. Go to: https://supabase.com/dashboard/project/chkwezsyopfciibifmxx
 2. Click: Settings → Database
 3. Copy: **Connection Pooler** URL (Transaction Mode)
 4. Use that exact string
 
 ### **To get NEXTAUTH_SECRET and GEMINI_API_KEY:**
+
 - Copy from your `.env.local` file (already set locally)
 
 ---
@@ -54,6 +60,7 @@ Your Vercel deployment is failing because environment variables aren't set. Here
 ## ⚡ **STEP 4: Redeploy**
 
 After setting all variables:
+
 1. **Click:** Deployments tab
 2. **Click:** ⋯ menu on latest deployment
 3. **Click:** Redeploy
@@ -64,6 +71,7 @@ After setting all variables:
 ## 🧪 **STEP 5: Test**
 
 Once redeployed:
+
 1. **Visit:** https://zero-barriers-growth-accelerator-20.vercel.app/auth/signin
 2. **Login with your existing credentials**
 3. **Should work immediately!**
@@ -73,6 +81,7 @@ Once redeployed:
 ## 🎯 **Expected Result**
 
 After setting environment variables:
+
 - ✅ Database connection will work
 - ✅ Authentication will work
 - ✅ Brand analysis features will work
@@ -108,4 +117,3 @@ echo "GEMINI_API_KEY value:" && grep "GEMINI_API_KEY" .env.local
 **Last Updated:** October 13, 2025
 **Status:** Ready for immediate fix
 **ETA:** 2 minutes to working site
-

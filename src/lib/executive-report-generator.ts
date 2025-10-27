@@ -71,10 +71,10 @@ export class ExecutiveReportGenerator {
 **Market Position:** ${data.competitiveAnalysis.marketPosition}
 
 **Primary Differentiators:**
-${data.competitiveAnalysis.differentiators.map(item => `- ${item}`).join('\n')}
+${data.competitiveAnalysis.differentiators.map((item) => `- ${item}`).join('\n')}
 
 **Growth Opportunities:**
-${data.competitiveAnalysis.opportunities.map(item => `- ${item}`).join('\n')}`;
+${data.competitiveAnalysis.opportunities.map((item) => `- ${item}`).join('\n')}`;
   }
 
   private generateKeyFindings(data: ExecutiveReportData): string {
@@ -82,13 +82,13 @@ ${data.competitiveAnalysis.opportunities.map(item => `- ${item}`).join('\n')}`;
 ## 🔍 Key Findings
 
 ### ✅ **What's Working Well**
-${data.strengths.map(strength => `- **${strength}**`).join('\n')}
+${data.strengths.map((strength) => `- **${strength}**`).join('\n')}
 
 ### ❌ **Critical Areas for Improvement**
-${data.weaknesses.map(weakness => `- **${weakness}**`).join('\n')}
+${data.weaknesses.map((weakness) => `- **${weakness}**`).join('\n')}
 
 ### 🎯 **Strategic Insights**
-${data.keyFindings.map(finding => `- ${finding}`).join('\n')}`;
+${data.keyFindings.map((finding) => `- ${finding}`).join('\n')}`;
   }
 
   private generateTechnicalAnalysis(data: ExecutiveReportData): string {
@@ -101,9 +101,9 @@ ${data.keyFindings.map(finding => `- ${finding}`).join('\n')}`;
 - **Accessibility Score:** ${data.technicalPerformance.accessibilityScore}/100
 
 ### 📈 Core Web Vitals
-${Object.entries(data.technicalPerformance.coreWebVitals).map(([metric, value]) =>
-  `- **${metric}:** ${value}`
-).join('\n')}
+${Object.entries(data.technicalPerformance.coreWebVitals)
+  .map(([metric, value]) => `- **${metric}:** ${value}`)
+  .join('\n')}
 
 ### 🔧 Technical Recommendations
 - Optimize page loading speed for better user experience
@@ -125,7 +125,7 @@ ${Object.entries(data.technicalPerformance.coreWebVitals).map(([metric, value]) 
 **Alignment Assessment:** ${data.contentAnalysis.messagingAlignment}
 
 ### 📋 Content Gaps
-${data.contentAnalysis.contentGaps.map(gap => `- **${gap}**`).join('\n')}
+${data.contentAnalysis.contentGaps.map((gap) => `- **${gap}**`).join('\n')}
 
 ### 💡 Content Recommendations
 - Strengthen value proposition messaging
@@ -139,16 +139,16 @@ ${data.contentAnalysis.contentGaps.map(gap => `- **${gap}**`).join('\n')}
 ## 🚀 Strategic Recommendations
 
 ### ⚡ Immediate Actions (0-30 days)
-${data.recommendations.immediate.map(rec => `- **${rec}**`).join('\n')}
+${data.recommendations.immediate.map((rec) => `- **${rec}**`).join('\n')}
 
 ### 📈 Short-term Initiatives (1-3 months)
-${data.recommendations.shortTerm.map(rec => `- **${rec}**`).join('\n')}
+${data.recommendations.shortTerm.map((rec) => `- **${rec}**`).join('\n')}
 
 ### 🎯 Long-term Strategy (3-12 months)
-${data.recommendations.longTerm.map(rec => `- **${rec}**`).join('\n')}
+${data.recommendations.longTerm.map((rec) => `- **${rec}**`).join('\n')}
 
 ### 🏆 Strategic Focus Areas
-${data.strategicInsights.marketOpportunities.map(opp => `- **${opp}**`).join('\n')}`;
+${data.strategicInsights.marketOpportunities.map((opp) => `- **${opp}**`).join('\n')}`;
   }
 
   private generateCompetitiveIntelligence(data: ExecutiveReportData): string {
@@ -159,10 +159,10 @@ ${data.strategicInsights.marketOpportunities.map(opp => `- **${opp}**`).join('\n
 **Current Position:** ${data.competitiveAnalysis.marketPosition}
 
 ### 💪 Competitive Advantages
-${data.competitiveAnalysis.differentiators.map(adv => `- **${adv}**`).join('\n')}
+${data.competitiveAnalysis.differentiators.map((adv) => `- **${adv}**`).join('\n')}
 
 ### 🚀 Growth Opportunities
-${data.competitiveAnalysis.opportunities.map(opp => `- **${opp}**`).join('\n')}
+${data.competitiveAnalysis.opportunities.map((opp) => `- **${opp}**`).join('\n')}
 
 ### 📊 Competitive Benchmarking
 - **Golden Circle Alignment:** ${data.strategicInsights.goldenCircleAlignment}
@@ -257,7 +257,9 @@ This report is generated using a comprehensive analysis framework that evaluates
     return '🔴 Critical';
   }
 
-  public generateMarkdownReport(analysisData: ComprehensiveAnalysisResult): string {
+  public generateMarkdownReport(
+    analysisData: ComprehensiveAnalysisResult
+  ): string {
     const reportData = this.transformAnalysisData(analysisData);
 
     const sections = [
@@ -268,13 +270,15 @@ This report is generated using a comprehensive analysis framework that evaluates
       this.generateStrategicRecommendations(reportData),
       this.generateCompetitiveIntelligence(reportData),
       this.generateImplementationRoadmap(reportData),
-      this.generateAppendix(reportData)
+      this.generateAppendix(reportData),
     ];
 
     return sections.join('\n\n');
   }
 
-  private transformAnalysisData(analysis: ComprehensiveAnalysisResult): ExecutiveReportData {
+  private transformAnalysisData(
+    analysis: ComprehensiveAnalysisResult
+  ): ExecutiveReportData {
     // Calculate overall score
     const scores = [
       analysis.goldenCircle?.overallScore || 0,
@@ -282,19 +286,26 @@ This report is generated using a comprehensive analysis framework that evaluates
       analysis.b2bElements?.overallScore || 0,
       analysis.cliftonStrengths?.overallScore || 0,
       analysis.lighthouseAnalysis?.scores?.overall || 0,
-      75 // Default SEO score if not available
+      75, // Default SEO score if not available
     ];
 
-    const overallScore = Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
+    const overallScore = Math.round(
+      scores.reduce((sum, score) => sum + score, 0) / scores.length
+    );
 
     // Extract key findings
     const keyFindings = [
       analysis.goldenCircle?.why?.score && analysis.goldenCircle.why.score >= 8
-        ? 'Strong purpose-driven messaging identified' : 'Purpose messaging needs strengthening',
-      analysis.elementsOfValue?.functional?.score && analysis.elementsOfValue.functional.score >= 8
-        ? 'Excellent functional value proposition' : 'Functional value proposition needs improvement',
-      analysis.lighthouseAnalysis?.performance?.score && analysis.lighthouseAnalysis.scores.performance >= 80
-        ? 'Strong technical performance' : 'Technical performance optimization needed'
+        ? 'Strong purpose-driven messaging identified'
+        : 'Purpose messaging needs strengthening',
+      analysis.elementsOfValue?.functional?.score &&
+      analysis.elementsOfValue.functional.score >= 8
+        ? 'Excellent functional value proposition'
+        : 'Functional value proposition needs improvement',
+      analysis.lighthouseAnalysis?.performance?.score &&
+      analysis.lighthouseAnalysis.scores.performance >= 80
+        ? 'Strong technical performance'
+        : 'Technical performance optimization needed',
     ];
 
     // Extract strengths and weaknesses
@@ -313,7 +324,10 @@ This report is generated using a comprehensive analysis framework that evaluates
       weaknesses.push('Functional value proposition needs enhancement');
     }
 
-    if (analysis.lighthouseAnalysis?.performance?.score && analysis.lighthouseAnalysis.performance.score >= 80) {
+    if (
+      analysis.lighthouseAnalysis?.performance?.score &&
+      analysis.lighthouseAnalysis.performance.score >= 80
+    ) {
       strengths.push('Excellent technical performance');
     } else {
       weaknesses.push('Technical performance optimization required');
@@ -329,7 +343,7 @@ This report is generated using a comprehensive analysis framework that evaluates
         b2bElements: analysis.b2bElements?.overallScore || 0,
         cliftonStrengths: analysis.cliftonStrengths?.overallScore || 0,
         lighthouse: analysis.lighthouseAnalysis?.scores?.overall || 0,
-        seo: 75 // Default if not available
+        seo: 75, // Default if not available
       },
       keyFindings,
       strengths,
@@ -338,58 +352,65 @@ This report is generated using a comprehensive analysis framework that evaluates
         immediate: [
           'Optimize page loading speed',
           'Strengthen value proposition messaging',
-          'Improve accessibility compliance'
+          'Improve accessibility compliance',
         ],
         shortTerm: [
           'Enhance content strategy alignment',
           'Implement SEO best practices',
-          'Strengthen competitive positioning'
+          'Strengthen competitive positioning',
         ],
         longTerm: [
           'Establish market leadership position',
           'Expand market opportunities',
-          'Build sustainable competitive advantages'
-        ]
+          'Build sustainable competitive advantages',
+        ],
       },
       competitiveAnalysis: {
         marketPosition: 'Competitive with growth potential',
         differentiators: [
           'Technical expertise and certifications',
           'Local market knowledge',
-          'Comprehensive service offering'
+          'Comprehensive service offering',
         ],
         opportunities: [
           'Digital transformation consulting',
           'AI and automation integration',
-          'Industry-specific solutions'
-        ]
+          'Industry-specific solutions',
+        ],
       },
       technicalPerformance: {
         lighthouseScore: analysis.lighthouseAnalysis?.scores?.overall || 0,
         coreWebVitals: analysis.lighthouseAnalysis?.metrics || {},
         seoScore: analysis.lighthouseAnalysis?.scores?.seo || 0,
-        accessibilityScore: analysis.lighthouseAnalysis?.scores?.accessibility || 0
+        accessibilityScore:
+          analysis.lighthouseAnalysis?.scores?.accessibility || 0,
       },
       contentAnalysis: {
-        valueProposition: analysis.goldenCircle?.why?.currentState || 'Value proposition analysis needed',
-        targetAudience: analysis.goldenCircle?.who?.currentState || 'Target audience analysis needed',
+        valueProposition:
+          analysis.goldenCircle?.why?.currentState ||
+          'Value proposition analysis needed',
+        targetAudience:
+          analysis.goldenCircle?.who?.currentState ||
+          'Target audience analysis needed',
         messagingAlignment: 'Good alignment with strategic positioning',
         contentGaps: [
           'Emotional connection messaging',
           'Social impact stories',
-          'Innovation and future vision'
-        ]
+          'Innovation and future vision',
+        ],
       },
       strategicInsights: {
-        goldenCircleAlignment: 'Strong strategic foundation with improvement opportunities',
-        valuePropositionClarity: 'Clear functional value, emotional connection needs work',
+        goldenCircleAlignment:
+          'Strong strategic foundation with improvement opportunities',
+        valuePropositionClarity:
+          'Clear functional value, emotional connection needs work',
         competitiveAdvantage: 'Technical expertise and local market focus',
         marketOpportunities: [
           'Expand digital transformation services',
           'Develop industry-specific solutions',
-          'Enhance customer success stories'
-        ]
-      }
+          'Enhance customer success stories',
+        ],
+      },
     };
   }
 

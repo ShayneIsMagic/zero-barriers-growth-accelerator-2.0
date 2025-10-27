@@ -116,7 +116,7 @@ const nextConfig = {
         net: false,
         tls: false,
         child_process: false,
-        'puppeteer': false,
+        puppeteer: false,
         'puppeteer-core': false,
         '@puppeteer/browsers': false,
       };

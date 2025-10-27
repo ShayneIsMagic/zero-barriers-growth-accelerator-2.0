@@ -9,10 +9,12 @@
 ## 📋 What You'll Create
 
 **Two tables:**
+
 1. ✅ `individual_reports` - Stores each markdown report
 2. ✅ `markdown_exports` - Stores combined reports
 
 **Five functions:**
+
 1. `save_individual_report()` - Save a report
 2. `get_analysis_reports()` - Get all reports
 3. `get_phase_reports()` - Get by phase
@@ -26,11 +28,13 @@
 ### **Step 1: Open Supabase SQL Editor** (30 seconds)
 
 **Go to this URL:**
+
 ```
 https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/sql
 ```
 
 Or manually:
+
 1. Go to: https://supabase.com/dashboard
 2. Click: Your project (chkwezsyopfciibifmxx)
 3. Click: "SQL Editor" in left sidebar
@@ -41,17 +45,20 @@ Or manually:
 ### **Step 2: Open the SQL File** (30 seconds)
 
 **On your computer, open:**
+
 ```
 /Users/shayneroy/zero-barriers-growth-accelerator-2.0/supabase-markdown-schema.sql
 ```
 
 **Or in terminal:**
+
 ```bash
 cd /Users/shayneroy/zero-barriers-growth-accelerator-2.0
 cat supabase-markdown-schema.sql
 ```
 
 **Or in VS Code:**
+
 1. Open VS Code
 2. Navigate to project folder
 3. Open: `supabase-markdown-schema.sql`
@@ -63,10 +70,12 @@ cat supabase-markdown-schema.sql
 **Select ALL content** from `supabase-markdown-schema.sql`
 
 **Keyboard shortcut:**
+
 - Mac: `Cmd + A` (select all), `Cmd + C` (copy)
 - Windows: `Ctrl + A` (select all), `Ctrl + C` (copy)
 
 **Or manually:**
+
 1. Click in the file
 2. Select all text (should be ~421 lines)
 3. Copy
@@ -84,6 +93,7 @@ cat supabase-markdown-schema.sql
 3. You should see all the SQL code
 
 **The SQL should start with:**
+
 ```sql
 -- =====================================================
 -- SUPABASE SCHEMA FOR MARKDOWN REPORTS
@@ -92,6 +102,7 @@ cat supabase-markdown-schema.sql
 ```
 
 **And end with:**
+
 ```sql
 -- =====================================================
 -- CLEANUP (use with caution - deletes all data)
@@ -109,6 +120,7 @@ cat supabase-markdown-schema.sql
 3. Look for: "Success. No rows returned"
 
 **Expected output:**
+
 ```
 Success. No rows returned
 
@@ -124,6 +136,7 @@ Rows: 0
 **Click "Table Editor" in left sidebar**
 
 You should now see these tables:
+
 ```
 ✅ User (existed before)
 ✅ Analysis (existed before)
@@ -148,6 +161,7 @@ ORDER BY routine_name;
 ```
 
 **Expected results:**
+
 ```
 ✅ get_analysis_reports
 ✅ get_complete_analysis_markdown
@@ -227,6 +241,7 @@ After completing all steps, verify:
 **Meaning:** Tables already exist (maybe from previous attempt)
 
 **Solution:**
+
 ```sql
 -- Option 1: Drop and recreate (CAUTION: Deletes data)
 DROP TABLE IF EXISTS individual_reports CASCADE;
@@ -242,6 +257,7 @@ DROP TABLE IF EXISTS markdown_exports CASCADE;
 **Meaning:** SQL was copied incorrectly or partially
 
 **Solution:**
+
 1. Clear the SQL Editor
 2. Go back to `supabase-markdown-schema.sql`
 3. Select ALL (Cmd/Ctrl + A)
@@ -256,6 +272,7 @@ DROP TABLE IF EXISTS markdown_exports CASCADE;
 **Meaning:** Not authenticated or wrong project
 
 **Solution:**
+
 1. Check you're logged into Supabase
 2. Verify you're in project: chkwezsyopfciibifmxx
 3. Try logging out and back in
@@ -265,6 +282,7 @@ DROP TABLE IF EXISTS markdown_exports CASCADE;
 ### Problem: Tables exist but functions don't
 
 **Solution:**
+
 ```sql
 -- Just run the functions part of the schema
 -- Copy from line 100-300 of supabase-markdown-schema.sql
@@ -312,22 +330,27 @@ Your Supabase Database:
 **Now your app can:**
 
 ✅ **Save markdown reports to database**
+
 - Each Phase 1, 2, 3 report saved automatically
 - Can retrieve later without re-running analysis
 
 ✅ **Store AI prompts**
+
 - See exactly what prompt was used
 - Reproduce results
 
 ✅ **Track scores over time**
+
 - Compare before/after
 - Show improvement
 
 ✅ **Export complete reports**
+
 - Download all reports at once
 - Share with clients
 
 ✅ **Query by phase**
+
 - Get just Phase 1 reports
 - Or Phase 2, or Phase 3
 
@@ -338,6 +361,7 @@ Your Supabase Database:
 ### **After Setup Complete:**
 
 1. **Test Your App:**
+
    ```
    https://zero-barriers-growth-accelerator-20-shayne-roys-projects.vercel.app/dashboard/phased-analysis
    ```
@@ -364,21 +388,25 @@ Your Supabase Database:
 ## 📞 Quick Reference
 
 ### **Supabase SQL Editor:**
+
 ```
 https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/sql
 ```
 
 ### **Supabase Table Editor:**
+
 ```
 https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/editor
 ```
 
 ### **SQL File Location:**
+
 ```
 /Users/shayneroy/zero-barriers-growth-accelerator-2.0/supabase-markdown-schema.sql
 ```
 
 ### **Verification Query:**
+
 ```sql
 SELECT table_name FROM information_schema.tables
 WHERE table_name IN ('individual_reports', 'markdown_exports');
@@ -389,6 +417,7 @@ WHERE table_name IN ('individual_reports', 'markdown_exports');
 ## 🎉 Summary
 
 **What you did:**
+
 1. ✅ Opened Supabase SQL Editor
 2. ✅ Copied SQL schema (421 lines)
 3. ✅ Pasted and ran in Supabase
@@ -398,6 +427,7 @@ WHERE table_name IN ('individual_reports', 'markdown_exports');
 **Time taken:** 5 minutes
 
 **Result:**
+
 - ✅ Markdown storage enabled
 - ✅ Reports persist in database
 - ✅ Can retrieve anytime
@@ -411,4 +441,3 @@ WHERE table_name IN ('individual_reports', 'markdown_exports');
 **Difficulty:** ⭐ Easy (copy & paste)
 **Time:** ⏱️ 5 minutes
 **Status:** ✅ Ready to execute
-

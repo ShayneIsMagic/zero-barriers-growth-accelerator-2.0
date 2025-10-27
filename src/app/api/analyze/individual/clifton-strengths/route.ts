@@ -13,24 +13,33 @@ export async function POST(request: NextRequest) {
     const { comprehensiveData } = await request.json();
 
     if (!comprehensiveData) {
-      return NextResponse.json({
-        success: false,
-        error: 'Comprehensive analysis data is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Comprehensive analysis data is required',
+        },
+        { status: 400 }
+      );
     }
 
-    console.log('🔍 Extracting CliftonStrengths analysis from comprehensive data...');
-
-    const cliftonAssessment = ComprehensiveParserService.getIndividualAssessment(
-      comprehensiveData, 
-      'clifton-strengths'
+    console.log(
+      '🔍 Extracting CliftonStrengths analysis from comprehensive data...'
     );
 
+    const cliftonAssessment =
+      ComprehensiveParserService.getIndividualAssessment(
+        comprehensiveData,
+        'clifton-strengths'
+      );
+
     if (!cliftonAssessment) {
-      return NextResponse.json({
-        success: false,
-        error: 'CliftonStrengths analysis not found in comprehensive data'
-      }, { status: 404 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'CliftonStrengths analysis not found in comprehensive data',
+        },
+        { status: 404 }
+      );
     }
 
     console.log('✅ CliftonStrengths analysis extracted successfully');
@@ -40,15 +49,17 @@ export async function POST(request: NextRequest) {
       data: cliftonAssessment.data,
       score: cliftonAssessment.score,
       status: cliftonAssessment.status,
-      message: 'CliftonStrengths analysis extracted from comprehensive data'
+      message: 'CliftonStrengths analysis extracted from comprehensive data',
     });
-
   } catch (error) {
     console.error('CliftonStrengths extraction error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to extract CliftonStrengths analysis',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to extract CliftonStrengths analysis',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

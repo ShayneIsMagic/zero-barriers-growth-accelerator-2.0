@@ -4,13 +4,13 @@ export const AI_CONFIG = {
     apiKey: process.env.OPENAI_API_KEY || '',
     model: process.env.OPENAI_MODEL || 'gpt-4o',
   },
-  
+
   // Google Gemini Configuration
   gemini: {
     apiKey: process.env.GEMINI_API_KEY || '',
     model: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
   },
-  
+
   // Anthropic Claude Configuration
   claude: {
     apiKey: process.env.CLAUDE_API_KEY || '',

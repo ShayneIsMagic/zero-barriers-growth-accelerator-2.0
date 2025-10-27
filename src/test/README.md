@@ -5,9 +5,11 @@ This directory contains all testing infrastructure for the Zero Barriers Growth 
 ## 🧪 Test Types
 
 ### 1. Unit Tests (Vitest)
+
 Located in: `src/test/*.test.tsx` and throughout `src/` directory
 
 **Run Commands:**
+
 ```bash
 npm test              # Run all unit tests
 npm run test:watch    # Run in watch mode
@@ -16,15 +18,18 @@ npm run test:coverage # Generate coverage report
 ```
 
 ### 2. E2E Tests (Playwright)
+
 Located in: `src/test/e2e/*.spec.ts`
 
 **Run Commands:**
+
 ```bash
 npm run test:e2e      # Run E2E tests
 npm run test:e2e:ui   # Run with Playwright UI
 ```
 
 ### 3. Test Mode Development
+
 Run the app in test mode with test auth enabled:
 
 ```bash
@@ -47,6 +52,7 @@ src/test/
 ## 🛠️ Test Utilities
 
 ### `renderWithProviders()`
+
 Renders components with all necessary providers (Auth, Theme, etc.)
 
 ```typescript
@@ -59,12 +65,15 @@ test('renders component', () => {
 ```
 
 ### Mock Data
+
 Pre-configured mock data available:
+
 - `mockUser` - Standard test user
 - `mockAdminUser` - Admin test user
 - `mockAnalysisResult` - Sample analysis data
 
 ### Mock Fetch
+
 Helper functions for mocking API calls:
 
 ```typescript
@@ -80,18 +89,21 @@ mockFetchError('API Error');
 ## 🔧 Configuration Files
 
 ### vitest.config.ts
+
 - Configures Vitest test runner
 - Sets up jsdom environment
 - Defines coverage settings
 - Configures path aliases
 
 ### playwright.config.ts
+
 - Configures Playwright E2E tests
 - Defines browser configurations
 - Sets up test reporters
 - Configures dev server
 
 ### .env.test
+
 - Test environment variables
 - Test credentials
 - Feature flags for testing
@@ -147,6 +159,7 @@ npm run lint:fix       # Auto-fix issues
 ```
 
 **VS Code Integration:**
+
 - ESLint runs automatically while typing
 - Errors appear inline with Error Lens extension
 - Auto-fix on save is enabled
@@ -155,10 +168,12 @@ npm run lint:fix       # Auto-fix issues
 ### Debug with React Dev Tools
 
 Install the React Developer Tools browser extension:
+
 - **Chrome**: [React DevTools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi)
 - **Firefox**: [React DevTools](https://addons.mozilla.org/en-US/firefox/addon/react-devtools/)
 
 **Key Features:**
+
 - 🔍 Inspect component props and state
 - 🪝 Debug React Hooks (useState, useEffect, etc.)
 - ⚡ Profile component performance
@@ -166,23 +181,27 @@ Install the React Developer Tools browser extension:
 - 🌳 View component tree hierarchy
 
 ### Debug Unit Tests
+
 ```bash
 npm run test:ui     # Opens Vitest UI for visual debugging
 ```
 
 **VS Code Debugger:**
+
 1. Set breakpoint in test file
 2. Open Debug panel (Cmd+Shift+D)
 3. Select "Debug Vitest Tests"
 4. Press F5
 
 ### Debug E2E Tests
+
 ```bash
 npm run test:e2e:ui # Opens Playwright UI
 npx playwright test --debug  # Playwright Inspector
 ```
 
 **VS Code Debugger:**
+
 1. Set breakpoint in test file
 2. Select "Debug Playwright Tests"
 3. Press F5
@@ -190,6 +209,7 @@ npx playwright test --debug  # Playwright Inspector
 ### Complete Debugging Guide
 
 For comprehensive debugging instructions including:
+
 - ESLint configuration and tips
 - React Dev Tools features and usage
 - Browser DevTools techniques
@@ -210,6 +230,7 @@ For comprehensive debugging instructions including:
 ## 🚀 CI/CD Integration
 
 Tests run automatically on:
+
 - Pull requests
 - Main branch commits
 - Pre-deployment checks
@@ -220,4 +241,3 @@ Tests run automatically on:
 - [Playwright Documentation](https://playwright.dev/)
 - [Testing Library](https://testing-library.com/)
 - [Jest DOM Matchers](https://github.com/testing-library/jest-dom)
-

@@ -34,10 +34,13 @@ class ApiClient {
   }
 
   private async delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  private async fetchWithTimeout(url: string, options: RequestInit): Promise<Response> {
+  private async fetchWithTimeout(
+    url: string,
+    options: RequestInit
+  ): Promise<Response> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
@@ -84,7 +87,8 @@ class ApiClient {
       return {
         success: false,
         error: 'NETWORK_ERROR',
-        message: 'Unable to connect to the server. Please check your connection and try again.',
+        message:
+          'Unable to connect to the server. Please check your connection and try again.',
         details: error instanceof Error ? error.message : 'Unknown error',
       };
     }

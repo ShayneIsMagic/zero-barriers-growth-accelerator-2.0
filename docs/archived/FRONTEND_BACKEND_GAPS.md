@@ -8,6 +8,7 @@
 ## 🚨 CRITICAL: Frontend Calling Non-Existent Backend Routes
 
 ### ❌ **1. Password Reset - BROKEN**
+
 ```typescript
 // Frontend Call (WORKS):
 📁 src/app/auth/forgot-password/page.tsx
@@ -22,6 +23,7 @@ Users cannot reset passwords - will get 404 error
 ```
 
 **Fix Needed:**
+
 ```bash
 Create: src/app/api/auth/forgot-password/route.ts
 Implement: Email verification + password reset logic
@@ -30,6 +32,7 @@ Implement: Email verification + password reset logic
 ---
 
 ### ❌ **2. Profile Update - BROKEN**
+
 ```typescript
 // Frontend Call (WORKS):
 📁 src/app/profile/page.tsx
@@ -44,6 +47,7 @@ Users cannot update their profile - will get 404 error
 ```
 
 **Fix Needed:**
+
 ```bash
 Create: src/app/api/user/profile/route.ts
 Implement: Update user name, email, preferences
@@ -52,6 +56,7 @@ Implement: Update user name, email, preferences
 ---
 
 ### ❌ **3. Password Change - BROKEN**
+
 ```typescript
 // Frontend Call (WORKS):
 📁 src/app/profile/page.tsx
@@ -66,6 +71,7 @@ Logged-in users cannot change password - will get 404 error
 ```
 
 **Fix Needed:**
+
 ```bash
 Create: src/app/api/user/change-password/route.ts
 Implement: Verify old password + hash + update new password
@@ -74,6 +80,7 @@ Implement: Verify old password + hash + update new password
 ---
 
 ### ❌ **4. Connectivity Check - BROKEN**
+
 ```typescript
 // Frontend Call (WORKS):
 📁 src/lib/analysis-client.ts
@@ -88,6 +95,7 @@ Cannot verify AI service availability before analysis
 ```
 
 **Fix Needed:**
+
 ```bash
 Create: src/app/api/analyze/connectivity/route.ts
 Implement: Check Gemini/Claude/OpenAI connectivity
@@ -96,6 +104,7 @@ Implement: Check Gemini/Claude/OpenAI connectivity
 ---
 
 ### ❌ **5. Scrape Endpoint Mismatch - BROKEN**
+
 ```typescript
 // Frontend Call (WORKS):
 📁 src/lib/analysis-client.ts
@@ -114,6 +123,7 @@ Scraping via AnalysisClient fails - will get 404 error
 ```
 
 **Fix Needed:**
+
 ```bash
 Option 1: Rename backend route from scrape-page to scrape
 Option 2: Update frontend to call /api/scrape-page
@@ -126,6 +136,7 @@ Option 2: Update frontend to call /api/scrape-page
 ### Routes That Exist But Frontend Never Calls:
 
 #### 1. **Report Storage System** (3 routes)
+
 ```typescript
 ✅ GET  /api/reports           - List all reports (unused)
 ✅ GET  /api/reports/[id]      - Get report by ID (unused)
@@ -138,6 +149,7 @@ Option 2: Update frontend to call /api/scrape-page
 ---
 
 #### 2. **Signout Route** (not needed)
+
 ```typescript
 ✅ POST /api/auth/signout      - Logout (unused)
 ```
@@ -148,6 +160,7 @@ Option 2: Update frontend to call /api/scrape-page
 ---
 
 #### 3. **tRPC Endpoint** (setup but unused)
+
 ```typescript
 ✅ ALL /api/trpc/[trpc]        - Type-safe RPC (unused)
 ```
@@ -160,6 +173,7 @@ Option 2: Update frontend to call /api/scrape-page
 ## 📊 SUMMARY
 
 ### Broken Features:
+
 1. ❌ Password Reset
 2. ❌ Profile Update
 3. ❌ Password Change
@@ -167,10 +181,12 @@ Option 2: Update frontend to call /api/scrape-page
 5. ❌ Scrape API Mismatch
 
 ### Missing Features:
+
 1. ⚠️ Analysis History (backend ready, frontend needs it)
 2. ⚠️ Report Retrieval (backend ready, frontend needs it)
 
 ### Status:
+
 - **Core Analysis**: ✅ 100% Working
 - **Authentication**: ✅ 95% Working (login/signup work, reset broken)
 - **User Management**: ❌ 0% Working (all routes missing)
@@ -181,6 +197,7 @@ Option 2: Update frontend to call /api/scrape-page
 ## 🔧 QUICK FIXES
 
 ### Priority 1 (Critical - User Management):
+
 ```bash
 # Create these files:
 src/app/api/auth/forgot-password/route.ts
@@ -189,12 +206,14 @@ src/app/api/user/change-password/route.ts
 ```
 
 ### Priority 2 (Important - Connectivity):
+
 ```bash
 # Create this file:
 src/app/api/analyze/connectivity/route.ts
 ```
 
 ### Priority 3 (Easy - Rename):
+
 ```bash
 # Either:
 mv src/app/api/scrape-page src/app/api/scrape
@@ -204,6 +223,7 @@ mv src/app/api/scrape-page src/app/api/scrape
 ```
 
 ### Priority 4 (Enhancement - History):
+
 ```bash
 # Connect frontend to existing backend:
 - Add "History" page
@@ -216,6 +236,7 @@ mv src/app/api/scrape-page src/app/api/scrape
 ## ✅ WHAT'S WORKING PERFECTLY
 
 ### Authentication Flow:
+
 ```
 ✅ POST /api/auth/signin     → AuthContext.signIn()
 ✅ POST /api/auth/signup     → AuthContext.signUp()
@@ -223,6 +244,7 @@ mv src/app/api/scrape-page src/app/api/scrape
 ```
 
 ### Analysis Endpoints (9 routes):
+
 ```
 ✅ POST /api/analyze/website
 ✅ POST /api/analyze/comprehensive
@@ -236,6 +258,7 @@ mv src/app/api/scrape-page src/app/api/scrape
 ```
 
 ### Supporting Endpoints:
+
 ```
 ✅ GET  /api/scrape-page
 ✅ POST /api/generate-executive-report
@@ -252,16 +275,19 @@ mv src/app/api/scrape-page src/app/api/scrape
 ## 🎯 RECOMMENDED ACTION PLAN
 
 ### Immediate (This Session):
+
 1. ✅ Fix authentication - DONE (real DB auth implemented)
 2. 🔴 Create missing user management routes
 3. 🔴 Fix scrape endpoint mismatch
 
 ### Short-term (Next Session):
+
 4. Connect frontend to report storage
 5. Add analysis history page
 6. Implement password reset flow
 
 ### Long-term (Future):
+
 7. Decide on tRPC (use or remove)
 8. Add more user features (preferences, settings)
 9. Implement email verification
@@ -271,4 +297,3 @@ mv src/app/api/scrape-page src/app/api/scrape
 **Current Status**: Frontend communicates well with backend for core analysis features. User management features are broken due to missing backend routes. Easy fixes!
 
 🚀 **Core app works, just missing user management backend!**
-

@@ -27,25 +27,31 @@ export class RealGoogleTrendsService {
   /**
    * Get real Google Trends data for a keyword
    */
-  async getTrendsData(keyword: string, timeframe: string = 'today 12-m'): Promise<GoogleTrendsData> {
+  async getTrendsData(
+    keyword: string,
+    timeframe: string = 'today 12-m'
+  ): Promise<GoogleTrendsData> {
     try {
       console.log(`📈 Getting real Google Trends data for: ${keyword}`);
 
       // Get interest over time data
-      const interestOverTime = await this.getInterestOverTime(keyword, timeframe);
-      
+      const interestOverTime = await this.getInterestOverTime(
+        keyword,
+        timeframe
+      );
+
       // Get related queries
       const relatedQueries = await this.getRelatedQueries(keyword);
-      
+
       // Get related topics
       const relatedTopics = await this.getRelatedTopics(keyword);
-      
+
       // Get regional interest
       const regionalInterest = await this.getRegionalInterest(keyword);
 
       // Analyze trend direction
       const trendAnalysis = this.analyzeTrendDirection(interestOverTime);
-      
+
       // Check if trending
       const trending = await this.isTrending(keyword);
 
@@ -59,7 +65,7 @@ export class RealGoogleTrendsService {
         peakInterest: trendAnalysis.peak,
         currentInterest: trendAnalysis.current,
         trendDirection: trendAnalysis.direction,
-        timeframe
+        timeframe,
       };
     } catch (error) {
       console.error(`❌ Google Trends API error for ${keyword}:`, error);
@@ -74,7 +80,7 @@ export class RealGoogleTrendsService {
         currentInterest: 0,
         trendDirection: 'stable',
         timeframe,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -82,13 +88,16 @@ export class RealGoogleTrendsService {
   /**
    * Get interest over time data
    */
-  private async getInterestOverTime(keyword: string, timeframe: string): Promise<any[]> {
+  private async getInterestOverTime(
+    keyword: string,
+    timeframe: string
+  ): Promise<any[]> {
     try {
       const response = await googleTrends.interestOverTime({
         keyword,
         startTime: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000), // 1 year ago
         endTime: new Date(),
-        geo: 'US' // Default to US, can be made configurable
+        geo: 'US', // Default to US, can be made configurable
       });
 
       const data = JSON.parse(response);
@@ -108,7 +117,7 @@ export class RealGoogleTrendsService {
         keyword,
         startTime: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000), // 3 months ago
         endTime: new Date(),
-        geo: 'US'
+        geo: 'US',
       });
 
       const data = JSON.parse(response);
@@ -128,7 +137,7 @@ export class RealGoogleTrendsService {
         keyword,
         startTime: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000), // 3 months ago
         endTime: new Date(),
-        geo: 'US'
+        geo: 'US',
       });
 
       const data = JSON.parse(response);
@@ -149,7 +158,7 @@ export class RealGoogleTrendsService {
         startTime: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000), // 3 months ago
         endTime: new Date(),
         geo: 'US',
-        resolution: 'COUNTRY'
+        resolution: 'COUNTRY',
       });
 
       const data = JSON.parse(response);
@@ -173,25 +182,30 @@ export class RealGoogleTrendsService {
     }
 
     // Get peak interest
-    const peak = Math.max(...interestData.map(d => d.value || 0));
-    
+    const peak = Math.max(...interestData.map((d) => d.value || 0));
+
     // Get current interest (last 30 days average)
     const recentData = interestData.slice(-30);
-    const current = recentData.length > 0 
-      ? recentData.reduce((sum, d) => sum + (d.value || 0), 0) / recentData.length 
-      : 0;
+    const current =
+      recentData.length > 0
+        ? recentData.reduce((sum, d) => sum + (d.value || 0), 0) /
+          recentData.length
+        : 0;
 
     // Get trend direction (compare first half vs second half)
     const midpoint = Math.floor(interestData.length / 2);
     const firstHalf = interestData.slice(0, midpoint);
     const secondHalf = interestData.slice(midpoint);
 
-    const firstHalfAvg = firstHalf.reduce((sum, d) => sum + (d.value || 0), 0) / firstHalf.length;
-    const secondHalfAvg = secondHalf.reduce((sum, d) => sum + (d.value || 0), 0) / secondHalf.length;
+    const firstHalfAvg =
+      firstHalf.reduce((sum, d) => sum + (d.value || 0), 0) / firstHalf.length;
+    const secondHalfAvg =
+      secondHalf.reduce((sum, d) => sum + (d.value || 0), 0) /
+      secondHalf.length;
 
     let direction: 'rising' | 'falling' | 'stable' = 'stable';
     const changePercent = ((secondHalfAvg - firstHalfAvg) / firstHalfAvg) * 100;
-    
+
     if (changePercent > 10) direction = 'rising';
     else if (changePercent < -10) direction = 'falling';
 
@@ -206,15 +220,17 @@ export class RealGoogleTrendsService {
       // Check if keyword appears in trending searches
       const response = await googleTrends.realTimeTrends({
         geo: 'US',
-        category: 'all'
+        category: 'all',
       });
 
       const data = JSON.parse(response);
-      const trendingKeywords = data.default?.trendingSearchesDays?.[0]?.trendingSearches || [];
-      
-      return trendingKeywords.some((trend: any) => 
-        trend.title?.query?.toLowerCase().includes(keyword.toLowerCase()) ||
-        trend.formattedTraffic?.toLowerCase().includes(keyword.toLowerCase())
+      const trendingKeywords =
+        data.default?.trendingSearchesDays?.[0]?.trendingSearches || [];
+
+      return trendingKeywords.some(
+        (trend: any) =>
+          trend.title?.query?.toLowerCase().includes(keyword.toLowerCase()) ||
+          trend.formattedTraffic?.toLowerCase().includes(keyword.toLowerCase())
       );
     } catch (error) {
       console.error(`Trending check error for ${keyword}:`, error);
@@ -225,19 +241,22 @@ export class RealGoogleTrendsService {
   /**
    * Get trends data for multiple keywords
    */
-  async getMultipleKeywordsTrends(keywords: string[]): Promise<GoogleTrendsData[]> {
+  async getMultipleKeywordsTrends(
+    keywords: string[]
+  ): Promise<GoogleTrendsData[]> {
     console.log(`📊 Getting trends data for ${keywords.length} keywords`);
-    
+
     const results: GoogleTrendsData[] = [];
-    
+
     // Process keywords with rate limiting
-    for (const keyword of keywords.slice(0, 5)) { // Limit to 5 keywords to avoid rate limits
+    for (const keyword of keywords.slice(0, 5)) {
+      // Limit to 5 keywords to avoid rate limits
       try {
         const trendData = await this.getTrendsData(keyword);
         results.push(trendData);
-        
+
         // Add delay between requests to respect rate limits
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       } catch (error) {
         console.error(`Error getting trends for ${keyword}:`, error);
         results.push({
@@ -251,7 +270,7 @@ export class RealGoogleTrendsService {
           currentInterest: 0,
           trendDirection: 'stable',
           timeframe: 'today 12-m',
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
       }
     }
@@ -265,16 +284,19 @@ export class RealGoogleTrendsService {
   async getTrendingKeywords(category: string = 'all'): Promise<string[]> {
     try {
       console.log(`🔥 Getting trending keywords for category: ${category}`);
-      
+
       const response = await googleTrends.realTimeTrends({
         geo: 'US',
-        category: category
+        category: category,
       });
 
       const data = JSON.parse(response);
-      const trendingSearches = data.default?.trendingSearchesDays?.[0]?.trendingSearches || [];
-      
-      return trendingSearches.map((trend: any) => trend.title?.query || '').filter(Boolean);
+      const trendingSearches =
+        data.default?.trendingSearchesDays?.[0]?.trendingSearches || [];
+
+      return trendingSearches
+        .map((trend: any) => trend.title?.query || '')
+        .filter(Boolean);
     } catch (error) {
       console.error(`Trending keywords error:`, error);
       return [];
@@ -291,9 +313,9 @@ export class RealGoogleTrendsService {
   }> {
     try {
       const trendData = await this.getTrendsData(keyword, 'today 12-m');
-      
+
       const avgInterest = trendData.currentInterest;
-      
+
       let volumeLevel: 'low' | 'medium' | 'high' = 'low';
       let hasVolume = false;
       let recommendation = '';
@@ -320,7 +342,7 @@ export class RealGoogleTrendsService {
       return {
         hasVolume: false,
         volumeLevel: 'low',
-        recommendation: 'Unable to validate search volume'
+        recommendation: 'Unable to validate search volume',
       };
     }
   }

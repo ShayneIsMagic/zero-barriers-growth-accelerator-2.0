@@ -55,13 +55,20 @@ export class SimpleActionableReportService {
   static async generateReport(
     url: string,
     scrapedContent: any,
-    analysisType: 'seo' | 'golden-circle' | 'elements-value' | 'recruitment' = 'seo'
+    analysisType:
+      | 'seo'
+      | 'golden-circle'
+      | 'elements-value'
+      | 'recruitment' = 'seo'
   ): Promise<SimpleActionableReport> {
     try {
       console.log(`📊 Generating simple actionable report for: ${url}`);
 
       const prompt = this.buildSimplePrompt(url, scrapedContent, analysisType);
-      const aiResponse = await analyzeWithGemini(prompt, `simple-actionable-${analysisType}`);
+      const aiResponse = await analyzeWithGemini(
+        prompt,
+        `simple-actionable-${analysisType}`
+      );
 
       // The analyzeWithGemini function returns the analysis directly, not wrapped in success/error
       if (!aiResponse) {
@@ -73,21 +80,25 @@ export class SimpleActionableReportService {
       return {
         success: true,
         url,
-        report: aiResponse
+        report: aiResponse,
       };
-
     } catch (error) {
       console.error('Simple actionable report generation failed:', error);
       return {
         success: false,
         url,
         report: {} as any,
-        error: error instanceof Error ? error.message : 'Report generation failed'
+        error:
+          error instanceof Error ? error.message : 'Report generation failed',
       };
     }
   }
 
-  private static buildSimplePrompt(url: string, scrapedContent: any, analysisType: string): string {
+  private static buildSimplePrompt(
+    url: string,
+    scrapedContent: any,
+    analysisType: string
+  ): string {
     return `
 You are a world-class business consultant. Generate a concise, actionable report for this website.
 

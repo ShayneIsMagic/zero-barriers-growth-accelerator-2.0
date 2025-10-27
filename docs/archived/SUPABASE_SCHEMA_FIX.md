@@ -8,11 +8,13 @@
 ## 🚨 THE REAL PROBLEM
 
 **Error on Live Site:**
+
 ```
 The column `Analysis.insights` does not exist in the current database.
 ```
 
 **What This Means:**
+
 - ✅ GitHub is up to date
 - ✅ Prisma schema is correct
 - ✅ Vercel is deployed
@@ -25,15 +27,19 @@ The column `Analysis.insights` does not exist in the current database.
 ## 📋 ANSWERS TO YOUR QUESTIONS
 
 ### 1. Is Prisma up to date?
+
 ✅ **YES** - Prisma v5.22.0, client generated, schema file is correct
 
 ### 2. Is Supabase up to date?
+
 ❌ **NO** - Database schema is missing the `insights` column (and possibly `frameworks`)
 
 ### 3. Is GitHub up to date?
+
 ✅ **YES** - All commits pushed, including the Prisma upsert fix
 
 ### 4. Is there anything else that needs updating to the URLs used?
+
 ✅ **NO** - URLs are correct and using the main domain
 
 ---
@@ -45,11 +51,13 @@ The column `Analysis.insights` does not exist in the current database.
 **Steps:**
 
 1. **Go to Supabase SQL Editor:**
+
    ```
    https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/sql/new
    ```
 
 2. **Copy and paste this SQL:**
+
    ```sql
    -- Add missing 'insights' column
    ALTER TABLE "Analysis"
@@ -95,6 +103,7 @@ npx prisma db push
 ## 📊 CURRENT SCHEMA VS EXPECTED
 
 ### **What Supabase Has (OLD):**
+
 ```
 Analysis table:
 - id
@@ -108,6 +117,7 @@ Analysis table:
 ```
 
 ### **What Prisma Expects (CORRECT):**
+
 ```
 Analysis table:
 - id
@@ -127,6 +137,7 @@ Analysis table:
 ## ✅ WHAT WILL BE FIXED
 
 **After running the SQL:**
+
 1. ✅ `insights` column added to Analysis table
 2. ✅ `frameworks` column added to Analysis table
 3. ✅ Supabase schema matches Prisma schema
@@ -150,19 +161,20 @@ Analysis table:
 
 ## 📋 SUMMARY TABLE
 
-| Component | Status             | Issue                          | Fix                    |
-|-----------|--------------------|--------------------------------|------------------------|
-| GitHub    | ✅ Up to date      | None                           | ✅ Done                |
-| Prisma    | ✅ Up to date      | None                           | ✅ Done                |
-| Vercel    | ✅ Deployed        | None                           | ✅ Done                |
+| Component | Status             | Issue                            | Fix                   |
+| --------- | ------------------ | -------------------------------- | --------------------- |
+| GitHub    | ✅ Up to date      | None                             | ✅ Done               |
+| Prisma    | ✅ Up to date      | None                             | ✅ Done               |
+| Vercel    | ✅ Deployed        | None                             | ✅ Done               |
 | Supabase  | ❌ **OUT OF SYNC** | Missing `insights`, `frameworks` | ⏰ **Run SQL script** |
-| URLs      | ✅ Correct         | None                           | ✅ Done                |
+| URLs      | ✅ Correct         | None                             | ✅ Done               |
 
 ---
 
 ## 🚀 ONCE FIXED
 
 **Everything will be fully synced:**
+
 - GitHub ✅
 - Prisma ✅
 - Vercel ✅
@@ -175,4 +187,3 @@ Analysis table:
 **Run the SQL script in Supabase to fix this in 1 minute!**
 
 See: `FIX_SUPABASE_SCHEMA.sql`
-

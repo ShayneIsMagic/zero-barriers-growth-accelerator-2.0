@@ -9,38 +9,50 @@ export async function POST(request: NextRequest) {
     const { url, phase1Data, phase2Data } = body;
 
     if (!url || !phase1Data || !phase2Data) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL, Phase 1 data, and Phase 2 data are required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL, Phase 1 data, and Phase 2 data are required',
+        },
+        { status: 400 }
+      );
     }
 
     console.log(`🎯 Starting Complete Phase 3 analysis for: ${url}`);
 
     if (!process.env.GEMINI_API_KEY) {
-      return NextResponse.json({
-        success: false,
-        error: 'GEMINI_API_KEY not configured'
-      }, { status: 500 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'GEMINI_API_KEY not configured',
+        },
+        { status: 500 }
+      );
     }
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
 
     // Generate comprehensive research and recommendations
-    const comprehensiveAnalysis = await generateComprehensiveAnalysis(model, url, phase1Data, phase2Data);
+    const comprehensiveAnalysis = await generateComprehensiveAnalysis(
+      model,
+      url,
+      phase1Data,
+      phase2Data
+    );
 
     const phase3Result = {
       url,
       timestamp: new Date().toISOString(),
       comprehensiveAnalysis,
       summary: {
-        totalRecommendations: comprehensiveAnalysis.recommendations?.length || 0,
+        totalRecommendations:
+          comprehensiveAnalysis.recommendations?.length || 0,
         quickWins: comprehensiveAnalysis.quickWins?.length || 0,
         longTermStrategy: comprehensiveAnalysis.longTermStrategy?.length || 0,
         impactAnalysis: comprehensiveAnalysis.impactAnalysis?.length || 0,
-        priorityActions: comprehensiveAnalysis.priorityActions?.length || 0
-      }
+        priorityActions: comprehensiveAnalysis.priorityActions?.length || 0,
+      },
     };
 
     console.log(`✅ Complete Phase 3 analysis completed for: ${url}`);
@@ -50,21 +62,28 @@ export async function POST(request: NextRequest) {
       url,
       phase: 3,
       data: phase3Result,
-      message: 'Complete Phase 3 analysis completed successfully'
+      message: 'Complete Phase 3 analysis completed successfully',
     });
-
   } catch (error) {
     console.error('Complete Phase 3 analysis error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Complete Phase 3 analysis failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Complete Phase 3 analysis failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }
 
 // Comprehensive Analysis Generation
-async function generateComprehensiveAnalysis(model: any, url: string, phase1Data: any, phase2Data: any) {
+async function generateComprehensiveAnalysis(
+  model: any,
+  url: string,
+  phase1Data: any,
+  phase2Data: any
+) {
   const prompt = `
 # COMPREHENSIVE RESEARCH & STRATEGY ANALYSIS
 

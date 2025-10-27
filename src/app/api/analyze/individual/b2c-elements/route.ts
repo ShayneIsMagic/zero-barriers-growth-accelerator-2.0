@@ -13,24 +13,32 @@ export async function POST(request: NextRequest) {
     const { comprehensiveData } = await request.json();
 
     if (!comprehensiveData) {
-      return NextResponse.json({
-        success: false,
-        error: 'Comprehensive analysis data is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Comprehensive analysis data is required',
+        },
+        { status: 400 }
+      );
     }
 
-    console.log('🔍 Extracting B2C Elements analysis from comprehensive data...');
+    console.log(
+      '🔍 Extracting B2C Elements analysis from comprehensive data...'
+    );
 
     const b2cAssessment = ComprehensiveParserService.getIndividualAssessment(
-      comprehensiveData, 
+      comprehensiveData,
       'b2c-elements'
     );
 
     if (!b2cAssessment) {
-      return NextResponse.json({
-        success: false,
-        error: 'B2C Elements analysis not found in comprehensive data'
-      }, { status: 404 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'B2C Elements analysis not found in comprehensive data',
+        },
+        { status: 404 }
+      );
     }
 
     console.log('✅ B2C Elements analysis extracted successfully');
@@ -40,15 +48,17 @@ export async function POST(request: NextRequest) {
       data: b2cAssessment.data,
       score: b2cAssessment.score,
       status: b2cAssessment.status,
-      message: 'B2C Elements analysis extracted from comprehensive data'
+      message: 'B2C Elements analysis extracted from comprehensive data',
     });
-
   } catch (error) {
     console.error('B2C Elements extraction error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to extract B2C Elements analysis',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to extract B2C Elements analysis',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

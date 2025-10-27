@@ -16,14 +16,14 @@
  */
 
 import {
-    generateB2BElementsReport,
-    generateCliftonStrengthsReport,
-    generateComprehensiveReport,
-    generateContentCollectionReport,
-    generateElementsB2CReport,
-    generateGoldenCircleReport,
-    generateLighthouseReport,
-    IndividualReport
+  generateB2BElementsReport,
+  generateCliftonStrengthsReport,
+  generateComprehensiveReport,
+  generateContentCollectionReport,
+  generateElementsB2CReport,
+  generateGoldenCircleReport,
+  generateLighthouseReport,
+  IndividualReport,
 } from '@/lib/individual-report-generator';
 import { prisma } from '@/lib/prisma';
 import { ThreePhaseAnalyzer } from '@/lib/three-phase-analyzer';
@@ -38,10 +38,13 @@ export async function POST(request: NextRequest) {
     const { _url, phase, analysisId } = body;
 
     if (!_url || !phase) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL and phase are required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL and phase are required',
+        },
+        { status: 400 }
+      );
     }
 
     console.log(`🚀 Starting Phase ${phase} for: ${_url}`);
@@ -49,41 +52,60 @@ export async function POST(request: NextRequest) {
     // Create or update analysis record
     let analysis;
     if (analysisId) {
-      analysis = await prisma.analysis.findUnique({ where: { id: analysisId } });
+      analysis = await prisma.analysis.findUnique({
+        where: { id: analysisId },
+      });
       if (!analysis) {
-        return NextResponse.json({
-          success: false,
-          error: 'Analysis not found'
-        }, { status: 404 });
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Analysis not found',
+          },
+          { status: 404 }
+        );
       }
     }
 
     const analyzer = new ThreePhaseAnalyzer(_url);
-    const individualReports: IndividualReport[] = analysis ? JSON.parse(analysis.content || '{}').individualReports || [] : [];
+    const individualReports: IndividualReport[] = analysis
+      ? JSON.parse(analysis.content || '{}').individualReports || []
+      : [];
 
     if (phase === 1) {
       // Execute Phase 1: Data Collection
       const phase1Result = await analyzer.executePhase1();
 
       // Generate individual reports for Phase 1
-      const contentReport = generateContentCollectionReport(phase1Result.scrapedContent, _url);
+      const contentReport = generateContentCollectionReport(
+        phase1Result.scrapedContent,
+        _url
+      );
       individualReports.push(contentReport);
 
       if (phase1Result.lighthouseData) {
-        const lighthouseReport = generateLighthouseReport(phase1Result.lighthouseData, _url);
+        const lighthouseReport = generateLighthouseReport(
+          phase1Result.lighthouseData,
+          _url
+        );
         individualReports.push(lighthouseReport);
       } else {
         // Lighthouse failed - return error instead of fallback
         console.error('Lighthouse analysis failed - no fallback data allowed');
-        return NextResponse.json({
-          success: false,
-          error: 'Lighthouse analysis failed. Configure GOOGLE_API_KEY for automated analysis.',
-          details: 'No fallback data allowed - real analysis required'
-        }, { status: 500 });
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              'Lighthouse analysis failed. Configure GOOGLE_API_KEY for automated analysis.',
+            details: 'No fallback data allowed - real analysis required',
+          },
+          { status: 500 }
+        );
       }
 
       // Store Phase 1 results
-      const newAnalysisId = analysisId || `analysis-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const newAnalysisId =
+        analysisId ||
+        `analysis-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
       await prisma.analysis.upsert({
         where: { id: newAnalysisId },
@@ -94,19 +116,19 @@ export async function POST(request: NextRequest) {
             phase: 1,
             phase1Data: phase1Result,
             individualReports,
-            completedPhases: [1]
+            completedPhases: [1],
           }),
           contentType: 'phased',
-          score: 0
+          score: 0,
         },
         update: {
           content: JSON.stringify({
             phase: 1,
             phase1Data: phase1Result,
             individualReports,
-            completedPhases: [1]
-          })
-        }
+            completedPhases: [1],
+          }),
+        },
       });
 
       return NextResponse.json({
@@ -115,7 +137,7 @@ export async function POST(request: NextRequest) {
         phase: 1,
         data: phase1Result,
         individualReports,
-        message: 'Phase 1 completed. Ready for Phase 2.'
+        message: 'Phase 1 completed. Ready for Phase 2.',
       });
     }
 
@@ -133,7 +155,9 @@ export async function POST(request: NextRequest) {
 
       if (!phase1Data) {
         // No Phase 1 data - create minimal data and add recommendations
-        console.log('⚠️ Running Phase 2 without Phase 1 - will use basic URL scraping');
+        console.log(
+          '⚠️ Running Phase 2 without Phase 1 - will use basic URL scraping'
+        );
 
         recommendations.push(
           'ℹ️ Phase 1 was skipped - using basic content extraction',
@@ -168,16 +192,26 @@ Extract:
 4. WHO (target audience) - exact quotes about their market
 
 Return structured analysis with scores and evidence.`;
-        const goldenReport = generateGoldenCircleReport(phase2Result.goldenCircle, _url, prompt);
+        const goldenReport = generateGoldenCircleReport(
+          phase2Result.goldenCircle,
+          _url,
+          prompt
+        );
         individualReports.push(goldenReport);
       } else {
         // Golden Circle failed - return error instead of fallback
-        console.error('Golden Circle analysis failed - no fallback data allowed');
-        return NextResponse.json({
-          success: false,
-          error: 'Golden Circle analysis failed. Check Gemini API configuration.',
-          details: 'No fallback data allowed - real analysis required'
-        }, { status: 500 });
+        console.error(
+          'Golden Circle analysis failed - no fallback data allowed'
+        );
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              'Golden Circle analysis failed. Check Gemini API configuration.',
+            details: 'No fallback data allowed - real analysis required',
+          },
+          { status: 500 }
+        );
       }
 
       if (phase2Result.elementsOfValue) {
@@ -188,16 +222,26 @@ Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
 
 Evaluate each of the 30 B2C Elements of Value and provide specific evidence from the content.
 Return structured analysis with scores for each element.`;
-        const elementsReport = generateElementsB2CReport(phase2Result.elementsOfValue, _url, prompt);
+        const elementsReport = generateElementsB2CReport(
+          phase2Result.elementsOfValue,
+          _url,
+          prompt
+        );
         individualReports.push(elementsReport);
       } else {
         // B2C Elements failed - return error instead of fallback
-        console.error('B2C Elements analysis failed - no fallback data allowed');
-        return NextResponse.json({
-          success: false,
-          error: 'B2C Elements analysis failed. Check Gemini API configuration.',
-          details: 'No fallback data allowed - real analysis required'
-        }, { status: 500 });
+        console.error(
+          'B2C Elements analysis failed - no fallback data allowed'
+        );
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              'B2C Elements analysis failed. Check Gemini API configuration.',
+            details: 'No fallback data allowed - real analysis required',
+          },
+          { status: 500 }
+        );
       }
 
       if (phase2Result.b2bElements) {
@@ -208,16 +252,26 @@ Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
 
 Evaluate each of the 40 B2B Elements of Value and provide specific evidence from the content.
 Return structured analysis with scores for each element.`;
-        const b2bReport = generateB2BElementsReport(phase2Result.b2bElements, _url, prompt);
+        const b2bReport = generateB2BElementsReport(
+          phase2Result.b2bElements,
+          _url,
+          prompt
+        );
         individualReports.push(b2bReport);
       } else {
         // B2B Elements failed - return error instead of fallback
-        console.error('B2B Elements analysis failed - no fallback data allowed');
-        return NextResponse.json({
-          success: false,
-          error: 'B2B Elements analysis failed. Check Gemini API configuration.',
-          details: 'No fallback data allowed - real analysis required'
-        }, { status: 500 });
+        console.error(
+          'B2B Elements analysis failed - no fallback data allowed'
+        );
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              'B2B Elements analysis failed. Check Gemini API configuration.',
+            details: 'No fallback data allowed - real analysis required',
+          },
+          { status: 500 }
+        );
       }
 
       if (phase2Result.cliftonStrengths) {
@@ -228,19 +282,31 @@ Content: ${phase1Data.scrapedContent?.content?.substring(0, 2000)}...
 
 Evaluate each of the 34 CliftonStrengths themes and provide specific evidence from the content.
 Return structured analysis with top 5 themes and scores.`;
-        const strengthsReport = generateCliftonStrengthsReport(phase2Result.cliftonStrengths, _url, prompt);
+        const strengthsReport = generateCliftonStrengthsReport(
+          phase2Result.cliftonStrengths,
+          _url,
+          prompt
+        );
         individualReports.push(strengthsReport);
       } else {
         // CliftonStrengths failed - return error instead of fallback
-        console.error('CliftonStrengths analysis failed - no fallback data allowed');
-        return NextResponse.json({
-          success: false,
-          error: 'CliftonStrengths analysis failed. Check Gemini API configuration.',
-          details: 'No fallback data allowed - real analysis required'
-        }, { status: 500 });
+        console.error(
+          'CliftonStrengths analysis failed - no fallback data allowed'
+        );
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              'CliftonStrengths analysis failed. Check Gemini API configuration.',
+            details: 'No fallback data allowed - real analysis required',
+          },
+          { status: 500 }
+        );
       }
 
-      const newAnalysisId = analysisId || `analysis-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const newAnalysisId =
+        analysisId ||
+        `analysis-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
       await prisma.analysis.upsert({
         where: { id: newAnalysisId },
@@ -253,10 +319,10 @@ Return structured analysis with top 5 themes and scores.`;
             phase2Data: phase2Result,
             individualReports,
             completedPhases: analysisId ? [1, 2] : [2],
-            recommendations
+            recommendations,
           }),
           contentType: 'phased',
-          score: 0
+          score: 0,
         },
         update: {
           content: JSON.stringify({
@@ -265,9 +331,9 @@ Return structured analysis with top 5 themes and scores.`;
             phase2Data: phase2Result,
             individualReports,
             completedPhases: analysisId ? [1, 2] : [2],
-            recommendations
-          })
-        }
+            recommendations,
+          }),
+        },
       });
 
       return NextResponse.json({
@@ -277,9 +343,10 @@ Return structured analysis with top 5 themes and scores.`;
         data: phase2Result,
         individualReports,
         recommendations,
-        message: recommendations.length > 0
-          ? 'Phase 2 completed without Phase 1. See recommendations for improvement.'
-          : 'Phase 2 completed. Ready for Phase 3.'
+        message:
+          recommendations.length > 0
+            ? 'Phase 2 completed without Phase 1. See recommendations for improvement.'
+            : 'Phase 2 completed. Ready for Phase 3.',
       });
     }
 
@@ -313,7 +380,6 @@ Return structured analysis with top 5 themes and scores.`;
         const analyzer = new ThreePhaseAnalyzer(_url);
         phase1Data = await analyzer.executePhase1();
         phase2Data = await analyzer.executePhase2(phase1Data);
-
       } else if (!phase1Data) {
         recommendations.push(
           'ℹ️ Phase 1 was skipped - missing baseline SEO data',
@@ -324,7 +390,6 @@ Return structured analysis with top 5 themes and scores.`;
         // Create minimal Phase 1 data
         const analyzer = new ThreePhaseAnalyzer(_url);
         phase1Data = await analyzer.executePhase1();
-
       } else if (!phase2Data) {
         recommendations.push(
           'ℹ️ Phase 2 was skipped - missing framework analysis',
@@ -362,19 +427,30 @@ Provide comprehensive recommendations for:
 5. Overall business growth
 
 Return structured recommendations with quick wins and long-term strategy.`;
-        const comprehensiveReport = generateComprehensiveReport(phase3Result.comprehensiveAnalysis, _url, prompt);
+        const comprehensiveReport = generateComprehensiveReport(
+          phase3Result.comprehensiveAnalysis,
+          _url,
+          prompt
+        );
         individualReports.push(comprehensiveReport);
       } else {
         // Comprehensive analysis failed - return error instead of fallback
-        console.error('Comprehensive analysis failed - no fallback data allowed');
-        return NextResponse.json({
-          success: false,
-          error: 'Comprehensive analysis failed. Check Gemini API configuration.',
-          details: 'No fallback data allowed - real analysis required'
-        }, { status: 500 });
+        console.error(
+          'Comprehensive analysis failed - no fallback data allowed'
+        );
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              'Comprehensive analysis failed. Check Gemini API configuration.',
+            details: 'No fallback data allowed - real analysis required',
+          },
+          { status: 500 }
+        );
       }
 
-      const overallScore = phase3Result.finalReport?.evaluationFramework?.overallScore || 0;
+      const overallScore =
+        phase3Result.finalReport?.evaluationFramework?.overallScore || 0;
 
       await prisma.analysis.update({
         where: { id: analysisId },
@@ -387,10 +463,10 @@ Return structured recommendations with quick wins and long-term strategy.`;
             phase3Data: phase3Result,
             individualReports,
             completedPhases: [1, 2, 3],
-            completed: true
+            completed: true,
           }),
-          score: overallScore
-        }
+          score: overallScore,
+        },
       });
 
       return NextResponse.json({
@@ -400,22 +476,26 @@ Return structured recommendations with quick wins and long-term strategy.`;
         data: phase3Result,
         individualReports,
         overallScore,
-        message: 'All phases completed!'
+        message: 'All phases completed!',
       });
     }
 
-    return NextResponse.json({
-      success: false,
-      error: 'Invalid phase. Must be 1, 2, or 3.'
-    }, { status: 400 });
-
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Invalid phase. Must be 1, 2, or 3.',
+      },
+      { status: 400 }
+    );
   } catch (error) {
     console.error('Phase execution error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Phase execution failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Phase execution failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }
-
