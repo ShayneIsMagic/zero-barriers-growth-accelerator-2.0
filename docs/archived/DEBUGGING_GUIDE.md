@@ -62,12 +62,12 @@ Current rules in `.eslintrc.json`:
 ```json
 {
   "rules": {
-    "no-unused-vars": "warn",           // Warns about unused variables
-    "no-console": "warn",               // Warns about console.log
-    "no-debugger": "warn",              // Warns about debugger statements
-    "react-hooks/rules-of-hooks": "error",  // Enforces Hook rules
-    "react-hooks/exhaustive-deps": "warn",  // Warns about missing dependencies
-    "jsx-a11y/alt-text": "warn",        // Accessibility warnings
+    "no-unused-vars": "warn", // Warns about unused variables
+    "no-console": "warn", // Warns about console.log
+    "no-debugger": "warn", // Warns about debugger statements
+    "react-hooks/rules-of-hooks": "error", // Enforces Hook rules
+    "react-hooks/exhaustive-deps": "warn", // Warns about missing dependencies
+    "jsx-a11y/alt-text": "warn" // Accessibility warnings
   }
 }
 ```
@@ -112,6 +112,7 @@ Add to `package.json`:
 2. **Click "Components" tab** (appears when React is detected)
 
 **Features:**
+
 - 🔍 **Component Tree**: View entire component hierarchy
 - 📝 **Props Inspector**: See all props passed to components
 - 🎯 **State Inspector**: View and edit component state
@@ -130,6 +131,7 @@ Measure component performance:
 5. Analyze render times and causes
 
 **What to Look For:**
+
 - Unnecessary re-renders
 - Slow components
 - Render frequency
@@ -138,18 +140,21 @@ Measure component performance:
 #### Key Features
 
 **1. Search Components**
+
 ```
 Use search bar to filter components by name
 Type "/" to focus search
 ```
 
 **2. Inspect Element**
+
 ```
 Right-click any element → "Inspect"
 Jumps to component in React DevTools
 ```
 
 **3. Edit Props/State**
+
 ```
 Click on value in inspector
 Edit directly
@@ -157,6 +162,7 @@ Press Enter to apply
 ```
 
 **4. Console Logging**
+
 ```
 Select component
 Type $r in console
@@ -164,6 +170,7 @@ Access selected component
 ```
 
 **5. Component Source**
+
 ```
 Click "</>" icon next to component name
 Opens source file in VS Code (with setup)
@@ -197,6 +204,7 @@ npm run dev:test
 ```
 
 React Dev Tools shows:
+
 - Test user authentication state
 - Mock data being used
 - Component props in test scenarios
@@ -234,11 +242,13 @@ The project includes pre-configured launch configurations.
 #### Debug Tests
 
 **Vitest:**
+
 1. Select "Debug Vitest Tests"
 2. Set breakpoints in test files
 3. Press F5
 
 **Playwright:**
+
 1. Select "Debug Playwright Tests"
 2. Set breakpoints
 3. Press F5
@@ -246,16 +256,19 @@ The project includes pre-configured launch configurations.
 ### Breakpoints
 
 **Set Breakpoints:**
+
 - Click in gutter next to line number
 - Press F9 on a line
 - Use `debugger;` statement in code
 
 **Conditional Breakpoints:**
+
 - Right-click breakpoint
 - Select "Edit Breakpoint"
 - Add condition (e.g., `user.id === 'test-123'`)
 
 **Logpoints:**
+
 - Right-click in gutter
 - Select "Add Logpoint"
 - Enter expression to log (e.g., `{user}`)
@@ -263,11 +276,12 @@ The project includes pre-configured launch configurations.
 ### Debug Console
 
 **Evaluate Expressions:**
+
 ```javascript
 // Type in Debug Console while paused
-console.log(user)
-JSON.stringify(state, null, 2)
-Object.keys(props)
+console.log(user);
+JSON.stringify(state, null, 2);
+Object.keys(props);
 ```
 
 ---
@@ -279,6 +293,7 @@ Object.keys(props)
 #### Console Tab
 
 **Log Filtering:**
+
 ```javascript
 // Use console methods
 console.log('Info')      // Info logs
@@ -291,6 +306,7 @@ Click icons in console toolbar
 ```
 
 **Advanced Logging:**
+
 ```javascript
 // Styled logs
 console.log('%c Custom styled log', 'color: blue; font-size: 20px');
@@ -313,6 +329,7 @@ console.timeEnd('Operation');
 #### Network Tab
 
 **Monitor API Calls:**
+
 1. Open Network tab
 2. Filter by "Fetch/XHR"
 3. Click request to see:
@@ -322,11 +339,13 @@ console.timeEnd('Operation');
    - Initiator (what triggered it)
 
 **Preserve Log:**
+
 - Check "Preserve log" to keep requests across page loads
 
 #### Application Tab
 
 **Inspect Storage:**
+
 - **Local Storage**: Analysis results
 - **Session Storage**: Temporary data
 - **Cookies**: Authentication tokens
@@ -335,6 +354,7 @@ console.timeEnd('Operation');
 #### Sources Tab
 
 **Debug JavaScript:**
+
 1. Open Sources tab
 2. Find file in file tree
 3. Set breakpoints
@@ -342,6 +362,7 @@ console.timeEnd('Operation');
 5. Step through execution
 
 **Keyboard Shortcuts:**
+
 - F8: Resume
 - F10: Step over
 - F11: Step into
@@ -354,6 +375,7 @@ console.timeEnd('Operation');
 ### Debug Vitest Unit Tests
 
 **Method 1: VS Code Debugger**
+
 ```bash
 # Use launch configuration
 1. Set breakpoint in test
@@ -362,6 +384,7 @@ console.timeEnd('Operation');
 ```
 
 **Method 2: Vitest UI**
+
 ```bash
 npm run test:ui
 
@@ -374,6 +397,7 @@ npm run test:ui
 ```
 
 **Method 3: Console Logs**
+
 ```typescript
 it('should work', () => {
   console.log('Debug info:', value);
@@ -384,6 +408,7 @@ it('should work', () => {
 ### Debug Playwright E2E Tests
 
 **Method 1: Playwright UI Mode**
+
 ```bash
 npm run test:e2e:ui
 
@@ -396,6 +421,7 @@ npm run test:e2e:ui
 ```
 
 **Method 2: Headed Mode**
+
 ```bash
 # See browser while testing
 npx playwright test --headed
@@ -405,6 +431,7 @@ npx playwright test --headed --slow-mo 1000
 ```
 
 **Method 3: Debug Mode**
+
 ```bash
 # Open Playwright Inspector
 npx playwright test --debug
@@ -414,6 +441,7 @@ npx playwright test example.spec.ts --debug
 ```
 
 **Method 4: VS Code**
+
 ```bash
 1. Set breakpoint in test
 2. Select "Debug Playwright Tests"
@@ -423,6 +451,7 @@ npx playwright test example.spec.ts --debug
 ### Test Debugging Tips
 
 **1. Isolate Test**
+
 ```typescript
 // Run only this test
 it.only('should work', () => {
@@ -436,6 +465,7 @@ it.skip('not ready yet', () => {
 ```
 
 **2. Increase Timeout**
+
 ```typescript
 it('slow test', async () => {
   // test code
@@ -443,6 +473,7 @@ it('slow test', async () => {
 ```
 
 **3. Add Debug Output**
+
 ```typescript
 it('should work', async () => {
   const result = await someFunction();
@@ -458,6 +489,7 @@ it('should work', async () => {
 ### ESLint Issues
 
 **Issue: ESLint not running**
+
 ```bash
 # Check ESLint is installed
 npm list eslint
@@ -467,6 +499,7 @@ Cmd+Shift+P → "ESLint: Restart ESLint Server"
 ```
 
 **Issue: Too many warnings**
+
 ```bash
 # Fix all auto-fixable issues
 npm run lint -- --fix
@@ -481,12 +514,14 @@ npm run lint -- --fix
 ### React Dev Tools Issues
 
 **Issue: Components tab not showing**
+
 - Refresh page
 - Check React is actually running
 - Try in incognito mode
 - Update React Dev Tools extension
 
 **Issue: Can't inspect component**
+
 - Make sure component is named (not anonymous)
 - Check component is actually rendered
 - Try searching by component name
@@ -494,12 +529,14 @@ npm run lint -- --fix
 ### Debugging Issues
 
 **Issue: Breakpoint not hit**
+
 - Check source maps are enabled
 - Verify code path is actually executed
 - Try adding `debugger;` statement
 - Restart debug session
 
 **Issue: Variables show "undefined"**
+
 - Code may be minified
 - Source maps may be missing
 - Try building in development mode
@@ -507,12 +544,14 @@ npm run lint -- --fix
 ### Test Issues
 
 **Issue: Tests timing out**
+
 ```typescript
 // Increase timeout
 vi.setConfig({ testTimeout: 30000 });
 ```
 
 **Issue: Tests pass locally but fail in CI**
+
 - Check for timing issues
 - Add proper waits
 - Verify environment variables
@@ -548,12 +587,14 @@ vi.setConfig({ testTimeout: 30000 });
 ## 📚 Resources
 
 ### Documentation
+
 - [ESLint Rules](https://eslint.org/docs/rules/)
 - [React Dev Tools](https://react.dev/learn/react-developer-tools)
 - [VS Code Debugging](https://code.visualstudio.com/docs/editor/debugging)
 - [Chrome DevTools](https://developer.chrome.com/docs/devtools/)
 
 ### Extensions
+
 - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens)
 - [Vitest](https://marketplace.visualstudio.com/items?itemName=ZixuanChen.vitest-explorer)
@@ -565,6 +606,7 @@ vi.setConfig({ testTimeout: 30000 });
 ### Keyboard Shortcuts
 
 **VS Code:**
+
 - `F5` - Start debugging
 - `F9` - Toggle breakpoint
 - `F10` - Step over
@@ -572,6 +614,7 @@ vi.setConfig({ testTimeout: 30000 });
 - `Shift+F5` - Stop debugging
 
 **Chrome DevTools:**
+
 - `Cmd+Option+I` / `Ctrl+Shift+I` - Open DevTools
 - `Cmd+Option+J` / `Ctrl+Shift+J` - Open Console
 - `Cmd+Shift+C` / `Ctrl+Shift+C` - Element picker
@@ -596,4 +639,3 @@ npm run dev:test      # Test mode
 ---
 
 **Happy Debugging! 🐛→🦋**
-

@@ -17,11 +17,13 @@
 **This is WHY login doesn't work** - Vercel is asking for VERCEL authentication before even showing your app!
 
 ### What You're Seeing:
+
 ```
 "Authentication Required" page with Vercel branding
 ```
 
 ### What You Should See:
+
 ```
 Your actual sign-in form with email/password fields
 ```
@@ -57,6 +59,7 @@ https://vercel.com/shayne-roys-projects/zero-barriers-growth-accelerator-2.0/set
 ## Why This Happened
 
 Vercel enables deployment protection by default on Hobby plan to prevent:
+
 - Unauthorized access
 - Web scraping
 - Bot traffic
@@ -70,6 +73,7 @@ Vercel enables deployment protection by default on Hobby plan to prevent:
 ## After Disabling:
 
 Your app will be publicly accessible:
+
 - ✅ Homepage loads without Vercel auth
 - ✅ Sign-in page shows your actual login form
 - ✅ Users can login with: shayne+1@devpipeline.com / ZBadmin123!
@@ -77,4 +81,3 @@ Your app will be publicly accessible:
 ---
 
 **Go to that Vercel settings page and disable Deployment Protection, then refresh the site!** 🚀
-

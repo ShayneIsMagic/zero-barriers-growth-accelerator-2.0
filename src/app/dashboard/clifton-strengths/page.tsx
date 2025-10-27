@@ -8,16 +8,22 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-    Brain,
-    Clock,
-    Download,
-    ExternalLink,
-    Users,
-    XCircle
+  Brain,
+  Clock,
+  Download,
+  ExternalLink,
+  Users,
+  XCircle,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -46,7 +52,9 @@ interface CliftonStrengthsAnalysis {
 export default function CliftonStrengthsPage() {
   const [url, setUrl] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysis, setAnalysis] = useState<CliftonStrengthsAnalysis | null>(null);
+  const [analysis, setAnalysis] = useState<CliftonStrengthsAnalysis | null>(
+    null
+  );
   const [_analysisId, _setAnalysisId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -61,7 +69,7 @@ export default function CliftonStrengthsPage() {
       const phase1Response = await fetch('/api/analyze/phase-new', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, phase: 1 })
+        body: JSON.stringify({ url, phase: 1 }),
       });
 
       if (!phase1Response.ok) {
@@ -76,7 +84,7 @@ export default function CliftonStrengthsPage() {
       const phase2Response = await fetch('/api/analyze/phase-new', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, phase: 2, analysisId: newAnalysisId })
+        body: JSON.stringify({ url, phase: 2, analysisId: newAnalysisId }),
       });
 
       if (!phase2Response.ok) {
@@ -84,12 +92,13 @@ export default function CliftonStrengthsPage() {
       }
 
       // Fetch CliftonStrengths analysis
-      const cliftonResponse = await fetch(`/api/analysis/clifton-strengths/${newAnalysisId}`);
+      const cliftonResponse = await fetch(
+        `/api/analysis/clifton-strengths/${newAnalysisId}`
+      );
       if (cliftonResponse.ok) {
         const cliftonData = await cliftonResponse.json();
         setAnalysis(cliftonData);
       }
-
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Analysis failed');
     } finally {
@@ -104,27 +113,38 @@ export default function CliftonStrengthsPage() {
   };
 
   const getScoreBadge = (score: number) => {
-    if (score >= 80) return <Badge className="bg-green-100 text-green-800">Strong</Badge>;
-    if (score >= 60) return <Badge className="bg-yellow-100 text-yellow-800">Moderate</Badge>;
+    if (score >= 80)
+      return <Badge className="bg-green-100 text-green-800">Strong</Badge>;
+    if (score >= 60)
+      return <Badge className="bg-yellow-100 text-yellow-800">Moderate</Badge>;
     return <Badge className="bg-red-100 text-red-800">Weak</Badge>;
   };
 
   const getDomainColor = (domain: string) => {
     switch (domain.toLowerCase()) {
-      case 'strategic thinking': return 'bg-blue-100 text-blue-800';
-      case 'relationship building': return 'bg-purple-100 text-purple-800';
-      case 'influencing': return 'bg-orange-100 text-orange-800';
-      case 'executing': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'strategic thinking':
+        return 'bg-blue-100 text-blue-800';
+      case 'relationship building':
+        return 'bg-purple-100 text-purple-800';
+      case 'influencing':
+        return 'bg-orange-100 text-orange-800';
+      case 'executing':
+        return 'bg-green-100 text-green-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const renderThemesByDomain = (themes: ThemeScore[]) => {
     const domains = {
-      'Strategic Thinking': themes.filter(t => t.domain === 'Strategic Thinking'),
-      'Relationship Building': themes.filter(t => t.domain === 'Relationship Building'),
-      'Influencing': themes.filter(t => t.domain === 'Influencing'),
-      'Executing': themes.filter(t => t.domain === 'Executing')
+      'Strategic Thinking': themes.filter(
+        (t) => t.domain === 'Strategic Thinking'
+      ),
+      'Relationship Building': themes.filter(
+        (t) => t.domain === 'Relationship Building'
+      ),
+      Influencing: themes.filter((t) => t.domain === 'Influencing'),
+      Executing: themes.filter((t) => t.domain === 'Executing'),
     };
 
     return (
@@ -144,52 +164,63 @@ export default function CliftonStrengthsPage() {
                 {domainThemes
                   .sort((a, b) => b.score - a.score)
                   .map((theme, index) => (
-                  <div key={index} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium capitalize">
-                        {theme.theme_name.replace(/_/g, ' ')}
-                      </h4>
-                      <div className="flex items-center gap-2">
-                        <span className={`font-bold ${getScoreColor(theme.score)}`}>
-                          {theme.score}
-                        </span>
-                        {getScoreBadge(theme.score)}
-                      </div>
-                    </div>
-
-                    <div className="text-sm text-gray-600 mb-2">
-                      Confidence: {(theme.evidence.confidence * 100).toFixed(0)}%
-                    </div>
-
-                    <div className="text-sm text-gray-700 mb-3">
-                      {theme.manifestation_description}
-                    </div>
-
-                    {theme.evidence.patterns.length > 0 && (
-                      <div className="mb-2">
-                        <div className="text-sm font-medium mb-1">Detected Patterns:</div>
-                        <div className="flex flex-wrap gap-1">
-                          {theme.evidence.patterns.map((pattern, i) => (
-                            <Badge key={i} variant="outline" className="text-xs">
-                              {pattern}
-                            </Badge>
-                          ))}
+                    <div key={index} className="rounded-lg border p-4">
+                      <div className="mb-2 flex items-center justify-between">
+                        <h4 className="font-medium capitalize">
+                          {theme.theme_name.replace(/_/g, ' ')}
+                        </h4>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`font-bold ${getScoreColor(theme.score)}`}
+                          >
+                            {theme.score}
+                          </span>
+                          {getScoreBadge(theme.score)}
                         </div>
                       </div>
-                    )}
 
-                    {theme.evidence.citations.length > 0 && (
-                      <div>
-                        <div className="text-sm font-medium mb-1">Evidence:</div>
-                        <ul className="text-xs text-gray-600 list-disc list-inside">
-                          {theme.evidence.citations.map((citation, i) => (
-                            <li key={i}>{citation}</li>
-                          ))}
-                        </ul>
+                      <div className="mb-2 text-sm text-gray-600">
+                        Confidence:{' '}
+                        {(theme.evidence.confidence * 100).toFixed(0)}%
                       </div>
-                    )}
-                  </div>
-                ))}
+
+                      <div className="mb-3 text-sm text-gray-700">
+                        {theme.manifestation_description}
+                      </div>
+
+                      {theme.evidence.patterns.length > 0 && (
+                        <div className="mb-2">
+                          <div className="mb-1 text-sm font-medium">
+                            Detected Patterns:
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                            {theme.evidence.patterns.map((pattern, i) => (
+                              <Badge
+                                key={i}
+                                variant="outline"
+                                className="text-xs"
+                              >
+                                {pattern}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {theme.evidence.citations.length > 0 && (
+                        <div>
+                          <div className="mb-1 text-sm font-medium">
+                            Evidence:
+                          </div>
+                          <ul className="list-inside list-disc text-xs text-gray-600">
+                            {theme.evidence.citations.map((citation, i) => (
+                              <li key={i}>{citation}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  ))}
               </div>
             </CardContent>
           </Card>
@@ -199,11 +230,12 @@ export default function CliftonStrengthsPage() {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">CliftonStrengths Analysis</h1>
+        <h1 className="mb-2 text-3xl font-bold">CliftonStrengths Analysis</h1>
         <p className="text-gray-600">
-          Analyze your website&apos;s organizational strengths using Gallup&apos;s 34-theme framework
+          Analyze your website&apos;s organizational strengths using
+          Gallup&apos;s 34-theme framework
         </p>
       </div>
 
@@ -215,7 +247,8 @@ export default function CliftonStrengthsPage() {
               Start CliftonStrengths Analysis
             </CardTitle>
             <CardDescription>
-              Enter your website URL to analyze your organizational strengths and themes
+              Enter your website URL to analyze your organizational strengths
+              and themes
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -264,7 +297,9 @@ export default function CliftonStrengthsPage() {
               <CardTitle className="flex items-center justify-between">
                 <span>Overall CliftonStrengths Score</span>
                 <div className="flex items-center gap-2">
-                  <span className={`text-3xl font-bold ${getScoreColor(analysis.overall_score)}`}>
+                  <span
+                    className={`text-3xl font-bold ${getScoreColor(analysis.overall_score)}`}
+                  >
                     {analysis.overall_score}
                   </span>
                   {getScoreBadge(analysis.overall_score)}
@@ -272,21 +307,33 @@ export default function CliftonStrengthsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">{analysis.strategic_thinking_score}</div>
-                  <div className="text-sm text-gray-600">Strategic Thinking</div>
+                  <div className="text-2xl font-bold text-blue-600">
+                    {analysis.strategic_thinking_score}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    Strategic Thinking
+                  </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">{analysis.relationship_building_score}</div>
-                  <div className="text-sm text-gray-600">Relationship Building</div>
+                  <div className="text-2xl font-bold text-purple-600">
+                    {analysis.relationship_building_score}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    Relationship Building
+                  </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-600">{analysis.influencing_score}</div>
+                  <div className="text-2xl font-bold text-orange-600">
+                    {analysis.influencing_score}
+                  </div>
                   <div className="text-sm text-gray-600">Influencing</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">{analysis.executing_score}</div>
+                  <div className="text-2xl font-bold text-green-600">
+                    {analysis.executing_score}
+                  </div>
                   <div className="text-sm text-gray-600">Executing</div>
                 </div>
               </div>
@@ -307,26 +354,33 @@ export default function CliftonStrengthsPage() {
                   .sort((a, b) => b.score - a.score)
                   .slice(0, 10)
                   .map((theme, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center text-sm font-bold">
-                        {index + 1}
-                      </div>
-                      <div>
-                        <div className="font-medium capitalize">
-                          {theme.theme_name.replace(/_/g, ' ')}
+                    <div
+                      key={index}
+                      className="flex items-center justify-between rounded-lg border p-3"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-800">
+                          {index + 1}
                         </div>
-                        <div className="text-sm text-gray-600">{theme.domain}</div>
+                        <div>
+                          <div className="font-medium capitalize">
+                            {theme.theme_name.replace(/_/g, ' ')}
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            {theme.domain}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`font-bold ${getScoreColor(theme.score)}`}
+                        >
+                          {theme.score}
+                        </span>
+                        {getScoreBadge(theme.score)}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`font-bold ${getScoreColor(theme.score)}`}>
-                        {theme.score}
-                      </span>
-                      {getScoreBadge(theme.score)}
-                    </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </CardContent>
           </Card>
@@ -339,9 +393,7 @@ export default function CliftonStrengthsPage() {
                 Complete breakdown of all 34 themes across the four domains
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              {renderThemesByDomain(analysis.themes)}
-            </CardContent>
+            <CardContent>{renderThemesByDomain(analysis.themes)}</CardContent>
           </Card>
 
           {/* Action Buttons */}

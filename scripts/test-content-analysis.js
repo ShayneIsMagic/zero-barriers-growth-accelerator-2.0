@@ -35,66 +35,78 @@ async function testContentAnalysis() {
 
   try {
     console.log('🔍 Running content-based analysis...');
-    
+
     const analyzer = new ContentAnalyzer();
-    const result = await analyzer.analyzeContent(testContent, 'https://example.com/', 'general');
-    
+    const result = await analyzer.analyzeContent(
+      testContent,
+      'https://example.com/',
+      'general'
+    );
+
     console.log('✅ Analysis completed!\n');
 
     // Display Golden Circle results
     console.log('📊 GOLDEN CIRCLE ANALYSIS');
     console.log('═'.repeat(50));
-    
+
     console.log('\n💡 WHY:');
     console.log(`Statement: "${result.goldenCircle.why}"`);
     console.log(`Score: ${result.goldenCircle.overallScore}/10`);
-    
+
     console.log('\n🔧 HOW:');
     console.log(`Methodology: "${result.goldenCircle.how}"`);
-    
+
     console.log('\n📦 WHAT:');
     console.log(`Offerings: "${result.goldenCircle.what}"`);
-    
+
     console.log('\n👥 WHO:');
     console.log(`Testimonials: "${result.goldenCircle.who}"`);
 
     // Display Elements of Value results
     console.log('\n\n💎 ELEMENTS OF VALUE ANALYSIS');
     console.log('═'.repeat(50));
-    
+
     console.log('\n🔧 FUNCTIONAL ELEMENTS:');
-    Object.entries(result.elementsOfValue.functional).forEach(([key, value]) => {
-      console.log(`${key}: ${value.score}/10 - "${value.evidence}"`);
-    });
-    
+    Object.entries(result.elementsOfValue.functional).forEach(
+      ([key, value]) => {
+        console.log(`${key}: ${value.score}/10 - "${value.evidence}"`);
+      }
+    );
+
     console.log('\n❤️ EMOTIONAL ELEMENTS:');
     Object.entries(result.elementsOfValue.emotional).forEach(([key, value]) => {
       console.log(`${key}: ${value.score}/10 - "${value.evidence}"`);
     });
-    
+
     console.log('\n🚀 LIFE-CHANGING ELEMENTS:');
-    Object.entries(result.elementsOfValue.lifeChanging).forEach(([key, value]) => {
-      console.log(`${key}: ${value.score}/10 - "${value.evidence}"`);
-    });
+    Object.entries(result.elementsOfValue.lifeChanging).forEach(
+      ([key, value]) => {
+        console.log(`${key}: ${value.score}/10 - "${value.evidence}"`);
+      }
+    );
 
     // Display CliftonStrengths results
     console.log('\n\n🎭 CLIFTONSTRENGTHS ANALYSIS');
     console.log('═'.repeat(50));
-    
+
     console.log('\n⚡ EXECUTING THEMES:');
-    Object.entries(result.cliftonStrengths.executing).forEach(([key, value]) => {
-      console.log(`${key}: ${value.score}/10 - "${value.evidence}"`);
-    });
-    
+    Object.entries(result.cliftonStrengths.executing).forEach(
+      ([key, value]) => {
+        console.log(`${key}: ${value.score}/10 - "${value.evidence}"`);
+      }
+    );
+
     console.log('\n🎯 INFLUENCING THEMES:');
-    Object.entries(result.cliftonStrengths.influencing).forEach(([key, value]) => {
-      console.log(`${key}: ${value.score}/10 - "${value.evidence}"`);
-    });
+    Object.entries(result.cliftonStrengths.influencing).forEach(
+      ([key, value]) => {
+        console.log(`${key}: ${value.score}/10 - "${value.evidence}"`);
+      }
+    );
 
     // Display recommendations
     console.log('\n\n💡 RECOMMENDATIONS');
     console.log('═'.repeat(50));
-    
+
     if (result.recommendations && result.recommendations.length > 0) {
       result.recommendations.forEach((rec, index) => {
         console.log(`${index + 1}. ${rec}`);
@@ -103,7 +115,6 @@ async function testContentAnalysis() {
 
     console.log(`\n📊 Overall Score: ${result.overallScore}/10`);
     console.log(`Summary: ${result.summary}`);
-
   } catch (error) {
     console.log(`❌ Error: ${error.message}`);
   }

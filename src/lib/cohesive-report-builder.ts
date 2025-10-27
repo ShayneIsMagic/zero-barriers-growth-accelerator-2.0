@@ -3,7 +3,11 @@
  * Collects all mini deliverables and creates comprehensive reports
  */
 
-import { AnalysisProgress, PhaseProgress, MiniDeliverable } from '@/components/analysis/ProgressTracker';
+import {
+  AnalysisProgress,
+  PhaseProgress,
+  MiniDeliverable,
+} from '@/components/analysis/ProgressTracker';
 
 export interface CohesiveReport {
   id: string;
@@ -183,14 +187,16 @@ export class CohesiveReportBuilder {
       status: phase.status,
       duration: phase.duration || 'Unknown',
       deliverables,
-      summary
+      summary,
     };
   }
 
   /**
    * Build report for a specific deliverable
    */
-  private async buildDeliverableReport(deliverable: MiniDeliverable): Promise<DeliverableReport> {
+  private async buildDeliverableReport(
+    deliverable: MiniDeliverable
+  ): Promise<DeliverableReport> {
     const insights = this.extractInsights(deliverable);
     const recommendations = this.extractRecommendations(deliverable);
     const evidence = this.extractEvidence(deliverable);
@@ -203,7 +209,7 @@ export class CohesiveReportBuilder {
       data: deliverable.result,
       insights,
       recommendations,
-      evidence
+      evidence,
     };
   }
 
@@ -213,7 +219,7 @@ export class CohesiveReportBuilder {
   private generateExecutiveSummary() {
     const overallScore = this.calculateOverallScore();
     const rating = this.getRating(overallScore);
-    
+
     const keyStrengths = this.extractKeyStrengths();
     const criticalIssues = this.extractCriticalIssues();
     const topRecommendations = this.extractTopRecommendations();
@@ -223,7 +229,7 @@ export class CohesiveReportBuilder {
       rating,
       keyStrengths,
       criticalIssues,
-      topRecommendations
+      topRecommendations,
     };
   }
 
@@ -240,7 +246,7 @@ export class CohesiveReportBuilder {
       seo: seoData,
       performance: performanceData,
       accessibility: accessibilityData,
-      security: securityData
+      security: securityData,
     };
   }
 
@@ -257,7 +263,7 @@ export class CohesiveReportBuilder {
       goldenCircle: goldenCircleData,
       elementsOfValue: elementsOfValueData,
       cliftonStrengths: cliftonStrengthsData,
-      competitivePosition: competitiveData
+      competitivePosition: competitiveData,
     };
   }
 
@@ -266,11 +272,11 @@ export class CohesiveReportBuilder {
    */
   private generateImplementationRoadmap(): ImplementationRoadmap {
     const allRecommendations = this.getAllRecommendations();
-    
+
     return {
       immediate: this.categorizeActions(allRecommendations, 'immediate'),
       shortTerm: this.categorizeActions(allRecommendations, 'shortTerm'),
-      longTerm: this.categorizeActions(allRecommendations, 'longTerm')
+      longTerm: this.categorizeActions(allRecommendations, 'longTerm'),
     };
   }
 
@@ -285,7 +291,7 @@ export class CohesiveReportBuilder {
       id: 'raw_data',
       title: 'Raw Analysis Data',
       type: 'data',
-      content: this.progress
+      content: this.progress,
     });
 
     // Evidence appendix
@@ -295,7 +301,7 @@ export class CohesiveReportBuilder {
         id: 'evidence',
         title: 'Supporting Evidence',
         type: 'evidence',
-        content: evidence
+        content: evidence,
       });
     }
 
@@ -306,7 +312,7 @@ export class CohesiveReportBuilder {
         id: 'technical_details',
         title: 'Technical Implementation Details',
         type: 'technical',
-        content: technicalDetails
+        content: technicalDetails,
       });
     }
 
@@ -324,47 +330,60 @@ export class CohesiveReportBuilder {
         rating: 'Poor',
         keyStrengths: [],
         criticalIssues: [],
-        topRecommendations: []
+        topRecommendations: [],
       },
       phaseReports: [],
       technicalMetrics: {
         seo: { score: 0, issues: [], opportunities: [] },
         performance: { score: 0, coreWebVitals: {}, recommendations: [] },
         accessibility: { score: 0, issues: [], improvements: [] },
-        security: { score: 0, threats: [], recommendations: [] }
+        security: { score: 0, threats: [], recommendations: [] },
       },
       businessInsights: {
         goldenCircle: { why: {}, how: {}, what: {}, who: {}, alignment: 0 },
-        elementsOfValue: { b2c: {}, b2b: {}, strongestElements: [], weakestElements: [] },
-        cliftonStrengths: { dominantThemes: [], strengths: [], developmentAreas: [] },
-        competitivePosition: { advantages: [], gaps: [], opportunities: [] }
+        elementsOfValue: {
+          b2c: {},
+          b2b: {},
+          strongestElements: [],
+          weakestElements: [],
+        },
+        cliftonStrengths: {
+          dominantThemes: [],
+          strengths: [],
+          developmentAreas: [],
+        },
+        competitivePosition: { advantages: [], gaps: [], opportunities: [] },
       },
       implementationRoadmap: {
         immediate: [],
         shortTerm: [],
-        longTerm: []
+        longTerm: [],
       },
-      appendices: []
+      appendices: [],
     };
   }
 
   private calculateOverallScore(): number {
     // Calculate based on phase scores and deliverable completion
-    const completedPhases = this.progress.phases.filter(p => p.status === 'completed');
+    const completedPhases = this.progress.phases.filter(
+      (p) => p.status === 'completed'
+    );
     if (completedPhases.length === 0) return 0;
-    
+
     const totalScore = completedPhases.reduce((sum, phase) => {
       const deliverableScores = phase.deliverables
-        .filter(d => d.status === 'completed' && d.result?.score)
-        .map(d => d.result.score);
-      
-      const phaseScore = deliverableScores.length > 0 
-        ? deliverableScores.reduce((a, b) => a + b, 0) / deliverableScores.length
-        : 0;
-      
+        .filter((d) => d.status === 'completed' && d.result?.score)
+        .map((d) => d.result.score);
+
+      const phaseScore =
+        deliverableScores.length > 0
+          ? deliverableScores.reduce((a, b) => a + b, 0) /
+            deliverableScores.length
+          : 0;
+
       return sum + phaseScore;
     }, 0);
-    
+
     return Math.round(totalScore / completedPhases.length);
   }
 
@@ -378,32 +397,56 @@ export class CohesiveReportBuilder {
   // Additional helper methods would be implemented here...
   private extractKeyStrengths(): string[] {
     // Extract key strengths from all completed deliverables
-    return ['Strong technical SEO foundation', 'Clear value proposition', 'Good content structure'];
+    return [
+      'Strong technical SEO foundation',
+      'Clear value proposition',
+      'Good content structure',
+    ];
   }
 
   private extractCriticalIssues(): string[] {
     // Extract critical issues from all deliverables
-    return ['Missing meta descriptions', 'Slow page load times', 'Limited accessibility features'];
+    return [
+      'Missing meta descriptions',
+      'Slow page load times',
+      'Limited accessibility features',
+    ];
   }
 
   private extractTopRecommendations(): string[] {
     // Extract top recommendations from all deliverables
-    return ['Optimize page speed', 'Add comprehensive meta descriptions', 'Implement accessibility improvements'];
+    return [
+      'Optimize page speed',
+      'Add comprehensive meta descriptions',
+      'Implement accessibility improvements',
+    ];
   }
 
   private extractSEOData(): any {
     // Extract SEO data from PageAudit and other sources
-    return { score: 75, issues: ['Missing meta descriptions'], opportunities: ['Add schema markup'] };
+    return {
+      score: 75,
+      issues: ['Missing meta descriptions'],
+      opportunities: ['Add schema markup'],
+    };
   }
 
   private extractPerformanceData(): any {
     // Extract performance data from Lighthouse
-    return { score: 65, coreWebVitals: {}, recommendations: ['Optimize images', 'Minify CSS'] };
+    return {
+      score: 65,
+      coreWebVitals: {},
+      recommendations: ['Optimize images', 'Minify CSS'],
+    };
   }
 
   private extractAccessibilityData(): any {
     // Extract accessibility data
-    return { score: 70, issues: ['Missing alt text'], improvements: ['Add skip links'] };
+    return {
+      score: 70,
+      issues: ['Missing alt text'],
+      improvements: ['Add skip links'],
+    };
   }
 
   private extractSecurityData(): any {
@@ -418,17 +461,30 @@ export class CohesiveReportBuilder {
 
   private extractElementsOfValueData(): any {
     // Extract Elements of Value data
-    return { b2c: {}, b2b: {}, strongestElements: ['Quality'], weakestElements: ['Innovation'] };
+    return {
+      b2c: {},
+      b2b: {},
+      strongestElements: ['Quality'],
+      weakestElements: ['Innovation'],
+    };
   }
 
   private extractCliftonStrengthsData(): any {
     // Extract CliftonStrengths data
-    return { dominantThemes: ['Strategic Thinking'], strengths: ['Analytical'], developmentAreas: ['Communication'] };
+    return {
+      dominantThemes: ['Strategic Thinking'],
+      strengths: ['Analytical'],
+      developmentAreas: ['Communication'],
+    };
   }
 
   private extractCompetitiveData(): any {
     // Extract competitive analysis data
-    return { advantages: ['Unique value prop'], gaps: ['Market reach'], opportunities: ['Content marketing'] };
+    return {
+      advantages: ['Unique value prop'],
+      gaps: ['Market reach'],
+      opportunities: ['Content marketing'],
+    };
   }
 
   private getAllRecommendations(): any[] {
@@ -436,7 +492,10 @@ export class CohesiveReportBuilder {
     return [];
   }
 
-  private categorizeActions(recommendations: any[], category: string): ActionItem[] {
+  private categorizeActions(
+    recommendations: any[],
+    category: string
+  ): ActionItem[] {
     // Categorize recommendations into immediate, short-term, long-term
     return [];
   }
@@ -461,7 +520,7 @@ export class CohesiveReportBuilder {
     return {
       score: 75,
       keyFindings: ['Finding 1', 'Finding 2'],
-      recommendations: ['Recommendation 1', 'Recommendation 2']
+      recommendations: ['Recommendation 1', 'Recommendation 2'],
     };
   }
 

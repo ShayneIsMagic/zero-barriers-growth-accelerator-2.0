@@ -7,9 +7,11 @@
 ## 🚨 Root Cause Analysis
 
 ### The Problem:
+
 Users exist locally, but login fails on Vercel.
 
 ### Possible Causes:
+
 1. ❌ Vercel doesn't have DATABASE_URL environment variable
 2. ❌ Vercel's DATABASE_URL points to wrong database
 3. ❌ Vercel's deployment is using old code
@@ -22,11 +24,13 @@ Users exist locally, but login fails on Vercel.
 ### Check Vercel Environment Variables:
 
 1. **Go to Vercel Dashboard**:
+
    ```
    https://vercel.com/[your-username]/zero-barriers-growth-accelerator-20/settings/environment-variables
    ```
 
 2. **Verify DATABASE_URL exists** and equals:
+
    ```
    postgresql://postgres.chkwezsyopfciibifmxx:go2ArBwdewM3M80e@aws-1-us-west-1.pooler.supabase.com:6543/postgres
    ```
@@ -72,11 +76,13 @@ vercel --prod
 **Since Prisma pooling has issues, use SQL directly**:
 
 1. **Go to Supabase SQL Editor**:
+
    ```
    https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/sql/new
    ```
 
 2. **Run this SQL** (with pre-hashed passwords):
+
    ```sql
    -- User 1: Admin (shayne+1@devpipeline.com)
    INSERT INTO "User" (id, email, password, name, role, "createdAt", "updatedAt")
@@ -166,4 +172,3 @@ Then use these hashes in the SQL INSERT statements above!
 ---
 
 **Most likely fix**: Add DATABASE_URL to Vercel and create users via SQL! 🔧
-

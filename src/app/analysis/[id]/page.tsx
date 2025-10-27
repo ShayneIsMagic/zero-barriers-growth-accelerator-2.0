@@ -3,13 +3,27 @@
 import { useParams } from 'next/navigation';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AnalysisClient, AnalysisResult } from '@/lib/analysis-client';
-import { ArrowLeft, Download, Share2, BarChart3, Target, Users, Lightbulb } from 'lucide-react';
+import {
+  ArrowLeft,
+  Download,
+  Share2,
+  BarChart3,
+  Target,
+  Users,
+  Lightbulb,
+} from 'lucide-react';
 import Link from 'next/link';
 
 export default function AnalysisDetailPage() {
@@ -22,8 +36,8 @@ export default function AnalysisDetailPage() {
     const loadAnalysis = async () => {
       try {
         const analyses = AnalysisClient.getAnalyses();
-        const foundAnalysis = analyses.find(a => a.id === params.id);
-        
+        const foundAnalysis = analyses.find((a) => a.id === params.id);
+
         if (foundAnalysis) {
           setAnalysis(foundAnalysis);
         } else {
@@ -41,12 +55,13 @@ export default function AnalysisDetailPage() {
 
   const downloadAnalysis = () => {
     if (!analysis) return;
-    
+
     const dataStr = JSON.stringify(analysis, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
+    const dataUri =
+      'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
     const exportFileDefaultName = `analysis-${analysis.url.replace(/[^a-zA-Z0-9]/g, '-')}-${new Date().toISOString().split('T')[0]}.json`;
-    
+
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);
@@ -68,7 +83,9 @@ export default function AnalysisDetailPage() {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600">Analysis Not Found</h1>
+          <h1 className="text-2xl font-bold text-red-600">
+            Analysis Not Found
+          </h1>
           <p className="mt-2 text-gray-600">{error}</p>
           <Link href="/dashboard/analyze">
             <Button className="mt-4">
@@ -94,7 +111,9 @@ export default function AnalysisDetailPage() {
                   Back to Analysis
                 </Button>
               </Link>
-              <h1 className="text-3xl font-bold text-growth-900">Analysis Report</h1>
+              <h1 className="text-3xl font-bold text-growth-900">
+                Analysis Report
+              </h1>
               <p className="text-growth-600">{analysis.url}</p>
             </div>
             <div className="flex gap-2">
@@ -120,10 +139,10 @@ export default function AnalysisDetailPage() {
           </CardHeader>
           <CardContent>
             <div className="text-center">
-              <div className="text-6xl font-bold text-growth-600 mb-2">
+              <div className="mb-2 text-6xl font-bold text-growth-600">
                 {analysis.overallScore}/100
               </div>
-              <Progress value={analysis.overallScore} className="h-3 mb-4" />
+              <Progress value={analysis.overallScore} className="mb-4 h-3" />
               <p className="text-growth-600">{analysis.summary}</p>
             </div>
           </CardContent>
@@ -146,37 +165,51 @@ export default function AnalysisDetailPage() {
                   <Target className="h-5 w-5" />
                   Golden Circle Analysis
                 </CardTitle>
-                <CardDescription>Simon Sinek&apos;s framework: Why, How, What</CardDescription>
+                <CardDescription>
+                  Simon Sinek&apos;s framework: Why, How, What
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="text-center">
-                  <div className="text-4xl font-bold text-growth-600 mb-2">
+                  <div className="mb-2 text-4xl font-bold text-growth-600">
                     {analysis.goldenCircle.overallScore}/100
                   </div>
-                  <Progress value={analysis.goldenCircle.overallScore} className="h-2" />
+                  <Progress
+                    value={analysis.goldenCircle.overallScore}
+                    className="h-2"
+                  />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                   <div className="space-y-2">
                     <h3 className="font-semibold text-growth-900">WHY</h3>
-                    <p className="text-sm text-gray-600">{analysis.goldenCircle.why}</p>
+                    <p className="text-sm text-gray-600">
+                      {analysis.goldenCircle.why}
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <h3 className="font-semibold text-growth-900">HOW</h3>
-                    <p className="text-sm text-gray-600">{analysis.goldenCircle.how}</p>
+                    <p className="text-sm text-gray-600">
+                      {analysis.goldenCircle.how}
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <h3 className="font-semibold text-growth-900">WHAT</h3>
-                    <p className="text-sm text-gray-600">{analysis.goldenCircle.what}</p>
+                    <p className="text-sm text-gray-600">
+                      {analysis.goldenCircle.what}
+                    </p>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="font-semibold mb-2">Key Insights</h4>
+                  <h4 className="mb-2 font-semibold">Key Insights</h4>
                   <ul className="space-y-1">
                     {analysis.goldenCircle.insights.map((insight, index) => (
-                      <li key={index} className="text-sm text-gray-600 flex items-start gap-2">
-                        <span className="text-growth-600 mt-1">•</span>
+                      <li
+                        key={index}
+                        className="flex items-start gap-2 text-sm text-gray-600"
+                      >
+                        <span className="mt-1 text-growth-600">•</span>
                         {insight}
                       </li>
                     ))}
@@ -194,27 +227,37 @@ export default function AnalysisDetailPage() {
                   <Users className="h-5 w-5" />
                   Elements of Value Analysis
                 </CardTitle>
-                <CardDescription>Bain&apos;s 30 Elements of Value scoring</CardDescription>
+                <CardDescription>
+                  Bain&apos;s 30 Elements of Value scoring
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="text-center">
-                  <div className="text-4xl font-bold text-growth-600 mb-2">
+                  <div className="mb-2 text-4xl font-bold text-growth-600">
                     {analysis.elementsOfValue.overallScore}/100
                   </div>
-                  <Progress value={analysis.elementsOfValue.overallScore} className="h-2" />
+                  <Progress
+                    value={analysis.elementsOfValue.overallScore}
+                    className="h-2"
+                  />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                   <div>
-                    <h4 className="font-semibold mb-3">Functional Elements</h4>
+                    <h4 className="mb-3 font-semibold">Functional Elements</h4>
                     <div className="space-y-2">
                       {Object.entries(analysis.elementsOfValue.functional)
                         .filter(([_, score]) => score >= 7)
                         .sort(([_, a], [__, b]) => b - a)
                         .slice(0, 6)
                         .map(([element, score]) => (
-                          <div key={element} className="flex justify-between items-center">
-                            <span className="text-sm capitalize">{element.replace(/([A-Z])/g, ' $1')}</span>
+                          <div
+                            key={element}
+                            className="flex items-center justify-between"
+                          >
+                            <span className="text-sm capitalize">
+                              {element.replace(/([A-Z])/g, ' $1')}
+                            </span>
                             <Badge variant="secondary">{score}/10</Badge>
                           </div>
                         ))}
@@ -222,15 +265,20 @@ export default function AnalysisDetailPage() {
                   </div>
 
                   <div>
-                    <h4 className="font-semibold mb-3">Emotional Elements</h4>
+                    <h4 className="mb-3 font-semibold">Emotional Elements</h4>
                     <div className="space-y-2">
                       {Object.entries(analysis.elementsOfValue.emotional)
                         .filter(([_, score]) => score >= 7)
                         .sort(([_, a], [__, b]) => b - a)
                         .slice(0, 6)
                         .map(([element, score]) => (
-                          <div key={element} className="flex justify-between items-center">
-                            <span className="text-sm capitalize">{element.replace(/([A-Z])/g, ' $1')}</span>
+                          <div
+                            key={element}
+                            className="flex items-center justify-between"
+                          >
+                            <span className="text-sm capitalize">
+                              {element.replace(/([A-Z])/g, ' $1')}
+                            </span>
                             <Badge variant="secondary">{score}/10</Badge>
                           </div>
                         ))}
@@ -238,15 +286,22 @@ export default function AnalysisDetailPage() {
                   </div>
 
                   <div>
-                    <h4 className="font-semibold mb-3">Life-Changing Elements</h4>
+                    <h4 className="mb-3 font-semibold">
+                      Life-Changing Elements
+                    </h4>
                     <div className="space-y-2">
                       {Object.entries(analysis.elementsOfValue.lifeChanging)
                         .filter(([_, score]) => score >= 7)
                         .sort(([_, a], [__, b]) => b - a)
                         .slice(0, 6)
                         .map(([element, score]) => (
-                          <div key={element} className="flex justify-between items-center">
-                            <span className="text-sm capitalize">{element.replace(/([A-Z])/g, ' $1')}</span>
+                          <div
+                            key={element}
+                            className="flex items-center justify-between"
+                          >
+                            <span className="text-sm capitalize">
+                              {element.replace(/([A-Z])/g, ' $1')}
+                            </span>
                             <Badge variant="secondary">{score}/10</Badge>
                           </div>
                         ))}
@@ -254,15 +309,22 @@ export default function AnalysisDetailPage() {
                   </div>
 
                   <div>
-                    <h4 className="font-semibold mb-3">Social Impact Elements</h4>
+                    <h4 className="mb-3 font-semibold">
+                      Social Impact Elements
+                    </h4>
                     <div className="space-y-2">
                       {Object.entries(analysis.elementsOfValue.socialImpact)
                         .filter(([_, score]) => score >= 7)
                         .sort(([_, a], [__, b]) => b - a)
                         .slice(0, 6)
                         .map(([element, score]) => (
-                          <div key={element} className="flex justify-between items-center">
-                            <span className="text-sm capitalize">{element.replace(/([A-Z])/g, ' $1')}</span>
+                          <div
+                            key={element}
+                            className="flex items-center justify-between"
+                          >
+                            <span className="text-sm capitalize">
+                              {element.replace(/([A-Z])/g, ' $1')}
+                            </span>
                             <Badge variant="secondary">{score}/10</Badge>
                           </div>
                         ))}
@@ -271,11 +333,14 @@ export default function AnalysisDetailPage() {
                 </div>
 
                 <div>
-                  <h4 className="font-semibold mb-2">Key Insights</h4>
+                  <h4 className="mb-2 font-semibold">Key Insights</h4>
                   <ul className="space-y-1">
                     {analysis.elementsOfValue.insights.map((insight, index) => (
-                      <li key={index} className="text-sm text-gray-600 flex items-start gap-2">
-                        <span className="text-growth-600 mt-1">•</span>
+                      <li
+                        key={index}
+                        className="flex items-start gap-2 text-sm text-gray-600"
+                      >
+                        <span className="mt-1 text-growth-600">•</span>
                         {insight}
                       </li>
                     ))}
@@ -293,52 +358,72 @@ export default function AnalysisDetailPage() {
                   <Lightbulb className="h-5 w-5" />
                   CliftonStrengths Analysis
                 </CardTitle>
-                <CardDescription>Gallup&apos;s 34 themes across 4 domains</CardDescription>
+                <CardDescription>
+                  Gallup&apos;s 34 themes across 4 domains
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="text-center">
-                  <div className="text-4xl font-bold text-growth-600 mb-2">
+                  <div className="mb-2 text-4xl font-bold text-growth-600">
                     {analysis.cliftonStrengths.overallScore}/100
                   </div>
-                  <Progress value={analysis.cliftonStrengths.overallScore} className="h-2" />
+                  <Progress
+                    value={analysis.cliftonStrengths.overallScore}
+                    className="h-2"
+                  />
                 </div>
 
                 <div>
-                  <h4 className="font-semibold mb-3">Top Themes</h4>
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                  <h4 className="mb-3 font-semibold">Top Themes</h4>
+                  <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
                     {Object.entries(analysis.cliftonStrengths.themes)
                       .sort(([_, a], [__, b]) => Number(b) - Number(a))
                       .slice(0, 10)
                       .map(([theme, score]) => (
-                        <div key={theme} className="text-center p-3 border rounded-lg">
-                          <div className="font-semibold text-sm">{theme}</div>
-                          <Badge variant="outline" className="mt-1">{score}/10</Badge>
+                        <div
+                          key={theme}
+                          className="rounded-lg border p-3 text-center"
+                        >
+                          <div className="text-sm font-semibold">{theme}</div>
+                          <Badge variant="outline" className="mt-1">
+                            {score}/10
+                          </Badge>
                         </div>
                       ))}
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="font-semibold mb-2">Recommendations</h4>
+                  <h4 className="mb-2 font-semibold">Recommendations</h4>
                   <ul className="space-y-1">
-                    {analysis.cliftonStrengths.recommendations.map((rec, index) => (
-                      <li key={index} className="text-sm text-gray-600 flex items-start gap-2">
-                        <span className="text-growth-600 mt-1">•</span>
-                        {rec}
-                      </li>
-                    ))}
+                    {analysis.cliftonStrengths.recommendations.map(
+                      (rec, index) => (
+                        <li
+                          key={index}
+                          className="flex items-start gap-2 text-sm text-gray-600"
+                        >
+                          <span className="mt-1 text-growth-600">•</span>
+                          {rec}
+                        </li>
+                      )
+                    )}
                   </ul>
                 </div>
 
                 <div>
-                  <h4 className="font-semibold mb-2">Key Insights</h4>
+                  <h4 className="mb-2 font-semibold">Key Insights</h4>
                   <ul className="space-y-1">
-                    {analysis.cliftonStrengths.insights.map((insight, index) => (
-                      <li key={index} className="text-sm text-gray-600 flex items-start gap-2">
-                        <span className="text-growth-600 mt-1">•</span>
-                        {insight}
-                      </li>
-                    ))}
+                    {analysis.cliftonStrengths.insights.map(
+                      (insight, index) => (
+                        <li
+                          key={index}
+                          className="flex items-start gap-2 text-sm text-gray-600"
+                        >
+                          <span className="mt-1 text-growth-600">•</span>
+                          {insight}
+                        </li>
+                      )
+                    )}
                   </ul>
                 </div>
               </CardContent>
@@ -350,28 +435,45 @@ export default function AnalysisDetailPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Actionable Recommendations</CardTitle>
-                <CardDescription>Prioritized steps to improve your content</CardDescription>
+                <CardDescription>
+                  Prioritized steps to improve your content
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
                   {analysis.recommendations.map((rec, index) => (
-                    <div key={index} className="border rounded-lg p-4">
+                    <div key={index} className="rounded-lg border p-4">
                       <div className="flex items-start gap-3">
-                        <Badge 
-                          variant={rec.priority === 'high' ? 'destructive' : rec.priority === 'medium' ? 'default' : 'secondary'}
+                        <Badge
+                          variant={
+                            rec.priority === 'high'
+                              ? 'destructive'
+                              : rec.priority === 'medium'
+                                ? 'default'
+                                : 'secondary'
+                          }
                           className="mt-1"
                         >
                           {rec.priority.toUpperCase()}
                         </Badge>
                         <div className="flex-1">
-                          <h4 className="font-semibold mb-2">{rec.category}</h4>
-                          <p className="text-sm text-gray-600 mb-3">{rec.description}</p>
+                          <h4 className="mb-2 font-semibold">{rec.category}</h4>
+                          <p className="mb-3 text-sm text-gray-600">
+                            {rec.description}
+                          </p>
                           <div>
-                            <h5 className="text-sm font-medium mb-2">Action Items:</h5>
+                            <h5 className="mb-2 text-sm font-medium">
+                              Action Items:
+                            </h5>
                             <ul className="space-y-1">
                               {rec.actionItems.map((item, itemIndex) => (
-                                <li key={itemIndex} className="text-sm text-gray-600 flex items-start gap-2">
-                                  <span className="text-growth-600 mt-1">•</span>
+                                <li
+                                  key={itemIndex}
+                                  className="flex items-start gap-2 text-sm text-gray-600"
+                                >
+                                  <span className="mt-1 text-growth-600">
+                                    •
+                                  </span>
                                   {item}
                                 </li>
                               ))}
@@ -391,10 +493,12 @@ export default function AnalysisDetailPage() {
         <Card className="mt-8">
           <CardHeader>
             <CardTitle>Raw Analysis Data</CardTitle>
-            <CardDescription>Complete JSON data for this analysis</CardDescription>
+            <CardDescription>
+              Complete JSON data for this analysis
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <pre className="bg-gray-100 p-4 rounded-lg overflow-auto text-xs">
+            <pre className="overflow-auto rounded-lg bg-gray-100 p-4 text-xs">
               {JSON.stringify(analysis, null, 2)}
             </pre>
           </CardContent>

@@ -17,7 +17,7 @@ const files = [];
 
 function walkDir(dir) {
   const files = fs.readdirSync(dir);
-  files.forEach(file => {
+  files.forEach((file) => {
     const filePath = path.join(dir, file);
     const stat = fs.statSync(filePath);
     if (stat.isDirectory()) {
@@ -38,8 +38,8 @@ const fixes = [
   {
     pattern: /import\s*{\s*([^}]*)\s*}\s*from\s*['"][^'"]*['"];?\s*$/gm,
     fix: (match, imports) => {
-      const importList = imports.split(',').map(imp => imp.trim());
-      const usedImports = importList.filter(imp => {
+      const importList = imports.split(',').map((imp) => imp.trim());
+      const usedImports = importList.filter((imp) => {
         const cleanImp = imp.replace(/\s+as\s+\w+/, '').trim();
         return cleanImp && !cleanImp.startsWith('_');
       });
@@ -49,7 +49,7 @@ const fixes = [
       }
 
       return match.replace(imports, usedImports.join(', '));
-    }
+    },
   },
 
   // Fix function parameters that are prefixed with _ but still used
@@ -57,7 +57,7 @@ const fixes = [
     pattern: /function\s+\w+\([^)]*_(\w+)[^)]*\)/g,
     fix: (match) => {
       return match.replace(/_(\w+)/g, '$1');
-    }
+    },
   },
 
   // Fix variable declarations that are prefixed with _ but still used
@@ -65,29 +65,29 @@ const fixes = [
     pattern: /const\s+_(\w+)\s*=/g,
     fix: (match, varName) => {
       return match.replace(`_${varName}`, varName);
-    }
+    },
   },
 
   // Fix destructuring with unused variables
   {
     pattern: /const\s*{\s*([^}]*)\s*}\s*=\s*[^;]+;/g,
     fix: (match, destructured) => {
-      const vars = destructured.split(',').map(v => v.trim());
-      const fixedVars = vars.map(v => {
+      const vars = destructured.split(',').map((v) => v.trim());
+      const fixedVars = vars.map((v) => {
         if (v.startsWith('_') && v.length > 1) {
           return v.substring(1); // Remove underscore
         }
         return v;
       });
       return match.replace(destructured, fixedVars.join(', '));
-    }
-  }
+    },
+  },
 ];
 
 let fixedFiles = 0;
 let totalFixes = 0;
 
-files.forEach(filePath => {
+files.forEach((filePath) => {
   try {
     let content = fs.readFileSync(filePath, 'utf8');
     let modified = false;
@@ -104,12 +104,16 @@ files.forEach(filePath => {
 
     if (modified) {
       fs.writeFileSync(filePath, content);
-      console.log(`  ✅ Fixed ${fileFixes} issues in ${path.relative(process.cwd(), filePath)}`);
+      console.log(
+        `  ✅ Fixed ${fileFixes} issues in ${path.relative(process.cwd(), filePath)}`
+      );
       fixedFiles++;
       totalFixes += fileFixes;
     }
   } catch (error) {
-    console.log(`  ❌ Error processing ${path.relative(process.cwd(), filePath)}: ${error.message}`);
+    console.log(
+      `  ❌ Error processing ${path.relative(process.cwd(), filePath)}: ${error.message}`
+    );
   }
 });
 
@@ -118,7 +122,9 @@ console.log(`\n🎉 Fixed ${totalFixes} issues across ${fixedFiles} files`);
 // Run ESLint to check remaining issues
 console.log('\n🔍 Running ESLint to check remaining issues...');
 try {
-  execSync('npx eslint src/ --format=compact | grep "unused" | wc -l', { stdio: 'inherit' });
+  execSync('npx eslint src/ --format=compact | grep "unused" | wc -l', {
+    stdio: 'inherit',
+  });
 } catch (error) {
   console.log('ESLint check completed with some remaining warnings');
 }

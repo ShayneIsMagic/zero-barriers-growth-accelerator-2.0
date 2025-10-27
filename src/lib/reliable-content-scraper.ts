@@ -58,19 +58,21 @@ export async function scrapeWebsiteContent(url: string): Promise<ScrapedData> {
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
         '--disable-accelerated-2d-canvas',
-        '--disable-gpu'
-      ]
+        '--disable-gpu',
+      ],
     });
 
     const page = await browser.newPage();
 
     // Set user agent to avoid bot detection
-    await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+    await page.setUserAgent(
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    );
 
     // Navigate to page
     await page.goto(url, {
       waitUntil: 'networkidle0',
-      timeout: 30000
+      timeout: 30000,
     });
 
     console.log(`📄 Page loaded, extracting content...`);
@@ -83,26 +85,40 @@ export async function scrapeWebsiteContent(url: string): Promise<ScrapedData> {
 
       // Get meta tags
       const getMetaContent = (name: string) => {
-        const meta = document.querySelector(`meta[name="${name}"], meta[property="${name}"]`);
+        const meta = document.querySelector(
+          `meta[name="${name}"], meta[property="${name}"]`
+        );
         return meta?.getAttribute('content') || '';
       };
 
       // Extract headings
-      const h1Elements = Array.from(document.querySelectorAll('h1')).map(h => h.innerText.trim());
-      const h2Elements = Array.from(document.querySelectorAll('h2')).map(h => h.innerText.trim());
-      const h3Elements = Array.from(document.querySelectorAll('h3')).map(h => h.innerText.trim());
+      const h1Elements = Array.from(document.querySelectorAll('h1')).map((h) =>
+        h.innerText.trim()
+      );
+      const h2Elements = Array.from(document.querySelectorAll('h2')).map((h) =>
+        h.innerText.trim()
+      );
+      const h3Elements = Array.from(document.querySelectorAll('h3')).map((h) =>
+        h.innerText.trim()
+      );
 
       // Get structured data
-      const schemaScripts = Array.from(document.querySelectorAll('script[type="application/ld+json"]'));
-      const structuredData = schemaScripts.map(script => {
-        try {
-          return JSON.parse(script.textContent || '');
-        } catch {
-          return null;
-        }
-      }).filter(Boolean);
+      const schemaScripts = Array.from(
+        document.querySelectorAll('script[type="application/ld+json"]')
+      );
+      const structuredData = schemaScripts
+        .map((script) => {
+          try {
+            return JSON.parse(script.textContent || '');
+          } catch {
+            return null;
+          }
+        })
+        .filter(Boolean);
 
-      const schemaTypes = structuredData.map((data: any) => data['@type']).filter(Boolean);
+      const schemaTypes = structuredData
+        .map((data: any) => data['@type'])
+        .filter(Boolean);
 
       return {
         content: document.documentElement.innerHTML,
@@ -110,20 +126,26 @@ export async function scrapeWebsiteContent(url: string): Promise<ScrapedData> {
         wordCount: cleanText.split(/\s+/).length,
         title: document.title || '',
         metaDescription: getMetaContent('description'),
-        metaKeywords: (getMetaContent('keywords') || '').split(',').map(k => k.trim()).filter(Boolean),
+        metaKeywords: (getMetaContent('keywords') || '')
+          .split(',')
+          .map((k) => k.trim())
+          .filter(Boolean),
         ogTitle: getMetaContent('og:title'),
         ogDescription: getMetaContent('og:description'),
         ogImage: getMetaContent('og:image'),
-        canonicalUrl: document.querySelector('link[rel="canonical"]')?.getAttribute('href') || '',
+        canonicalUrl:
+          document
+            .querySelector('link[rel="canonical"]')
+            ?.getAttribute('href') || '',
         headings: {
           h1: h1Elements,
           h2: h2Elements,
-          h3: h3Elements
+          h3: h3Elements,
         },
         imageCount: document.querySelectorAll('img').length,
         linkCount: document.querySelectorAll('a').length,
         structuredData,
-        schemaTypes
+        schemaTypes,
       };
     });
 
@@ -132,10 +154,15 @@ export async function scrapeWebsiteContent(url: string): Promise<ScrapedData> {
     const loadTime = Date.now() - startTime;
 
     // Extract keywords from content
-    const extractedKeywords = extractKeywords(scrapedData.cleanText, scrapedData.headings);
+    const extractedKeywords = extractKeywords(
+      scrapedData.cleanText,
+      scrapedData.headings
+    );
     const topicClusters = findTopicClusters(scrapedData.headings.h2);
 
-    console.log(`✅ Scraping complete - ${scrapedData.wordCount} words, ${extractedKeywords.length} keywords`);
+    console.log(
+      `✅ Scraping complete - ${scrapedData.wordCount} words, ${extractedKeywords.length} keywords`
+    );
 
     return {
       ...scrapedData,
@@ -143,9 +170,8 @@ export async function scrapeWebsiteContent(url: string): Promise<ScrapedData> {
       topicClusters,
       hasSSL: url.startsWith('https'),
       loadTime,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
-
   } catch (error) {
     console.error('Puppeteer scraping failed:', error);
 
@@ -157,36 +183,42 @@ export async function scrapeWebsiteContent(url: string): Promise<ScrapedData> {
 /**
  * Extract keywords from content and headings
  */
-function extractKeywords(text: string, headings: { h1: string[]; h2: string[]; h3: string[] }): string[] {
+function extractKeywords(
+  text: string,
+  headings: { h1: string[]; h2: string[]; h3: string[] }
+): string[] {
   const keywords: string[] = [];
 
   // From H1 (highest weight)
-  headings.h1.forEach(h1 => {
-    const words = h1.toLowerCase()
+  headings.h1.forEach((h1) => {
+    const words = h1
+      .toLowerCase()
       .replace(/[^\w\s]/g, ' ')
       .split(/\s+/)
-      .filter(word => word.length > 3);
+      .filter((word) => word.length > 3);
     keywords.push(...words);
   });
 
   // From H2 (medium weight)
-  headings.h2.forEach(h2 => {
-    const words = h2.toLowerCase()
+  headings.h2.forEach((h2) => {
+    const words = h2
+      .toLowerCase()
       .replace(/[^\w\s]/g, ' ')
       .split(/\s+/)
-      .filter(word => word.length > 4);
+      .filter((word) => word.length > 4);
     keywords.push(...words);
   });
 
   // From main content (extract frequent terms)
-  const contentWords = text.toLowerCase()
+  const contentWords = text
+    .toLowerCase()
     .replace(/[^\w\s]/g, ' ')
     .split(/\s+/)
-    .filter(word => word.length > 5);
+    .filter((word) => word.length > 5);
 
   // Count word frequency
   const wordFreq: Record<string, number> = {};
-  contentWords.forEach(word => {
+  contentWords.forEach((word) => {
     if (!isStopWord(word)) {
       wordFreq[word] = (wordFreq[word] || 0) + 1;
     }
@@ -209,8 +241,8 @@ function extractKeywords(text: string, headings: { h1: string[]; h2: string[]; h
  */
 function findTopicClusters(h2Headings: string[]): string[] {
   return h2Headings
-    .map(h => h.toLowerCase().trim())
-    .filter(h => h.length > 0)
+    .map((h) => h.toLowerCase().trim())
+    .filter((h) => h.length > 0)
     .slice(0, 10); // Top 10 topics
 }
 
@@ -218,7 +250,34 @@ function findTopicClusters(h2Headings: string[]): string[] {
  * Check if word is a stop word
  */
 function isStopWord(word: string): boolean {
-  const stopWords = ['the', 'and', 'for', 'with', 'this', 'that', 'from', 'have', 'will', 'your', 'our', 'their', 'about', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'between', 'under', 'again', 'further', 'then', 'once'];
+  const stopWords = [
+    'the',
+    'and',
+    'for',
+    'with',
+    'this',
+    'that',
+    'from',
+    'have',
+    'will',
+    'your',
+    'our',
+    'their',
+    'about',
+    'into',
+    'through',
+    'during',
+    'before',
+    'after',
+    'above',
+    'below',
+    'between',
+    'under',
+    'again',
+    'further',
+    'then',
+    'once',
+  ];
   return stopWords.includes(word);
 }
 
@@ -231,8 +290,8 @@ async function fallbackScrape(url: string): Promise<ScrapedData> {
   try {
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; ZeroBarriersBot/1.0)'
-      }
+        'User-Agent': 'Mozilla/5.0 (compatible; ZeroBarriersBot/1.0)',
+      },
     });
 
     const html = await response.text();
@@ -241,7 +300,9 @@ async function fallbackScrape(url: string): Promise<ScrapedData> {
     const titleMatch = html.match(/<title[^>]*>(.*?)<\/title>/i);
     const title = titleMatch ? titleMatch[1] : '';
 
-    const metaDescMatch = html.match(/<meta[^>]*name=["']description["'][^>]*content=["'](.*?)["']/i);
+    const metaDescMatch = html.match(
+      /<meta[^>]*name=["']description["'][^>]*content=["'](.*?)["']/i
+    );
     const metaDescription = metaDescMatch ? metaDescMatch[1] : '';
 
     const cleanText = html
@@ -271,10 +332,11 @@ async function fallbackScrape(url: string): Promise<ScrapedData> {
       loadTime: 0,
       schemaTypes: [],
       structuredData: [],
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   } catch (error) {
-    throw new Error(`Failed to scrape content: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(
+      `Failed to scrape content: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
   }
 }
-

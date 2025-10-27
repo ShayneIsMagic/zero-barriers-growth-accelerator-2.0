@@ -11,16 +11,22 @@ export async function POST(request: NextRequest) {
     const { email, password, name } = body;
 
     if (!email || !password || !name) {
-      return NextResponse.json({ error: 'Email, password, and name are required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Email, password, and name are required' },
+        { status: 400 }
+      );
     }
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() }
+      where: { email: email.toLowerCase() },
     });
 
     if (existingUser) {
-      return NextResponse.json({ error: 'User already exists' }, { status: 409 });
+      return NextResponse.json(
+        { error: 'User already exists' },
+        { status: 409 }
+      );
     }
 
     // Hash password
@@ -33,7 +39,7 @@ export async function POST(request: NextRequest) {
         password: hashedPassword,
         name,
         role: 'USER', // Default role for new signups
-      }
+      },
     });
 
     // Generate JWT token
@@ -41,7 +47,7 @@ export async function POST(request: NextRequest) {
       {
         userId: user.id,
         email: user.email,
-        role: user.role
+        role: user.role,
       },
       JWT_SECRET,
       { expiresIn: '7d' }
@@ -55,10 +61,13 @@ export async function POST(request: NextRequest) {
         role: user.role,
       },
       token,
-      message: 'Sign up successful'
+      message: 'Sign up successful',
     });
   } catch (error) {
     console.error('Sign up error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

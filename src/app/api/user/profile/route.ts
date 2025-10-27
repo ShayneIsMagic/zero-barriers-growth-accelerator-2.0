@@ -16,23 +16,33 @@ export async function PUT(request: NextRequest) {
     const token = authHeader.substring(7);
 
     // Verify JWT token
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; email: string; role: string };
+    const decoded = jwt.verify(token, JWT_SECRET) as {
+      userId: string;
+      email: string;
+      role: string;
+    };
 
     const body = await request.json();
     const { name, email } = body;
 
     if (!name && !email) {
-      return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'No fields to update' },
+        { status: 400 }
+      );
     }
 
     // Check if email already exists (if trying to update email)
     if (email && email !== decoded.email) {
       const existingUser = await prisma.user.findUnique({
-        where: { email: email.toLowerCase() }
+        where: { email: email.toLowerCase() },
       });
 
       if (existingUser) {
-        return NextResponse.json({ error: 'Email already in use' }, { status: 409 });
+        return NextResponse.json(
+          { error: 'Email already in use' },
+          { status: 409 }
+        );
       }
     }
 
@@ -41,8 +51,8 @@ export async function PUT(request: NextRequest) {
       where: { id: decoded.userId },
       data: {
         ...(name && { name }),
-        ...(email && { email: email.toLowerCase() })
-      }
+        ...(email && { email: email.toLowerCase() }),
+      },
     });
 
     return NextResponse.json({
@@ -52,15 +62,17 @@ export async function PUT(request: NextRequest) {
         name: updatedUser.name,
         role: updatedUser.role,
       },
-      message: 'Profile updated successfully'
+      message: 'Profile updated successfully',
     });
-
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
     console.error('Profile update error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -77,7 +89,7 @@ export async function GET(request: NextRequest) {
     const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
 
     const user = await prisma.user.findUnique({
-      where: { id: decoded.userId }
+      where: { id: decoded.userId },
     });
 
     if (!user) {
@@ -92,15 +104,16 @@ export async function GET(request: NextRequest) {
         role: user.role,
         createdAt: user.createdAt.toISOString(),
         updatedAt: user.updatedAt.toISOString(),
-      }
+      },
     });
-
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
     console.error('Get profile error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
-

@@ -23,13 +23,13 @@ const criticalFiles = [
   'src/app/api/trpc/[trpc]/route.ts',
   'src/app/dashboard/analyze/page.tsx',
   'src/app/dashboard/phase3/page.tsx',
-  'src/app/dashboard/reports/page.tsx'
+  'src/app/dashboard/reports/page.tsx',
 ];
 
 let fixedFiles = 0;
 let totalFixes = 0;
 
-criticalFiles.forEach(filePath => {
+criticalFiles.forEach((filePath) => {
   const fullPath = path.join(process.cwd(), filePath);
 
   if (!fs.existsSync(fullPath)) {
@@ -53,48 +53,54 @@ criticalFiles.forEach(filePath => {
     });
 
     // Fix unused imports
-    content = content.replace(/import\s*{\s*([^}]*)\s*}\s*from\s*['"][^'"]*['"];?\s*$/gm, (match, imports) => {
-      const importList = imports.split(',').map(imp => imp.trim());
-      const unusedImports = importList.filter(imp => {
-        const cleanImp = imp.replace(/\s+as\s+\w+/, '').trim();
-        return cleanImp && cleanImp.startsWith('_');
-      });
-
-      if (unusedImports.length > 0) {
-        const usedImports = importList.filter(imp => {
+    content = content.replace(
+      /import\s*{\s*([^}]*)\s*}\s*from\s*['"][^'"]*['"];?\s*$/gm,
+      (match, imports) => {
+        const importList = imports.split(',').map((imp) => imp.trim());
+        const unusedImports = importList.filter((imp) => {
           const cleanImp = imp.replace(/\s+as\s+\w+/, '').trim();
-          return cleanImp && !cleanImp.startsWith('_');
+          return cleanImp && cleanImp.startsWith('_');
         });
 
-        if (usedImports.length === 0) {
-          fileFixes++;
-          modified = true;
-          return ''; // Remove entire import line
-        } else {
-          fileFixes++;
-          modified = true;
-          return match.replace(imports, usedImports.join(', '));
-        }
-      }
+        if (unusedImports.length > 0) {
+          const usedImports = importList.filter((imp) => {
+            const cleanImp = imp.replace(/\s+as\s+\w+/, '').trim();
+            return cleanImp && !cleanImp.startsWith('_');
+          });
 
-      return match;
-    });
+          if (usedImports.length === 0) {
+            fileFixes++;
+            modified = true;
+            return ''; // Remove entire import line
+          } else {
+            fileFixes++;
+            modified = true;
+            return match.replace(imports, usedImports.join(', '));
+          }
+        }
+
+        return match;
+      }
+    );
 
     // Fix unused variable declarations
-    content = content.replace(/const\s+(\w+)\s*=\s*[^;]+;\s*$/gm, (match, varName) => {
-      // Check if variable is used elsewhere in the file
-      const varUsage = new RegExp(`\\b${varName}\\b`, 'g');
-      const matches = content.match(varUsage);
+    content = content.replace(
+      /const\s+(\w+)\s*=\s*[^;]+;\s*$/gm,
+      (match, varName) => {
+        // Check if variable is used elsewhere in the file
+        const varUsage = new RegExp(`\\b${varName}\\b`, 'g');
+        const matches = content.match(varUsage);
 
-      if (matches && matches.length === 1) {
-        // Variable is only declared, never used
-        fileFixes++;
-        modified = true;
-        return ''; // Remove the line
+        if (matches && matches.length === 1) {
+          // Variable is only declared, never used
+          fileFixes++;
+          modified = true;
+          return ''; // Remove the line
+        }
+
+        return match;
       }
-
-      return match;
-    });
+    );
 
     if (modified) {
       fs.writeFileSync(fullPath, content);
@@ -104,7 +110,6 @@ criticalFiles.forEach(filePath => {
     } else {
       console.log(`  ⏭️  No issues found in ${filePath}`);
     }
-
   } catch (error) {
     console.log(`  ❌ Error processing ${filePath}: ${error.message}`);
   }
@@ -115,11 +120,16 @@ console.log(`\n🎉 Fixed ${totalFixes} issues across ${fixedFiles} files`);
 // Run a quick ESLint check
 console.log('\n🔍 Running ESLint check...');
 try {
-  const result = execSync('npx eslint src/app/api/ --format=compact | grep "unused" | wc -l', {
-    encoding: 'utf8',
-    stdio: 'pipe'
-  });
-  console.log(`Remaining unused variable warnings in API routes: ${result.trim()}`);
+  const result = execSync(
+    'npx eslint src/app/api/ --format=compact | grep "unused" | wc -l',
+    {
+      encoding: 'utf8',
+      stdio: 'pipe',
+    }
+  );
+  console.log(
+    `Remaining unused variable warnings in API routes: ${result.trim()}`
+  );
 } catch (error) {
   console.log('ESLint check completed');
 }

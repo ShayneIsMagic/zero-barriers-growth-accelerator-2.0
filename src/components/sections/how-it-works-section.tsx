@@ -188,5 +188,3 @@ export function HowItWorksSection() {
     </section>
   );
 }
-
-

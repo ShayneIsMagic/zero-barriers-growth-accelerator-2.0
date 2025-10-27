@@ -30,7 +30,7 @@ export function MobileNav() {
         size="sm"
         className="md:hidden"
         onClick={() => setIsOpen(!isOpen)}
-        aria-label={isOpen ? "Close mobile menu" : "Open mobile menu"}
+        aria-label={isOpen ? 'Close mobile menu' : 'Open mobile menu'}
         aria-expanded={isOpen}
       >
         {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

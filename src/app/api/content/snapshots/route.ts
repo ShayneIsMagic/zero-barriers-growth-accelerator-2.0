@@ -13,10 +13,13 @@ export async function POST(request: NextRequest) {
     const { url, title, content, metadata, userId } = await request.json();
 
     if (!url || !content || !userId) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL, content, and userId are required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL, content, and userId are required',
+        },
+        { status: 400 }
+      );
     }
 
     console.log(`📸 Creating content snapshot for: ${url}`);
@@ -28,8 +31,8 @@ export async function POST(request: NextRequest) {
         title: title || null,
         content,
         metadata: metadata || {},
-        userId
-      }
+        userId,
+      },
     });
 
     console.log(`✅ Content snapshot created: ${snapshot.id}`);
@@ -43,18 +46,20 @@ export async function POST(request: NextRequest) {
         content: snapshot.content,
         metadata: snapshot.metadata,
         userId: snapshot.userId,
-        createdAt: snapshot.createdAt
+        createdAt: snapshot.createdAt,
       },
-      message: 'Content snapshot created successfully'
+      message: 'Content snapshot created successfully',
     });
-
   } catch (error) {
     console.error('Content snapshot creation error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to create content snapshot',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to create content snapshot',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -65,10 +70,13 @@ export async function GET(request: NextRequest) {
     const url = searchParams.get('url');
 
     if (!userId) {
-      return NextResponse.json({
-        success: false,
-        error: 'userId is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'userId is required',
+        },
+        { status: 400 }
+      );
     }
 
     console.log(`📋 Fetching content snapshots for user: ${userId}`);
@@ -83,16 +91,16 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' },
       include: {
         proposedContent: {
-          orderBy: { createdAt: 'desc' }
-        }
-      }
+          orderBy: { createdAt: 'desc' },
+        },
+      },
     });
 
     console.log(`✅ Found ${snapshots.length} content snapshots`);
 
     return NextResponse.json({
       success: true,
-      snapshots: snapshots.map(snapshot => ({
+      snapshots: snapshots.map((snapshot) => ({
         id: snapshot.id,
         url: snapshot.url,
         title: snapshot.title,
@@ -100,23 +108,25 @@ export async function GET(request: NextRequest) {
         metadata: snapshot.metadata,
         userId: snapshot.userId,
         createdAt: snapshot.createdAt,
-        proposedContent: snapshot.proposedContent.map(proposed => ({
+        proposedContent: snapshot.proposedContent.map((proposed) => ({
           id: proposed.id,
           version: proposed.version,
           status: proposed.status,
           createdBy: proposed.createdBy,
-          createdAt: proposed.createdAt
-        }))
+          createdAt: proposed.createdAt,
+        })),
       })),
-      message: 'Content snapshots retrieved successfully'
+      message: 'Content snapshots retrieved successfully',
     });
-
   } catch (error) {
     console.error('Content snapshots retrieval error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to retrieve content snapshots',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to retrieve content snapshots',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

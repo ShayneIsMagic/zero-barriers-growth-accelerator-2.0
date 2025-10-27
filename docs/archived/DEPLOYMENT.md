@@ -16,6 +16,7 @@
 ### **Option 1: Vercel** (⭐ RECOMMENDED)
 
 **Why Vercel?**
+
 - Built for Next.js
 - Zero configuration
 - Automatic deployments
@@ -23,6 +24,7 @@
 - CDN included
 
 **Steps**:
+
 ```bash
 # 1. Install Vercel CLI
 npm install -g vercel
@@ -50,6 +52,7 @@ vercel --prod
 ### **Option 2: Netlify**
 
 **Steps**:
+
 ```bash
 # 1. Build the app
 npm run build
@@ -76,6 +79,7 @@ netlify env:set CLAUDE_API_KEY your-key-here
 ### **Option 3: Cloudflare Pages**
 
 **Steps**:
+
 ```bash
 # 1. Build static export
 npm run build
@@ -100,11 +104,13 @@ npm run build
 ### **Option 4: Self-Hosted (VPS)**
 
 **Requirements**:
+
 - Ubuntu 20.04+ or similar
 - Node.js 18+ installed
 - nginx for reverse proxy
 
 **Steps**:
+
 ```bash
 # On your server
 
@@ -133,6 +139,7 @@ sudo nano /etc/nginx/sites-available/zero-barriers
 ```
 
 **nginx config**:
+
 ```nginx
 server {
     listen 80;
@@ -154,6 +161,7 @@ server {
 ## 🔐 Environment Variables for Production
 
 ### **Required**:
+
 ```env
 # At least ONE AI service
 GEMINI_API_KEY=your-key
@@ -169,6 +177,7 @@ NODE_ENV=production
 ```
 
 ### **Optional**:
+
 ```env
 # Database (if using Prisma)
 DATABASE_URL=postgresql://...
@@ -186,22 +195,24 @@ BROWSERLESS_API_KEY=
 ## 🏗️ Build Configuration
 
 ### **For Static Export** (Netlify, Cloudflare):
+
 ```javascript
 // next.config.js
 module.exports = {
-  output: 'export',  // Enable static export
+  output: 'export', // Enable static export
   images: {
-    unoptimized: true  // Required for static export
-  }
-}
+    unoptimized: true, // Required for static export
+  },
+};
 ```
 
 ### **For Server-Side** (Vercel, VPS):
+
 ```javascript
-// next.config.js  
+// next.config.js
 module.exports = {
   // Current config is already optimized
-}
+};
 ```
 
 ---
@@ -209,6 +220,7 @@ module.exports = {
 ## 🔍 Production Checklist
 
 ### **Before Deploying**:
+
 - [ ] Test build locally: `npm run build`
 - [ ] Test production mode: `npm start`
 - [ ] Set all environment variables
@@ -218,6 +230,7 @@ module.exports = {
 - [ ] Test on mobile devices
 
 ### **After Deploying**:
+
 - [ ] Visit deployed URL
 - [ ] Test all 4 analysis tools
 - [ ] Verify styling (dark mode)
@@ -230,6 +243,7 @@ module.exports = {
 ## 📊 Performance Optimization
 
 ### **Already Configured**:
+
 - ✅ Static page generation (45 pages)
 - ✅ Image optimization
 - ✅ Code splitting
@@ -237,6 +251,7 @@ module.exports = {
 - ✅ CSS purging (Tailwind)
 
 ### **Additional Optimizations**:
+
 ```bash
 # Analyze bundle size
 ANALYZE=true npm run build
@@ -249,15 +264,19 @@ ANALYZE=true npm run build
 ## 🐛 Common Deployment Issues
 
 ### **Issue**: "Module not found" in production
+
 **Fix**: Add to `package.json` dependencies (not devDependencies)
 
 ### **Issue**: "AI_SERVICE_UNAVAILABLE"
+
 **Fix**: Set environment variables in deployment platform
 
 ### **Issue**: "Styling broken" in production
+
 **Fix**: Ensure `globals.css` is imported in `layout.tsx`
 
 ### **Issue**: "Build timeout"
+
 **Fix**: Increase build timeout in platform settings
 
 ---
@@ -265,15 +284,19 @@ ANALYZE=true npm run build
 ## 🎯 Deployment Recommendations
 
 ### **For Personal/Testing**:
+
 → **Vercel** (free, fast, easy)
 
 ### **For Production Business**:
+
 → **Vercel Pro** or **Self-hosted VPS**
 
 ### **For Static Sites**:
+
 → **Cloudflare Pages** (fast, free)
 
 ### **For Enterprise**:
+
 → **Self-hosted with PM2 + nginx**
 
 ---
@@ -281,18 +304,21 @@ ANALYZE=true npm run build
 ## 💡 Post-Deployment
 
 ### **Monitor**:
+
 - Server logs
 - Error rates
 - API usage (Gemini/Claude quotas)
 - Performance metrics
 
 ### **Optimize**:
+
 - Enable caching
 - Add CDN
 - Compress responses
 - Monitor bundle size
 
 ### **Update**:
+
 ```bash
 # On server
 git pull
@@ -319,6 +345,7 @@ Your deployment is successful when:
 ## 📞 Support
 
 Check documentation in project root:
+
 - `ANALYSIS_STATUS.md` - Usage guide
 - `ENVIRONMENT_FIXES.md` - Technical details
 - `VERSION_COMPATIBILITY.md` - Version info
@@ -329,4 +356,4 @@ Check documentation in project root:
 
 **Last Updated**: October 8, 2025  
 **Build Status**: ✅ PASSING  
-**Production Ready**: ✅ YES  
+**Production Ready**: ✅ YES

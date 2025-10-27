@@ -12,6 +12,7 @@
 **Phase:** 1
 
 **Response:**
+
 ```json
 {
   "success": false,
@@ -29,6 +30,7 @@
 **Supabase database is missing columns that Prisma expects!**
 
 Missing columns:
+
 - `insights` (TEXT)
 - `frameworks` (TEXT)
 
@@ -67,6 +69,7 @@ The query should complete in < 1 second.
 ### **Step 4: Verify**
 
 You should see output showing all columns including:
+
 - ✅ `insights` (TEXT, YES)
 - ✅ `frameworks` (TEXT, YES)
 
@@ -78,11 +81,11 @@ Once the SQL runs successfully, Phase 1 will work!
 
 ## 📊 WHAT'S UP TO DATE
 
-| Component | Status         | Notes                           |
-|-----------|----------------|---------------------------------|
-| GitHub    | ✅ Up to date  | All code pushed                 |
-| Prisma    | ✅ Up to date  | Schema has insights/frameworks  |
-| Vercel    | ✅ Deployed    | Latest code is live             |
+| Component | Status             | Notes                          |
+| --------- | ------------------ | ------------------------------ |
+| GitHub    | ✅ Up to date      | All code pushed                |
+| Prisma    | ✅ Up to date      | Schema has insights/frameworks |
+| Vercel    | ✅ Deployed        | Latest code is live            |
 | Supabase  | ❌ **OUT OF SYNC** | **MISSING COLUMNS** ← FIX THIS |
 
 ---
@@ -98,6 +101,7 @@ Once the SQL runs successfully, Phase 1 will work!
 5. ✅ No more Prisma errors!
 
 **Then you can test:**
+
 - https://zero-barriers-growth-accelerator-20.vercel.app/dashboard/phased-analysis
 
 ---
@@ -117,4 +121,3 @@ See `SUPABASE_SCHEMA_FIX.md`
 
 **The code is ready. The database just needs those 2 columns added.** ✅
 **Run the SQL and Phase 1 will work!** 🚀
-

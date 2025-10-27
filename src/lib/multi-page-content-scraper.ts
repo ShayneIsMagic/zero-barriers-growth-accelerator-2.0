@@ -53,7 +53,7 @@ export class MultiPageContentScraper {
       includeAbout = true,
       includeContact = true,
       includeServices = true,
-      maxDepth = 2
+      maxDepth = 2,
     } = options;
 
     console.log(`🌐 Starting multi-page content scraping for: ${baseUrl}`);
@@ -74,32 +74,38 @@ export class MultiPageContentScraper {
         includeAbout,
         includeContact,
         includeServices,
-        maxDepth
+        maxDepth,
       });
 
       // Step 3: Scrape discovered pages
-      console.log(`📄 Step 3: Scraping ${discoveredPages.length} additional pages...`);
+      console.log(
+        `📄 Step 3: Scraping ${discoveredPages.length} additional pages...`
+      );
       const additionalPages = await this.scrapeDiscoveredPages(discoveredPages);
 
       // Step 4: Analyze and categorize pages
       const pageTypes = this.categorizePages(discoveredPages);
 
       // Step 5: Create comprehensive content analysis
-      const comprehensiveContent = this.createComprehensiveContent(homepage, additionalPages);
+      const comprehensiveContent = this.createComprehensiveContent(
+        homepage,
+        additionalPages
+      );
 
-      console.log(`✅ Multi-page scraping completed: ${additionalPages.length + 1} pages total`);
+      console.log(
+        `✅ Multi-page scraping completed: ${additionalPages.length + 1} pages total`
+      );
 
       return {
         homepage,
         additionalPages,
         siteMap: {
           totalPages: additionalPages.length + 1,
-          discoveredPages: discoveredPages.map(p => p.url),
-          pageTypes
+          discoveredPages: discoveredPages.map((p) => p.url),
+          pageTypes,
         },
-        comprehensiveContent
+        comprehensiveContent,
       };
-
     } catch (error) {
       console.error('Multi-page scraping failed:', error);
       throw error;
@@ -116,7 +122,7 @@ export class MultiPageContentScraper {
     const puppeteer = require('puppeteer');
     const browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
 
     try {
@@ -128,7 +134,7 @@ export class MultiPageContentScraper {
         const allLinks = Array.from(document.querySelectorAll('a[href]'));
         const internalLinks = new Set<string>();
 
-        allLinks.forEach(link => {
+        allLinks.forEach((link) => {
           const href = link.getAttribute('href');
           if (!href) return;
 
@@ -157,10 +163,13 @@ export class MultiPageContentScraper {
       }, baseUrl);
 
       // Categorize and prioritize pages
-      const categorizedPages = this.categorizeAndPrioritizePages(links, baseUrl, options);
+      const categorizedPages = this.categorizeAndPrioritizePages(
+        links,
+        baseUrl,
+        options
+      );
 
       return categorizedPages.slice(0, options.maxPages || 10);
-
     } finally {
       await browser.close();
     }
@@ -174,9 +183,10 @@ export class MultiPageContentScraper {
     baseUrl: string,
     options: PageDiscoveryOptions
   ): { url: string; pageType: string; priority: number }[] {
-    const categorized: { url: string; pageType: string; priority: number }[] = [];
+    const categorized: { url: string; pageType: string; priority: number }[] =
+      [];
 
-    links.forEach(link => {
+    links.forEach((link) => {
       const url = new URL(link);
       const path = url.pathname.toLowerCase();
       let pageType = 'other';
@@ -187,13 +197,25 @@ export class MultiPageContentScraper {
         return; // Skip homepage (already scraped)
       }
 
-      if (path.includes('/blog/') || path.includes('/news/') || path.includes('/articles/')) {
+      if (
+        path.includes('/blog/') ||
+        path.includes('/news/') ||
+        path.includes('/articles/')
+      ) {
         pageType = 'blog';
         priority = options.includeBlog ? 3 : 0;
-      } else if (path.includes('/product') || path.includes('/shop/') || path.includes('/store/')) {
+      } else if (
+        path.includes('/product') ||
+        path.includes('/shop/') ||
+        path.includes('/store/')
+      ) {
         pageType = 'products';
         priority = options.includeProducts ? 4 : 0;
-      } else if (path.includes('/about') || path.includes('/company') || path.includes('/team')) {
+      } else if (
+        path.includes('/about') ||
+        path.includes('/company') ||
+        path.includes('/team')
+      ) {
         pageType = 'about';
         priority = options.includeAbout ? 2 : 0;
       } else if (path.includes('/contact') || path.includes('/support')) {
@@ -235,7 +257,9 @@ export class MultiPageContentScraper {
    */
   private static async scrapeDiscoveredPages(
     pages: { url: string; pageType: string; priority: number }[]
-  ): Promise<{ url: string; data: ScrapedData; pageType: string; priority: number }[]> {
+  ): Promise<
+    { url: string; data: ScrapedData; pageType: string; priority: number }[]
+  > {
     const results = [];
 
     for (const page of pages) {
@@ -246,7 +270,7 @@ export class MultiPageContentScraper {
           url: page.url,
           data,
           pageType: page.pageType,
-          priority: page.priority
+          priority: page.priority,
         });
       } catch (error) {
         console.warn(`⚠️ Failed to scrape ${page.url}:`, error);
@@ -265,7 +289,7 @@ export class MultiPageContentScraper {
   ): { [key: string]: number } {
     const pageTypes: { [key: string]: number } = {};
 
-    pages.forEach(page => {
+    pages.forEach((page) => {
       pageTypes[page.pageType] = (pageTypes[page.pageType] || 0) + 1;
     });
 
@@ -277,7 +301,12 @@ export class MultiPageContentScraper {
    */
   private static createComprehensiveContent(
     homepage: ScrapedData,
-    additionalPages: { url: string; data: ScrapedData; pageType: string; priority: number }[]
+    additionalPages: {
+      url: string;
+      data: ScrapedData;
+      pageType: string;
+      priority: number;
+    }[]
   ): {
     allText: string;
     allHeadings: string[];
@@ -286,12 +315,20 @@ export class MultiPageContentScraper {
   } {
     // Combine all text content
     const allTexts = [homepage.cleanText];
-    const allHeadings = [...homepage.headings.h1, ...homepage.headings.h2, ...homepage.headings.h3];
+    const allHeadings = [
+      ...homepage.headings.h1,
+      ...homepage.headings.h2,
+      ...homepage.headings.h3,
+    ];
     const allKeywords = [...homepage.extractedKeywords];
 
-    additionalPages.forEach(page => {
+    additionalPages.forEach((page) => {
       allTexts.push(page.data.cleanText);
-      allHeadings.push(...page.data.headings.h1, ...page.data.headings.h2, ...page.data.headings.h3);
+      allHeadings.push(
+        ...page.data.headings.h1,
+        ...page.data.headings.h2,
+        ...page.data.headings.h3
+      );
       allKeywords.push(...page.data.extractedKeywords);
     });
 
@@ -300,20 +337,26 @@ export class MultiPageContentScraper {
     const uniqueHeadings = [...new Set(allHeadings)];
 
     // Identify content themes based on headings and keywords
-    const contentThemes = this.identifyContentThemes(uniqueHeadings, uniqueKeywords);
+    const contentThemes = this.identifyContentThemes(
+      uniqueHeadings,
+      uniqueKeywords
+    );
 
     return {
       allText: allTexts.join('\n\n--- PAGE BREAK ---\n\n'),
       allHeadings: uniqueHeadings,
       allKeywords: uniqueKeywords,
-      contentThemes
+      contentThemes,
     };
   }
 
   /**
    * Identify content themes from headings and keywords
    */
-  private static identifyContentThemes(headings: string[], keywords: string[]): string[] {
+  private static identifyContentThemes(
+    headings: string[],
+    keywords: string[]
+  ): string[] {
     const themes = new Set<string>();
 
     // Common business themes
@@ -323,9 +366,18 @@ export class MultiPageContentScraper {
       { pattern: /pricing|cost|plan|subscription/i, theme: 'Pricing & Plans' },
       { pattern: /contact|support|help|faq/i, theme: 'Support & Contact' },
       { pattern: /blog|news|article|insights/i, theme: 'Content & Blog' },
-      { pattern: /feature|capability|function/i, theme: 'Features & Capabilities' },
-      { pattern: /security|privacy|compliance/i, theme: 'Security & Compliance' },
-      { pattern: /integration|api|developer/i, theme: 'Integration & Development' }
+      {
+        pattern: /feature|capability|function/i,
+        theme: 'Features & Capabilities',
+      },
+      {
+        pattern: /security|privacy|compliance/i,
+        theme: 'Security & Compliance',
+      },
+      {
+        pattern: /integration|api|developer/i,
+        theme: 'Integration & Development',
+      },
     ];
 
     const allText = [...headings, ...keywords].join(' ').toLowerCase();

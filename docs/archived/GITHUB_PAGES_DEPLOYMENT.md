@@ -13,6 +13,7 @@ Example: `https://shayneroy.github.io/zero-barriers-growth-accelerator-2.0`
 ## ⚠️ Important Considerations
 
 ### ✅ What Works
+
 - ✅ Static pages
 - ✅ Client-side rendering
 - ✅ React components
@@ -20,13 +21,16 @@ Example: `https://shayneroy.github.io/zero-barriers-growth-accelerator-2.0`
 - ✅ Static assets (images, CSS, JS)
 
 ### ❌ Limitations
+
 - ❌ API routes (server-side code won't work)
 - ❌ Server-side rendering (SSR)
 - ❌ Incremental Static Regeneration (ISR)
 - ❌ Server actions
 
 ### 💡 Workaround for API Routes
+
 For your analysis features, you'll need to:
+
 1. Use client-side API calls to external services directly
 2. Or deploy API routes separately (Vercel, Railway, etc.)
 3. Use the demo/test mode with mock data

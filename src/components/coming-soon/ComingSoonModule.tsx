@@ -25,7 +25,7 @@ export const ComingSoonModule: React.FC<ComingSoonModuleProps> = ({
   estimatedCompletion,
   alternativeAction,
   manualPrompt,
-  onUsePrompt
+  onUsePrompt,
 }) => {
   const [promptCopied, setPromptCopied] = useState(false);
 
@@ -40,11 +40,26 @@ export const ComingSoonModule: React.FC<ComingSoonModuleProps> = ({
   const getStatusBadge = () => {
     switch (status) {
       case 'available':
-        return <Badge variant="default" className="bg-green-500">Available</Badge>;
+        return (
+          <Badge variant="default" className="bg-green-500">
+            Available
+          </Badge>
+        );
       case 'partial':
-        return <Badge variant="secondary" className="bg-yellow-500">Partial</Badge>;
+        return (
+          <Badge variant="secondary" className="bg-yellow-500">
+            Partial
+          </Badge>
+        );
       case 'coming_soon':
-        return <Badge variant="outline" className="border-orange-500 text-orange-500">Coming Soon</Badge>;
+        return (
+          <Badge
+            variant="outline"
+            className="border-orange-500 text-orange-500"
+          >
+            Coming Soon
+          </Badge>
+        );
       default:
         return <Badge variant="outline">Unknown</Badge>;
     }
@@ -55,9 +70,15 @@ export const ComingSoonModule: React.FC<ComingSoonModuleProps> = ({
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
-            {status === 'coming_soon' && <Clock className="h-5 w-5 text-orange-500" />}
-            {status === 'partial' && <Sparkles className="h-5 w-5 text-yellow-500" />}
-            {status === 'available' && <Sparkles className="h-5 w-5 text-green-500" />}
+            {status === 'coming_soon' && (
+              <Clock className="h-5 w-5 text-orange-500" />
+            )}
+            {status === 'partial' && (
+              <Sparkles className="h-5 w-5 text-yellow-500" />
+            )}
+            {status === 'available' && (
+              <Sparkles className="h-5 w-5 text-green-500" />
+            )}
             {name}
           </CardTitle>
           {getStatusBadge()}
@@ -96,14 +117,16 @@ export const ComingSoonModule: React.FC<ComingSoonModuleProps> = ({
             </div>
 
             <div className="relative">
-              <pre className="bg-muted p-3 rounded-md text-sm overflow-x-auto whitespace-pre-wrap">
+              <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-muted p-3 text-sm">
                 {manualPrompt}
               </pre>
             </div>
 
             <div className="text-sm text-muted-foreground">
-              <p><strong>How to use:</strong></p>
-              <ol className="list-decimal list-inside space-y-1 mt-1">
+              <p>
+                <strong>How to use:</strong>
+              </p>
+              <ol className="mt-1 list-inside list-decimal space-y-1">
                 <li>Copy the prompt above</li>
                 <li>Paste it into ChatGPT, Claude, or Gemini</li>
                 <li>Replace "your-website-url" with your actual URL</li>

@@ -4,7 +4,13 @@
 export interface AnalysisPromptConfig {
   url: string;
   content: string;
-  pageType: 'home' | 'testimonials' | 'about' | 'services' | 'contact' | 'general';
+  pageType:
+    | 'home'
+    | 'testimonials'
+    | 'about'
+    | 'services'
+    | 'contact'
+    | 'general';
 }
 
 export function buildGoldenCirclePrompt(config: AnalysisPromptConfig): string {
@@ -129,7 +135,9 @@ Return a JSON object with this exact structure:
 `;
 }
 
-export function buildElementsOfValuePrompt(config: AnalysisPromptConfig): string {
+export function buildElementsOfValuePrompt(
+  config: AnalysisPromptConfig
+): string {
   return `
 # BAIN & COMPANY ELEMENTS OF VALUE ANALYSIS
 
@@ -228,7 +236,9 @@ Return a JSON object with this exact structure:
 `;
 }
 
-export function buildCliftonStrengthsPrompt(config: AnalysisPromptConfig): string {
+export function buildCliftonStrengthsPrompt(
+  config: AnalysisPromptConfig
+): string {
   return `
 # GALLUP CLIFTONSTRENGTHS ANALYSIS
 
@@ -345,7 +355,9 @@ Return a JSON object with this exact structure:
 `;
 }
 
-export function buildActionableRecommendationsPrompt(config: AnalysisPromptConfig): string {
+export function buildActionableRecommendationsPrompt(
+  config: AnalysisPromptConfig
+): string {
   return `
 # ACTIONABLE RECOMMENDATIONS ANALYSIS
 
@@ -436,7 +448,9 @@ Return a JSON object with this exact structure:
 `;
 }
 
-export function buildComprehensiveAnalysisPrompt(config: AnalysisPromptConfig): string {
+export function buildComprehensiveAnalysisPrompt(
+  config: AnalysisPromptConfig
+): string {
   return `
 # COMPREHENSIVE WEBSITE ANALYSIS
 

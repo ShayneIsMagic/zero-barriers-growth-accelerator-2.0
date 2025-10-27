@@ -31,20 +31,26 @@ export class EnhancedAnalysisService {
     url: string
   ): Promise<EnhancedAnalysisResult> {
     try {
-      console.log(`🧠 Starting enhanced analysis with framework knowledge for: ${url}`);
+      console.log(
+        `🧠 Starting enhanced analysis with framework knowledge for: ${url}`
+      );
       console.log(`📊 Assessment type: ${assessmentType}`);
 
       // Build enhanced prompt with framework knowledge
-      const enhancedPrompt = await FrameworkIntegrationService.buildEnhancedPrompt(
-        assessmentType,
-        scrapedData,
-        url
-      );
+      const enhancedPrompt =
+        await FrameworkIntegrationService.buildEnhancedPrompt(
+          assessmentType,
+          scrapedData,
+          url
+        );
 
       console.log(`📝 Enhanced prompt built with framework knowledge`);
 
       // Run AI analysis
-      const aiResponse = await analyzeWithGemini(enhancedPrompt, assessmentType);
+      const aiResponse = await analyzeWithGemini(
+        enhancedPrompt,
+        assessmentType
+      );
 
       if (!aiResponse.success) {
         throw new Error(aiResponse.error || 'AI analysis failed');
@@ -58,7 +64,7 @@ export class EnhancedAnalysisService {
         console.error('Failed to parse AI response:', parseError);
         analysis = {
           error: 'Failed to parse AI response',
-          raw_response: aiResponse.analysis
+          raw_response: aiResponse.analysis,
         };
       }
 
@@ -77,7 +83,7 @@ export class EnhancedAnalysisService {
         assessmentType,
         analysis,
         frameworkUsed: this.getFrameworkName(assessmentType),
-        validation
+        validation,
       };
     } catch (error) {
       console.error('Enhanced analysis failed:', error);
@@ -91,9 +97,9 @@ export class EnhancedAnalysisService {
           isValid: false,
           score: 0,
           missingElements: [],
-          recommendations: []
+          recommendations: [],
         },
-        error: error instanceof Error ? error.message : 'Analysis failed'
+        error: error instanceof Error ? error.message : 'Analysis failed',
       };
     }
   }
@@ -108,7 +114,7 @@ export class EnhancedAnalysisService {
       'elements-value-b2b': 'B2B Elements of Value Framework',
       'clifton-strengths': 'CliftonStrengths Framework',
       'content-comparison': 'Content Comparison Framework',
-      'google-tools': 'Google Tools Analysis Framework'
+      'google-tools': 'Google Tools Analysis Framework',
     };
 
     return frameworkMap[assessmentType] || 'Unknown Framework';
@@ -125,7 +131,8 @@ export class EnhancedAnalysisService {
   }> {
     try {
       const frameworkName = this.getFrameworkName(assessmentType);
-      const elements = await FrameworkIntegrationService.getFrameworkElements(assessmentType);
+      const elements =
+        await FrameworkIntegrationService.getFrameworkElements(assessmentType);
 
       let elementsCount = 0;
       if (elements) {
@@ -148,14 +155,14 @@ export class EnhancedAnalysisService {
       return {
         frameworkLoaded: true,
         elementsCount,
-        frameworkName
+        frameworkName,
       };
     } catch (error) {
       return {
         frameworkLoaded: false,
         elementsCount: 0,
         frameworkName: 'Unknown',
-        error: error instanceof Error ? error.message : 'Framework test failed'
+        error: error instanceof Error ? error.message : 'Framework test failed',
       };
     }
   }

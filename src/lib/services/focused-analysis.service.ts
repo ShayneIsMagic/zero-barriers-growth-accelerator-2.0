@@ -4,7 +4,10 @@
  */
 
 import { prisma } from '../prisma';
-import { SimpleSynonymDetectionService, PatternMatch } from './simple-synonym-detection.service';
+import {
+  SimpleSynonymDetectionService,
+  PatternMatch,
+} from './simple-synonym-detection.service';
 
 export interface FocusedAnalysisResult {
   success: boolean;
@@ -62,7 +65,10 @@ Return as JSON:
       const aiResponse = await this.callGemini(prompt);
       return { success: true, data: aiResponse };
     } catch (error) {
-      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
@@ -127,7 +133,10 @@ Return as JSON:
       const aiResponse = await this.callGemini(prompt);
       return { success: true, data: aiResponse };
     } catch (error) {
-      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
@@ -153,7 +162,7 @@ WEBSITE CONTENT:
 ${JSON.stringify(content, null, 2)}
 
 FOCUS: STRATEGIC THINKING THEMES (8 themes)
-${themes.map(t => `• ${t.theme_name}: ${t.description}`).join('\n')}
+${themes.map((t) => `• ${t.theme_name}: ${t.description}`).join('\n')}
 
 For each theme:
 - Score 0-100 based on evidence in content
@@ -182,7 +191,10 @@ Return as JSON:
       const aiResponse = await this.callGemini(prompt);
       return { success: true, data: aiResponse };
     } catch (error) {
-      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
@@ -237,20 +249,25 @@ Return as JSON:
       const aiResponse = await this.callGemini(prompt);
       return { success: true, data: aiResponse };
     } catch (error) {
-      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
   /**
    * Get Strategic Thinking themes from database
    */
-  private static async getStrategicThinkingThemes(): Promise<Array<{ theme_name: string; description: string }>> {
+  private static async getStrategicThinkingThemes(): Promise<
+    Array<{ theme_name: string; description: string }>
+  > {
     try {
       // Use Prisma client instead of $queryRaw to avoid prepared statement issues
       const themes = await prisma.clifton_themes_reference.findMany({
         where: { domain: 'strategic_thinking' },
         select: { theme_name: true, description: true },
-        orderBy: { theme_name: 'asc' }
+        orderBy: { theme_name: 'asc' },
       });
       return themes;
     } catch (error) {
@@ -264,7 +281,7 @@ Return as JSON:
    */
   private static async callGemini(prompt: string): Promise<any> {
     const { GoogleGenerativeAI } = await import('@google/generative-ai');
-    
+
     if (!process.env.GEMINI_API_KEY) {
       throw new Error('GEMINI_API_KEY not configured');
     }

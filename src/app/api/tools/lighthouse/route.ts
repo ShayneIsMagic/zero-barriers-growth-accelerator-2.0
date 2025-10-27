@@ -28,36 +28,50 @@ export async function POST(request: NextRequest) {
     // Extract scores
     const lighthouse = data.lighthouseResult;
     const scores = {
-      performance: Math.round((lighthouse.categories.performance?.score || 0) * 100),
-      accessibility: Math.round((lighthouse.categories.accessibility?.score || 0) * 100),
-      bestPractices: Math.round((lighthouse.categories['best-practices']?.score || 0) * 100),
-      seo: Math.round((lighthouse.categories.seo?.score || 0) * 100)
+      performance: Math.round(
+        (lighthouse.categories.performance?.score || 0) * 100
+      ),
+      accessibility: Math.round(
+        (lighthouse.categories.accessibility?.score || 0) * 100
+      ),
+      bestPractices: Math.round(
+        (lighthouse.categories['best-practices']?.score || 0) * 100
+      ),
+      seo: Math.round((lighthouse.categories.seo?.score || 0) * 100),
     };
 
     // Extract key metrics
     const metrics = {
-      'First Contentful Paint': lighthouse.audits['first-contentful-paint']?.displayValue,
-      'Largest Contentful Paint': lighthouse.audits['largest-contentful-paint']?.displayValue,
-      'Total Blocking Time': lighthouse.audits['total-blocking-time']?.displayValue,
-      'Cumulative Layout Shift': lighthouse.audits['cumulative-layout-shift']?.displayValue,
-      'Speed Index': lighthouse.audits['speed-index']?.displayValue
+      'First Contentful Paint':
+        lighthouse.audits['first-contentful-paint']?.displayValue,
+      'Largest Contentful Paint':
+        lighthouse.audits['largest-contentful-paint']?.displayValue,
+      'Total Blocking Time':
+        lighthouse.audits['total-blocking-time']?.displayValue,
+      'Cumulative Layout Shift':
+        lighthouse.audits['cumulative-layout-shift']?.displayValue,
+      'Speed Index': lighthouse.audits['speed-index']?.displayValue,
     };
 
-    console.log(`✅ Lighthouse complete - Performance: ${scores.performance}/100`);
+    console.log(
+      `✅ Lighthouse complete - Performance: ${scores.performance}/100`
+    );
 
     return NextResponse.json({
       success: true,
       scores,
       metrics,
-      fullReport: lighthouse
+      fullReport: lighthouse,
     });
-
   } catch (error) {
     console.error('Lighthouse API error:', error);
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Failed to run Lighthouse'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Failed to run Lighthouse',
+      },
+      { status: 500 }
+    );
   }
 }
-

@@ -2,7 +2,13 @@
 
 import { AnalysisResult } from '@/lib/ai-providers';
 // import { AnalysisVisualization } from './AnalysisVisualization';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { ExternalLink } from 'lucide-react';
 
 interface AnalysisResultsProps {
@@ -31,8 +37,9 @@ export function AnalysisResults({ analysis }: AnalysisResultsProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground italic">
-            Analysis completed on {new Date(analysis.createdAt).toLocaleDateString()}
+          <p className="italic text-muted-foreground">
+            Analysis completed on{' '}
+            {new Date(analysis.createdAt).toLocaleDateString()}
           </p>
         </CardContent>
       </Card>

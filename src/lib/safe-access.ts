@@ -5,19 +5,27 @@
 /**
  * Safely access nested object properties
  */
-export function safeGet<T = any>(obj: any, path: string, defaultValue: T | null = null): T | null {
+export function safeGet<T = any>(
+  obj: any,
+  path: string,
+  defaultValue: T | null = null
+): T | null {
   if (!obj || typeof obj !== 'object') return defaultValue;
-  
+
   const keys = path.split('.');
   let current = obj;
-  
+
   for (const key of keys) {
-    if (current === null || current === undefined || typeof current !== 'object') {
+    if (
+      current === null ||
+      current === undefined ||
+      typeof current !== 'object'
+    ) {
       return defaultValue;
     }
     current = current[key];
   }
-  
+
   return current !== undefined ? current : defaultValue;
 }
 

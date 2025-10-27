@@ -11,13 +11,15 @@
 ### **Frontend vs Backend JWT Mismatch**
 
 **Frontend** (`src/lib/auth.ts`):
+
 ```typescript
-import { SignJWT, jwtVerify } from 'jose';  // Modern JWT library
+import { SignJWT, jwtVerify } from 'jose'; // Modern JWT library
 ```
 
 **Backend** (`src/app/api/auth/me/route.ts`):
+
 ```typescript
-import jwt from 'jsonwebtoken';  // Legacy JWT library
+import jwt from 'jsonwebtoken'; // Legacy JWT library
 ```
 
 **Result**: Tokens created by frontend can't be verified by backend!
@@ -34,7 +36,8 @@ import jwt from 'jsonwebtoken';  // Legacy JWT library
 // src/lib/auth.ts - REPLACE jose with jsonwebtoken
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'fallback-secret-key-change-in-production';
+const JWT_SECRET =
+  process.env.NEXTAUTH_SECRET || 'fallback-secret-key-change-in-production';
 
 export class AuthService {
   static async createToken(user: User): Promise<string> {
@@ -68,6 +71,7 @@ npm install jsonwebtoken @types/jsonwebtoken
 **Step 3: Update all imports**
 
 Replace all `jose` imports with `jsonwebtoken`:
+
 - `src/lib/auth.ts`
 - Any other files using `jose`
 
@@ -78,11 +82,13 @@ Replace all `jose` imports with `jsonwebtoken`:
 ### **Step 1: Fix DATABASE_URL**
 
 **Current (Broken)**:
+
 ```
 postgresql://postgres.xxx:password@aws-1-us-west-1.pooler.supabase.com:5432/postgres
 ```
 
 **Fixed (Add pgbouncer=true)**:
+
 ```
 postgresql://postgres.xxx:password@aws-1-us-west-1.pooler.supabase.com:5432/postgres?pgbouncer=true
 ```
@@ -92,6 +98,7 @@ postgresql://postgres.xxx:password@aws-1-us-west-1.pooler.supabase.com:5432/post
 Go to: https://vercel.com/[project]/settings/environment-variables
 
 **Required Variables**:
+
 - ✅ `DATABASE_URL` (with ?pgbouncer=true)
 - ✅ `NEXTAUTH_SECRET` (same value as local)
 - ✅ `GEMINI_API_KEY`
@@ -102,18 +109,21 @@ Go to: https://vercel.com/[project]/settings/environment-variables
 ## 🧪 **TEST THE FIX**
 
 ### **Step 1: Test Locally**
+
 ```bash
 npm run dev
 # Try to login with test@example.com / testpassword123
 ```
 
 ### **Step 2: Test on Vercel**
+
 ```bash
 # After pushing changes
 # Go to live site and try login
 ```
 
 ### **Step 3: Check Logs**
+
 ```bash
 # Check Vercel function logs for errors
 vercel logs --follow
@@ -124,6 +134,7 @@ vercel logs --follow
 ## 📋 **QUICK IMPLEMENTATION**
 
 **1. Update src/lib/auth.ts:**
+
 ```typescript
 // Replace jose imports with jsonwebtoken
 import jwt from 'jsonwebtoken';
@@ -148,16 +159,19 @@ static async verifyToken(token: string): Promise<any> {
 ```
 
 **2. Update package.json:**
+
 ```bash
 npm uninstall jose
 npm install jsonwebtoken @types/jsonwebtoken
 ```
 
 **3. Fix Vercel DATABASE_URL:**
+
 - Add `?pgbouncer=true` to end of DATABASE_URL
 - Redeploy
 
 **4. Test:**
+
 - Local login works
 - Vercel login works
 - No more token errors
@@ -167,6 +181,7 @@ npm install jsonwebtoken @types/jsonwebtoken
 ## ✅ **EXPECTED RESULT**
 
 After this fix:
+
 - ✅ Frontend and backend use same JWT library
 - ✅ Tokens created by frontend can be verified by backend
 - ✅ Authentication works on Vercel

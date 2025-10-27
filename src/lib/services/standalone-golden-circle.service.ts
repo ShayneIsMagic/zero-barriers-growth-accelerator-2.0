@@ -83,7 +83,9 @@ export class StandaloneGoldenCircleService {
    */
   static async analyzeWebsite(url: string): Promise<GoldenCircleResult> {
     try {
-      console.log(`🔄 Starting Golden Circle analysis with framework knowledge for: ${url}`);
+      console.log(
+        `🔄 Starting Golden Circle analysis with framework knowledge for: ${url}`
+      );
 
       // Step 1: Scrape website content
       console.log('📊 Step 1: Scraping website content...');
@@ -96,7 +98,9 @@ export class StandaloneGoldenCircleService {
       console.log('✅ Content scraped successfully');
 
       // Step 2: Use enhanced analysis with framework integration
-      console.log('🧠 Step 2: Running enhanced Golden Circle analysis with framework knowledge...');
+      console.log(
+        '🧠 Step 2: Running enhanced Golden Circle analysis with framework knowledge...'
+      );
       const enhancedResult = await EnhancedAnalysisService.analyzeWithFramework(
         'golden-circle',
         scrapedData,
@@ -114,16 +118,15 @@ export class StandaloneGoldenCircleService {
       return {
         success: true,
         url,
-        data: enhancedResult.analysis
+        data: enhancedResult.analysis,
       };
-
     } catch (error) {
       console.error('Golden Circle analysis failed:', error);
       return {
         success: false,
         url,
         data: {} as any,
-        error: error instanceof Error ? error.message : 'Analysis failed'
+        error: error instanceof Error ? error.message : 'Analysis failed',
       };
     }
   }
@@ -131,7 +134,10 @@ export class StandaloneGoldenCircleService {
   /**
    * Run Golden Circle analysis using Gemini AI
    */
-  private static async runGoldenCircleAnalysis(scrapedData: any, url: string): Promise<any> {
+  private static async runGoldenCircleAnalysis(
+    scrapedData: any,
+    url: string
+  ): Promise<any> {
     if (!this.genAI) {
       this.initialize();
     }
@@ -163,7 +169,10 @@ export class StandaloneGoldenCircleService {
   /**
    * Build comprehensive Golden Circle prompt
    */
-  private static buildGoldenCirclePrompt(scrapedData: any, url: string): string {
+  private static buildGoldenCirclePrompt(
+    scrapedData: any,
+    url: string
+  ): string {
     return `
 Analyze this website using the Golden Circle framework. Provide detailed analysis for all 4 dimensions:
 

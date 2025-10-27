@@ -40,9 +40,11 @@ export class RecommendationsMarkdownService {
 
     // Executive Summary
     markdown += `## Executive Summary\n\n`;
-    const highPriority = recommendations.filter(r => r.priority === 'High');
-    const mediumPriority = recommendations.filter(r => r.priority === 'Medium');
-    const lowPriority = recommendations.filter(r => r.priority === 'Low');
+    const highPriority = recommendations.filter((r) => r.priority === 'High');
+    const mediumPriority = recommendations.filter(
+      (r) => r.priority === 'Medium'
+    );
+    const lowPriority = recommendations.filter((r) => r.priority === 'Low');
 
     markdown += `- **Total Recommendations:** ${recommendations.length}\n`;
     markdown += `- **High Priority:** ${highPriority.length}\n`;
@@ -50,7 +52,9 @@ export class RecommendationsMarkdownService {
     markdown += `- **Low Priority:** ${lowPriority.length}\n\n`;
 
     // Quick Wins (High Impact, Low Effort)
-    const quickWins = recommendations.filter(r => r.impact === 'High' && r.effort === 'Low');
+    const quickWins = recommendations.filter(
+      (r) => r.impact === 'High' && r.effort === 'Low'
+    );
     if (quickWins.length > 0) {
       markdown += `## 🚀 Quick Wins (High Impact, Low Effort)\n\n`;
       quickWins.forEach((rec, index) => {
@@ -115,20 +119,29 @@ export class RecommendationsMarkdownService {
     // Implementation Roadmap
     markdown += `## 🗺️ Implementation Roadmap\n\n`;
     markdown += `### Phase 1: Quick Wins (0-30 days)\n`;
-    const phase1 = recommendations.filter(r => r.timeline.includes('week') || r.timeline.includes('1 month'));
-    phase1.forEach(rec => {
+    const phase1 = recommendations.filter(
+      (r) => r.timeline.includes('week') || r.timeline.includes('1 month')
+    );
+    phase1.forEach((rec) => {
       markdown += `- [ ] ${rec.action} (${rec.timeline})\n`;
     });
 
     markdown += `\n### Phase 2: High Impact (1-3 months)\n`;
-    const phase2 = recommendations.filter(r => r.timeline.includes('month') && !r.timeline.includes('1 month'));
-    phase2.forEach(rec => {
+    const phase2 = recommendations.filter(
+      (r) => r.timeline.includes('month') && !r.timeline.includes('1 month')
+    );
+    phase2.forEach((rec) => {
       markdown += `- [ ] ${rec.action} (${rec.timeline})\n`;
     });
 
     markdown += `\n### Phase 3: Long-term Strategy (3+ months)\n`;
-    const phase3 = recommendations.filter(r => r.timeline.includes('3 month') || r.timeline.includes('6 month') || r.timeline.includes('year'));
-    phase3.forEach(rec => {
+    const phase3 = recommendations.filter(
+      (r) =>
+        r.timeline.includes('3 month') ||
+        r.timeline.includes('6 month') ||
+        r.timeline.includes('year')
+    );
+    phase3.forEach((rec) => {
       markdown += `- [ ] ${rec.action} (${rec.timeline})\n`;
     });
 
@@ -173,7 +186,11 @@ export class RecommendationsMarkdownService {
     websiteUrl: string,
     analysisType: string
   ): Promise<string> {
-    const markdown = this.generateMarkdownReport(recommendations, websiteUrl, analysisType);
+    const markdown = this.generateMarkdownReport(
+      recommendations,
+      websiteUrl,
+      analysisType
+    );
     const filename = `recommendations-${analysisType.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.md`;
 
     // In a real implementation, this would save to a file system or database
@@ -197,24 +214,29 @@ export class RecommendationsMarkdownService {
 
     // Convert revenue opportunities to recommendations
     if (analysisResult.revenue_opportunities) {
-      analysisResult.revenue_opportunities.forEach((opp: any, index: number) => {
-        recommendations.push({
-          id: `${analysisType.toLowerCase()}-opp-${index}`,
-          category: 'Revenue Opportunity',
-          priority: this.determinePriority(opp.revenue_potential, opp.implementation_effort),
-          action: opp.element || 'Optimize Value Element',
-          description: `Enhance ${opp.element} to drive revenue growth`,
-          expected_revenue_impact: opp.revenue_potential || 'TBD',
-          implementation_cost: this.estimateCost(opp.implementation_effort),
-          timeline: this.estimateTimeline(opp.implementation_effort),
-          roi_estimate: opp.estimated_roi || 'TBD',
-          effort: opp.implementation_effort || 'Medium',
-          impact: this.determineImpact(opp.revenue_potential),
-          created_at: timestamp,
-          analysis_type: analysisType,
-          website_url: websiteUrl
-        });
-      });
+      analysisResult.revenue_opportunities.forEach(
+        (opp: any, index: number) => {
+          recommendations.push({
+            id: `${analysisType.toLowerCase()}-opp-${index}`,
+            category: 'Revenue Opportunity',
+            priority: this.determinePriority(
+              opp.revenue_potential,
+              opp.implementation_effort
+            ),
+            action: opp.element || 'Optimize Value Element',
+            description: `Enhance ${opp.element} to drive revenue growth`,
+            expected_revenue_impact: opp.revenue_potential || 'TBD',
+            implementation_cost: this.estimateCost(opp.implementation_effort),
+            timeline: this.estimateTimeline(opp.implementation_effort),
+            roi_estimate: opp.estimated_roi || 'TBD',
+            effort: opp.implementation_effort || 'Medium',
+            impact: this.determineImpact(opp.revenue_potential),
+            created_at: timestamp,
+            analysis_type: analysisType,
+            website_url: websiteUrl,
+          });
+        }
+      );
     }
 
     // Convert recommendations to recommendations format
@@ -234,7 +256,7 @@ export class RecommendationsMarkdownService {
           impact: rec.impact || 'Medium',
           created_at: timestamp,
           analysis_type: analysisType,
-          website_url: websiteUrl
+          website_url: websiteUrl,
         });
       });
     }
@@ -242,13 +264,18 @@ export class RecommendationsMarkdownService {
     return recommendations;
   }
 
-  private static determinePriority(revenuePotential: string, effort: string): 'High' | 'Medium' | 'Low' {
+  private static determinePriority(
+    revenuePotential: string,
+    effort: string
+  ): 'High' | 'Medium' | 'Low' {
     if (revenuePotential.includes('High') && effort === 'Low') return 'High';
     if (revenuePotential.includes('High') || effort === 'Low') return 'Medium';
     return 'Low';
   }
 
-  private static determineImpact(revenuePotential: string): 'High' | 'Medium' | 'Low' {
+  private static determineImpact(
+    revenuePotential: string
+  ): 'High' | 'Medium' | 'Low' {
     if (revenuePotential.includes('High')) return 'High';
     if (revenuePotential.includes('Medium')) return 'Medium';
     return 'Low';
@@ -256,19 +283,27 @@ export class RecommendationsMarkdownService {
 
   private static estimateCost(effort: string): string {
     switch (effort.toLowerCase()) {
-      case 'low': return '$1,000 - $5,000';
-      case 'medium': return '$5,000 - $25,000';
-      case 'high': return '$25,000 - $100,000';
-      default: return 'TBD';
+      case 'low':
+        return '$1,000 - $5,000';
+      case 'medium':
+        return '$5,000 - $25,000';
+      case 'high':
+        return '$25,000 - $100,000';
+      default:
+        return 'TBD';
     }
   }
 
   private static estimateTimeline(effort: string): string {
     switch (effort.toLowerCase()) {
-      case 'low': return '1-2 weeks';
-      case 'medium': return '1-2 months';
-      case 'high': return '3-6 months';
-      default: return 'TBD';
+      case 'low':
+        return '1-2 weeks';
+      case 'medium':
+        return '1-2 months';
+      case 'high':
+        return '3-6 months';
+      default:
+        return 'TBD';
     }
   }
 }

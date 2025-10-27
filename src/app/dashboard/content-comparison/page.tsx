@@ -8,4 +8,3 @@ import { ContentComparisonPage } from '@/components/analysis/ContentComparisonPa
 export default function ContentComparisonRoute() {
   return <ContentComparisonPage />;
 }
-

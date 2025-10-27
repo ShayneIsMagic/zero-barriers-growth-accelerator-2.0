@@ -36,6 +36,7 @@ Once project is ready:
 6. Copy the full connection string
 
 It will look like:
+
 ```
 postgresql://postgres.xxxxx:[YOUR-PASSWORD]@aws-0-us-west-1.pooler.supabase.com:6543/postgres
 ```
@@ -86,6 +87,7 @@ npx prisma db push
 ```
 
 You should see:
+
 ```
 ✔ Your database is now in sync with your Prisma schema
 ```
@@ -99,6 +101,7 @@ npm run setup:users
 ```
 
 This creates:
+
 - admin@zerobarriers.io / ZBadmin123! (SUPER_ADMIN)
 - SK@zerobarriers.io / ZBuser123! (USER)
 
@@ -107,6 +110,7 @@ This creates:
 ## Step 8: Verify Database (1 minute)
 
 Open Supabase Table Editor:
+
 ```
 Supabase Dashboard → Table Editor → "User" table
 ```
@@ -160,16 +164,19 @@ After completing all steps:
 ## 🆘 Troubleshooting
 
 ### "Database URL is invalid"
+
 - Check you copied the entire string
 - Check password is correct
 - Try regenerating the connection string
 
 ### "Cannot connect to database"
+
 - Wait 2-3 minutes for Supabase to fully provision
 - Check your IP isn't blocked (Supabase is usually open)
 - Try the "Session" mode connection string instead of "URI"
 
 ### "Prisma push fails"
+
 ```bash
 # Clear Prisma cache
 rm -rf node_modules/.prisma
@@ -186,4 +193,3 @@ npx prisma db push
 ---
 
 **Ready when you are! Let me know when you have the Supabase connection string.**
-

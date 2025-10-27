@@ -7,6 +7,7 @@
 ## 🚨 PROBLEM IDENTIFIED
 
 ### **What Happened:**
+
 ```
 ✅ Script ran successfully
 ✅ "All users created successfully!"
@@ -14,6 +15,7 @@
 ```
 
 ### **Root Cause:**
+
 **Vercel doesn't have DATABASE_URL environment variable!**
 
 Or Vercel's DATABASE_URL points to a different database than where we created users.
@@ -25,6 +27,7 @@ Or Vercel's DATABASE_URL points to a different database than where we created us
 ### **Check #1: Did Users Actually Get Created?**
 
 Run this query in **Supabase SQL Editor**:
+
 ```sql
 -- Go to: https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/sql/new
 
@@ -41,6 +44,7 @@ ORDER BY "createdAt" DESC;
 ### **Check #2: Does Vercel Have DATABASE_URL?**
 
 **Go to Vercel**:
+
 ```
 https://vercel.com/[your-account]/zero-barriers-growth-accelerator-20/settings/environment-variables
 ```
@@ -48,6 +52,7 @@ https://vercel.com/[your-account]/zero-barriers-growth-accelerator-20/settings/e
 **Look for**: `DATABASE_URL`
 
 **Should be**:
+
 ```
 postgresql://postgres.chkwezsyopfciibifmxx:go2ArBwdewM3M80e@aws-1-us-west-1.pooler.supabase.com:6543/postgres
 ```
@@ -61,6 +66,7 @@ postgresql://postgres.chkwezsyopfciibifmxx:go2ArBwdewM3M80e@aws-1-us-west-1.pool
 ### **Step 1: Verify Users in Supabase (SQL)**
 
 **Run in Supabase SQL Editor**:
+
 ```sql
 -- Check if users exist
 SELECT COUNT(*) as user_count FROM "User";
@@ -107,6 +113,7 @@ SELECT email, role FROM "User";
 **Vercel DATABASE_URL is missing or wrong!**
 
 **Evidence:**
+
 - Local users exist (script succeeded locally)
 - Vercel health check shows: `database: "unknown"`
 - Login fails on Vercel, works locally
@@ -116,8 +123,8 @@ SELECT email, role FROM "User";
 ---
 
 **IMMEDIATE ACTION**:
+
 1. Check Supabase User table (should have 3 users)
 2. Add DATABASE_URL to Vercel if missing
 3. Redeploy
 4. ✅ Login will work!
-

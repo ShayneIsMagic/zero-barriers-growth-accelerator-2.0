@@ -314,7 +314,8 @@ Provide a comprehensive analysis in JSON format with the following structure:
     // Check for presence of detailed feedback
     if (
       (analysis.barriers as { barriers?: unknown[] })?.barriers?.length > 0 &&
-      (analysis.recommendations as { recommendations?: unknown[] })?.recommendations?.length > 0
+      (analysis.recommendations as { recommendations?: unknown[] })
+        ?.recommendations?.length > 0
     ) {
       confidence *= 1.1;
     }

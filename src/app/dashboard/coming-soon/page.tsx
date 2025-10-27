@@ -25,7 +25,8 @@ export default function ComingSoonPage() {
       {
         id: 'lighthouse',
         name: 'Lighthouse Performance Analysis',
-        description: 'Automated website performance, accessibility, and SEO scoring',
+        description:
+          'Automated website performance, accessibility, and SEO scoring',
         status: 'coming_soon',
         estimatedCompletion: '2-3 weeks',
         alternativeAction: 'Use Google PageSpeed Insights manually',
@@ -39,12 +40,13 @@ Focus on:
 3. Best practices
 4. SEO optimization
 
-Provide specific scores and actionable recommendations.`
+Provide specific scores and actionable recommendations.`,
       },
       {
         id: 'seo_opportunities',
         name: 'SEO Opportunities Analysis',
-        description: 'Keyword research, content gaps, and technical SEO recommendations',
+        description:
+          'Keyword research, content gaps, and technical SEO recommendations',
         status: 'coming_soon',
         estimatedCompletion: '3-4 weeks',
         alternativeAction: 'Use Google Search Console and SEMrush',
@@ -60,12 +62,13 @@ Analyze:
 4. Meta tags and structured data
 5. Internal linking opportunities
 
-Provide prioritized recommendations with estimated impact.`
+Provide prioritized recommendations with estimated impact.`,
       },
       {
         id: 'advanced_content_analysis',
         name: 'Advanced Content Analysis',
-        description: 'Deep content structure, readability, and engagement analysis',
+        description:
+          'Deep content structure, readability, and engagement analysis',
         status: 'partial',
         estimatedCompletion: '1-2 weeks',
         alternativeAction: 'Use Hemingway Editor and Grammarly',
@@ -81,8 +84,8 @@ Evaluate:
 4. Content gaps and opportunities
 5. User journey optimization
 
-Provide specific recommendations for content improvement.`
-      }
+Provide specific recommendations for content improvement.`,
+      },
     ];
 
     setModules(mockModules);
@@ -100,10 +103,10 @@ Provide specific recommendations for content improvement.`
     return (
       <div className="container mx-auto p-6">
         <div className="animate-pulse">
-          <div className="h-8 bg-muted rounded w-1/4 mb-4"></div>
+          <div className="mb-4 h-8 w-1/4 rounded bg-muted"></div>
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-32 bg-muted rounded"></div>
+              <div key={i} className="h-32 rounded bg-muted"></div>
             ))}
           </div>
         </div>
@@ -111,17 +114,18 @@ Provide specific recommendations for content improvement.`
     );
   }
 
-  const availableModules = modules.filter(m => m.status === 'available');
-  const partialModules = modules.filter(m => m.status === 'partial');
-  const comingSoonModules = modules.filter(m => m.status === 'coming_soon');
+  const availableModules = modules.filter((m) => m.status === 'available');
+  const partialModules = modules.filter((m) => m.status === 'partial');
+  const comingSoonModules = modules.filter((m) => m.status === 'coming_soon');
 
   return (
-    <div className="container mx-auto p-6 space-y-8">
-      <div className="text-center space-y-4">
+    <div className="container mx-auto space-y-8 p-6">
+      <div className="space-y-4 text-center">
         <h1 className="text-3xl font-bold">Coming Soon Features</h1>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
+        <p className="mx-auto max-w-2xl text-muted-foreground">
           We&apos;re working hard to bring you more automated analysis features.
-          In the meantime, use the manual prompts below to get immediate AI-powered insights.
+          In the meantime, use the manual prompts below to get immediate
+          AI-powered insights.
         </p>
       </div>
 
@@ -134,18 +138,24 @@ Provide specific recommendations for content improvement.`
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div className="flex items-center gap-2">
               <CheckCircle className="h-5 w-5 text-green-500" />
-              <span className="font-medium">Available: {availableModules.length}</span>
+              <span className="font-medium">
+                Available: {availableModules.length}
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <Clock className="h-5 w-5 text-yellow-500" />
-              <span className="font-medium">Partial: {partialModules.length}</span>
+              <span className="font-medium">
+                Partial: {partialModules.length}
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <Clock className="h-5 w-5 text-orange-500" />
-              <span className="font-medium">Coming Soon: {comingSoonModules.length}</span>
+              <span className="font-medium">
+                Coming Soon: {comingSoonModules.length}
+              </span>
             </div>
           </div>
         </CardContent>
@@ -154,11 +164,11 @@ Provide specific recommendations for content improvement.`
       {/* Available Modules */}
       {availableModules.length > 0 && (
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold flex items-center gap-2">
+          <h2 className="flex items-center gap-2 text-2xl font-semibold">
             <CheckCircle className="h-6 w-6 text-green-500" />
             Available Now
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {availableModules.map((module) => (
               <ComingSoonModule
                 key={module.id}
@@ -173,11 +183,11 @@ Provide specific recommendations for content improvement.`
       {/* Partial Modules */}
       {partialModules.length > 0 && (
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold flex items-center gap-2">
+          <h2 className="flex items-center gap-2 text-2xl font-semibold">
             <Clock className="h-6 w-6 text-yellow-500" />
             Partial Functionality
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {partialModules.map((module) => (
               <ComingSoonModule
                 key={module.id}
@@ -192,11 +202,11 @@ Provide specific recommendations for content improvement.`
       {/* Coming Soon Modules */}
       {comingSoonModules.length > 0 && (
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold flex items-center gap-2">
+          <h2 className="flex items-center gap-2 text-2xl font-semibold">
             <Clock className="h-6 w-6 text-orange-500" />
             Coming Soon
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {comingSoonModules.map((module) => (
               <ComingSoonModule
                 key={module.id}
@@ -214,32 +224,35 @@ Provide specific recommendations for content improvement.`
           <CardTitle>How to Use Manual Prompts</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-center space-y-2">
-              <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="space-y-2 text-center">
+              <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
                 1
               </div>
               <h3 className="font-medium">Copy the Prompt</h3>
               <p className="text-sm text-muted-foreground">
-                Click the copy button on any module to copy the manual analysis prompt
+                Click the copy button on any module to copy the manual analysis
+                prompt
               </p>
             </div>
-            <div className="text-center space-y-2">
-              <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto">
+            <div className="space-y-2 text-center">
+              <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
                 2
               </div>
               <h3 className="font-medium">Paste in AI Tool</h3>
               <p className="text-sm text-muted-foreground">
-                Paste the prompt into ChatGPT, Claude, Gemini, or your preferred AI tool
+                Paste the prompt into ChatGPT, Claude, Gemini, or your preferred
+                AI tool
               </p>
             </div>
-            <div className="text-center space-y-2">
-              <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto">
+            <div className="space-y-2 text-center">
+              <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
                 3
               </div>
               <h3 className="font-medium">Get Results</h3>
               <p className="text-sm text-muted-foreground">
-                Replace placeholders with your actual data and get immediate analysis
+                Replace placeholders with your actual data and get immediate
+                analysis
               </p>
             </div>
           </div>

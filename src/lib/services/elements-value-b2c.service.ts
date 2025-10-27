@@ -5,33 +5,36 @@
  * Based on Harvard Business Review's Elements of Value framework
  */
 
-import { prisma } from '@/lib/prisma'
-import { PatternMatch, SimpleSynonymDetectionService } from './simple-synonym-detection.service'
+import { prisma } from '@/lib/prisma';
+import {
+  PatternMatch,
+  SimpleSynonymDetectionService,
+} from './simple-synonym-detection.service';
 
 export interface ElementsOfValueB2CAnalysis {
-  id: string
-  analysis_id: string
-  overall_score: number
-  functional_score: number
-  emotional_score: number
-  life_changing_score: number
-  social_impact_score: number
-  elements: ElementScore[]
+  id: string;
+  analysis_id: string;
+  overall_score: number;
+  functional_score: number;
+  emotional_score: number;
+  life_changing_score: number;
+  social_impact_score: number;
+  elements: ElementScore[];
 }
 
 export interface ElementScore {
-  id: string
-  element_name: string
-  element_category: string
-  pyramid_level: number
-  score: number
-  weight: number
-  weighted_score: number
+  id: string;
+  element_name: string;
+  element_category: string;
+  pyramid_level: number;
+  score: number;
+  weight: number;
+  weighted_score: number;
   evidence: {
-    patterns: string[]
-    citations: string[]
-    confidence: number
-  }
+    patterns: string[];
+    citations: string[];
+    confidence: number;
+  };
 }
 
 export class ElementsOfValueB2CService {
@@ -49,17 +52,17 @@ export class ElementsOfValueB2CService {
       patterns = await SimpleSynonymDetectionService.findValuePatterns(
         content.text || content.content,
         industry
-      )
+      );
     }
 
     // Build prompt
-    const prompt = await this.buildElementsPrompt(content, industry, patterns)
+    const prompt = await this.buildElementsPrompt(content, industry, patterns);
 
     // Call Gemini
-    const aiResponse = await this.callGeminiForElements(prompt)
+    const aiResponse = await this.callGeminiForElements(prompt);
 
     // Store in database
-    return await this.storeElementsAnalysis(analysisId, aiResponse, patterns)
+    return await this.storeElementsAnalysis(analysisId, aiResponse, patterns);
   }
 
   /**
@@ -194,19 +197,19 @@ Return as valid JSON:
     // ... 27 more elements
   ]
 }
-`
+`;
 
-    return basePrompt
+    return basePrompt;
   }
 
   /**
    * Call Gemini for Elements of Value analysis
    */
   private static async callGeminiForElements(prompt: string): Promise<any> {
-    const apiKey = process.env.GEMINI_API_KEY
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      throw new Error('GEMINI_API_KEY not configured')
+      throw new Error('GEMINI_API_KEY not configured');
     }
 
     const response = await fetch(
@@ -218,31 +221,31 @@ Return as valid JSON:
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 8192
-          }
-        })
+            maxOutputTokens: 8192,
+          },
+        }),
       }
-    )
+    );
 
     if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.statusText}`)
+      throw new Error(`Gemini API error: ${response.statusText}`);
     }
 
-    const data = await response.json()
-    const text = data.candidates[0]?.content?.parts[0]?.text
+    const data = await response.json();
+    const text = data.candidates[0]?.content?.parts[0]?.text;
 
     if (!text) {
-      throw new Error('No response from Gemini')
+      throw new Error('No response from Gemini');
     }
 
-    const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/) ||
-                     text.match(/\{[\s\S]*\}/)
+    const jsonMatch =
+      text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/\{[\s\S]*\}/);
 
     if (jsonMatch) {
-      return JSON.parse(jsonMatch[1] || jsonMatch[0])
+      return JSON.parse(jsonMatch[1] || jsonMatch[0]);
     }
 
-    throw new Error('Could not parse Gemini response as JSON')
+    throw new Error('Could not parse Gemini response as JSON');
   }
 
   /**
@@ -261,12 +264,12 @@ Return as valid JSON:
         functional_score: aiResponse.functional_score || 0,
         emotional_score: aiResponse.emotional_score || 0,
         life_changing_score: aiResponse.life_changing_score || 0,
-        social_impact_score: aiResponse.social_impact_score || 0
-      }
-    })
+        social_impact_score: aiResponse.social_impact_score || 0,
+      },
+    });
 
     // Store individual element scores using Prisma client
-    const elements: ElementScore[] = []
+    const elements: ElementScore[] = [];
 
     for (const elem of aiResponse.elements || []) {
       const stored = await prisma.b2c_element_scores.create({
@@ -278,23 +281,33 @@ Return as valid JSON:
           score: elem.score || 0,
           weight: 1.0,
           weighted_score: elem.score || 0,
-          evidence: elem.evidence || {}
-        }
-      })
+          evidence: elem.evidence || {},
+        },
+      });
 
-      const evidence = stored.evidence as { patterns?: unknown[]; citations?: unknown[]; confidence?: number } | null;
-      
+      const evidence = stored.evidence as {
+        patterns?: unknown[];
+        citations?: unknown[];
+        confidence?: number;
+      } | null;
+
       elements.push({
         ...stored,
         score: stored.score ? Number(stored.score) : 0,
         weight: stored.weight ? Number(stored.weight) : 0,
-        weighted_score: stored.weighted_score ? Number(stored.weighted_score) : 0,
+        weighted_score: stored.weighted_score
+          ? Number(stored.weighted_score)
+          : 0,
         evidence: {
-          patterns: Array.isArray(evidence?.patterns) ? evidence.patterns as string[] : [],
-          citations: Array.isArray(evidence?.citations) ? evidence.citations as string[] : [],
-          confidence: evidence?.confidence || 0
-        }
-      })
+          patterns: Array.isArray(evidence?.patterns)
+            ? (evidence.patterns as string[])
+            : [],
+          citations: Array.isArray(evidence?.citations)
+            ? (evidence.citations as string[])
+            : [],
+          confidence: evidence?.confidence || 0,
+        },
+      });
     }
 
     return {
@@ -305,51 +318,68 @@ Return as valid JSON:
       emotional_score: aiResponse.emotional_score,
       life_changing_score: aiResponse.life_changing_score,
       social_impact_score: aiResponse.social_impact_score,
-      elements
-    }
+      elements,
+    };
   }
 
   /**
    * Fetch existing B2C analysis
    */
-  static async getByAnalysisId(analysisId: string): Promise<ElementsOfValueB2CAnalysis | null> {
+  static async getByAnalysisId(
+    analysisId: string
+  ): Promise<ElementsOfValueB2CAnalysis | null> {
     try {
       const eov = await prisma.elements_of_value_b2c.findFirst({
         where: { analysis_id: analysisId },
         include: {
-          b2c_element_scores: true
-        }
-      })
+          b2c_element_scores: true,
+        },
+      });
 
-      if (!eov) return null
+      if (!eov) return null;
 
       return {
         id: eov.id,
         analysis_id: eov.analysis_id,
         overall_score: eov.overall_score ? Number(eov.overall_score) : 0,
-        functional_score: eov.functional_score ? Number(eov.functional_score) : 0,
+        functional_score: eov.functional_score
+          ? Number(eov.functional_score)
+          : 0,
         emotional_score: eov.emotional_score ? Number(eov.emotional_score) : 0,
-        life_changing_score: eov.life_changing_score ? Number(eov.life_changing_score) : 0,
-        social_impact_score: eov.social_impact_score ? Number(eov.social_impact_score) : 0,
-        elements: eov.b2c_element_scores.map(score => {
-          const evidence = score.evidence as { patterns?: unknown[]; citations?: unknown[]; confidence?: number } | null;
+        life_changing_score: eov.life_changing_score
+          ? Number(eov.life_changing_score)
+          : 0,
+        social_impact_score: eov.social_impact_score
+          ? Number(eov.social_impact_score)
+          : 0,
+        elements: eov.b2c_element_scores.map((score) => {
+          const evidence = score.evidence as {
+            patterns?: unknown[];
+            citations?: unknown[];
+            confidence?: number;
+          } | null;
           return {
             ...score,
             score: score.score ? Number(score.score) : 0,
             weight: score.weight ? Number(score.weight) : 0,
-            weighted_score: score.weighted_score ? Number(score.weighted_score) : 0,
+            weighted_score: score.weighted_score
+              ? Number(score.weighted_score)
+              : 0,
             evidence: {
-              patterns: Array.isArray(evidence?.patterns) ? evidence.patterns as string[] : [],
-              citations: Array.isArray(evidence?.citations) ? evidence.citations as string[] : [],
-              confidence: evidence?.confidence || 0
-            }
+              patterns: Array.isArray(evidence?.patterns)
+                ? (evidence.patterns as string[])
+                : [],
+              citations: Array.isArray(evidence?.citations)
+                ? (evidence.citations as string[])
+                : [],
+              confidence: evidence?.confidence || 0,
+            },
           };
-        })
-      }
+        }),
+      };
     } catch (error) {
-      console.error('Failed to fetch Elements of Value B2C:', error)
-      return null
+      console.error('Failed to fetch Elements of Value B2C:', error);
+      return null;
     }
   }
 }
-

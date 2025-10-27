@@ -18,20 +18,20 @@ const USERS = [
     name: 'Shayne Roy',
     email: 'shayne+1@devpipeline.com',
     password: 'ZBadmin123!',
-    role: 'SUPER_ADMIN'
+    role: 'SUPER_ADMIN',
   },
   {
     name: 'SK Roy',
     email: 'sk@zerobarriers.io',
     password: 'ZBuser123!',
-    role: 'USER'
+    role: 'USER',
   },
   {
     name: 'S Roy',
     email: 'shayne+2@devpipeline.com',
     password: 'ZBuser2123!',
-    role: 'USER'
-  }
+    role: 'USER',
+  },
 ];
 
 async function setupUsers() {
@@ -43,7 +43,7 @@ async function setupUsers() {
 
       // Check if user already exists
       const existing = await prisma.user.findUnique({
-        where: { email: userData.email }
+        where: { email: userData.email },
       });
 
       if (existing) {
@@ -58,8 +58,8 @@ async function setupUsers() {
           data: {
             password: hashedPassword,
             name: userData.name,
-            role: userData.role
-          }
+            role: userData.role,
+          },
         });
 
         console.log(`  ✅ Updated: ${userData.email}\n`);
@@ -73,8 +73,8 @@ async function setupUsers() {
             email: userData.email,
             password: hashedPassword,
             name: userData.name,
-            role: userData.role
-          }
+            role: userData.role,
+          },
         });
 
         console.log(`  ✅ Created: ${userData.email}\n`);
@@ -94,7 +94,6 @@ async function setupUsers() {
     console.log('  Password: ZBuser123!');
     console.log('  Role:     USER');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
-
   } catch (error) {
     console.error('❌ Error setting up users:', error);
     process.exit(1);
@@ -104,4 +103,3 @@ async function setupUsers() {
 }
 
 setupUsers();
-

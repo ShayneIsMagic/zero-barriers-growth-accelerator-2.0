@@ -9,6 +9,7 @@
 ## ✅ FIXED COLUMNS
 
 ### **User References (TEXT, not UUID)**
+
 ```sql
 user_id TEXT REFERENCES "User"(id)
 created_by TEXT REFERENCES "User"(id)
@@ -20,6 +21,7 @@ updated_by TEXT REFERENCES "User"(id)
 ---
 
 ### **Analysis References (TEXT, not UUID)**
+
 ```sql
 analysis_id TEXT REFERENCES "Analysis"(id)
 analysis_id_old TEXT REFERENCES "Analysis"(id)
@@ -31,6 +33,7 @@ analysis_id_new TEXT REFERENCES "Analysis"(id)
 ---
 
 ### **Function Parameters**
+
 ```sql
 -- Before:
 p_user_id UUID
@@ -42,6 +45,7 @@ p_analysis_id TEXT
 ```
 
 **Functions affected:**
+
 - `deduct_credits()`
 - `calculate_overall_score()`
 
@@ -86,6 +90,7 @@ lighthouse_id UUID REFERENCES lighthouse_analyses(id)  ✅
 ```
 
 **These do NOT need to change** because:
+
 - `websites.id` is UUID
 - `golden_circle_analyses.id` is UUID
 - All new tables use UUID for their primary keys
@@ -98,4 +103,3 @@ lighthouse_id UUID REFERENCES lighthouse_analyses(id)  ✅
 SQL is now fully compatible with existing Prisma schema!
 
 **No more type mismatches!** ✅
-

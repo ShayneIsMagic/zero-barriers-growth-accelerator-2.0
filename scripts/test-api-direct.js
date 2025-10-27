@@ -35,33 +35,37 @@ async function testAPIDirect() {
 
   try {
     console.log('🔍 Testing analysis API...');
-    
-    const response = await fetch('http://localhost:3000/api/analyze/website/enhanced', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        url: 'https://example.com/',
-        content: testContent
-      })
-    });
+
+    const response = await fetch(
+      'http://localhost:3000/api/analyze/website/enhanced',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url: 'https://example.com/',
+          content: testContent,
+        }),
+      }
+    );
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.log(`❌ Analysis failed: ${errorData.details || errorData.error}`);
+      console.log(
+        `❌ Analysis failed: ${errorData.details || errorData.error}`
+      );
       return;
     }
 
     const analysis = await response.json();
-    
+
     console.log('✅ Analysis completed!\n');
 
     // Display the raw response to see what we're getting
     console.log('📊 RAW ANALYSIS RESPONSE');
     console.log('═'.repeat(50));
     console.log(JSON.stringify(analysis, null, 2));
-
   } catch (error) {
     console.log(`❌ Error: ${error.message}`);
   }

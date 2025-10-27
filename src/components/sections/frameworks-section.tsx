@@ -238,5 +238,3 @@ export function FrameworksSection() {
     </section>
   );
 }
-
-

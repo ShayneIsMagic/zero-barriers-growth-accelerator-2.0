@@ -8,7 +8,13 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -40,7 +46,9 @@ interface ControlledAnalysisPageProps {
   onAnalysisComplete?: (result: any) => void;
 }
 
-export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysisPageProps) {
+export function ControlledAnalysisPage({
+  onAnalysisComplete,
+}: ControlledAnalysisPageProps) {
   const [url, setUrl] = useState('');
   const [availableSteps, setAvailableSteps] = useState<AnalysisStep[]>([]);
   const [selectedSteps, setSelectedSteps] = useState<string[]>([]);
@@ -65,7 +73,9 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
       if (data.success) {
         setAvailableSteps(data.data.availableSteps);
         // Select all steps by default
-        setSelectedSteps(data.data.availableSteps.map((step: AnalysisStep) => step.id));
+        setSelectedSteps(
+          data.data.availableSteps.map((step: AnalysisStep) => step.id)
+        );
       }
     } catch (error) {
       console.error('Failed to load available steps:', error);
@@ -86,20 +96,20 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
 
     try {
       // Initialize progress for all selected steps
-      const initialProgress = selectedSteps.map(stepId => {
-        const step = availableSteps.find(s => s.id === stepId);
+      const initialProgress = selectedSteps.map((stepId) => {
+        const step = availableSteps.find((s) => s.id === stepId);
         return {
           stepId,
           stepName: step?.name || stepId,
           status: 'pending' as const,
-          progress: 0
+          progress: 0,
         };
       });
       setProgress(initialProgress);
 
       // Calculate total estimated time
       const totalTime = selectedSteps.reduce((total, stepId) => {
-        const step = availableSteps.find(s => s.id === stepId);
+        const step = availableSteps.find((s) => s.id === stepId);
         return total + (step?.expectedDuration || 30000);
       }, 0);
       setEstimatedTimeRemaining(totalTime);
@@ -112,7 +122,7 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
         body: JSON.stringify({
           url,
           steps: selectedSteps,
-          timeoutPerStep: 30000
+          timeoutPerStep: 30000,
         }),
       });
 
@@ -123,12 +133,14 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
         onAnalysisComplete?.(data.data);
 
         // Mark all steps as completed
-        setProgress(prev => prev.map(p => ({
-          ...p,
-          status: 'completed' as const,
-          progress: 100,
-          endTime: new Date()
-        })));
+        setProgress((prev) =>
+          prev.map((p) => ({
+            ...p,
+            status: 'completed' as const,
+            progress: 100,
+            endTime: new Date(),
+          }))
+        );
         setOverallProgress(100);
       } else {
         throw new Error(data.error || 'Analysis failed');
@@ -138,11 +150,17 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
       setError(error instanceof Error ? error.message : 'Analysis failed');
 
       // Mark current step as failed
-      setProgress(prev => prev.map(p =>
-        p.stepId === currentStep
-          ? { ...p, status: 'failed' as const, error: error instanceof Error ? error.message : 'Unknown error' }
-          : p
-      ));
+      setProgress((prev) =>
+        prev.map((p) =>
+          p.stepId === currentStep
+            ? {
+                ...p,
+                status: 'failed' as const,
+                error: error instanceof Error ? error.message : 'Unknown error',
+              }
+            : p
+        )
+      );
     } finally {
       setIsAnalyzing(false);
       setCurrentStep('');
@@ -150,15 +168,15 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
   };
 
   const toggleStepSelection = (stepId: string) => {
-    setSelectedSteps(prev =>
+    setSelectedSteps((prev) =>
       prev.includes(stepId)
-        ? prev.filter(id => id !== stepId)
+        ? prev.filter((id) => id !== stepId)
         : [...prev, stepId]
     );
   };
 
   const selectAllSteps = () => {
-    setSelectedSteps(availableSteps.map(step => step.id));
+    setSelectedSteps(availableSteps.map((step) => step.id));
   };
 
   const deselectAllSteps = () => {
@@ -172,7 +190,7 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
       case 'failed':
         return <XCircle className="h-4 w-4 text-red-500" />;
       case 'running':
-        return <Play className="h-4 w-4 text-blue-500 animate-pulse" />;
+        return <Play className="h-4 w-4 animate-pulse text-blue-500" />;
       default:
         return <Clock className="h-4 w-4 text-gray-400" />;
     }
@@ -183,7 +201,7 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
       pending: 'secondary',
       running: 'default',
       completed: 'default',
-      failed: 'destructive'
+      failed: 'destructive',
     } as const;
 
     return (
@@ -200,13 +218,13 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
 
   const getTotalEstimatedTime = () => {
     return selectedSteps.reduce((total, stepId) => {
-      const step = availableSteps.find(s => s.id === stepId);
+      const step = availableSteps.find((s) => s.id === stepId);
       return total + (step?.expectedDuration || 30000);
     }, 0);
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
+    <div className="mx-auto max-w-6xl space-y-6 p-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -214,7 +232,8 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
             Controlled Analysis
           </CardTitle>
           <CardDescription>
-            Execute website analysis with precise control over steps, timing, and progress tracking
+            Execute website analysis with precise control over steps, timing,
+            and progress tracking
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -247,21 +266,24 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
 
             <div className="grid gap-3">
               {availableSteps.map((step) => (
-                <div key={step.id} className="flex items-center space-x-3 p-3 border rounded-lg">
+                <div
+                  key={step.id}
+                  className="flex items-center space-x-3 rounded-lg border p-3"
+                >
                   <Checkbox
                     id={step.id}
                     checked={selectedSteps.includes(step.id)}
                     onCheckedChange={() => toggleStepSelection(step.id)}
                     disabled={isAnalyzing}
                   />
-                  <div className="flex-1 min-w-0">
+                  <div className="min-w-0 flex-1">
                     <Label htmlFor={step.id} className="font-medium">
                       {step.name}
                     </Label>
                     <p className="text-sm text-muted-foreground">
                       {step.description}
                     </p>
-                    <div className="flex items-center gap-2 mt-1">
+                    <div className="mt-1 flex items-center gap-2">
                       <Badge variant="outline" className="text-xs">
                         {formatDuration(step.expectedDuration)}
                       </Badge>
@@ -280,8 +302,9 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
               <Alert>
                 <Clock className="h-4 w-4" />
                 <AlertDescription>
-                  Total estimated time: {formatDuration(getTotalEstimatedTime())}
-                  ({selectedSteps.length} steps selected)
+                  Total estimated time:{' '}
+                  {formatDuration(getTotalEstimatedTime())}(
+                  {selectedSteps.length} steps selected)
                 </AlertDescription>
               </Alert>
             )}
@@ -295,12 +318,12 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
           >
             {isAnalyzing ? (
               <>
-                <Pause className="h-4 w-4 mr-2" />
+                <Pause className="mr-2 h-4 w-4" />
                 Analyzing...
               </>
             ) : (
               <>
-                <Play className="h-4 w-4 mr-2" />
+                <Play className="mr-2 h-4 w-4" />
                 Start Controlled Analysis
               </>
             )}
@@ -314,7 +337,9 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
           <CardHeader>
             <CardTitle>Analysis Progress</CardTitle>
             <CardDescription>
-              {currentStep ? `Currently running: ${currentStep}` : 'Preparing analysis...'}
+              {currentStep
+                ? `Currently running: ${currentStep}`
+                : 'Preparing analysis...'}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -330,7 +355,10 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
 
             <div className="grid gap-3">
               {progress.map((stepProgress, index) => (
-                <div key={stepProgress.stepId} className="flex items-center justify-between p-3 border rounded-lg">
+                <div
+                  key={stepProgress.stepId}
+                  className="flex items-center justify-between rounded-lg border p-3"
+                >
                   <div className="flex items-center space-x-3">
                     {getStatusIcon(stepProgress.status)}
                     <div>
@@ -356,7 +384,8 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
               <Alert>
                 <Clock className="h-4 w-4" />
                 <AlertDescription>
-                  Estimated time remaining: {formatDuration(estimatedTimeRemaining)}
+                  Estimated time remaining:{' '}
+                  {formatDuration(estimatedTimeRemaining)}
                 </AlertDescription>
               </Alert>
             )}
@@ -377,62 +406,74 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
         <Card>
           <CardHeader>
             <CardTitle>Analysis Results</CardTitle>
-            <CardDescription>
-              Completed analysis for {url}
-            </CardDescription>
+            <CardDescription>Completed analysis for {url}</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="summary" className="w-full">
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="summary">Summary</TabsTrigger>
                 <TabsTrigger value="detailed">Detailed</TabsTrigger>
-                <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
+                <TabsTrigger value="recommendations">
+                  Recommendations
+                </TabsTrigger>
                 <TabsTrigger value="raw">Raw Data</TabsTrigger>
               </TabsList>
 
               <TabsContent value="summary" className="space-y-4">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="text-center p-4 border rounded-lg">
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                  <div className="rounded-lg border p-4 text-center">
                     <div className="text-2xl font-bold text-blue-600">
                       {result.summary?.overallScore || 0}
                     </div>
-                    <div className="text-sm text-muted-foreground">Overall Score</div>
+                    <div className="text-sm text-muted-foreground">
+                      Overall Score
+                    </div>
                   </div>
-                  <div className="text-center p-4 border rounded-lg">
+                  <div className="rounded-lg border p-4 text-center">
                     <div className="text-2xl font-bold text-green-600">
                       {result.summary?.completedSteps || 0}
                     </div>
-                    <div className="text-sm text-muted-foreground">Steps Completed</div>
+                    <div className="text-sm text-muted-foreground">
+                      Steps Completed
+                    </div>
                   </div>
-                  <div className="text-center p-4 border rounded-lg">
+                  <div className="rounded-lg border p-4 text-center">
                     <div className="text-2xl font-bold text-purple-600">
                       {result.summary?.totalSteps || 0}
                     </div>
-                    <div className="text-sm text-muted-foreground">Total Steps</div>
+                    <div className="text-sm text-muted-foreground">
+                      Total Steps
+                    </div>
                   </div>
-                  <div className="text-center p-4 border rounded-lg">
+                  <div className="rounded-lg border p-4 text-center">
                     <div className="text-2xl font-bold text-orange-600">
                       {Math.round(result.totalDuration / 1000)}s
                     </div>
-                    <div className="text-sm text-muted-foreground">Duration</div>
+                    <div className="text-sm text-muted-foreground">
+                      Duration
+                    </div>
                   </div>
                 </div>
               </TabsContent>
 
               <TabsContent value="detailed" className="space-y-4">
                 <div className="space-y-4">
-                  {Object.entries(result.results || {}).map(([key, value]: [string, any]) => (
-                    <Card key={key}>
-                      <CardHeader>
-                        <CardTitle className="text-lg">{key.replace(/_/g, ' ').toUpperCase()}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <pre className="text-sm bg-muted p-4 rounded-lg overflow-auto max-h-96">
-                          {JSON.stringify(value, null, 2)}
-                        </pre>
-                      </CardContent>
-                    </Card>
-                  ))}
+                  {Object.entries(result.results || {}).map(
+                    ([key, value]: [string, any]) => (
+                      <Card key={key}>
+                        <CardHeader>
+                          <CardTitle className="text-lg">
+                            {key.replace(/_/g, ' ').toUpperCase()}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <pre className="max-h-96 overflow-auto rounded-lg bg-muted p-4 text-sm">
+                            {JSON.stringify(value, null, 2)}
+                          </pre>
+                        </CardContent>
+                      </Card>
+                    )
+                  )}
                 </div>
               </TabsContent>
 
@@ -444,12 +485,17 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
                     </CardHeader>
                     <CardContent>
                       <ul className="space-y-2">
-                        {result.summary?.keyFindings?.map((finding: string, index: number) => (
-                          <li key={index} className="flex items-start space-x-2">
-                            <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                            <span className="text-sm">{finding}</span>
-                          </li>
-                        ))}
+                        {result.summary?.keyFindings?.map(
+                          (finding: string, index: number) => (
+                            <li
+                              key={index}
+                              className="flex items-start space-x-2"
+                            >
+                              <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
+                              <span className="text-sm">{finding}</span>
+                            </li>
+                          )
+                        )}
                       </ul>
                     </CardContent>
                   </Card>
@@ -460,12 +506,19 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
                     </CardHeader>
                     <CardContent>
                       <ul className="space-y-2">
-                        {result.summary?.priorityRecommendations?.map((rec: string, index: number) => (
-                          <li key={index} className="flex items-start space-x-2">
-                            <span className="font-medium text-blue-600">{index + 1}.</span>
-                            <span className="text-sm">{rec}</span>
-                          </li>
-                        ))}
+                        {result.summary?.priorityRecommendations?.map(
+                          (rec: string, index: number) => (
+                            <li
+                              key={index}
+                              className="flex items-start space-x-2"
+                            >
+                              <span className="font-medium text-blue-600">
+                                {index + 1}.
+                              </span>
+                              <span className="text-sm">{rec}</span>
+                            </li>
+                          )
+                        )}
                       </ul>
                     </CardContent>
                   </Card>
@@ -473,7 +526,7 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
               </TabsContent>
 
               <TabsContent value="raw" className="space-y-4">
-                <pre className="text-sm bg-muted p-4 rounded-lg overflow-auto max-h-96">
+                <pre className="max-h-96 overflow-auto rounded-lg bg-muted p-4 text-sm">
                   {JSON.stringify(result, null, 2)}
                 </pre>
               </TabsContent>

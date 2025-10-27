@@ -7,6 +7,7 @@ npm run dev:test
 ```
 
 This will start the development server with:
+
 - ✅ Test mode enabled (`TEST_MODE=true`)
 - ✅ Test authentication active
 - ✅ Enhanced console logging
@@ -18,11 +19,13 @@ This will start the development server with:
 ## 📍 Quick Links (Local Development)
 
 ### Main Pages
+
 - 🏠 **Home**: http://localhost:3000
 - 📊 **Dashboard**: http://localhost:3000/dashboard
 - 📈 **Analysis Hub**: http://localhost:3000/dashboard/analysis
 
 ### Analysis Tools
+
 - 🎯 **Website Analysis**: http://localhost:3000/dashboard/website-analysis
 - 🚀 **Comprehensive Analysis**: http://localhost:3000/dashboard/comprehensive-analysis
 - 📈 **SEO Analysis**: http://localhost:3000/dashboard/seo-analysis
@@ -33,15 +36,18 @@ This will start the development server with:
 - 📊 **Executive Reports**: http://localhost:3000/dashboard/executive-reports
 
 ### Auth Pages
+
 - 🔐 **Sign In**: http://localhost:3000/auth/signin
 - ✍️ **Sign Up**: http://localhost:3000/auth/signup
 - 🔑 **Forgot Password**: http://localhost:3000/auth/forgot-password
 
 ### Test Pages
+
 - 🧪 **Test Page**: http://localhost:3000/test
 - 🔑 **Test Login**: http://localhost:3000/test-login
 
 ### API Health Check
+
 - 💚 **Health**: http://localhost:3000/api/health
 
 ---
@@ -49,16 +55,19 @@ This will start the development server with:
 ## 🔐 Test Users
 
 ### User Login (Test Auth)
+
 - **Email**: `test@example.com`
 - **Password**: Any password (accepted in test mode)
 - **Role**: SUPER_ADMIN
 
 ### Admin Login
+
 - **Email**: `admin@example.com`
 - **Password**: Any password (accepted in test mode)
 - **Role**: SUPER_ADMIN
 
 ### Demo User
+
 - **Email**: `demo@example.com`
 - **Password**: Any password (accepted in test mode)
 - **Role**: USER
@@ -70,6 +79,7 @@ This will start the development server with:
 ## 🧪 Running Tests
 
 ### Unit Tests
+
 ```bash
 npm test                  # Run once
 npm run test:watch        # Watch mode
@@ -78,6 +88,7 @@ npm run test:coverage     # With coverage report
 ```
 
 ### E2E Tests
+
 ```bash
 npm run test:e2e          # Run E2E tests
 npm run test:e2e:ui       # Playwright UI mode
@@ -85,6 +96,7 @@ npx playwright test --headed --slow-mo 1000  # Visual slow motion
 ```
 
 ### Linting
+
 ```bash
 npm run lint              # Check for errors
 npm run lint:fix          # Auto-fix issues
@@ -98,13 +110,16 @@ npm run lint:check        # Check without fixing
 ### Browser DevTools (F12)
 
 #### Console Tab
+
 Access helper functions:
+
 ```javascript
-logComponentTree()    // Shows React component tips
-logPerformance()      // Shows performance metrics
+logComponentTree(); // Shows React component tips
+logPerformance(); // Shows performance metrics
 ```
 
 #### React Tab (React DevTools Required)
+
 - 🔍 Inspect component props
 - 🎯 View component state
 - 🪝 Debug React Hooks
@@ -112,12 +127,14 @@ logPerformance()      // Shows performance metrics
 - 🌳 View component tree
 
 #### Network Tab
+
 - Monitor API calls
 - Check request/response
 - View timing information
 - Filter by Fetch/XHR
 
 #### Application Tab
+
 - **Local Storage**: View saved analyses
 - **Session Storage**: Temporary data
 - **Cookies**: Auth tokens
@@ -125,6 +142,7 @@ logPerformance()      // Shows performance metrics
 ### VS Code Debugger (F5)
 
 Available debug configurations:
+
 1. **Next.js: debug server-side** - Debug API routes
 2. **Next.js: debug client-side** - Debug React components
 3. **Debug Full Stack** - Debug both
@@ -189,6 +207,7 @@ curl -X POST http://localhost:3000/api/analyze/website \
 ### Enhanced Console Logging
 
 All console logs include timestamps and icons:
+
 ```
 [2025-10-09T...] 📝 Regular log
 [2025-10-09T...] ⚠️  Warning
@@ -199,6 +218,7 @@ All console logs include timestamps and icons:
 ### Performance Monitoring
 
 Automatic detection of:
+
 - Long tasks (>50ms)
 - Slow components
 - Re-render issues
@@ -206,6 +226,7 @@ Automatic detection of:
 ### Error Tracking
 
 Automatic logging of:
+
 - Unhandled errors
 - Promise rejections
 - Component errors
@@ -237,6 +258,7 @@ Automatic logging of:
 ## 🆘 Quick Troubleshooting
 
 ### Server Won't Start
+
 ```bash
 # Kill any process on port 3000
 lsof -ti:3000 | xargs kill -9
@@ -247,6 +269,7 @@ npm run dev:test
 ```
 
 ### Tests Failing
+
 ```bash
 # Clear test cache
 rm -rf node_modules/.vite coverage
@@ -257,6 +280,7 @@ npm test
 ```
 
 ### ESLint Errors
+
 ```bash
 # Auto-fix most issues
 npm run lint:fix
@@ -266,6 +290,7 @@ npm run lint
 ```
 
 ### React Dev Tools Not Showing
+
 1. Refresh page (Cmd+R / Ctrl+R)
 2. Hard refresh (Cmd+Shift+R / Ctrl+Shift+R)
 3. Check extension is installed
@@ -285,6 +310,7 @@ npm run lint
 ## 🎮 Keyboard Shortcuts
 
 ### VS Code
+
 - `F5` - Start debugging
 - `F9` - Toggle breakpoint
 - `F10` - Step over
@@ -293,6 +319,7 @@ npm run lint
 - `Cmd+Shift+D` / `Ctrl+Shift+D` - Open debug panel
 
 ### Browser DevTools
+
 - `F12` - Open DevTools
 - `Cmd+Option+I` / `Ctrl+Shift+I` - Open DevTools
 - `Cmd+Option+J` / `Ctrl+Shift+J` - Open Console
@@ -303,6 +330,7 @@ npm run lint
 ## 🚀 You're Ready to Test!
 
 Start with:
+
 ```bash
 npm run dev:test
 ```
@@ -310,4 +338,3 @@ npm run dev:test
 Then open: http://localhost:3000
 
 **Happy Testing! 🎉**
-

@@ -5,35 +5,38 @@
  * Identifies top themes and provides detailed manifestation descriptions
  */
 
-import { prisma } from '@/lib/prisma'
-import { PatternMatch, SimpleSynonymDetectionService } from './simple-synonym-detection.service'
+import { prisma } from '@/lib/prisma';
+import {
+  PatternMatch,
+  SimpleSynonymDetectionService,
+} from './simple-synonym-detection.service';
 
 export interface CliftonStrengthsAnalysis {
-  id: string
-  analysis_id: string
-  overall_score: number
-  strategic_thinking_score: number
-  executing_score: number
-  influencing_score: number
-  relationship_building_score: number
-  dominant_domain: string
-  top_5: ThemeScore[]
-  all_themes: ThemeScore[]
+  id: string;
+  analysis_id: string;
+  overall_score: number;
+  strategic_thinking_score: number;
+  executing_score: number;
+  influencing_score: number;
+  relationship_building_score: number;
+  dominant_domain: string;
+  top_5: ThemeScore[];
+  all_themes: ThemeScore[];
 }
 
 export interface ThemeScore {
-  id: string
-  theme_name: string
-  domain: string
-  score: number
-  rank: number
-  is_top_5: boolean
-  is_top_10: boolean
+  id: string;
+  theme_name: string;
+  domain: string;
+  score: number;
+  rank: number;
+  is_top_5: boolean;
+  is_top_10: boolean;
   evidence: {
-    patterns: string[]
-    manifestations: string[]
-  }
-  manifestation_description: string
+    patterns: string[];
+    manifestations: string[];
+  };
+  manifestation_description: string;
 }
 
 export class CliftonStrengthsService {
@@ -50,43 +53,47 @@ export class CliftonStrengthsService {
       patterns = await SimpleSynonymDetectionService.findValuePatterns(
         content.text || content.content,
         industry
-      )
+      );
     }
 
     // Get all 34 themes from reference
-    const themes = await this.getAllThemes()
+    const themes = await this.getAllThemes();
 
     // Build prompt
-    const prompt = await this.buildCliftonPrompt(content, themes, industry, patterns)
+    const prompt = await this.buildCliftonPrompt(
+      content,
+      themes,
+      industry,
+      patterns
+    );
 
     // Call Gemini
-    const aiResponse = await this.callGeminiForClifton(prompt)
+    const aiResponse = await this.callGeminiForClifton(prompt);
 
     // Store in database
-    return await this.storeCliftonAnalysis(analysisId, aiResponse, patterns)
+    return await this.storeCliftonAnalysis(analysisId, aiResponse, patterns);
   }
 
   /**
    * Get all 34 CliftonStrengths themes
    */
-  private static async getAllThemes(): Promise<Array<{ theme_name: string; domain: string; description: string }>> {
+  private static async getAllThemes(): Promise<
+    Array<{ theme_name: string; domain: string; description: string }>
+  > {
     try {
       const themes = await prisma.clifton_themes_reference.findMany({
         select: {
           theme_name: true,
           domain: true,
-          description: true
+          description: true,
         },
-        orderBy: [
-          { domain: 'asc' },
-          { theme_name: 'asc' }
-        ]
-      })
+        orderBy: [{ domain: 'asc' }, { theme_name: 'asc' }],
+      });
 
-      return themes
+      return themes;
     } catch (error) {
-      console.error('Failed to get themes:', error)
-      return []
+      console.error('Failed to get themes:', error);
+      return [];
     }
   }
 
@@ -100,11 +107,17 @@ export class CliftonStrengthsService {
     patterns?: PatternMatch[]
   ): Promise<string> {
     // Group themes by domain for better organization
-    const themesByDomain = themes.reduce((acc, theme) => {
-      if (!acc[theme.domain]) acc[theme.domain] = [];
-      acc[theme.domain].push(theme);
-      return acc;
-    }, {} as Record<string, Array<{ theme_name: string; domain: string; description: string }>>);
+    const themesByDomain = themes.reduce(
+      (acc, theme) => {
+        if (!acc[theme.domain]) acc[theme.domain] = [];
+        acc[theme.domain].push(theme);
+        return acc;
+      },
+      {} as Record<
+        string,
+        Array<{ theme_name: string; domain: string; description: string }>
+      >
+    );
 
     const basePrompt = `
 Analyze this organization's website to identify CliftonStrengths themes.
@@ -116,16 +129,16 @@ ${JSON.stringify(content, null, 2)}
 THE 34 CLIFTONSTRENGTHS THEMES BY DOMAIN:
 
 STRATEGIC THINKING (8 themes):
-${themesByDomain.strategic_thinking?.map(t => `• ${t.theme_name}: ${t.description}`).join('\n') || 'No themes found'}
+${themesByDomain.strategic_thinking?.map((t) => `• ${t.theme_name}: ${t.description}`).join('\n') || 'No themes found'}
 
 EXECUTING (9 themes):
-${themesByDomain.executing?.map(t => `• ${t.theme_name}: ${t.description}`).join('\n') || 'No themes found'}
+${themesByDomain.executing?.map((t) => `• ${t.theme_name}: ${t.description}`).join('\n') || 'No themes found'}
 
 INFLUENCING (8 themes):
-${themesByDomain.influencing?.map(t => `• ${t.theme_name}: ${t.description}`).join('\n') || 'No themes found'}
+${themesByDomain.influencing?.map((t) => `• ${t.theme_name}: ${t.description}`).join('\n') || 'No themes found'}
 
 RELATIONSHIP BUILDING (9 themes):
-${themesByDomain.relationship_building?.map(t => `• ${t.theme_name}: ${t.description}`).join('\n') || 'No themes found'}
+${themesByDomain.relationship_building?.map((t) => `• ${t.theme_name}: ${t.description}`).join('\n') || 'No themes found'}
 
 ANALYSIS INSTRUCTIONS:
 For each of the 34 themes:
@@ -169,27 +182,27 @@ Return as JSON:
     }
   ]
 }
-`
+`;
 
     if (industry && patterns) {
       return await SimpleSynonymDetectionService.buildEnhancedPrompt(
         basePrompt,
         content.text || content.content,
         industry
-      )
+      );
     }
 
-    return basePrompt
+    return basePrompt;
   }
 
   /**
    * Call Gemini for CliftonStrengths analysis
    */
   private static async callGeminiForClifton(prompt: string): Promise<any> {
-    const apiKey = process.env.GEMINI_API_KEY
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      throw new Error('GEMINI_API_KEY not configured')
+      throw new Error('GEMINI_API_KEY not configured');
     }
 
     const response = await fetch(
@@ -201,31 +214,31 @@ Return as JSON:
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 8192
-          }
-        })
+            maxOutputTokens: 8192,
+          },
+        }),
       }
-    )
+    );
 
     if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.statusText}`)
+      throw new Error(`Gemini API error: ${response.statusText}`);
     }
 
-    const data = await response.json()
-    const text = data.candidates[0]?.content?.parts[0]?.text
+    const data = await response.json();
+    const text = data.candidates[0]?.content?.parts[0]?.text;
 
     if (!text) {
-      throw new Error('No response from Gemini')
+      throw new Error('No response from Gemini');
     }
 
-    const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/) ||
-                     text.match(/\{[\s\S]*\}/)
+    const jsonMatch =
+      text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/\{[\s\S]*\}/);
 
     if (jsonMatch) {
-      return JSON.parse(jsonMatch[1] || jsonMatch[0])
+      return JSON.parse(jsonMatch[1] || jsonMatch[0]);
     }
 
-    throw new Error('Could not parse Gemini response')
+    throw new Error('Could not parse Gemini response');
   }
 
   /**
@@ -244,13 +257,14 @@ Return as JSON:
         strategic_thinking_score: aiResponse.strategic_thinking_score || 0,
         executing_score: aiResponse.executing_score || 0,
         influencing_score: aiResponse.influencing_score || 0,
-        relationship_building_score: aiResponse.relationship_building_score || 0,
-        dominant_domain: aiResponse.dominant_domain || 'strategic_thinking'
-      }
-    })
+        relationship_building_score:
+          aiResponse.relationship_building_score || 0,
+        dominant_domain: aiResponse.dominant_domain || 'strategic_thinking',
+      },
+    });
 
     // Store theme scores using Prisma client
-    const themes: ThemeScore[] = []
+    const themes: ThemeScore[] = [];
 
     for (const theme of aiResponse.themes || []) {
       const stored = await prisma.clifton_theme_scores.create({
@@ -263,19 +277,26 @@ Return as JSON:
           is_top_5: (theme.rank || 0) <= 5,
           is_top_10: (theme.rank || 0) <= 10,
           evidence: theme.evidence || {},
-          manifestation_description: theme.manifestation || ''
-        }
-      })
+          manifestation_description: theme.manifestation || '',
+        },
+      });
 
-      const evidence = stored.evidence as { patterns?: unknown[]; manifestations?: unknown[] } | null;
+      const evidence = stored.evidence as {
+        patterns?: unknown[];
+        manifestations?: unknown[];
+      } | null;
       themes.push({
         ...stored,
         score: Number(stored.score),
         evidence: {
-          patterns: Array.isArray(evidence?.patterns) ? evidence.patterns as string[] : [],
-          manifestations: Array.isArray(evidence?.manifestations) ? evidence.manifestations as string[] : []
-        }
-      })
+          patterns: Array.isArray(evidence?.patterns)
+            ? (evidence.patterns as string[])
+            : [],
+          manifestations: Array.isArray(evidence?.manifestations)
+            ? (evidence.manifestations as string[])
+            : [],
+        },
+      });
     }
 
     return {
@@ -287,63 +308,86 @@ Return as JSON:
       influencing_score: aiResponse.influencing_score,
       relationship_building_score: aiResponse.relationship_building_score,
       dominant_domain: aiResponse.dominant_domain,
-      top_5: themes.filter(t => t.rank <= 5).sort((a, b) => a.rank - b.rank),
-      all_themes: themes.sort((a, b) => a.rank - b.rank)
-    }
+      top_5: themes.filter((t) => t.rank <= 5).sort((a, b) => a.rank - b.rank),
+      all_themes: themes.sort((a, b) => a.rank - b.rank),
+    };
   }
 
   /**
    * Fetch existing CliftonStrengths analysis
    */
-  static async getByAnalysisId(analysisId: string): Promise<CliftonStrengthsAnalysis | null> {
+  static async getByAnalysisId(
+    analysisId: string
+  ): Promise<CliftonStrengthsAnalysis | null> {
     try {
       const cs = await prisma.clifton_strengths_analyses.findFirst({
         where: { analysis_id: analysisId },
         include: {
           clifton_theme_scores: {
-            orderBy: { rank: 'asc' }
-          }
-        }
-      })
+            orderBy: { rank: 'asc' },
+          },
+        },
+      });
 
-      if (!cs) return null
+      if (!cs) return null;
 
       return {
         id: cs.id,
         analysis_id: cs.analysis_id,
         overall_score: cs.overall_score ? Number(cs.overall_score) : 0,
-        strategic_thinking_score: cs.strategic_thinking_score ? Number(cs.strategic_thinking_score) : 0,
+        strategic_thinking_score: cs.strategic_thinking_score
+          ? Number(cs.strategic_thinking_score)
+          : 0,
         executing_score: cs.executing_score ? Number(cs.executing_score) : 0,
-        influencing_score: cs.influencing_score ? Number(cs.influencing_score) : 0,
-        relationship_building_score: cs.relationship_building_score ? Number(cs.relationship_building_score) : 0,
+        influencing_score: cs.influencing_score
+          ? Number(cs.influencing_score)
+          : 0,
+        relationship_building_score: cs.relationship_building_score
+          ? Number(cs.relationship_building_score)
+          : 0,
         dominant_domain: cs.dominant_domain,
-        top_5: cs.clifton_theme_scores.filter(t => t.rank && t.rank <= 5).map(t => {
-          const evidence = t.evidence as { patterns?: unknown[]; manifestations?: unknown[] } | null;
+        top_5: cs.clifton_theme_scores
+          .filter((t) => t.rank && t.rank <= 5)
+          .map((t) => {
+            const evidence = t.evidence as {
+              patterns?: unknown[];
+              manifestations?: unknown[];
+            } | null;
+            return {
+              ...t,
+              score: t.score ? Number(t.score) : 0,
+              evidence: {
+                patterns: Array.isArray(evidence?.patterns)
+                  ? (evidence.patterns as string[])
+                  : [],
+                manifestations: Array.isArray(evidence?.manifestations)
+                  ? (evidence.manifestations as string[])
+                  : [],
+              },
+            };
+          }),
+        all_themes: cs.clifton_theme_scores.map((t) => {
+          const evidence = t.evidence as {
+            patterns?: unknown[];
+            manifestations?: unknown[];
+          } | null;
           return {
             ...t,
             score: t.score ? Number(t.score) : 0,
             evidence: {
-              patterns: Array.isArray(evidence?.patterns) ? evidence.patterns as string[] : [],
-              manifestations: Array.isArray(evidence?.manifestations) ? evidence.manifestations as string[] : []
-            }
+              patterns: Array.isArray(evidence?.patterns)
+                ? (evidence.patterns as string[])
+                : [],
+              manifestations: Array.isArray(evidence?.manifestations)
+                ? (evidence.manifestations as string[])
+                : [],
+            },
           };
         }),
-        all_themes: cs.clifton_theme_scores.map(t => {
-          const evidence = t.evidence as { patterns?: unknown[]; manifestations?: unknown[] } | null;
-          return {
-            ...t,
-            score: t.score ? Number(t.score) : 0,
-            evidence: {
-              patterns: Array.isArray(evidence?.patterns) ? evidence.patterns as string[] : [],
-              manifestations: Array.isArray(evidence?.manifestations) ? evidence.manifestations as string[] : []
-            }
-          };
-        })
-      }
+      };
     } catch (error) {
-      console.error('Failed to fetch CliftonStrengths:', error)
-      return null
+      console.error('Failed to fetch CliftonStrengths:', error);
+      return null;
     }
   }
 }
-

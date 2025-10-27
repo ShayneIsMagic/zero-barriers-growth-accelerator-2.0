@@ -81,25 +81,30 @@ async function testRealAnalysis() {
 
   try {
     const startTime = Date.now();
-    
-    const response = await fetch('http://localhost:3000/api/analyze/website/enhanced', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        content: ZEROBARRIERS_HOME_CONTENT,
-        contentType: 'website',
-        url: 'https://zerobarriers.io/'
-      }),
-    });
+
+    const response = await fetch(
+      'http://localhost:3000/api/analyze/website/enhanced',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: ZEROBARRIERS_HOME_CONTENT,
+          contentType: 'website',
+          url: 'https://zerobarriers.io/',
+        }),
+      }
+    );
 
     const endTime = Date.now();
     const duration = endTime - startTime;
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.log(`❌ Analysis failed: ${errorData.details || errorData.error}`);
+      console.log(
+        `❌ Analysis failed: ${errorData.details || errorData.error}`
+      );
       return;
     }
 
@@ -108,9 +113,15 @@ async function testRealAnalysis() {
 
     console.log(`✅ Analysis completed in ${duration}ms`);
     console.log(`📊 Overall Score: ${analysis.overallScore}/100`);
-    console.log(`🎯 Golden Circle Score: ${analysis.goldenCircle.overallScore}/100`);
-    console.log(`💎 Elements of Value Score: ${analysis.elementsOfValue.overallScore}/100`);
-    console.log(`🌟 CliftonStrengths Score: ${analysis.cliftonStrengths.overallScore}/100`);
+    console.log(
+      `🎯 Golden Circle Score: ${analysis.goldenCircle.overallScore}/100`
+    );
+    console.log(
+      `💎 Elements of Value Score: ${analysis.elementsOfValue.overallScore}/100`
+    );
+    console.log(
+      `🌟 CliftonStrengths Score: ${analysis.cliftonStrengths.overallScore}/100`
+    );
     console.log('');
 
     console.log('🎯 GOLDEN CIRCLE ANALYSIS:');
@@ -139,7 +150,6 @@ async function testRealAnalysis() {
       console.log(`${index + 1}. ${insight}`);
     });
     console.log('');
-
   } catch (error) {
     console.log(`❌ Error: ${error.message}`);
   }

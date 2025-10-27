@@ -2,19 +2,25 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-    BarChart3,
-    Bot,
-    Brain,
-    CheckCircle,
-    Clock,
-    ExternalLink,
-    Globe,
-    Target,
-    TrendingUp,
-    Users,
-    Zap
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  BarChart3,
+  Bot,
+  Brain,
+  CheckCircle,
+  Clock,
+  ExternalLink,
+  Globe,
+  Target,
+  TrendingUp,
+  Users,
+  Zap,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -27,41 +33,44 @@ export default function DashboardPage() {
       id: 'value-centric-b2c',
       name: 'Value-Centric Analysis (B2C)',
       status: 'ready',
-      description: 'Analyze your website using B2C Elements of Value framework - perfect for consumer-focused businesses',
+      description:
+        'Analyze your website using B2C Elements of Value framework - perfect for consumer-focused businesses',
       icon: Users,
       route: '/dashboard/elements-value-b2c',
       whatYouGet: [
         '30 B2C Elements of Value analysis',
         'Revenue opportunity identification',
         'Premium pricing strategy recommendations',
-        'Customer satisfaction optimization insights'
+        'Customer satisfaction optimization insights',
       ],
       estimatedTime: '2-3 minutes',
       complexity: 'Beginner',
-      prerequisites: 'None - just enter your website URL'
+      prerequisites: 'None - just enter your website URL',
     },
     {
       id: 'value-centric-b2b',
       name: 'Value-Centric Analysis (B2B)',
       status: 'ready',
-      description: 'Analyze your website using B2B Elements of Value framework - perfect for enterprise and B2B businesses',
+      description:
+        'Analyze your website using B2B Elements of Value framework - perfect for enterprise and B2B businesses',
       icon: BarChart3,
       route: '/dashboard/elements-value-b2b',
       whatYouGet: [
         '40 B2B Elements of Value analysis',
         'Enterprise value proposition optimization',
         'Sales enablement recommendations',
-        'Customer retention strategy insights'
+        'Customer retention strategy insights',
       ],
       estimatedTime: '2-3 minutes',
       complexity: 'Beginner',
-      prerequisites: 'None - just enter your website URL'
+      prerequisites: 'None - just enter your website URL',
     },
     {
       id: 'unified-analysis',
       name: 'Unified Analysis (All Frameworks)',
       status: 'ready',
-      description: 'Run multiple analyses from a single website scrape - Golden Circle, B2C/B2B Elements of Value, and CliftonStrengths',
+      description:
+        'Run multiple analyses from a single website scrape - Golden Circle, B2C/B2B Elements of Value, and CliftonStrengths',
       icon: Zap,
       route: '/dashboard/unified-analysis',
       whatYouGet: [
@@ -69,17 +78,18 @@ export default function DashboardPage() {
         'Golden Circle, B2C Elements, B2B Elements, CliftonStrengths',
         'Comprehensive report combining all insights',
         'Parallel processing for faster results',
-        'Choose which analyses to run'
+        'Choose which analyses to run',
       ],
       estimatedTime: '3-5 minutes',
       complexity: 'Intermediate',
-      prerequisites: 'None - just enter your website URL'
+      prerequisites: 'None - just enter your website URL',
     },
     {
       id: 'multi-page-scraping',
       name: 'Multi-Page Content Scraping',
       status: 'ready',
-      description: 'Discover and scrape content from multiple pages across a website for comprehensive analysis',
+      description:
+        'Discover and scrape content from multiple pages across a website for comprehensive analysis',
       icon: Globe,
       route: '/dashboard/multi-page-scraping',
       whatYouGet: [
@@ -87,17 +97,18 @@ export default function DashboardPage() {
         'Comprehensive content analysis across all pages',
         'Content theme identification and categorization',
         'Enhanced keyword and heading extraction',
-        'Configurable scraping options and depth control'
+        'Configurable scraping options and depth control',
       ],
       estimatedTime: '5-10 minutes',
       complexity: 'Intermediate',
-      prerequisites: 'None - just enter your website URL'
+      prerequisites: 'None - just enter your website URL',
     },
     {
       id: 'google-tools',
       name: 'Google Tools Analysis',
       status: 'ready',
-      description: 'Access Google Tools directly and analyze data using AI-powered insights - no APIs needed',
+      description:
+        'Access Google Tools directly and analyze data using AI-powered insights - no APIs needed',
       icon: TrendingUp,
       route: '/dashboard/google-tools',
       whatYouGet: [
@@ -105,17 +116,18 @@ export default function DashboardPage() {
         'PTCF framework prompts for each tool',
         'Manual data input and AI analysis',
         'Revenue-focused insights and recommendations',
-        'No API setup required - just paste data'
+        'No API setup required - just paste data',
       ],
       estimatedTime: '5-10 minutes',
       complexity: 'Beginner',
-      prerequisites: 'None - just enter your website URL and paste data'
+      prerequisites: 'None - just enter your website URL and paste data',
     },
     {
       id: 'automated-google-tools',
       name: 'Automated Google Tools Analysis',
       status: 'ready',
-      description: 'Automatically scrape Google Tools data using Puppeteer and get AI analysis - fully automated!',
+      description:
+        'Automatically scrape Google Tools data using Puppeteer and get AI analysis - fully automated!',
       icon: Bot,
       route: '/dashboard/automated-google-tools',
       whatYouGet: [
@@ -123,34 +135,36 @@ export default function DashboardPage() {
         'Direct tool links + automated scraping in one place',
         'AI-powered analysis of scraped data',
         'Download scraped data as JSON',
-        'No manual data entry required'
+        'No manual data entry required',
       ],
       estimatedTime: '3-5 minutes',
       complexity: 'Intermediate',
-      prerequisites: 'None - just enter your website URL and keywords'
+      prerequisites: 'None - just enter your website URL and keywords',
     },
     {
       id: 'content-comparison',
       name: 'Content Comparison Analysis',
       status: 'ready',
-      description: 'Compare existing website content against proposed new content. Get AI-powered side-by-side analysis.',
+      description:
+        'Compare existing website content against proposed new content. Get AI-powered side-by-side analysis.',
       icon: Brain,
       route: '/dashboard/content-comparison',
       whatYouGet: [
         'Side-by-side content analysis and comparison',
         'AI-powered content optimization recommendations',
         'Content gap identification and improvement suggestions',
-        'Performance impact analysis for content changes'
+        'Performance impact analysis for content changes',
       ],
       estimatedTime: '2-3 minutes',
       complexity: 'Beginner',
-      prerequisites: 'None - just enter your website URL'
+      prerequisites: 'None - just enter your website URL',
     },
     {
       id: 'clifton-strengths-simple',
       name: 'CliftonStrengths Analysis',
       status: 'ready',
-      description: 'Discover your organization\'s dominant strengths and cultural patterns using the proven CliftonStrengths framework',
+      description:
+        "Discover your organization's dominant strengths and cultural patterns using the proven CliftonStrengths framework",
       icon: Brain,
       route: '/dashboard/clifton-strengths-simple',
       whatYouGet: [
@@ -158,17 +172,18 @@ export default function DashboardPage() {
         'Top 5 dominant themes identification',
         'Domain scoring (Strategic Thinking, Executing, Influencing, Relationship Building)',
         'Evidence-based theme manifestations',
-        'Actionable recommendations for leveraging strengths'
+        'Actionable recommendations for leveraging strengths',
       ],
       estimatedTime: '2-3 minutes',
       complexity: 'Beginner',
-      prerequisites: 'None - just enter your website URL'
+      prerequisites: 'None - just enter your website URL',
     },
     {
       id: 'revenue-golden-circle',
       name: 'Revenue-Focused Golden Circle',
       status: 'ready',
-      description: 'Identify revenue opportunities and calculate potential ROI using the Golden Circle framework - perfect for growth-focused businesses',
+      description:
+        'Identify revenue opportunities and calculate potential ROI using the Golden Circle framework - perfect for growth-focused businesses',
       icon: Target,
       route: '/dashboard/golden-circle-standalone',
       whatYouGet: [
@@ -176,17 +191,18 @@ export default function DashboardPage() {
         'Market opportunity identification with size estimates',
         'ROI calculations for each recommendation',
         'High-value target persona identification',
-        'Competitive advantage scoring'
+        'Competitive advantage scoring',
       ],
       estimatedTime: '2-3 minutes',
       complexity: 'Intermediate',
-      prerequisites: 'None - just enter your website URL'
+      prerequisites: 'None - just enter your website URL',
     },
     {
       id: 'revenue-elements-value',
       name: 'Revenue-Focused Elements of Value',
       status: 'ready',
-      description: 'Discover which value elements drive the most revenue and identify opportunities for premium pricing and market expansion',
+      description:
+        'Discover which value elements drive the most revenue and identify opportunities for premium pricing and market expansion',
       icon: BarChart3,
       route: '/dashboard/elements-value-standalone',
       whatYouGet: [
@@ -194,17 +210,18 @@ export default function DashboardPage() {
         'Premium pricing opportunity identification',
         'Market gap analysis with revenue potential',
         'Implementation effort vs ROI prioritization',
-        'Target audience revenue value scoring'
+        'Target audience revenue value scoring',
       ],
       estimatedTime: '2-3 minutes',
       complexity: 'Intermediate',
-      prerequisites: 'None - just enter your website URL'
+      prerequisites: 'None - just enter your website URL',
     },
     {
       id: 'revenue-trends',
       name: 'Revenue-Focused Market Analysis',
       status: 'ready',
-      description: 'Identify underserved market demand and emerging revenue opportunities through AI-powered content strategy analysis',
+      description:
+        'Identify underserved market demand and emerging revenue opportunities through AI-powered content strategy analysis',
       icon: TrendingUp,
       route: '/dashboard/revenue-trends',
       whatYouGet: [
@@ -212,17 +229,18 @@ export default function DashboardPage() {
         'Revenue opportunity briefs with ROI calculations',
         'Content strategy recommendations with revenue impact',
         'Competitive analysis and differentiation opportunities',
-        'Content calendar suggestions with traffic estimates'
+        'Content calendar suggestions with traffic estimates',
       ],
       estimatedTime: '2-3 minutes',
       complexity: 'Advanced',
-      prerequisites: 'None - just enter your website URL'
+      prerequisites: 'None - just enter your website URL',
     },
     {
       id: 'google-tools',
       name: 'Google Tools Analysis',
       status: 'ready',
-      description: 'Access Google Tools directly and analyze data using AI-powered insights - no APIs needed',
+      description:
+        'Access Google Tools directly and analyze data using AI-powered insights - no APIs needed',
       icon: BarChart3,
       route: '/dashboard/google-tools',
       whatYouGet: [
@@ -230,80 +248,84 @@ export default function DashboardPage() {
         'PTCF framework prompts for each tool',
         'Manual data input and AI analysis',
         'Revenue-focused insights and recommendations',
-        'No API setup required - just paste data'
+        'No API setup required - just paste data',
       ],
       estimatedTime: '5-10 minutes',
       complexity: 'Beginner',
-      prerequisites: 'None - just enter your website URL and paste data'
+      prerequisites: 'None - just enter your website URL and paste data',
     },
     {
       id: 'golden-circle',
       name: 'Golden Circle Analysis',
       status: 'ready',
-      description: 'Individual Golden Circle analysis for focused strategic clarity',
+      description:
+        'Individual Golden Circle analysis for focused strategic clarity',
       icon: Target,
       route: '/dashboard/golden-circle-standalone',
       whatYouGet: [
         'Purpose, Methodology, and Offerings analysis',
         'Strategic clarity and positioning insights',
         'Value proposition optimization',
-        'Target audience identification'
+        'Target audience identification',
       ],
       estimatedTime: '2-3 minutes',
       complexity: 'Beginner',
-      prerequisites: 'None - just enter your website URL'
+      prerequisites: 'None - just enter your website URL',
     },
     {
       id: 'elements-b2c-individual',
       name: 'B2C Elements of Value Analysis',
       status: 'ready',
-      description: 'Individual B2C Elements of Value analysis for consumer-focused businesses',
+      description:
+        'Individual B2C Elements of Value analysis for consumer-focused businesses',
       icon: Users,
       route: '/dashboard/elements-value-b2c',
       whatYouGet: [
         '30 B2C Elements of Value analysis',
         'Consumer value proposition optimization',
         'Customer satisfaction insights',
-        'Revenue opportunity identification'
+        'Revenue opportunity identification',
       ],
       estimatedTime: '2-3 minutes',
       complexity: 'Beginner',
-      prerequisites: 'None - just enter your website URL'
+      prerequisites: 'None - just enter your website URL',
     },
     {
       id: 'elements-b2b-individual',
       name: 'B2B Elements of Value Analysis',
       status: 'ready',
-      description: 'Individual B2B Elements of Value analysis for enterprise and B2B businesses',
+      description:
+        'Individual B2B Elements of Value analysis for enterprise and B2B businesses',
       icon: BarChart3,
       route: '/dashboard/elements-value-b2b',
       whatYouGet: [
         '40 B2B Elements of Value analysis',
         'Enterprise value proposition optimization',
         'Sales enablement recommendations',
-        'Customer retention strategy insights'
+        'Customer retention strategy insights',
       ],
       estimatedTime: '2-3 minutes',
       complexity: 'Beginner',
-      prerequisites: 'None - just enter your website URL'
+      prerequisites: 'None - just enter your website URL',
     },
     {
       id: 'clifton-strengths-individual',
       name: 'CliftonStrengths Analysis',
       status: 'ready',
-      description: 'Individual CliftonStrengths themes analysis for organizational strengths',
+      description:
+        'Individual CliftonStrengths themes analysis for organizational strengths',
       icon: Brain,
       route: '/dashboard/clifton-strengths',
       whatYouGet: [
         '34 CliftonStrengths themes analysis',
         'Top 5 dominant themes identification',
         'Domain scoring and insights',
-        'Actionable recommendations for leveraging strengths'
+        'Actionable recommendations for leveraging strengths',
       ],
       estimatedTime: '2-3 minutes',
       complexity: 'Beginner',
-      prerequisites: 'None - just enter your website URL'
-    }
+      prerequisites: 'None - just enter your website URL',
+    },
   ];
 
   const comingSoonAssessments = [
@@ -313,7 +335,7 @@ export default function DashboardPage() {
       status: 'testing',
       description: 'Website performance and SEO analysis',
       eta: 'Next week',
-      icon: Zap
+      icon: Zap,
     },
     {
       id: 'seo',
@@ -321,33 +343,33 @@ export default function DashboardPage() {
       status: 'testing',
       description: 'Comprehensive SEO audit and recommendations',
       eta: 'Next week',
-      icon: BarChart3
-    }
+      icon: BarChart3,
+    },
   ];
 
   const statusBadges = {
     ready: <Badge className="bg-green-500 text-white">Ready</Badge>,
     testing: <Badge className="bg-yellow-500 text-white">Testing</Badge>,
-    pending: <Badge className="bg-gray-500 text-white">Coming Soon</Badge>
+    pending: <Badge className="bg-gray-500 text-white">Coming Soon</Badge>,
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-      <div className="container mx-auto py-8 px-4">
-
+      <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="mb-12 text-center">
+          <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-white">
             Analysis Dashboard
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            AI-powered business framework analysis. Only working, tested features shown.
+          <p className="mx-auto max-w-3xl text-xl text-gray-600 dark:text-gray-300">
+            AI-powered business framework analysis. Only working, tested
+            features shown.
           </p>
         </div>
 
         {/* Working Features */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+          <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
             <CheckCircle className="mr-2 text-green-500" />
             Ready to Use
           </h2>
@@ -356,15 +378,24 @@ export default function DashboardPage() {
             {workingAssessments.map((assessment) => {
               const IconComponent = assessment.icon;
               return (
-                <Card key={assessment.id} className="border-green-200 bg-green-50 dark:bg-green-900/10">
+                <Card
+                  key={assessment.id}
+                  className="border-green-200 bg-green-50 dark:bg-green-900/10"
+                >
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <IconComponent className="h-8 w-8 text-green-600" />
                         <div>
-                          <CardTitle className="text-xl">{assessment.name}</CardTitle>
-                          <div className="flex items-center space-x-2 mt-1">
-                            {statusBadges[assessment.status as keyof typeof statusBadges]}
+                          <CardTitle className="text-xl">
+                            {assessment.name}
+                          </CardTitle>
+                          <div className="mt-1 flex items-center space-x-2">
+                            {
+                              statusBadges[
+                                assessment.status as keyof typeof statusBadges
+                              ]
+                            }
                             <span className="text-sm text-gray-600 dark:text-gray-400">
                               {assessment.estimatedTime}
                             </span>
@@ -380,16 +411,16 @@ export default function DashboardPage() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription className="text-base mb-4">
+                    <CardDescription className="mb-4 text-base">
                       {assessment.description}
                     </CardDescription>
 
                     <div className="space-y-3">
                       <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                        <h4 className="mb-2 font-semibold text-gray-900 dark:text-white">
                           What You Get:
                         </h4>
-                        <ul className="list-disc list-inside space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                        <ul className="list-inside list-disc space-y-1 text-sm text-gray-600 dark:text-gray-400">
                           {assessment.whatYouGet.map((item, index) => (
                             <li key={index}>{item}</li>
                           ))}
@@ -411,8 +442,8 @@ export default function DashboardPage() {
 
         {/* Coming Soon Features */}
         <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="flex items-center text-2xl font-bold text-gray-900 dark:text-white">
               <Clock className="mr-2 text-yellow-500" />
               Coming Soon
             </h2>
@@ -428,14 +459,23 @@ export default function DashboardPage() {
             {comingSoonAssessments.slice(0, 3).map((assessment) => {
               const IconComponent = assessment.icon;
               return (
-                <Card key={assessment.id} className="border-yellow-200 bg-yellow-50 dark:bg-yellow-900/10">
+                <Card
+                  key={assessment.id}
+                  className="border-yellow-200 bg-yellow-50 dark:bg-yellow-900/10"
+                >
                   <CardHeader>
                     <div className="flex items-center space-x-3">
                       <IconComponent className="h-6 w-6 text-yellow-600" />
                       <div>
-                        <CardTitle className="text-lg">{assessment.name}</CardTitle>
-                        <div className="flex items-center space-x-2 mt-1">
-                          {statusBadges[assessment.status as keyof typeof statusBadges]}
+                        <CardTitle className="text-lg">
+                          {assessment.name}
+                        </CardTitle>
+                        <div className="mt-1 flex items-center space-x-2">
+                          {
+                            statusBadges[
+                              assessment.status as keyof typeof statusBadges
+                            ]
+                          }
                           <span className="text-sm text-gray-600 dark:text-gray-400">
                             ETA: {assessment.eta}
                           </span>
@@ -460,7 +500,10 @@ export default function DashboardPage() {
 
           <div className="mt-4 text-center">
             <Link href="/dashboard/coming-soon">
-              <Button variant="ghost" className="text-yellow-600 hover:text-yellow-700">
+              <Button
+                variant="ghost"
+                className="text-yellow-600 hover:text-yellow-700"
+              >
                 View all coming soon features with manual prompts →
               </Button>
             </Link>
@@ -477,14 +520,24 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2 text-sm text-blue-800 dark:text-blue-200">
-              <p>✅ <strong>Main Branch:</strong> Clean, working features only</p>
-              <p>🔧 <strong>Dev Branch:</strong> Broken features being fixed separately</p>
-              <p>📊 <strong>Assessment Pipeline:</strong> Features move from testing → ready</p>
-              <p>🚀 <strong>Deployment:</strong> Only tested features go to production</p>
+              <p>
+                ✅ <strong>Main Branch:</strong> Clean, working features only
+              </p>
+              <p>
+                🔧 <strong>Dev Branch:</strong> Broken features being fixed
+                separately
+              </p>
+              <p>
+                📊 <strong>Assessment Pipeline:</strong> Features move from
+                testing → ready
+              </p>
+              <p>
+                🚀 <strong>Deployment:</strong> Only tested features go to
+                production
+              </p>
             </div>
           </CardContent>
         </Card>
-
       </div>
     </div>
   );

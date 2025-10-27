@@ -14,40 +14,60 @@ export async function POST(request: NextRequest) {
     const { url } = body;
 
     if (!url) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL is required',
+        },
+        { status: 400 }
+      );
     }
 
-    console.log(`💰 Starting revenue-focused Elements of Value analysis for: ${url}`);
+    console.log(
+      `💰 Starting revenue-focused Elements of Value analysis for: ${url}`
+    );
 
-    const result = await RevenueFocusedElementsOfValueService.analyzeWebsite(url);
+    const result =
+      await RevenueFocusedElementsOfValueService.analyzeWebsite(url);
 
     if (!result.success) {
-      console.error('Revenue-focused Elements of Value analysis failed:', result.error);
-      return NextResponse.json({
-        success: false,
-        error: 'Revenue-focused Elements of Value analysis failed',
-        details: result.error
-      }, { status: 500 });
+      console.error(
+        'Revenue-focused Elements of Value analysis failed:',
+        result.error
+      );
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Revenue-focused Elements of Value analysis failed',
+          details: result.error,
+        },
+        { status: 500 }
+      );
     }
 
-    console.log(`✅ Revenue-focused Elements of Value analysis completed for: ${url}`);
+    console.log(
+      `✅ Revenue-focused Elements of Value analysis completed for: ${url}`
+    );
 
     return NextResponse.json({
       success: true,
       url: result.url,
       data: result.data,
-      message: 'Revenue-focused Elements of Value analysis completed successfully'
+      message:
+        'Revenue-focused Elements of Value analysis completed successfully',
     });
-
   } catch (error) {
-    console.error('Revenue-focused Elements of Value API execution error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Revenue-focused Elements of Value analysis failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    console.error(
+      'Revenue-focused Elements of Value API execution error:',
+      error
+    );
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Revenue-focused Elements of Value analysis failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

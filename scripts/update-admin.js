@@ -49,5 +49,3 @@ async function updateSuperAdmin() {
 }
 
 updateSuperAdmin();
-
-

@@ -10,6 +10,7 @@
 ### **Phase 1: Content Collection Only**
 
 **What the Backend Does:**
+
 ```typescript
 // three-phase-analyzer.ts executePhase1()
 1. Scrapes website content ✅
@@ -19,6 +20,7 @@
 ```
 
 **What the API Route Does:**
+
 ```typescript
 // api/analyze/phase/route.ts
 1. Calls executePhase1() ✅
@@ -29,6 +31,7 @@
 ```
 
 **What User Gets:**
+
 ```
 ✅ Report 1: Content & SEO Data Collection
    - Scraped content, meta tags, keywords
@@ -40,11 +43,13 @@
 ```
 
 **Current Frontend Description (WRONG):**
+
 ```
 ❌ "• Lighthouse performance audit" (implies it runs automatically)
 ```
 
 **Should Say:**
+
 ```
 ✅ "• Content & metadata extraction"
 ✅ "• Lighthouse manual instructions"
@@ -57,6 +62,7 @@ or
 ### **Phase 2: AI Framework Analysis**
 
 **What the Backend Does:**
+
 ```typescript
 // three-phase-analyzer.ts executePhase2()
 1. Golden Circle Analysis (AI) ✅
@@ -66,6 +72,7 @@ or
 ```
 
 **What the API Route Does:**
+
 ```typescript
 // api/analyze/phase/route.ts
 1. Gets Phase 1 data (or scrapes if missing)
@@ -75,6 +82,7 @@ or
 ```
 
 **What User Gets:**
+
 ```
 ✅ Report 3: Golden Circle Analysis
 ✅ Report 4: Elements of Value (B2C)
@@ -89,6 +97,7 @@ Each includes:
 ```
 
 **Current Frontend Description:**
+
 ```
 ✅ "• Golden Circle (Gemini AI)" CORRECT
 ✅ "• Elements of Value (Gemini AI)" CORRECT
@@ -98,6 +107,7 @@ Each includes:
 ```
 
 **Should Say:**
+
 ```
 ✅ "Requires Phase 1 data for best results"
 or
@@ -109,6 +119,7 @@ or
 ### **Phase 3: Strategic Synthesis**
 
 **What the Backend Does:**
+
 ```typescript
 // three-phase-analyzer.ts executePhase3()
 1. Tries to run Lighthouse via API (may fail gracefully)
@@ -118,6 +129,7 @@ or
 ```
 
 **What the API Route Does:**
+
 ```typescript
 // api/analyze/phase/route.ts
 1. Gets Phase 1 + Phase 2 data (or creates minimal if missing)
@@ -127,6 +139,7 @@ or
 ```
 
 **What User Gets:**
+
 ```
 ✅ Report 7: Comprehensive Strategic Analysis
    - Executive summary
@@ -139,6 +152,7 @@ or
 ```
 
 **Current Frontend Description:**
+
 ```
 ✅ "• Comprehensive insights (Gemini AI)" CORRECT
 ✅ "• Priority recommendations" CORRECT
@@ -151,11 +165,11 @@ This one is actually CORRECT! ✅
 
 ## 📊 SUMMARY TABLE
 
-| Phase | Frontend Says | Backend Does | Match? | Fix Needed? |
-|-------|--------------|--------------|--------|-------------|
-| **Phase 1** | "Lighthouse performance audit" | Only content scraping, Lighthouse = manual fallback | ❌ NO | ✅ YES - Update description |
-| **Phase 2** | "Can run independently..." | Needs Phase 1 data, can scrape if missing | ⚠️ Confusing | ✅ YES - Clarify message |
-| **Phase 3** | "Comprehensive insights" | Synthesizes all data + recommendations | ✅ YES | ✅ NO - Correct! |
+| Phase       | Frontend Says                  | Backend Does                                        | Match?       | Fix Needed?                 |
+| ----------- | ------------------------------ | --------------------------------------------------- | ------------ | --------------------------- |
+| **Phase 1** | "Lighthouse performance audit" | Only content scraping, Lighthouse = manual fallback | ❌ NO        | ✅ YES - Update description |
+| **Phase 2** | "Can run independently..."     | Needs Phase 1 data, can scrape if missing           | ⚠️ Confusing | ✅ YES - Clarify message    |
+| **Phase 3** | "Comprehensive insights"       | Synthesizes all data + recommendations              | ✅ YES       | ✅ NO - Correct!            |
 
 ---
 
@@ -164,6 +178,7 @@ This one is actually CORRECT! ✅
 ### **Fix 1: Update Phase 1 Description**
 
 **Change from:**
+
 ```
 • Scrape website content
 • Extract meta tags & SEO data
@@ -171,6 +186,7 @@ This one is actually CORRECT! ✅
 ```
 
 **Change to:**
+
 ```
 • Scrape website content
 • Extract meta tags & keywords
@@ -182,11 +198,13 @@ This one is actually CORRECT! ✅
 ### **Fix 2: Update Phase 2 Message**
 
 **Change from:**
+
 ```
 💡 Can run independently, but Phase 1 data improves accuracy by 40%
 ```
 
 **Change to:**
+
 ```
 ℹ️ Uses content from Phase 1 to analyze through 4 frameworks
 ```
@@ -206,17 +224,20 @@ Phase 3 description is already correct! ✅
 **What Your App Actually Does:**
 
 **Phase 1:**
+
 - Scrapes content ✅
 - Extracts meta tags, keywords ✅
 - Does NOT run Lighthouse automatically ❌
 - Gives manual Lighthouse instructions ✅
 
 **Phase 2:**
+
 - Runs 4 AI frameworks ✅
 - Uses Phase 1 content ✅
 - Can work standalone but scrapes content again if Phase 1 skipped ✅
 
 **Phase 3:**
+
 - Synthesizes everything ✅
 - Tries Lighthouse API (often fails) ⚠️
 - Tries Google Trends API (often works) ✅

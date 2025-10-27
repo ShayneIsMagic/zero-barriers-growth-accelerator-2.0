@@ -451,5 +451,3 @@ export function QualityDashboard() {
     </div>
   );
 }
-
-

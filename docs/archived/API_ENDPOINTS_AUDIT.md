@@ -1,4 +1,5 @@
 # API ENDPOINTS AUDIT
+
 ## Zero Barriers Growth Accelerator V2
 
 This document catalogs all API endpoints, their status, and required fixes.
@@ -10,16 +11,18 @@ This document catalogs all API endpoints, their status, and required fixes.
 ### **1. Core Analysis APIs**
 
 #### **`POST /api/analyze/website`** ✅ WORKING
+
 - **File**: `src/app/api/analyze/website/route.ts`
 - **Purpose**: Basic website analysis with real AI
 - **Status**: ✅ Working (uses `free-ai-analysis.ts`)
-- **Features**: 
+- **Features**:
   - Real AI analysis only (no demo data)
   - Gemini/Claude integration
   - Connectivity testing
 - **Issues**: None identified
 
 #### **`POST /api/analyze/phase-new`** ✅ WORKING
+
 - **File**: `src/app/api/analyze/phase-new/route.ts`
 - **Purpose**: New phased analysis system
 - **Status**: ✅ Working (Phase 1 only, Phases 2-3 need fixing)
@@ -30,6 +33,7 @@ This document catalogs all API endpoints, their status, and required fixes.
 - **Issues**: Phases 2-3 have Prisma connection errors
 
 #### **`POST /api/analyze/focused`** ✅ WORKING
+
 - **File**: `src/app/api/analyze/focused/route.ts`
 - **Purpose**: Focused analysis for individual frameworks
 - **Status**: ✅ Working (just created)
@@ -43,6 +47,7 @@ This document catalogs all API endpoints, their status, and required fixes.
 ### **2. Content Collection APIs**
 
 #### **`GET /api/scrape-page`** ✅ WORKING
+
 - **File**: `src/app/api/scrape-page/route.ts`
 - **Purpose**: Content extraction from websites
 - **Status**: ✅ Working (uses production extractor)
@@ -53,6 +58,7 @@ This document catalogs all API endpoints, their status, and required fixes.
 - **Issues**: None identified
 
 #### **`POST /api/analyze/page`** ✅ WORKING
+
 - **File**: `src/app/api/analyze/page/route.ts`
 - **Purpose**: Individual page analysis
 - **Status**: ✅ Working
@@ -65,6 +71,7 @@ This document catalogs all API endpoints, their status, and required fixes.
 ### **3. System APIs**
 
 #### **`GET /api/health`** ✅ WORKING
+
 - **File**: `src/app/api/health/route.ts`
 - **Purpose**: System health check
 - **Status**: ✅ Working
@@ -81,6 +88,7 @@ This document catalogs all API endpoints, their status, and required fixes.
 ### **1. Enhanced Analysis APIs**
 
 #### **`POST /api/analyze/enhanced`** ⚠️ PARTIAL
+
 - **File**: `src/app/api/analyze/enhanced/route.ts`
 - **Purpose**: Enhanced analysis with progress tracking
 - **Status**: ⚠️ Partially working
@@ -90,6 +98,7 @@ This document catalogs all API endpoints, their status, and required fixes.
   - May have Prisma connection issues
 
 #### **`POST /api/analyze/comprehensive`** ⚠️ PARTIAL
+
 - **File**: `src/app/api/analyze/comprehensive/route.ts`
 - **Purpose**: Comprehensive analysis with all tools
 - **Status**: ⚠️ Partially working
@@ -99,6 +108,7 @@ This document catalogs all API endpoints, their status, and required fixes.
   - Google Trends integration needs verification
 
 #### **`POST /api/analyze/controlled`** ⚠️ PARTIAL
+
 - **File**: `src/app/api/analyze/controlled/route.ts`
 - **Purpose**: Controlled step-by-step analysis
 - **Status**: ⚠️ Partially working
@@ -110,6 +120,7 @@ This document catalogs all API endpoints, their status, and required fixes.
 ### **2. SEO Analysis APIs**
 
 #### **`POST /api/analyze/seo`** ⚠️ PARTIAL
+
 - **File**: `src/app/api/analyze/seo/route.ts`
 - **Purpose**: SEO-focused analysis
 - **Status**: ⚠️ Partially working
@@ -125,6 +136,7 @@ This document catalogs all API endpoints, their status, and required fixes.
 ### **1. Legacy Analysis APIs**
 
 #### **`POST /api/analyze/step-by-step`** ❌ BROKEN
+
 - **File**: `src/app/api/analyze/step-by-step/route.ts`
 - **Purpose**: Step-by-step analysis
 - **Status**: ❌ Broken
@@ -134,6 +146,7 @@ This document catalogs all API endpoints, their status, and required fixes.
   - Needs updating to new service layer
 
 #### **`POST /api/analyze/website/enhanced`** ❌ BROKEN
+
 - **File**: `src/app/api/analyze/website/enhanced/route.ts`
 - **Purpose**: Enhanced website analysis
 - **Status**: ❌ Broken
@@ -145,6 +158,7 @@ This document catalogs all API endpoints, their status, and required fixes.
 ### **2. Report Management APIs**
 
 #### **`GET/POST /api/reports`** ❌ BROKEN
+
 - **File**: `src/app/api/reports/route.ts`
 - **Purpose**: Report management
 - **Status**: ❌ Broken
@@ -212,37 +226,40 @@ This document catalogs all API endpoints, their status, and required fixes.
 
 ## 📊 **API STATUS SUMMARY**
 
-| Endpoint | Status | Priority | Notes |
-|----------|--------|----------|-------|
-| `/api/analyze/website` | ✅ Working | Low | Core functionality |
-| `/api/analyze/phase-new` | ⚠️ Partial | **High** | Phase 1 works, 2-3 broken |
-| `/api/analyze/focused` | ✅ Working | Low | New focused analysis |
-| `/api/scrape-page` | ✅ Working | Low | Content extraction |
-| `/api/analyze/page` | ✅ Working | Low | Page analysis |
-| `/api/health` | ✅ Working | Low | System health |
-| `/api/analyze/enhanced` | ⚠️ Partial | Medium | Needs updating |
-| `/api/analyze/comprehensive` | ⚠️ Partial | Medium | External APIs need fixing |
-| `/api/analyze/controlled` | ⚠️ Partial | Medium | Step execution issues |
-| `/api/analyze/seo` | ⚠️ Partial | Medium | Google APIs need setup |
-| `/api/analyze/step-by-step` | ❌ Broken | Low | Legacy, can remove |
-| `/api/analyze/website/enhanced` | ❌ Broken | Low | Duplicate, can remove |
-| `/api/reports` | ❌ Broken | **High** | Needs database backend |
+| Endpoint                        | Status     | Priority | Notes                     |
+| ------------------------------- | ---------- | -------- | ------------------------- |
+| `/api/analyze/website`          | ✅ Working | Low      | Core functionality        |
+| `/api/analyze/phase-new`        | ⚠️ Partial | **High** | Phase 1 works, 2-3 broken |
+| `/api/analyze/focused`          | ✅ Working | Low      | New focused analysis      |
+| `/api/scrape-page`              | ✅ Working | Low      | Content extraction        |
+| `/api/analyze/page`             | ✅ Working | Low      | Page analysis             |
+| `/api/health`                   | ✅ Working | Low      | System health             |
+| `/api/analyze/enhanced`         | ⚠️ Partial | Medium   | Needs updating            |
+| `/api/analyze/comprehensive`    | ⚠️ Partial | Medium   | External APIs need fixing |
+| `/api/analyze/controlled`       | ⚠️ Partial | Medium   | Step execution issues     |
+| `/api/analyze/seo`              | ⚠️ Partial | Medium   | Google APIs need setup    |
+| `/api/analyze/step-by-step`     | ❌ Broken  | Low      | Legacy, can remove        |
+| `/api/analyze/website/enhanced` | ❌ Broken  | Low      | Duplicate, can remove     |
+| `/api/reports`                  | ❌ Broken  | **High** | Needs database backend    |
 
 ---
 
 ## 🚀 **RECOMMENDED ACTION PLAN**
 
 ### **Phase 1: Fix Critical Issues (Week 1)**
+
 1. Fix Prisma connection errors in Phase 2 & 3
 2. Implement proper report management backend
 3. Consolidate duplicate endpoints
 
 ### **Phase 2: Complete Features (Week 2)**
+
 4. Fix Google Tools integration
 5. Update enhanced analysis to use new service layer
 6. Add comprehensive error handling
 
 ### **Phase 3: Optimization (Week 3)**
+
 7. Add rate limiting and input validation
 8. Performance optimization
 9. Documentation updates

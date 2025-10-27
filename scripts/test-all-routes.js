@@ -14,19 +14,43 @@ const routes = [
   { url: 'http://localhost:3000/dashboard/analysis', name: 'Analysis Hub' },
 
   // Analysis Tools
-  { url: 'http://localhost:3000/dashboard/website-analysis', name: 'Website Analysis' },
-  { url: 'http://localhost:3000/dashboard/comprehensive-analysis', name: 'Comprehensive Analysis' },
+  {
+    url: 'http://localhost:3000/dashboard/website-analysis',
+    name: 'Website Analysis',
+  },
+  {
+    url: 'http://localhost:3000/dashboard/comprehensive-analysis',
+    name: 'Comprehensive Analysis',
+  },
   { url: 'http://localhost:3000/dashboard/seo-analysis', name: 'SEO Analysis' },
-  { url: 'http://localhost:3000/dashboard/enhanced-analysis', name: 'Enhanced Analysis' },
-  { url: 'http://localhost:3000/dashboard/step-by-step-analysis', name: 'Step-by-Step Analysis' },
-  { url: 'http://localhost:3000/dashboard/page-analysis', name: 'Page Analysis' },
-  { url: 'http://localhost:3000/dashboard/evaluation-guide', name: 'Evaluation Guide' },
-  { url: 'http://localhost:3000/dashboard/executive-reports', name: 'Executive Reports' },
+  {
+    url: 'http://localhost:3000/dashboard/enhanced-analysis',
+    name: 'Enhanced Analysis',
+  },
+  {
+    url: 'http://localhost:3000/dashboard/step-by-step-analysis',
+    name: 'Step-by-Step Analysis',
+  },
+  {
+    url: 'http://localhost:3000/dashboard/page-analysis',
+    name: 'Page Analysis',
+  },
+  {
+    url: 'http://localhost:3000/dashboard/evaluation-guide',
+    name: 'Evaluation Guide',
+  },
+  {
+    url: 'http://localhost:3000/dashboard/executive-reports',
+    name: 'Executive Reports',
+  },
 
   // Auth Pages
   { url: 'http://localhost:3000/auth/signin', name: 'Sign In' },
   { url: 'http://localhost:3000/auth/signup', name: 'Sign Up' },
-  { url: 'http://localhost:3000/auth/forgot-password', name: 'Forgot Password' },
+  {
+    url: 'http://localhost:3000/auth/forgot-password',
+    name: 'Forgot Password',
+  },
 
   // Test Pages
   { url: 'http://localhost:3000/test', name: 'Test Page' },
@@ -50,7 +74,12 @@ async function testRoute(route) {
       return { success: false, route: route.name, status, error: 'Not Found' };
     } else if (status === 500) {
       console.log(`⚠️  ${route.name}: ${status} Server Error`);
-      return { success: false, route: route.name, status, error: 'Server Error' };
+      return {
+        success: false,
+        route: route.name,
+        status,
+        error: 'Server Error',
+      };
     } else {
       console.log(`⚠️  ${route.name}: ${status} ${statusText}`);
       return { success: true, route: route.name, status, warning: statusText };
@@ -66,7 +95,7 @@ async function testAllRoutes() {
   console.log('Make sure the dev server is running: npm run dev:test\n');
 
   // Wait a bit for server to be ready
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   const results = [];
 
@@ -75,7 +104,7 @@ async function testAllRoutes() {
     results.push(result);
 
     // Small delay between requests
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
   // Summary
@@ -83,15 +112,15 @@ async function testAllRoutes() {
   console.log('📊 Summary:');
   console.log('='.repeat(60));
 
-  const successful = results.filter(r => r.success);
-  const failed = results.filter(r => !r.success);
+  const successful = results.filter((r) => r.success);
+  const failed = results.filter((r) => !r.success);
 
   console.log(`✅ Successful: ${successful.length}/${routes.length}`);
   console.log(`❌ Failed: ${failed.length}/${routes.length}`);
 
   if (failed.length > 0) {
     console.log('\n❌ Failed Routes:');
-    failed.forEach(r => {
+    failed.forEach((r) => {
       console.log(`   - ${r.route}: ${r.error || r.status}`);
     });
   }
@@ -130,4 +159,3 @@ async function main() {
 
 // Run the tests
 main();
-

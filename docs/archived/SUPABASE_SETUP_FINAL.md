@@ -56,6 +56,7 @@ npm run setup:users
 ```
 
 This will create **3 users** with properly hashed passwords:
+
 1. Shayne Roy (Admin) - shayne+1@devpipeline.com
 2. SK Roy (User) - sk@zerobarriers.io
 3. S Roy (User) - shayne+2@devpipeline.com
@@ -68,6 +69,7 @@ Go to Table Editor:
 https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/editor
 
 You should see:
+
 - **"User" table** with 3 rows
 - **"Analysis" table** (empty initially)
 
@@ -78,6 +80,7 @@ You should see:
 Go to: https://zero-barriers-growth-accelerator-20-mr035qo2m.vercel.app/auth/signin
 
 Try logging in with:
+
 - shayne+1@devpipeline.com / ZBadmin123!
 
 Should work! ✅
@@ -85,4 +88,3 @@ Should work! ✅
 ---
 
 **Copy the SQL above, paste in Supabase SQL Editor, click "Run", then tell me what happens!** 🚀
-

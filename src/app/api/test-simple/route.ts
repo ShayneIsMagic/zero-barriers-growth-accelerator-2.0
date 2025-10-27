@@ -6,12 +6,15 @@ export async function GET(_request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Simple API test successful',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

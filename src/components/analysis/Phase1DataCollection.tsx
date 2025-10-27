@@ -3,7 +3,13 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 // import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -23,64 +29,188 @@ const ASSESSMENT_TYPES = {
   'content-comparison': {
     name: 'Content Comparison',
     description: 'Compare existing vs proposed content',
-    keywords: ['compare', 'comparison', 'versus', 'vs', 'difference', 'improvement'],
+    keywords: [
+      'compare',
+      'comparison',
+      'versus',
+      'vs',
+      'difference',
+      'improvement',
+    ],
     tables: ['analyses', 'content_comparisons'],
-    variables: ['title', 'metaDescription', 'wordCount', 'extractedKeywords', 'headings', 'cleanText']
+    variables: [
+      'title',
+      'metaDescription',
+      'wordCount',
+      'extractedKeywords',
+      'headings',
+      'cleanText',
+    ],
   },
   'golden-circle': {
     name: 'Golden Circle Analysis',
     description: 'Simon Sinek Golden Circle framework',
-    keywords: ['why', 'how', 'what', 'who', 'purpose', 'mission', 'vision', 'values'],
+    keywords: [
+      'why',
+      'how',
+      'what',
+      'who',
+      'purpose',
+      'mission',
+      'vision',
+      'values',
+    ],
     tables: ['analyses', 'golden_circle_analyses'],
-    variables: ['why', 'how', 'what', 'who', 'purpose', 'mission', 'values', 'target_audience']
+    variables: [
+      'why',
+      'how',
+      'what',
+      'who',
+      'purpose',
+      'mission',
+      'values',
+      'target_audience',
+    ],
   },
   'elements-value-b2c': {
     name: 'B2C Elements of Value',
     description: 'Bain & Company B2C Elements of Value',
-    keywords: ['functional', 'emotional', 'life-changing', 'social-impact', 'value', 'benefit', 'customer'],
+    keywords: [
+      'functional',
+      'emotional',
+      'life-changing',
+      'social-impact',
+      'value',
+      'benefit',
+      'customer',
+    ],
     tables: ['analyses', 'elements_of_value_b2c'],
-    variables: ['functional_elements', 'emotional_elements', 'life_changing_elements', 'social_impact_elements']
+    variables: [
+      'functional_elements',
+      'emotional_elements',
+      'life_changing_elements',
+      'social_impact_elements',
+    ],
   },
   'elements-value-b2b': {
     name: 'B2B Elements of Value',
     description: 'Bain & Company B2B Elements of Value',
-    keywords: ['functional', 'emotional', 'life-changing', 'social-impact', 'business', 'enterprise', 'corporate'],
+    keywords: [
+      'functional',
+      'emotional',
+      'life-changing',
+      'social-impact',
+      'business',
+      'enterprise',
+      'corporate',
+    ],
     tables: ['analyses', 'elements_of_value_b2b'],
-    variables: ['functional_elements', 'emotional_elements', 'life_changing_elements', 'social_impact_elements', 'business_elements']
+    variables: [
+      'functional_elements',
+      'emotional_elements',
+      'life_changing_elements',
+      'social_impact_elements',
+      'business_elements',
+    ],
   },
   'clifton-strengths': {
     name: 'CliftonStrengths Analysis',
     description: 'Gallup CliftonStrengths framework',
-    keywords: ['executing', 'influencing', 'relationship-building', 'strategic-thinking', 'strengths', 'talents'],
+    keywords: [
+      'executing',
+      'influencing',
+      'relationship-building',
+      'strategic-thinking',
+      'strengths',
+      'talents',
+    ],
     tables: ['analyses', 'clifton_strengths_analyses'],
-    variables: ['executing_strengths', 'influencing_strengths', 'relationship_building_strengths', 'strategic_thinking_strengths']
+    variables: [
+      'executing_strengths',
+      'influencing_strengths',
+      'relationship_building_strengths',
+      'strategic_thinking_strengths',
+    ],
   },
-  'comprehensive': {
+  comprehensive: {
     name: 'Comprehensive Analysis',
     description: 'Multi-framework comprehensive analysis',
-    keywords: ['comprehensive', 'complete', 'full', 'detailed', 'thorough', 'analysis'],
+    keywords: [
+      'comprehensive',
+      'complete',
+      'full',
+      'detailed',
+      'thorough',
+      'analysis',
+    ],
     tables: ['analyses', 'comprehensive_analyses'],
-    variables: ['all_frameworks', 'golden_circle', 'elements_of_value', 'clifton_strengths', 'seo_analysis', 'performance_analysis']
+    variables: [
+      'all_frameworks',
+      'golden_circle',
+      'elements_of_value',
+      'clifton_strengths',
+      'seo_analysis',
+      'performance_analysis',
+    ],
   },
   'seo-analysis': {
     name: 'SEO Analysis',
     description: 'Search engine optimization analysis',
-    keywords: ['seo', 'search', 'optimization', 'ranking', 'keywords', 'meta', 'title', 'description'],
+    keywords: [
+      'seo',
+      'search',
+      'optimization',
+      'ranking',
+      'keywords',
+      'meta',
+      'title',
+      'description',
+    ],
     tables: ['analyses', 'seo_analyses'],
-    variables: ['meta_tags', 'keywords', 'headings', 'internal_links', 'external_links', 'images', 'schema_markup']
+    variables: [
+      'meta_tags',
+      'keywords',
+      'headings',
+      'internal_links',
+      'external_links',
+      'images',
+      'schema_markup',
+    ],
   },
   'lighthouse-performance': {
     name: 'Lighthouse Performance',
     description: 'Core Web Vitals and performance analysis',
-    keywords: ['performance', 'speed', 'lighthouse', 'core-web-vitals', 'loading', 'optimization'],
+    keywords: [
+      'performance',
+      'speed',
+      'lighthouse',
+      'core-web-vitals',
+      'loading',
+      'optimization',
+    ],
     tables: ['analyses', 'lighthouse_analyses'],
-    variables: ['lcp', 'fid', 'cls', 'performance_score', 'accessibility_score', 'best_practices_score', 'seo_score']
-  }
+    variables: [
+      'lcp',
+      'fid',
+      'cls',
+      'performance_score',
+      'accessibility_score',
+      'best_practices_score',
+      'seo_score',
+    ],
+  },
 };
 
-export function Phase1DataCollection({ onDataReceived, onContinue, initialData }: Phase1DataCollectionProps) {
-  const [uploadMethod, setUploadMethod] = useState<'url' | 'paste' | 'upload'>('url');
-  const [selectedAssessment, setSelectedAssessment] = useState<string>('content-comparison');
+export function Phase1DataCollection({
+  onDataReceived,
+  onContinue,
+  initialData,
+}: Phase1DataCollectionProps) {
+  const [uploadMethod, setUploadMethod] = useState<'url' | 'paste' | 'upload'>(
+    'url'
+  );
+  const [selectedAssessment, setSelectedAssessment] =
+    useState<string>('content-comparison');
   const [url, setUrl] = useState('');
   const [pastedData, setPastedData] = useState('');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -101,13 +231,16 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
       const response = await fetch('/api/scrape-content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: url.trim() })
+        body: JSON.stringify({ url: url.trim() }),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        const processedData = processCollectedData(data.data, selectedAssessment);
+        const processedData = processCollectedData(
+          data.data,
+          selectedAssessment
+        );
         setCollectedData(processedData);
         onDataReceived(processedData);
         toast.success('Data collected and processed successfully');
@@ -115,7 +248,9 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
         setValidationErrors([data.error || 'Failed to collect data from URL']);
       }
     } catch (error) {
-      setValidationErrors([`Error: ${error instanceof Error ? error.message : 'Unknown error'}`]);
+      setValidationErrors([
+        `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      ]);
     } finally {
       setIsProcessing(false);
     }
@@ -142,17 +277,22 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
           images: [],
           internalLinks: [],
           externalLinks: [],
-          scrapedAt: new Date().toISOString()
+          scrapedAt: new Date().toISOString(),
         };
       }
 
-      const processedData = processCollectedData(parsedData, selectedAssessment);
+      const processedData = processCollectedData(
+        parsedData,
+        selectedAssessment
+      );
       setCollectedData(processedData);
       onDataReceived(processedData);
       toast.success('Pasted data processed successfully');
       setValidationErrors([]);
     } catch (error) {
-      setValidationErrors([`Error processing pasted data: ${error instanceof Error ? error.message : 'Unknown error'}`]);
+      setValidationErrors([
+        `Error processing pasted data: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      ]);
     }
   };
 
@@ -190,21 +330,27 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
           images: [],
           internalLinks: [],
           externalLinks: [],
-          scrapedAt: new Date().toISOString()
+          scrapedAt: new Date().toISOString(),
         };
-        const finalData = processCollectedData(processedData, selectedAssessment);
+        const finalData = processCollectedData(
+          processedData,
+          selectedAssessment
+        );
         setCollectedData(finalData);
         onDataReceived(finalData);
         toast.success('Text file uploaded and processed successfully');
       };
       reader.readAsText(file);
     } else {
-      setValidationErrors(['Unsupported file type. Please upload JSON, TXT, or HTML files.']);
+      setValidationErrors([
+        'Unsupported file type. Please upload JSON, TXT, or HTML files.',
+      ]);
     }
   };
 
   const processCollectedData = (rawData: any, assessmentType: string) => {
-    const config = ASSESSMENT_TYPES[assessmentType as keyof typeof ASSESSMENT_TYPES];
+    const config =
+      ASSESSMENT_TYPES[assessmentType as keyof typeof ASSESSMENT_TYPES];
     if (!config) return rawData;
 
     // Map collected data to assessment-specific variables
@@ -214,17 +360,24 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
       assessmentConfig: config,
       mappedVariables: {},
       tableMapping: {},
-      keywordMatches: []
+      keywordMatches: [],
     };
 
     // Map variables based on assessment type
-    config.variables.forEach(variable => {
-      processedData.mappedVariables[variable] = mapVariableToData(variable, rawData);
+    config.variables.forEach((variable) => {
+      processedData.mappedVariables[variable] = mapVariableToData(
+        variable,
+        rawData
+      );
     });
 
     // Map to database tables
-    config.tables.forEach(table => {
-      processedData.tableMapping[table] = mapDataToTable(table, rawData, assessmentType);
+    config.tables.forEach((table) => {
+      processedData.tableMapping[table] = mapDataToTable(
+        table,
+        rawData,
+        assessmentType
+      );
     });
 
     // Find keyword matches
@@ -244,7 +397,17 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
       case 'extractedKeywords':
         return data.extractedKeywords || data.seo?.extractedKeywords || [];
       case 'headings':
-        return data.headings || data.seo?.headings || { h1: [], h2: [], h3: [], h4: [], h5: [], h6: [] };
+        return (
+          data.headings ||
+          data.seo?.headings || {
+            h1: [],
+            h2: [],
+            h3: [],
+            h4: [],
+            h5: [],
+            h6: [],
+          }
+        );
       case 'cleanText':
         return data.cleanText || '';
       case 'why':
@@ -287,7 +450,7 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
       title: data.title,
       assessment_type: assessmentType,
       created_at: new Date().toISOString(),
-      raw_data: data
+      raw_data: data,
     };
 
     switch (table) {
@@ -296,14 +459,14 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
           ...baseData,
           content: JSON.stringify(data),
           score: calculateOverallScore(data),
-          status: 'completed'
+          status: 'completed',
         };
       case 'content_comparisons':
         return {
           ...baseData,
           existing_content: data.cleanText,
           word_count: data.wordCount,
-          keywords: data.extractedKeywords
+          keywords: data.extractedKeywords,
         };
       case 'golden_circle_analyses':
         return {
@@ -311,32 +474,68 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
           why_data: extractFrameworkData(data, 'why'),
           how_data: extractFrameworkData(data, 'how'),
           what_data: extractFrameworkData(data, 'what'),
-          who_data: extractFrameworkData(data, 'who')
+          who_data: extractFrameworkData(data, 'who'),
         };
       case 'elements_of_value_b2c':
         return {
           ...baseData,
-          functional_elements: extractElementsOfValue(data, 'functional_elements'),
-          emotional_elements: extractElementsOfValue(data, 'emotional_elements'),
-          life_changing_elements: extractElementsOfValue(data, 'life_changing_elements'),
-          social_impact_elements: extractElementsOfValue(data, 'social_impact_elements')
+          functional_elements: extractElementsOfValue(
+            data,
+            'functional_elements'
+          ),
+          emotional_elements: extractElementsOfValue(
+            data,
+            'emotional_elements'
+          ),
+          life_changing_elements: extractElementsOfValue(
+            data,
+            'life_changing_elements'
+          ),
+          social_impact_elements: extractElementsOfValue(
+            data,
+            'social_impact_elements'
+          ),
         };
       case 'elements_of_value_b2b':
         return {
           ...baseData,
-          functional_elements: extractElementsOfValue(data, 'functional_elements'),
-          emotional_elements: extractElementsOfValue(data, 'emotional_elements'),
-          life_changing_elements: extractElementsOfValue(data, 'life_changing_elements'),
-          social_impact_elements: extractElementsOfValue(data, 'social_impact_elements'),
-          business_elements: extractElementsOfValue(data, 'business_elements')
+          functional_elements: extractElementsOfValue(
+            data,
+            'functional_elements'
+          ),
+          emotional_elements: extractElementsOfValue(
+            data,
+            'emotional_elements'
+          ),
+          life_changing_elements: extractElementsOfValue(
+            data,
+            'life_changing_elements'
+          ),
+          social_impact_elements: extractElementsOfValue(
+            data,
+            'social_impact_elements'
+          ),
+          business_elements: extractElementsOfValue(data, 'business_elements'),
         };
       case 'clifton_strengths_analyses':
         return {
           ...baseData,
-          executing_strengths: extractCliftonStrengths(data, 'executing_strengths'),
-          influencing_strengths: extractCliftonStrengths(data, 'influencing_strengths'),
-          relationship_building_strengths: extractCliftonStrengths(data, 'relationship_building_strengths'),
-          strategic_thinking_strengths: extractCliftonStrengths(data, 'strategic_thinking_strengths')
+          executing_strengths: extractCliftonStrengths(
+            data,
+            'executing_strengths'
+          ),
+          influencing_strengths: extractCliftonStrengths(
+            data,
+            'influencing_strengths'
+          ),
+          relationship_building_strengths: extractCliftonStrengths(
+            data,
+            'relationship_building_strengths'
+          ),
+          strategic_thinking_strengths: extractCliftonStrengths(
+            data,
+            'strategic_thinking_strengths'
+          ),
         };
       case 'seo_analyses':
         return {
@@ -346,8 +545,8 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
           headings: data.seo?.headings || {},
           links: {
             internal: data.seo?.internalLinks || [],
-            external: data.seo?.externalLinks || []
-          }
+            external: data.seo?.externalLinks || [],
+          },
         };
       case 'lighthouse_analyses':
         return {
@@ -356,8 +555,8 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
           core_web_vitals: {
             lcp: data.performance?.lcp || 0,
             fid: data.performance?.fid || 0,
-            cls: data.performance?.cls || 0
-          }
+            cls: data.performance?.cls || 0,
+          },
         };
       default:
         return baseData;
@@ -370,7 +569,7 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
     return {
       score: 0,
       evidence: [],
-      recommendations: []
+      recommendations: [],
     };
   };
 
@@ -386,7 +585,9 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
 
   const findKeywordMatches = (data: any, keywords: string[]) => {
     const content = (data.cleanText || '').toLowerCase();
-    return keywords.filter(keyword => content.includes(keyword.toLowerCase()));
+    return keywords.filter((keyword) =>
+      content.includes(keyword.toLowerCase())
+    );
   };
 
   const calculateOverallScore = (data: any) => {
@@ -401,13 +602,14 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
   };
 
   const extractKeywords = (text: string): string[] => {
-    const words = text.toLowerCase()
+    const words = text
+      .toLowerCase()
       .replace(/[^\w\s]/g, ' ')
       .split(/\s+/)
-      .filter(word => word.length > 3);
+      .filter((word) => word.length > 3);
 
     const wordFreq: Record<string, number> = {};
-    words.forEach(word => {
+    words.forEach((word) => {
       wordFreq[word] = (wordFreq[word] || 0) + 1;
     });
 
@@ -423,39 +625,46 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
+    <div className="mx-auto max-w-6xl space-y-6 p-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-2xl">
             <Database className="h-6 w-6" />
             Phase 1 Data Collection & Assessment Mapping
           </CardTitle>
           <CardDescription>
-            Collect content and map it to specific assessment variables and database tables.
-            Choose your assessment type to see what data will be collected and analyzed.
+            Collect content and map it to specific assessment variables and
+            database tables. Choose your assessment type to see what data will
+            be collected and analyzed.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Assessment Type Selection */}
           <div className="space-y-4">
-            <Label className="text-lg font-semibold">Select Assessment Type:</Label>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <Label className="text-lg font-semibold">
+              Select Assessment Type:
+            </Label>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               {Object.entries(ASSESSMENT_TYPES).map(([key, config]) => (
                 <Card
                   key={key}
                   className={`cursor-pointer transition-all ${
                     selectedAssessment === key
-                      ? 'ring-2 ring-primary bg-primary/5'
+                      ? 'bg-primary/5 ring-2 ring-primary'
                       : 'hover:bg-muted/50'
                   }`}
                   onClick={() => setSelectedAssessment(key)}
                 >
                   <CardContent className="p-4">
                     <div className="text-sm font-medium">{config.name}</div>
-                    <div className="text-xs text-muted-foreground mt-1">{config.description}</div>
-                    <div className="flex flex-wrap gap-1 mt-2">
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      {config.description}
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-1">
                       {config.keywords.slice(0, 3).map((keyword, i) => (
-                        <Badge key={i} variant="secondary" className="text-xs">{keyword}</Badge>
+                        <Badge key={i} variant="secondary" className="text-xs">
+                          {keyword}
+                        </Badge>
                       ))}
                     </div>
                   </CardContent>
@@ -494,8 +703,10 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
             {/* Temporary replacement with select */}
             <select
               value={uploadMethod}
-              onChange={(e) => setUploadMethod(e.target.value as 'url' | 'paste' | 'upload')}
-              className="w-full p-2 border rounded-md"
+              onChange={(e) =>
+                setUploadMethod(e.target.value as 'url' | 'paste' | 'upload')
+              }
+              className="w-full rounded-md border p-2"
             >
               <option value="url">Collect from URL</option>
               <option value="paste">Paste Content</option>
@@ -508,7 +719,7 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                <ul className="list-disc list-inside">
+                <ul className="list-inside list-disc">
                   {validationErrors.map((error, index) => (
                     <li key={index}>{error}</li>
                   ))}
@@ -569,7 +780,7 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
                   type="file"
                   accept=".json,.txt,.html"
                   onChange={handleFileUpload}
-                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/80"
+                  className="file:mr-4 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-foreground hover:file:bg-primary/80"
                 />
               </div>
             </div>
@@ -577,11 +788,11 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
 
           {/* Side-by-Side Data Collection and Assessment View */}
           {collectedData && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {/* Left Side: Collected Data */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-lg">
                     <Database className="h-5 w-5 text-blue-500" />
                     Collected Data
                   </CardTitle>
@@ -599,36 +810,49 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
 
                     <TabsContent value="summary" className="space-y-3">
                       <div className="grid grid-cols-2 gap-3 text-sm">
-                        <div className="p-2 bg-muted rounded">
+                        <div className="rounded bg-muted p-2">
                           <div className="font-medium">Title</div>
-                          <div className="text-xs text-muted-foreground truncate">{collectedData.title || 'N/A'}</div>
+                          <div className="truncate text-xs text-muted-foreground">
+                            {collectedData.title || 'N/A'}
+                          </div>
                         </div>
-                        <div className="p-2 bg-muted rounded">
+                        <div className="rounded bg-muted p-2">
                           <div className="font-medium">Word Count</div>
-                          <div className="text-xs text-muted-foreground">{collectedData.wordCount || 0}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {collectedData.wordCount || 0}
+                          </div>
                         </div>
-                        <div className="p-2 bg-muted rounded">
+                        <div className="rounded bg-muted p-2">
                           <div className="font-medium">Keywords</div>
-                          <div className="text-xs text-muted-foreground">{collectedData.extractedKeywords?.length || 0}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {collectedData.extractedKeywords?.length || 0}
+                          </div>
                         </div>
-                        <div className="p-2 bg-muted rounded">
+                        <div className="rounded bg-muted p-2">
                           <div className="font-medium">Images</div>
-                          <div className="text-xs text-muted-foreground">{collectedData.seo?.images?.length || 0}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {collectedData.seo?.images?.length || 0}
+                          </div>
                         </div>
-                        <div className="p-2 bg-muted rounded">
+                        <div className="rounded bg-muted p-2">
                           <div className="font-medium">Internal Links</div>
-                          <div className="text-xs text-muted-foreground">{collectedData.seo?.internalLinks?.length || 0}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {collectedData.seo?.internalLinks?.length || 0}
+                          </div>
                         </div>
-                        <div className="p-2 bg-muted rounded">
+                        <div className="rounded bg-muted p-2">
                           <div className="font-medium">External Links</div>
-                          <div className="text-xs text-muted-foreground">{collectedData.seo?.externalLinks?.length || 0}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {collectedData.seo?.externalLinks?.length || 0}
+                          </div>
                         </div>
                       </div>
                     </TabsContent>
 
                     <TabsContent value="content" className="space-y-3">
-                      <div className="max-h-40 overflow-y-auto text-sm bg-muted p-3 rounded">
-                        {collectedData.cleanText?.substring(0, 1000) || 'No content available'}
+                      <div className="max-h-40 overflow-y-auto rounded bg-muted p-3 text-sm">
+                        {collectedData.cleanText?.substring(0, 1000) ||
+                          'No content available'}
                         {collectedData.cleanText?.length > 1000 && '...'}
                       </div>
                       <div className="text-xs text-muted-foreground">
@@ -638,12 +862,32 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
 
                     <TabsContent value="seo" className="space-y-3">
                       <div className="space-y-2 text-sm">
-                        <div><strong>Meta Description:</strong> {collectedData.seo?.metaDescription || 'N/A'}</div>
-                        <div><strong>H1 Tags:</strong> {collectedData.seo?.headings?.h1?.length || 0}</div>
-                        <div><strong>H2 Tags:</strong> {collectedData.seo?.headings?.h2?.length || 0}</div>
-                        <div><strong>H3 Tags:</strong> {collectedData.seo?.headings?.h3?.length || 0}</div>
-                        <div><strong>Schema Types:</strong> {collectedData.structuredData?.schemaTypes?.join(', ') || 'None'}</div>
-                        <div><strong>Load Time:</strong> {collectedData.performance?.loadTime || 0}ms</div>
+                        <div>
+                          <strong>Meta Description:</strong>{' '}
+                          {collectedData.seo?.metaDescription || 'N/A'}
+                        </div>
+                        <div>
+                          <strong>H1 Tags:</strong>{' '}
+                          {collectedData.seo?.headings?.h1?.length || 0}
+                        </div>
+                        <div>
+                          <strong>H2 Tags:</strong>{' '}
+                          {collectedData.seo?.headings?.h2?.length || 0}
+                        </div>
+                        <div>
+                          <strong>H3 Tags:</strong>{' '}
+                          {collectedData.seo?.headings?.h3?.length || 0}
+                        </div>
+                        <div>
+                          <strong>Schema Types:</strong>{' '}
+                          {collectedData.structuredData?.schemaTypes?.join(
+                            ', '
+                          ) || 'None'}
+                        </div>
+                        <div>
+                          <strong>Load Time:</strong>{' '}
+                          {collectedData.performance?.loadTime || 0}ms
+                        </div>
                       </div>
                     </TabsContent>
                   </Tabs>
@@ -653,12 +897,17 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
               {/* Right Side: Assessment Mapping */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-lg">
                     <BarChart3 className="h-5 w-5 text-green-500" />
                     Assessment Mapping
                   </CardTitle>
                   <CardDescription>
-                    {ASSESSMENT_TYPES[selectedAssessment as keyof typeof ASSESSMENT_TYPES].name} - Variables & Tables
+                    {
+                      ASSESSMENT_TYPES[
+                        selectedAssessment as keyof typeof ASSESSMENT_TYPES
+                      ].name
+                    }{' '}
+                    - Variables & Tables
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -671,28 +920,49 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
 
                     <TabsContent value="variables" className="space-y-3">
                       <div className="space-y-2">
-                        <h4 className="font-semibold text-sm">Required Variables</h4>
+                        <h4 className="text-sm font-semibold">
+                          Required Variables
+                        </h4>
                         <div className="space-y-2">
-                          {ASSESSMENT_TYPES[selectedAssessment as keyof typeof ASSESSMENT_TYPES].variables.map((variable) => {
-                            const value = collectedData.mappedVariables?.[variable];
-                            const hasValue = value && value !== 'N/A' && value !== '' && (Array.isArray(value) ? value.length > 0 : true);
+                          {ASSESSMENT_TYPES[
+                            selectedAssessment as keyof typeof ASSESSMENT_TYPES
+                          ].variables.map((variable) => {
+                            const value =
+                              collectedData.mappedVariables?.[variable];
+                            const hasValue =
+                              value &&
+                              value !== 'N/A' &&
+                              value !== '' &&
+                              (Array.isArray(value) ? value.length > 0 : true);
 
                             return (
-                              <div key={variable} className={`p-2 rounded border-l-4 ${
-                                hasValue ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'
-                              }`}>
+                              <div
+                                key={variable}
+                                className={`rounded border-l-4 p-2 ${
+                                  hasValue
+                                    ? 'border-green-500 bg-green-50'
+                                    : 'border-red-500 bg-red-50'
+                                }`}
+                              >
                                 <div className="flex items-center justify-between">
-                                  <span className="font-medium text-sm">{variable}</span>
-                                  <Badge variant={hasValue ? 'default' : 'destructive'}>
+                                  <span className="text-sm font-medium">
+                                    {variable}
+                                  </span>
+                                  <Badge
+                                    variant={
+                                      hasValue ? 'default' : 'destructive'
+                                    }
+                                  >
                                     {hasValue ? 'Found' : 'Missing'}
                                   </Badge>
                                 </div>
-                                <div className="text-xs text-muted-foreground mt-1">
-                                  {hasValue ? (
-                                    typeof value === 'object' ?
-                                      `${Array.isArray(value) ? value.length : Object.keys(value).length} items` :
-                                      String(value).substring(0, 50) + (String(value).length > 50 ? '...' : '')
-                                  ) : 'No data available'}
+                                <div className="mt-1 text-xs text-muted-foreground">
+                                  {hasValue
+                                    ? typeof value === 'object'
+                                      ? `${Array.isArray(value) ? value.length : Object.keys(value).length} items`
+                                      : String(value).substring(0, 50) +
+                                        (String(value).length > 50 ? '...' : '')
+                                    : 'No data available'}
                                 </div>
                               </div>
                             );
@@ -703,20 +973,36 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
 
                     <TabsContent value="tables" className="space-y-3">
                       <div className="space-y-2">
-                        <h4 className="font-semibold text-sm">Database Tables</h4>
+                        <h4 className="text-sm font-semibold">
+                          Database Tables
+                        </h4>
                         <div className="space-y-2">
-                          {ASSESSMENT_TYPES[selectedAssessment as keyof typeof ASSESSMENT_TYPES].tables.map((table) => {
-                            const tableData = collectedData.tableMapping?.[table];
-                            const fieldCount = tableData ? Object.keys(tableData).length : 0;
+                          {ASSESSMENT_TYPES[
+                            selectedAssessment as keyof typeof ASSESSMENT_TYPES
+                          ].tables.map((table) => {
+                            const tableData =
+                              collectedData.tableMapping?.[table];
+                            const fieldCount = tableData
+                              ? Object.keys(tableData).length
+                              : 0;
 
                             return (
-                              <div key={table} className="p-3 border rounded-lg">
+                              <div
+                                key={table}
+                                className="rounded-lg border p-3"
+                              >
                                 <div className="flex items-center justify-between">
-                                  <span className="font-medium text-sm">{table}</span>
-                                  <Badge variant="secondary">{fieldCount} fields</Badge>
+                                  <span className="text-sm font-medium">
+                                    {table}
+                                  </span>
+                                  <Badge variant="secondary">
+                                    {fieldCount} fields
+                                  </Badge>
                                 </div>
-                                <div className="text-xs text-muted-foreground mt-1">
-                                  {fieldCount > 0 ? 'Ready for database insertion' : 'No data mapped'}
+                                <div className="mt-1 text-xs text-muted-foreground">
+                                  {fieldCount > 0
+                                    ? 'Ready for database insertion'
+                                    : 'No data mapped'}
                                 </div>
                               </div>
                             );
@@ -727,29 +1013,56 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
 
                     <TabsContent value="keywords" className="space-y-3">
                       <div className="space-y-2">
-                        <h4 className="font-semibold text-sm">Keyword Analysis</h4>
+                        <h4 className="text-sm font-semibold">
+                          Keyword Analysis
+                        </h4>
                         <div className="space-y-3">
                           <div>
-                            <div className="text-sm font-medium mb-2">Matched Keywords</div>
+                            <div className="mb-2 text-sm font-medium">
+                              Matched Keywords
+                            </div>
                             <div className="flex flex-wrap gap-1">
-                              {collectedData.keywordMatches?.map((keyword: string, index: number) => (
-                                <Badge key={index} variant="default" className="text-xs">{keyword}</Badge>
-                              ))}
+                              {collectedData.keywordMatches?.map(
+                                (keyword: string, index: number) => (
+                                  <Badge
+                                    key={index}
+                                    variant="default"
+                                    className="text-xs"
+                                  >
+                                    {keyword}
+                                  </Badge>
+                                )
+                              )}
                             </div>
                           </div>
                           <div className="text-sm">
                             <div className="flex justify-between">
                               <span>Matches Found:</span>
-                              <span className="font-medium">{collectedData.keywordMatches?.length || 0}</span>
+                              <span className="font-medium">
+                                {collectedData.keywordMatches?.length || 0}
+                              </span>
                             </div>
                             <div className="flex justify-between">
                               <span>Expected Keywords:</span>
-                              <span className="font-medium">{ASSESSMENT_TYPES[selectedAssessment as keyof typeof ASSESSMENT_TYPES].keywords.length}</span>
+                              <span className="font-medium">
+                                {
+                                  ASSESSMENT_TYPES[
+                                    selectedAssessment as keyof typeof ASSESSMENT_TYPES
+                                  ].keywords.length
+                                }
+                              </span>
                             </div>
                             <div className="flex justify-between">
                               <span>Match Rate:</span>
                               <span className="font-medium">
-                                {Math.round(((collectedData.keywordMatches?.length || 0) / ASSESSMENT_TYPES[selectedAssessment as keyof typeof ASSESSMENT_TYPES].keywords.length) * 100)}%
+                                {Math.round(
+                                  ((collectedData.keywordMatches?.length || 0) /
+                                    ASSESSMENT_TYPES[
+                                      selectedAssessment as keyof typeof ASSESSMENT_TYPES
+                                    ].keywords.length) *
+                                    100
+                                )}
+                                %
                               </span>
                             </div>
                           </div>
@@ -770,7 +1083,13 @@ export function Phase1DataCollection({ onDataReceived, onContinue, initialData }
                 size="lg"
                 className="bg-green-600 hover:bg-green-700"
               >
-                Continue to {ASSESSMENT_TYPES[selectedAssessment as keyof typeof ASSESSMENT_TYPES].name} Analysis
+                Continue to{' '}
+                {
+                  ASSESSMENT_TYPES[
+                    selectedAssessment as keyof typeof ASSESSMENT_TYPES
+                  ].name
+                }{' '}
+                Analysis
               </Button>
             </div>
           )}

@@ -18,7 +18,7 @@ import {
   B2B_PROMPT_TEMPLATE,
   B2C_PROMPT_TEMPLATE,
   CLIFTON_PROMPT_TEMPLATE,
-  GOLDEN_CIRCLE_PROMPT_TEMPLATE
+  GOLDEN_CIRCLE_PROMPT_TEMPLATE,
 } from './gemini-prompts';
 
 export interface StandardAnalysisRequest {
@@ -27,7 +27,12 @@ export interface StandardAnalysisRequest {
   proposedContent?: ContentData;
   framework: string;
   frameworkDefinition: string; // Complete markdown definition of the framework
-  analysisType: 'b2c' | 'b2b' | 'clifton-strengths' | 'golden-circle' | 'content-comparison';
+  analysisType:
+    | 'b2c'
+    | 'b2b'
+    | 'clifton-strengths'
+    | 'golden-circle'
+    | 'content-comparison';
 }
 
 export interface ContentData {
@@ -57,7 +62,13 @@ export interface ImageData {
  * Build a standard AI prompt for framework analysis
  */
 export function buildStandardPrompt(request: StandardAnalysisRequest): string {
-  const { url, existingContent, proposedContent, framework, frameworkDefinition } = request;
+  const {
+    url,
+    existingContent,
+    proposedContent,
+    framework,
+    frameworkDefinition,
+  } = request;
 
   return `# Comprehensive Content Analysis Request
 
@@ -75,17 +86,33 @@ ${url}
 **Content Preview (first 2500 characters):**
 ${existingContent.cleanText.substring(0, 2500)}
 
-${existingContent.headings ? `
+${
+  existingContent.headings
+    ? `
 **Headings Structure:**
-${existingContent.headings.slice(0, 10).map((h, i) => `${i + 1}. ${h}`).join('\n')}
-` : ''}
+${existingContent.headings
+  .slice(0, 10)
+  .map((h, i) => `${i + 1}. ${h}`)
+  .join('\n')}
+`
+    : ''
+}
 
-${existingContent.images?.length ? `
+${
+  existingContent.images?.length
+    ? `
 **Images Found:** ${existingContent.images.length} images
-${existingContent.images.slice(0, 5).map(img => `- ${img.alt || 'No alt text'}`).join('\n')}
-` : ''}
+${existingContent.images
+  .slice(0, 5)
+  .map((img) => `- ${img.alt || 'No alt text'}`)
+  .join('\n')}
+`
+    : ''
+}
 
-${proposedContent ? `
+${
+  proposedContent
+    ? `
 ---
 
 ### Proposed Content (Comparison)
@@ -97,22 +124,42 @@ ${proposedContent ? `
 **Content Preview (first 2500 characters):**
 ${proposedContent.cleanText.substring(0, 2500)}
 
-${proposedContent.headings ? `
+${
+  proposedContent.headings
+    ? `
 **Headings Structure:**
-${proposedContent.headings.slice(0, 10).map((h, i) => `${i + 1}. ${h}`).join('\n')}
-` : ''}
+${proposedContent.headings
+  .slice(0, 10)
+  .map((h, i) => `${i + 1}. ${h}`)
+  .join('\n')}
+`
+    : ''
+}
 
-${proposedContent.images?.length ? `
+${
+  proposedContent.images?.length
+    ? `
 **Images Found:** ${proposedContent.images.length} images
-${proposedContent.images.slice(0, 5).map(img => `- ${img.alt || 'No alt text'}`).join('\n')}
-` : ''}
+${proposedContent.images
+  .slice(0, 5)
+  .map((img) => `- ${img.alt || 'No alt text'}`)
+  .join('\n')}
+`
+    : ''
+}
 
-${proposedContent.links?.length ? `
+${
+  proposedContent.links?.length
+    ? `
 **Links:** ${proposedContent.links.length} total
-**External Links:** ${proposedContent.links.filter(l => l.type === 'external').length}
-**Internal Links:** ${proposedContent.links.filter(l => l.type === 'internal').length}
-` : ''}
-` : ''}
+**External Links:** ${proposedContent.links.filter((l) => l.type === 'external').length}
+**Internal Links:** ${proposedContent.links.filter((l) => l.type === 'internal').length}
+`
+    : ''
+}
+`
+    : ''
+}
 
 ---
 
@@ -413,7 +460,7 @@ export function parseAnalysisResponse(response: string): any {
     console.error('Failed to parse analysis response:', error);
     return {
       error: 'Failed to parse AI response',
-      raw: response.substring(0, 200)
+      raw: response.substring(0, 200),
     };
   }
 }
@@ -476,7 +523,11 @@ export function getScoreStatus(score: number): {
 /**
  * Calculate priority action by combining score, impact, and effort
  */
-export function calculatePriority(score: number, impact: string, effort: string): 'high' | 'medium' | 'low' {
+export function calculatePriority(
+  score: number,
+  impact: string,
+  effort: string
+): 'high' | 'medium' | 'low' {
   const scoreWeight = score < 0.4 ? 3 : score < 0.6 ? 2 : 1;
   const impactWeight = impact === 'high' ? 3 : impact === 'medium' ? 2 : 1;
   const effortWeight = effort === 'low' ? 3 : effort === 'medium' ? 2 : 1;
@@ -503,7 +554,6 @@ export function buildStandardRequest(
     proposedContent,
     framework: getFrameworkName(analysisType),
     frameworkDefinition: getFrameworkDefinition(analysisType),
-    analysisType
+    analysisType,
   };
 }
-

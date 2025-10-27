@@ -15,9 +15,11 @@ export async function GET(request: NextRequest) {
         'elements-of-value',
         'clifton-strengths',
         'seo-analysis',
-        'google-tools'
+        'google-tools',
       ],
-      nextSteps: analysisId ? ['Run Phase 2 analysis'] : ['Complete Phase 1 data collection']
+      nextSteps: analysisId
+        ? ['Run Phase 2 analysis']
+        : ['Complete Phase 1 data collection'],
     };
 
     return NextResponse.json({
@@ -25,24 +27,26 @@ export async function GET(request: NextRequest) {
       data: {
         workflow: workflowResponse,
         modules: {
-          available: workflowResponse.availableModules.map(id => ({
+          available: workflowResponse.availableModules.map((id) => ({
             id,
-            name: id.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()),
+            name: id.replace('-', ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
             description: `Available ${id} analysis`,
-            status: 'available'
+            status: 'available',
           })),
           comingSoon: [],
-          partial: []
-        }
-      }
+          partial: [],
+        },
+      },
     });
-
   } catch (error) {
     console.error('Workflow status error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to get workflow status',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to get workflow status',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

@@ -40,8 +40,8 @@ export async function GET(request: NextRequest) {
         score: true,
         createdAt: true,
         updatedAt: true,
-        content: true
-      }
+        content: true,
+      },
     });
 
     // Parse content to extract URL and other metadata
@@ -54,35 +54,38 @@ export async function GET(request: NextRequest) {
       updatedAt: Date | null;
       content: string | null;
     }
-    
-    const processedAnalyses = (analyses as AnalysisWithContent[]).map(analysis => {
-      let url = 'Unknown URL';
-      let data = null;
-      
-      try {
-        const content = typeof analysis.content === 'string' 
-          ? JSON.parse(analysis.content) 
-          : analysis.content;
-        
-        if (content && typeof content === 'object') {
-          url = content.url || content.data?.url || 'Unknown URL';
-          data = content;
-        }
-      } catch (error) {
-        console.warn('Failed to parse analysis content:', error);
-      }
 
-      return {
-        id: analysis.id,
-        url: url,
-        contentType: analysis.contentType,
-        status: analysis.status,
-        score: analysis.score,
-        createdAt: analysis.createdAt,
-        updatedAt: analysis.updatedAt,
-        content: data
-      };
-    });
+    const processedAnalyses = (analyses as AnalysisWithContent[]).map(
+      (analysis) => {
+        let url = 'Unknown URL';
+        let data = null;
+
+        try {
+          const content =
+            typeof analysis.content === 'string'
+              ? JSON.parse(analysis.content)
+              : analysis.content;
+
+          if (content && typeof content === 'object') {
+            url = content.url || content.data?.url || 'Unknown URL';
+            data = content;
+          }
+        } catch (error) {
+          console.warn('Failed to parse analysis content:', error);
+        }
+
+        return {
+          id: analysis.id,
+          url: url,
+          contentType: analysis.contentType,
+          status: analysis.status,
+          score: analysis.score,
+          createdAt: analysis.createdAt,
+          updatedAt: analysis.updatedAt,
+          content: data,
+        };
+      }
+    );
 
     return NextResponse.json({
       success: true,
@@ -91,16 +94,18 @@ export async function GET(request: NextRequest) {
         total: processedAnalyses.length, // Simplified for now
         limit,
         offset,
-        hasMore: processedAnalyses.length === limit
-      }
+        hasMore: processedAnalyses.length === limit,
+      },
     });
-
   } catch (error) {
     console.error('Failed to fetch analyses:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to fetch analyses',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to fetch analyses',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

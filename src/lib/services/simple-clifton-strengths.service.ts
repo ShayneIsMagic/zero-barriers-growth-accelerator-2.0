@@ -42,12 +42,19 @@ export class SimpleCliftonStrengthsService {
   /**
    * Analyze website content using CliftonStrengths framework
    */
-  static async analyzeWithScrapedContent(url: string, scrapedData: any): Promise<SimpleCliftonStrengthsResult> {
+  static async analyzeWithScrapedContent(
+    url: string,
+    scrapedData: any
+  ): Promise<SimpleCliftonStrengthsResult> {
     try {
-      console.log(`🎯 Starting CliftonStrengths analysis with framework knowledge for: ${url}`);
+      console.log(
+        `🎯 Starting CliftonStrengths analysis with framework knowledge for: ${url}`
+      );
 
       // Use enhanced analysis with framework integration
-      console.log('🧠 Running enhanced analysis with CliftonStrengths framework...');
+      console.log(
+        '🧠 Running enhanced analysis with CliftonStrengths framework...'
+      );
       const enhancedResult = await EnhancedAnalysisService.analyzeWithFramework(
         'clifton-strengths',
         scrapedData,
@@ -65,7 +72,7 @@ export class SimpleCliftonStrengthsService {
       return {
         success: true,
         url,
-        data: enhancedResult.analysis
+        data: enhancedResult.analysis,
       };
     } catch (error) {
       console.error('CliftonStrengths analysis failed:', error);
@@ -73,7 +80,7 @@ export class SimpleCliftonStrengthsService {
         success: false,
         url,
         data: {} as any,
-        error: error instanceof Error ? error.message : 'Analysis failed'
+        error: error instanceof Error ? error.message : 'Analysis failed',
       };
     }
   }
@@ -81,7 +88,10 @@ export class SimpleCliftonStrengthsService {
   /**
    * Run CliftonStrengths analysis using AI
    */
-  private static async runCliftonStrengthsAnalysis(scrapedData: any, url: string): Promise<any> {
+  private static async runCliftonStrengthsAnalysis(
+    scrapedData: any,
+    url: string
+  ): Promise<any> {
     const prompt = this.buildCliftonStrengthsPrompt(scrapedData, url);
 
     const aiResponse = await analyzeWithGemini(prompt, 'gemini');
@@ -104,7 +114,10 @@ export class SimpleCliftonStrengthsService {
   /**
    * Build CliftonStrengths analysis prompt
    */
-  private static buildCliftonStrengthsPrompt(scrapedData: any, url: string): string {
+  private static buildCliftonStrengthsPrompt(
+    scrapedData: any,
+    url: string
+  ): string {
     return `You are a Senior Organizational Psychologist and CliftonStrengths expert. Your expertise is in identifying organizational strengths and cultural patterns that drive business success.
 
 TASK: Analyze the provided website content to identify the organization's dominant CliftonStrengths themes. Focus on identifying the top 5 themes that best represent the organization's culture, values, and operational approach.
@@ -174,57 +187,59 @@ Return your analysis as a valid JSON object with this exact structure:
       executing_score: 80,
       influencing_score: 65,
       relationship_building_score: 75,
-      dominant_domain: "Executing",
+      dominant_domain: 'Executing',
       top_5_themes: [
         {
-          theme_name: "Achiever",
-          domain: "Executing",
+          theme_name: 'Achiever',
+          domain: 'Executing',
           score: 85,
-          evidence: ["Focus on results and productivity"],
-          manifestation: "Strong drive to accomplish goals and maintain high standards"
+          evidence: ['Focus on results and productivity'],
+          manifestation:
+            'Strong drive to accomplish goals and maintain high standards',
         },
         {
-          theme_name: "Responsibility",
-          domain: "Executing",
+          theme_name: 'Responsibility',
+          domain: 'Executing',
           score: 80,
-          evidence: ["Commitment to follow through on commitments"],
-          manifestation: "Takes psychological ownership of commitments and follows through"
+          evidence: ['Commitment to follow through on commitments'],
+          manifestation:
+            'Takes psychological ownership of commitments and follows through',
         },
         {
-          theme_name: "Learner",
-          domain: "Strategic Thinking",
+          theme_name: 'Learner',
+          domain: 'Strategic Thinking',
           score: 75,
-          evidence: ["Emphasis on continuous improvement and growth"],
-          manifestation: "Strong desire to learn and improve continuously"
+          evidence: ['Emphasis on continuous improvement and growth'],
+          manifestation: 'Strong desire to learn and improve continuously',
         },
         {
-          theme_name: "Communication",
-          domain: "Influencing",
+          theme_name: 'Communication',
+          domain: 'Influencing',
           score: 70,
-          evidence: ["Clear messaging and value proposition"],
-          manifestation: "Ability to put thoughts into words and engage others"
+          evidence: ['Clear messaging and value proposition'],
+          manifestation: 'Ability to put thoughts into words and engage others',
         },
         {
-          theme_name: "Harmony",
-          domain: "Relationship Building",
+          theme_name: 'Harmony',
+          domain: 'Relationship Building',
           score: 65,
-          evidence: ["Focus on collaboration and team dynamics"],
-          manifestation: "Seeks consensus and avoids conflict"
-        }
+          evidence: ['Focus on collaboration and team dynamics'],
+          manifestation: 'Seeks consensus and avoids conflict',
+        },
       ],
       all_themes: [],
       recommendations: [
         {
-          theme: "Achiever",
-          action: "Set clear, measurable goals and celebrate milestones",
-          impact: "Maintain high performance and motivation"
+          theme: 'Achiever',
+          action: 'Set clear, measurable goals and celebrate milestones',
+          impact: 'Maintain high performance and motivation',
         },
         {
-          theme: "Responsibility",
-          action: "Create accountability systems and clear ownership",
-          impact: "Ensure reliable delivery and build trust"
-        }
-      ]
+          theme: 'Responsibility',
+          action: 'Create accountability systems and clear ownership',
+          impact: 'Ensure reliable delivery and build trust',
+        },
+      ],
     };
   }
 }

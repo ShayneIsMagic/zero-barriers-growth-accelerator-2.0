@@ -14,7 +14,8 @@ export interface AnalysisTemplate {
 export const ANALYSIS_TEMPLATES: Record<string, AnalysisTemplate> = {
   GOLDEN_CIRCLE: {
     framework: "Simon Sinek's Golden Circle",
-    objective: "Extract the core purpose (Why), unique approach (How), and specific offerings (What) from website content",
+    objective:
+      'Extract the core purpose (Why), unique approach (How), and specific offerings (What) from website content',
     prompt: `
 ANALYZE THE GOLDEN CIRCLE FRAMEWORK:
 
@@ -50,25 +51,26 @@ SCORING CRITERIA (1-10):
 - 1-2: Minimal evidence, no specific details, generic content
 `,
     scoringCriteria: [
-      "Clarity of purpose statement",
-      "Specificity of methodology",
-      "Detail of product/service offerings",
-      "Quality of testimonials and case studies",
-      "Differentiation from competitors"
+      'Clarity of purpose statement',
+      'Specificity of methodology',
+      'Detail of product/service offerings',
+      'Quality of testimonials and case studies',
+      'Differentiation from competitors',
     ],
     outputFormat: {
-      why: "string",
-      how: "string", 
-      what: "string",
-      who: "string",
-      overallScore: "number",
-      insights: ["string"]
-    }
+      why: 'string',
+      how: 'string',
+      what: 'string',
+      who: 'string',
+      overallScore: 'number',
+      insights: ['string'],
+    },
   },
 
   ELEMENTS_OF_VALUE: {
     framework: "Bain & Company's Elements of Value",
-    objective: "Score 30 elements across 4 categories based on evidence in the content",
+    objective:
+      'Score 30 elements across 4 categories based on evidence in the content',
     prompt: `
 ANALYZE THE ELEMENTS OF VALUE FRAMEWORK:
 
@@ -125,25 +127,26 @@ EVIDENCE REQUIREMENTS:
 - Look for transformation stories and outcomes
 `,
     scoringCriteria: [
-      "Evidence of functional value delivery",
-      "Emotional connection and appeal",
-      "Life-changing impact potential",
-      "Social impact and purpose",
-      "Overall value proposition strength"
+      'Evidence of functional value delivery',
+      'Emotional connection and appeal',
+      'Life-changing impact potential',
+      'Social impact and purpose',
+      'Overall value proposition strength',
     ],
     outputFormat: {
-      functional: "object",
-      emotional: "object",
-      lifeChanging: "object", 
-      socialImpact: "object",
-      overallScore: "number",
-      insights: ["string"]
-    }
+      functional: 'object',
+      emotional: 'object',
+      lifeChanging: 'object',
+      socialImpact: 'object',
+      overallScore: 'number',
+      insights: ['string'],
+    },
   },
 
   CLIFTON_STRENGTHS: {
     framework: "Gallup's CliftonStrengths",
-    objective: "Analyze which personality themes the content appeals to and resonates with",
+    objective:
+      'Analyze which personality themes the content appeals to and resonates with',
     prompt: `
 ANALYZE CLIFTONSTRENGTHS THEMES (0-10 each):
 
@@ -197,23 +200,24 @@ ANALYSIS FOCUS:
 - Target audience appeal
 `,
     scoringCriteria: [
-      "Appeal to Strategic Thinking themes",
-      "Appeal to Executing themes", 
-      "Appeal to Influencing themes",
-      "Appeal to Relationship Building themes",
-      "Overall personality theme balance"
+      'Appeal to Strategic Thinking themes',
+      'Appeal to Executing themes',
+      'Appeal to Influencing themes',
+      'Appeal to Relationship Building themes',
+      'Overall personality theme balance',
     ],
     outputFormat: {
-      themes: "object",
-      recommendations: ["string"],
-      overallScore: "number",
-      insights: ["string"]
-    }
+      themes: 'object',
+      recommendations: ['string'],
+      overallScore: 'number',
+      insights: ['string'],
+    },
   },
 
   TESTIMONIAL_ANALYSIS: {
-    framework: "Client Testimonials & Case Studies Analysis",
-    objective: "Extract and evaluate client testimonials, case studies, and success stories",
+    framework: 'Client Testimonials & Case Studies Analysis',
+    objective:
+      'Extract and evaluate client testimonials, case studies, and success stories',
     prompt: `
 ANALYZE TESTIMONIALS AND CASE STUDIES:
 
@@ -254,23 +258,26 @@ SCORING CRITERIA (1-10):
 - 1-2: Generic, no specific details, low credibility
 `,
     scoringCriteria: [
-      "Specificity of client details",
-      "Quantifiable success metrics",
-      "Diversity of client base",
-      "Credibility and authenticity",
-      "Recency and relevance"
+      'Specificity of client details',
+      'Quantifiable success metrics',
+      'Diversity of client base',
+      'Credibility and authenticity',
+      'Recency and relevance',
     ],
     outputFormat: {
-      clientNames: ["string"],
-      companies: ["string"],
-      successMetrics: ["string"],
-      credibilityScore: "number",
-      insights: ["string"]
-    }
-  }
+      clientNames: ['string'],
+      companies: ['string'],
+      successMetrics: ['string'],
+      credibilityScore: 'number',
+      insights: ['string'],
+    },
+  },
 };
 
-export function buildComprehensiveAnalysisPrompt(content: string, url?: string): string {
+export function buildComprehensiveAnalysisPrompt(
+  content: string,
+  url?: string
+): string {
   return `
 You are an expert business analyst specializing in comprehensive content analysis using proven frameworks. Analyze the following website content with extreme attention to detail and specificity.
 

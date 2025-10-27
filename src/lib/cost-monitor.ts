@@ -19,7 +19,7 @@ export class CostMonitor {
   private static readonly COST_LIMITS: CostLimits = {
     dailyLimit: 10, // $10 per day
     monthlyLimit: 100, // $100 per month
-    perRequestLimit: 0.50, // $0.50 per request
+    perRequestLimit: 0.5, // $0.50 per request
   };
 
   private static readonly COST_ESTIMATES = {
@@ -35,22 +35,32 @@ export class CostMonitor {
     },
   };
 
-  static estimateCost(provider: string, model: string, contentLength: number): number {
-    const providerCosts = this.COST_ESTIMATES[provider as keyof typeof this.COST_ESTIMATES];
+  static estimateCost(
+    provider: string,
+    model: string,
+    contentLength: number
+  ): number {
+    const providerCosts =
+      this.COST_ESTIMATES[provider as keyof typeof this.COST_ESTIMATES];
     if (!providerCosts) return 0;
 
-    const costPerToken = providerCosts[model as keyof typeof providerCosts] || 0;
+    const costPerToken =
+      providerCosts[model as keyof typeof providerCosts] || 0;
     const estimatedTokens = Math.ceil(contentLength / 4); // Rough estimate: 4 chars per token
     return (costPerToken * estimatedTokens) / 1000;
   }
 
-  static checkCostLimits(provider: string, model: string, contentLength: number): {
+  static checkCostLimits(
+    provider: string,
+    model: string,
+    contentLength: number
+  ): {
     allowed: boolean;
     estimatedCost: number;
     reason?: string;
   } {
     const estimatedCost = this.estimateCost(provider, model, contentLength);
-    
+
     // Check per-request limit
     if (estimatedCost > this.COST_LIMITS.perRequestLimit) {
       return {
@@ -76,7 +86,11 @@ export class CostMonitor {
     };
   }
 
-  static recordUsage(provider: string, model: string, contentLength: number): void {
+  static recordUsage(
+    provider: string,
+    model: string,
+    contentLength: number
+  ): void {
     const cost = this.estimateCost(provider, model, contentLength);
     // In production, store this in Redis/database
     console.log(`[COST MONITOR] ${provider}/${model}: $${cost.toFixed(4)}`);

@@ -30,6 +30,7 @@ SELECT * FROM find_value_patterns(
 ```
 
 **Expected Results:**
+
 ```
 element_name    | pattern_text      | match_count | confidence
 ----------------|-------------------|-------------|------------
@@ -49,7 +50,7 @@ simplifies      | drag-and-drop     | 1           | 0.9000
 
 ```sql
 -- Count themes by domain
-SELECT 
+SELECT
   domain,
   COUNT(*) as theme_count
 FROM clifton_themes_reference
@@ -58,6 +59,7 @@ ORDER BY domain;
 ```
 
 **Expected Results:**
+
 ```
 domain                  | theme_count
 ------------------------|------------
@@ -111,7 +113,7 @@ INSERT INTO golden_circle_why (
 ) RETURNING *;
 
 -- Verify it worked
-SELECT 
+SELECT
   gc.analysis_id,
   gc.overall_score,
   gw.current_state,
@@ -143,8 +145,8 @@ SELECT calculate_overall_score('test-001') as overall_score;
 Create: `src/app/api/test-schema/route.ts`
 
 ```typescript
-import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
@@ -154,28 +156,28 @@ export async function GET() {
       goldenCircleCount,
       themesCount,
       valueElementsCount,
-      patternsCount
+      patternsCount,
     ] = await Promise.all([
       prisma.websites.count(),
       prisma.golden_circle_analyses.count(),
       prisma.clifton_themes_reference.count(),
       prisma.value_element_reference.count(),
-      prisma.value_element_patterns.count()
-    ])
+      prisma.value_element_patterns.count(),
+    ]);
 
     // Test 2: Get sample themes
     const sampleThemes = await prisma.clifton_themes_reference.findMany({
       take: 5,
-      orderBy: { theme_name: 'asc' }
-    })
+      orderBy: { theme_name: 'asc' },
+    });
 
     // Test 3: Get value elements
     const valueElements = await prisma.value_element_reference.findMany({
       where: {
-        element_category: 'functional'
+        element_category: 'functional',
       },
-      take: 5
-    })
+      take: 5,
+    });
 
     // Test 4: Pattern matching via raw SQL
     const patterns = await prisma.$queryRaw<any[]>`
@@ -184,7 +186,7 @@ export async function GET() {
         'saas'
       )
       LIMIT 10
-    `
+    `;
 
     return NextResponse.json({
       success: true,
@@ -193,25 +195,29 @@ export async function GET() {
         goldenCircle: goldenCircleCount,
         themes: themesCount,
         valueElements: valueElementsCount,
-        patterns: patternsCount
+        patterns: patternsCount,
       },
       samples: {
         themes: sampleThemes,
         valueElements: valueElements,
-        patternMatches: patterns
-      }
-    })
+        patternMatches: patterns,
+      },
+    });
   } catch (error: any) {
-    return NextResponse.json({
-      success: false,
-      error: error.message,
-      stack: error.stack
-    }, { status: 500 })
+    return NextResponse.json(
+      {
+        success: false,
+        error: error.message,
+        stack: error.stack,
+      },
+      { status: 500 }
+    );
   }
 }
 ```
 
 **Test it:**
+
 ```bash
 # Start dev server
 npm run dev
@@ -221,6 +227,7 @@ curl http://localhost:3000/api/test-schema
 ```
 
 **Expected Response:**
+
 ```json
 {
   "success": true,
@@ -246,11 +253,11 @@ curl http://localhost:3000/api/test-schema
 Create: `src/app/api/test-full-analysis/route.ts`
 
 ```typescript
-import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(req: Request) {
-  const { url, content, industry } = await req.json()
+  const { url, content, industry } = await req.json();
 
   try {
     // Step 1: Create Website entry
@@ -261,9 +268,9 @@ export async function POST(req: Request) {
         title: 'Test Website',
         industry: industry,
         business_type: 'B2B',
-        total_analyses: 0
-      }
-    })
+        total_analyses: 0,
+      },
+    });
 
     // Step 2: Create Analysis (using existing User table)
     // Note: You'll need a real user_id from your User table
@@ -272,15 +279,15 @@ export async function POST(req: Request) {
         content: content,
         contentType: 'website',
         status: 'PENDING',
-        frameworks: JSON.stringify(['golden_circle', 'elements_of_value'])
-      }
-    })
+        frameworks: JSON.stringify(['golden_circle', 'elements_of_value']),
+      },
+    });
 
     // Step 3: Run pattern matching
     const patterns = await prisma.$queryRaw<any[]>`
       SELECT * FROM find_value_patterns(${content}, ${industry})
       LIMIT 20
-    `
+    `;
 
     // Step 4: Create Golden Circle Analysis
     const goldenCircle = await prisma.golden_circle_analyses.create({
@@ -288,9 +295,9 @@ export async function POST(req: Request) {
         analysis_id: analysis.id,
         overall_score: 85.0,
         alignment_score: 90.0,
-        clarity_score: 80.0
-      }
-    })
+        clarity_score: 80.0,
+      },
+    });
 
     // Step 5: Create WHY dimension
     const whyData = await prisma.golden_circle_why.create({
@@ -304,13 +311,13 @@ export async function POST(req: Request) {
         differentiation_rating: 8.0,
         evidence: {
           citations: ['homepage', 'about'],
-          patterns: patterns.slice(0, 5)
+          patterns: patterns.slice(0, 5),
         },
         recommendations: {
-          improvements: ['Strengthen emotional appeal', 'Add founder story']
-        }
-      }
-    })
+          improvements: ['Strengthen emotional appeal', 'Add founder story'],
+        },
+      },
+    });
 
     // Step 6: Create Elements of Value analysis
     const eovB2B = await prisma.elements_of_value_b2b.create({
@@ -321,9 +328,9 @@ export async function POST(req: Request) {
         functional_score: 85.0,
         ease_of_business_score: 80.0,
         individual_score: 75.0,
-        inspirational_score: 70.0
-      }
-    })
+        inspirational_score: 70.0,
+      },
+    });
 
     // Step 7: Add individual element scores
     const elementScores = await prisma.b2b_element_scores.createMany({
@@ -332,56 +339,60 @@ export async function POST(req: Request) {
         element_name: p.element_name,
         element_category: 'functional',
         category_level: 2,
-        score: 85.0 - (idx * 2),
+        score: 85.0 - idx * 2,
         weight: 1.0,
-        weighted_score: 85.0 - (idx * 2),
+        weighted_score: 85.0 - idx * 2,
         evidence: {
           pattern: p.pattern_text,
           confidence: p.confidence,
-          matches: p.match_count
-        }
-      }))
-    })
+          matches: p.match_count,
+        },
+      })),
+    });
 
     // Step 8: Calculate overall score
     const overallScore = await prisma.$queryRaw<any[]>`
       SELECT calculate_overall_score(${analysis.id}) as score
-    `
+    `;
 
     return NextResponse.json({
       success: true,
       analysis: {
         id: analysis.id,
         status: analysis.status,
-        overallScore: overallScore[0]?.score || 0
+        overallScore: overallScore[0]?.score || 0,
       },
       website: {
         id: website.id,
-        url: website.url
+        url: website.url,
       },
       goldenCircle: {
         id: goldenCircle.id,
         overall_score: goldenCircle.overall_score,
-        why: whyData
+        why: whyData,
       },
       elementsOfValue: {
         id: eovB2B.id,
         overall_score: eovB2B.overall_score,
-        elementCount: 5
+        elementCount: 5,
       },
-      patterns: patterns.length
-    })
+      patterns: patterns.length,
+    });
   } catch (error: any) {
-    return NextResponse.json({
-      success: false,
-      error: error.message,
-      details: error
-    }, { status: 500 })
+    return NextResponse.json(
+      {
+        success: false,
+        error: error.message,
+        details: error,
+      },
+      { status: 500 }
+    );
   }
 }
 ```
 
 **Test it:**
+
 ```bash
 curl -X POST http://localhost:3000/api/test-full-analysis \
   -H "Content-Type: application/json" \
@@ -415,7 +426,7 @@ export default function TestAnalysisPage() {
   const runSchemaTest = async () => {
     setLoading(true)
     setError(null)
-    
+
     try {
       const res = await fetch('/api/test-schema')
       const data = await res.json()
@@ -430,7 +441,7 @@ export default function TestAnalysisPage() {
   const runFullAnalysisTest = async () => {
     setLoading(true)
     setError(null)
-    
+
     try {
       const res = await fetch('/api/test-full-analysis', {
         method: 'POST',
@@ -481,7 +492,7 @@ export default function TestAnalysisPage() {
       {result && (
         <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg">
           <h2 className="text-xl font-semibold mb-4">Test Results:</h2>
-          
+
           {result.success ? (
             <div className="space-y-4">
               <div className="bg-green-50 border border-green-200 p-4 rounded">
@@ -678,6 +689,7 @@ echo "Next: Visit http://localhost:3000/test-analysis to run interactive tests"
 ```
 
 **Make executable and run:**
+
 ```bash
 chmod +x scripts/test-schema.sh
 ./scripts/test-schema.sh
@@ -745,4 +757,3 @@ curl http://localhost:3000/api/test-schema
 ---
 
 **Ready to start testing?** Let me know when you've set the DATABASE_URL and I'll help you run the first test!
-

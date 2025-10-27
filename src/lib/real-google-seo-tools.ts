@@ -58,7 +58,11 @@ export class RealGoogleSEOTools {
   private targetKeywords: string[];
   private competitorUrls: string[];
 
-  constructor(url: string, targetKeywords: string[] = [], competitorUrls: string[] = []) {
+  constructor(
+    url: string,
+    targetKeywords: string[] = [],
+    competitorUrls: string[] = []
+  ) {
     this.url = url;
     this.targetKeywords = targetKeywords;
     this.competitorUrls = competitorUrls;
@@ -71,10 +75,10 @@ export class RealGoogleSEOTools {
   async getSearchConsoleData(): Promise<SearchConsoleData> {
     try {
       console.log('🔍 Step 1: Fetching Google Search Console data...');
-      
+
       // Note: This would require Google Search Console API integration
       // For now, we'll provide a structure that can be implemented with real API calls
-      
+
       // Example API call structure:
       // const searchConsole = google.searchconsole({ version: 'v1', auth: oauth2Client });
       // const response = await searchConsole.searchanalytics.query({
@@ -90,11 +94,13 @@ export class RealGoogleSEOTools {
       // For now, return structured data that indicates real integration is needed
       return {
         currentRankings: [],
-        topPerformingPages: []
+        topPerformingPages: [],
       };
     } catch (error) {
       console.error('Search Console API error:', error);
-      throw new Error(`Search Console integration failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Search Console integration failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -105,10 +111,10 @@ export class RealGoogleSEOTools {
   async getKeywordPlannerData(): Promise<KeywordResearchData> {
     try {
       console.log('🔍 Step 2: Fetching Google Keyword Planner data...');
-      
+
       // Note: This would require Google Ads API integration
       // For now, we'll provide a structure that can be implemented with real API calls
-      
+
       // Example API call structure:
       // const googleAds = google.ads({ version: 'v14', auth: oauth2Client });
       // const response = await googleAds.keywordPlanIdeas.generateKeywordIdeas({
@@ -126,11 +132,13 @@ export class RealGoogleSEOTools {
       return {
         targetKeywords: [],
         contentGaps: [],
-        trendingKeywords: []
+        trendingKeywords: [],
       };
     } catch (error) {
       console.error('Keyword Planner API error:', error);
-      throw new Error(`Keyword Planner integration failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Keyword Planner integration failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -141,10 +149,10 @@ export class RealGoogleSEOTools {
   async getGoogleTrendsData(): Promise<GoogleTrendsData> {
     try {
       console.log('📈 Step 3: Fetching Google Trends data...');
-      
+
       // Note: Google Trends doesn't have an official API, but there are unofficial libraries
       // For now, we'll provide a structure that can be implemented with scraping or unofficial APIs
-      
+
       // Example using unofficial Google Trends API:
       // const googleTrends = require('google-trends-api');
       // const trends = await googleTrends.interestOverTime({
@@ -158,11 +166,13 @@ export class RealGoogleSEOTools {
       return {
         trendingKeywords: [],
         industryTrends: null,
-        seasonalPatterns: null
+        seasonalPatterns: null,
       };
     } catch (error) {
       console.error('Google Trends API error:', error);
-      throw new Error(`Google Trends integration failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Google Trends integration failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -173,18 +183,20 @@ export class RealGoogleSEOTools {
   async getCompetitiveAnalysisData(): Promise<CompetitiveAnalysisData> {
     try {
       console.log('🏆 Step 4: Performing competitive analysis...');
-      
+
       // This would use the same tools as above but for competitor URLs
       // For now, return structured data that indicates real integration is needed
-      
+
       return {
         competitors: [],
         keywordComparison: {},
-        contentGaps: []
+        contentGaps: [],
       };
     } catch (error) {
       console.error('Competitive analysis error:', error);
-      throw new Error(`Competitive analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Competitive analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -201,20 +213,25 @@ export class RealGoogleSEOTools {
   }> {
     try {
       console.log('🚀 Starting real Google SEO Tools analysis...');
-      
+
       // Execute all four steps
-      const [searchConsole, keywordResearch, googleTrends, competitiveAnalysis] = await Promise.all([
+      const [
+        searchConsole,
+        keywordResearch,
+        googleTrends,
+        competitiveAnalysis,
+      ] = await Promise.all([
         this.getSearchConsoleData(),
         this.getKeywordPlannerData(),
         this.getGoogleTrendsData(),
-        this.getCompetitiveAnalysisData()
+        this.getCompetitiveAnalysisData(),
       ]);
 
       const setupRequired = [
         'Google Search Console API integration',
         'Google Ads API integration for Keyword Planner',
         'Google Trends data collection setup',
-        'Competitive analysis framework'
+        'Competitive analysis framework',
       ];
 
       return {
@@ -223,11 +240,13 @@ export class RealGoogleSEOTools {
         googleTrends,
         competitiveAnalysis,
         integrationStatus: 'Ready for real API integration',
-        setupRequired
+        setupRequired,
       };
     } catch (error) {
       console.error('Real SEO analysis failed:', error);
-      throw new Error(`Real SEO analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Real SEO analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -246,29 +265,29 @@ export class RealGoogleSEOTools {
         '2. Create OAuth2 credentials',
         '3. Verify website ownership in Search Console',
         '4. Implement API authentication flow',
-        '5. Set up quota monitoring'
+        '5. Set up quota monitoring',
       ],
       keywordPlanner: [
         '1. Enable Google Ads API in Google Cloud Console',
         '2. Get Google Ads developer token',
         '3. Create OAuth2 credentials',
         '4. Implement API authentication flow',
-        '5. Set up quota monitoring for Keyword Planner'
+        '5. Set up quota monitoring for Keyword Planner',
       ],
       googleTrends: [
         '1. Set up Google Trends scraping solution',
         '2. Implement rate limiting',
         '3. Handle data parsing and validation',
         '4. Set up regional data collection',
-        '5. Implement error handling for scraping'
+        '5. Implement error handling for scraping',
       ],
       competitiveAnalysis: [
         '1. Set up competitor URL monitoring',
         '2. Implement keyword overlap detection',
         '3. Create content gap analysis',
         '4. Set up performance benchmarking',
-        '5. Implement competitive reporting'
-      ]
+        '5. Implement competitive reporting',
+      ],
     };
   }
 }

@@ -56,5 +56,3 @@ export function Logo({
 
   return asLink ? <Link href="/">{logoContent}</Link> : logoContent;
 }
-
-

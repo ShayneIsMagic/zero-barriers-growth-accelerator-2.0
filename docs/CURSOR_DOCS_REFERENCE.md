@@ -9,6 +9,7 @@
 ## 🎯 QUICK START
 
 ### Essential Commands
+
 ```bash
 # Install security tools
 pip install detect-secrets bandit safety
@@ -26,6 +27,7 @@ pre-commit install
 ```
 
 ### First Time Setup
+
 1. Read all documentation files
 2. Install required tools
 3. Run setup script
@@ -38,6 +40,7 @@ pre-commit install
 ## 📖 DOCUMENTATION INDEX
 
 ### Core Documents
+
 - **`.cursorrules`**: Master coding rules and standards
 - **`CURSOR_SECURITY_ADDENDUM.md`**: Security rules and procedures
 - **`CURSOR_AGILE_WORKFLOW.md`**: Development workflow and task management
@@ -45,6 +48,7 @@ pre-commit install
 - **`INTEGRATION_GUIDE.md`**: How all documents work together
 
 ### Configuration Files
+
 - **`.gitignore`**: Git ignore patterns with security entries
 - **`.pre-commit-config.yaml`**: Pre-commit hooks configuration
 - **`.secrets.baseline`**: Secrets detection baseline
@@ -52,6 +56,7 @@ pre-commit install
 - **`.env.example`**: Environment variables template
 
 ### Scripts
+
 - **`setup-security.sh`**: Initial security setup
 - **`security-audit.sh`**: Comprehensive security audit
 - **`generate-secret.sh`**: Generate secure secrets
@@ -63,6 +68,7 @@ pre-commit install
 ### Code Review Prompts
 
 #### Security Code Review
+
 ```
 Please review this code for security vulnerabilities:
 
@@ -82,6 +88,7 @@ Code to review:
 ```
 
 #### Performance Code Review
+
 ```
 Please review this code for performance issues:
 
@@ -103,6 +110,7 @@ Code to review:
 ### Testing Prompts
 
 #### Unit Test Generation
+
 ```
 Generate comprehensive unit tests for this function:
 
@@ -120,6 +128,7 @@ Function to test:
 ```
 
 #### Integration Test Generation
+
 ```
 Generate integration tests for this API endpoint:
 
@@ -140,6 +149,7 @@ API endpoint:
 ### Documentation Prompts
 
 #### API Documentation
+
 ```
 Generate comprehensive API documentation for this endpoint:
 
@@ -158,6 +168,7 @@ API endpoint:
 ```
 
 #### Code Documentation
+
 ```
 Generate comprehensive documentation for this code:
 
@@ -182,6 +193,7 @@ Code to document:
 ### Security Tools
 
 #### detect-secrets
+
 ```bash
 # Scan for secrets
 detect-secrets scan --all-files
@@ -197,6 +209,7 @@ detect-secrets scan path/to/file
 ```
 
 #### gitleaks
+
 ```bash
 # Scan repository
 gitleaks detect --source . --verbose
@@ -209,6 +222,7 @@ gitleaks detect --source . --config .gitleaks.toml
 ```
 
 #### bandit (Python)
+
 ```bash
 # Scan Python code
 bandit -r .
@@ -224,6 +238,7 @@ bandit -r . -s B101,B102
 ```
 
 #### eslint-plugin-security (JavaScript/TypeScript)
+
 ```bash
 # Run security linting
 npm run lint:security
@@ -238,6 +253,7 @@ npx eslint --plugin security path/to/file.js
 ### Dependency Auditing
 
 #### pip-audit (Python)
+
 ```bash
 # Audit Python dependencies
 pip-audit
@@ -250,6 +266,7 @@ pip-audit --fix
 ```
 
 #### npm audit (Node.js)
+
 ```bash
 # Audit npm dependencies
 npm audit
@@ -267,6 +284,7 @@ npm audit package-name
 ### Container Scanning
 
 #### trivy
+
 ```bash
 # Scan Docker image
 trivy image myapp:latest
@@ -286,6 +304,7 @@ trivy image --format json --output trivy-report.json myapp:latest
 ## 📋 CHECKLISTS
 
 ### Pre-commit Checklist
+
 - [ ] No secrets in code
 - [ ] All tests passing
 - [ ] Code formatted
@@ -295,6 +314,7 @@ trivy image --format json --output trivy-report.json myapp:latest
 - [ ] Commit message follows convention
 
 ### Pre-deployment Checklist
+
 - [ ] All tests passing
 - [ ] Security scan clean
 - [ ] Dependencies updated
@@ -304,6 +324,7 @@ trivy image --format json --output trivy-report.json myapp:latest
 - [ ] Rollback plan ready
 
 ### Code Review Checklist
+
 - [ ] Code follows style guidelines
 - [ ] Tests are comprehensive
 - [ ] Documentation is updated
@@ -319,6 +340,7 @@ trivy image --format json --output trivy-report.json myapp:latest
 ### Common Issues
 
 #### Pre-commit Hooks Not Running
+
 ```bash
 # Reinstall hooks
 pre-commit uninstall
@@ -329,6 +351,7 @@ pre-commit run --all-files
 ```
 
 #### Secrets Detected
+
 ```bash
 # Update baseline
 detect-secrets scan --update .secrets.baseline
@@ -338,6 +361,7 @@ detect-secrets audit .secrets.baseline
 ```
 
 #### Dependencies Vulnerable
+
 ```bash
 # Python
 pip-audit --fix
@@ -347,6 +371,7 @@ npm audit fix
 ```
 
 #### Tests Failing
+
 ```bash
 # Run specific test
 npm test -- --testNamePattern="test name"
@@ -363,17 +388,20 @@ npm test -- --verbose
 ## 📞 SUPPORT
 
 ### Internal Support
+
 - **Security Team**: security@company.com
 - **DevOps Team**: devops@company.com
 - **Documentation**: docs@company.com
 
 ### External Resources
+
 - **Cursor Documentation**: https://cursor.sh/docs
 - **OWASP**: https://owasp.org
 - **GitHub Security**: https://github.com/security
 - **NPM Security**: https://www.npmjs.com/advisories
 
 ### Emergency Contacts
+
 - **Security Incident**: incident@company.com
 - **Production Issues**: oncall@company.com
 - **Data Breach**: breach@company.com
@@ -383,12 +411,14 @@ npm test -- --verbose
 ## 🔄 UPDATES
 
 ### Regular Updates
+
 - **Daily**: Check for new vulnerabilities
 - **Weekly**: Update dependencies
 - **Monthly**: Review security policies
 - **Quarterly**: Update documentation
 
 ### Version Control
+
 - **Major Changes**: Update version number
 - **Minor Changes**: Update last modified date
 - **Patches**: Update specific sections
@@ -398,6 +428,7 @@ npm test -- --verbose
 ## ✨ TIPS AND TRICKS
 
 ### Cursor AI Tips
+
 - Use specific prompts for better results
 - Provide context and examples
 - Iterate on AI suggestions
@@ -405,6 +436,7 @@ npm test -- --verbose
 - Use AI for documentation generation
 
 ### Security Tips
+
 - Rotate secrets regularly
 - Use least privilege principle
 - Monitor for unusual activity
@@ -412,6 +444,7 @@ npm test -- --verbose
 - Regular security training
 
 ### Development Tips
+
 - Write tests first (TDD)
 - Use meaningful commit messages
 - Document complex logic
@@ -421,6 +454,3 @@ npm test -- --verbose
 ---
 
 **Remember: This reference is a living document - update it as you learn and improve!**
-
-
-

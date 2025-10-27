@@ -17,20 +17,20 @@ async function createUsers() {
       name: 'Shayne Roy',
       email: 'shayne+1@devpipeline.com',
       password: 'ZBadmin123!',
-      role: 'SUPER_ADMIN'
+      role: 'SUPER_ADMIN',
     },
     {
       name: 'SK Roy',
       email: 'sk@zerobarriers.io',
       password: 'ZBuser123!',
-      role: 'USER'
+      role: 'USER',
     },
     {
       name: 'S Roy',
       email: 'shayne+2@devpipeline.com',
       password: 'ZBuser2123!',
-      role: 'USER'
-    }
+      role: 'USER',
+    },
   ];
 
   console.log('🚀 Creating users in Supabase...\n');
@@ -48,21 +48,20 @@ async function createUsers() {
         update: {
           password: hashedPassword,
           name: userData.name,
-          role: userData.role
+          role: userData.role,
         },
         create: {
           email: userData.email,
           password: hashedPassword,
           name: userData.name,
-          role: userData.role
-        }
+          role: userData.role,
+        },
       });
 
       console.log(`  ✅ ${user.email} (${user.role})\n`);
     }
 
     console.log('✨ All users created successfully!\n');
-
   } catch (error) {
     console.error('❌ Error:', error.message);
   } finally {
@@ -71,4 +70,3 @@ async function createUsers() {
 }
 
 createUsers();
-

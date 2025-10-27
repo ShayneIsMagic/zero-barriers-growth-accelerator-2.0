@@ -33,7 +33,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Perform analysis with selected provider
-    const analysisResult = await EnhancedAIService.analyzeWebsite(url, provider);
+    const analysisResult = await EnhancedAIService.analyzeWebsite(
+      url,
+      provider
+    );
 
     // Return analysis result
     return NextResponse.json({
@@ -49,7 +52,8 @@ export async function POST(request: NextRequest) {
       if (error.message.includes('AI analysis failed')) {
         return NextResponse.json(
           {
-            error: 'AI analysis service temporarily unavailable. Please try again later.',
+            error:
+              'AI analysis service temporarily unavailable. Please try again later.',
             details: error.message,
           },
           { status: 503 }
@@ -58,7 +62,8 @@ export async function POST(request: NextRequest) {
       if (error.message.includes('Failed to fetch website')) {
         return NextResponse.json(
           {
-            error: 'Unable to access the website. Please check the URL and try again.',
+            error:
+              'Unable to access the website. Please check the URL and try again.',
             details: error.message,
           },
           { status: 400 }

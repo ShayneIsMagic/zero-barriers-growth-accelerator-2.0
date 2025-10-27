@@ -7,20 +7,23 @@
 ## 🚀 Quick Access Links
 
 ### **1. Google Lighthouse (PageSpeed Insights)**
+
 **URL:** https://pagespeed.web.dev/
 
 **What to do:**
+
 1. Go to: https://pagespeed.web.dev/
 2. Enter your website URL
 3. Click "Analyze"
 4. Wait 30 seconds
 5. Copy the scores:
-   - Performance: __/100
-   - Accessibility: __/100
-   - Best Practices: __/100
-   - SEO: __/100
+   - Performance: \_\_/100
+   - Accessibility: \_\_/100
+   - Best Practices: \_\_/100
+   - SEO: \_\_/100
 
 **Paste into Gemini with this prompt:**
+
 ```
 Analyze these Lighthouse scores for [YOUR_URL]:
 - Performance: [SCORE]/100
@@ -41,21 +44,24 @@ Provide:
 ---
 
 ### **2. Google Search Console**
+
 **URL:** https://search.google.com/search-console
 
 **What to do:**
+
 1. Go to: https://search.google.com/search-console
 2. Select your property (or add it if not already added)
 3. Go to "Performance" section
 4. Note down:
-   - Total clicks (last 28 days): ____
-   - Total impressions: ____
-   - Average CTR: ____%
-   - Average position: ____
+   - Total clicks (last 28 days): \_\_\_\_
+   - Total impressions: \_\_\_\_
+   - Average CTR: \_\_\_\_%
+   - Average position: \_\_\_\_
 5. Go to "Coverage" section
 6. Note any errors or warnings
 
 **Paste into Gemini with this prompt:**
+
 ```
 Analyze my Google Search Console data for [YOUR_URL]:
 
@@ -85,9 +91,11 @@ Provide:
 ---
 
 ### **3. Google Trends**
+
 **URL:** https://trends.google.com/trends/
 
 **What to do:**
+
 1. Go to: https://trends.google.com/trends/
 2. Enter your main keyword(s)
 3. Set region (e.g., United States, Worldwide)
@@ -98,6 +106,7 @@ Provide:
    - Regional interest
 
 **Paste into Gemini with this prompt:**
+
 ```
 Analyze Google Trends data for my keywords:
 
@@ -129,9 +138,11 @@ Provide:
 ---
 
 ### **4. Google Analytics (GA4)**
+
 **URL:** https://analytics.google.com/
 
 **What to do:**
+
 1. Go to: https://analytics.google.com/
 2. Select your property
 3. Go to "Reports" → "Engagement" → "Pages and screens"
@@ -140,6 +151,7 @@ Provide:
 6. Note traffic sources
 
 **Paste into Gemini with this prompt:**
+
 ```
 Analyze my Google Analytics data for [YOUR_URL]:
 
@@ -174,9 +186,11 @@ Provide:
 ---
 
 ### **5. Google Keyword Planner**
+
 **URL:** https://ads.google.com/home/tools/keyword-planner/
 
 **What to do:**
+
 1. Go to: https://ads.google.com/home/tools/keyword-planner/
 2. Click "Discover new keywords"
 3. Enter your website URL or main topic
@@ -184,6 +198,7 @@ Provide:
 5. Note volume and competition
 
 **Paste into Gemini with this prompt:**
+
 ```
 Analyze keyword opportunities for [YOUR_URL]:
 
@@ -210,15 +225,18 @@ Provide:
 ---
 
 ### **6. Google Rich Results Test**
+
 **URL:** https://search.google.com/test/rich-results
 
 **What to do:**
+
 1. Go to: https://search.google.com/test/rich-results
 2. Enter your URL
 3. Click "Test URL"
 4. Review results
 
 **Paste into Gemini with this prompt:**
+
 ```
 Google Rich Results Test for [YOUR_URL]:
 
@@ -291,6 +309,7 @@ Provide a comprehensive analysis with:
 ## 🤖 Where to Paste These Prompts
 
 ### **Option 1: Google Gemini AI**
+
 **URL:** https://gemini.google.com/
 
 1. Go to https://gemini.google.com/
@@ -298,6 +317,7 @@ Provide a comprehensive analysis with:
 3. Get comprehensive analysis
 
 ### **Option 2: ChatGPT**
+
 **URL:** https://chat.openai.com/
 
 1. Go to https://chat.openai.com/
@@ -305,6 +325,7 @@ Provide a comprehensive analysis with:
 3. Get detailed recommendations
 
 ### **Option 3: Claude**
+
 **URL:** https://claude.ai/
 
 1. Go to https://claude.ai/
@@ -337,6 +358,7 @@ Use this to ensure you have all the data:
    - Just get clicks, impressions, CTR, position
 
 3. **Paste to Gemini** (2 min):
+
 ```
 Quick SEO check for [URL]:
 
@@ -380,4 +402,3 @@ If the app can't automatically call these APIs, **these manual prompts give you 
 ---
 
 **Bookmark this page and use it whenever automated tools fail!** 🚀
-

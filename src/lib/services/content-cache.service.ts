@@ -23,7 +23,10 @@ export class ContentCacheService {
   /**
    * Get content from cache or scrape if not available
    */
-  static async getContent(url: string, scraper: () => Promise<any>): Promise<CachedContent> {
+  static async getContent(
+    url: string,
+    scraper: () => Promise<any>
+  ): Promise<CachedContent> {
     const cacheKey = this.normalizeUrl(url);
 
     // Check cache
@@ -46,7 +49,7 @@ export class ContentCacheService {
       extractedKeywords: existingData.extractedKeywords || [],
       headings: existingData.headings || { h1: [], h2: [], h3: [] },
       scrapedAt: new Date().toISOString(),
-      expiresAt: new Date(Date.now() + this.CACHE_DURATION).toISOString()
+      expiresAt: new Date(Date.now() + this.CACHE_DURATION).toISOString(),
     };
 
     // Store in cache
@@ -96,15 +99,18 @@ export class ContentCacheService {
   /**
    * Get cache statistics
    */
-  static getStats(): { size: number; entries: Array<{ url: string; scrapedAt: string }> } {
+  static getStats(): {
+    size: number;
+    entries: Array<{ url: string; scrapedAt: string }>;
+  } {
     const entries = Array.from(this.cache.entries()).map(([url, content]) => ({
       url,
-      scrapedAt: content.scrapedAt
+      scrapedAt: content.scrapedAt,
     }));
 
     return {
       size: this.cache.size,
-      entries
+      entries,
     };
   }
 
@@ -120,4 +126,3 @@ export class ContentCacheService {
     }
   }
 }
-

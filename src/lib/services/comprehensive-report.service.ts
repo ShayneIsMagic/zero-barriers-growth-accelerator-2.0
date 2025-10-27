@@ -5,32 +5,32 @@
  * Queries all detailed tables and synthesizes with Gemini AI
  */
 
-import { prisma } from '@/lib/prisma'
-import { CliftonStrengthsService } from './clifton-strengths-detailed.service'
+import { prisma } from '@/lib/prisma';
+import { CliftonStrengthsService } from './clifton-strengths-detailed.service';
 // ComingSoonService archived
-import { ElementsOfValueB2BService } from './elements-value-b2b.service'
-import { ElementsOfValueB2CService } from './elements-value-b2c.service'
-import { GoldenCircleDetailedService } from './golden-circle-detailed.service'
+import { ElementsOfValueB2BService } from './elements-value-b2b.service';
+import { ElementsOfValueB2CService } from './elements-value-b2c.service';
+import { GoldenCircleDetailedService } from './golden-circle-detailed.service';
 
 export interface ComprehensiveReport {
-  id: string
-  analysis_id: string
-  report_type: string
-  report_format: string
-  overall_score: number
+  id: string;
+  analysis_id: string;
+  report_type: string;
+  report_format: string;
+  overall_score: number;
   sections: {
-    executive_summary: string
-    golden_circle: string
-    elements_of_value_b2c: string
-    elements_of_value_b2b: string
-    clifton_strengths: string
-    performance: string
-    seo: string
-    strategic_recommendations: string
-    action_roadmap: string
-  }
-  file_url?: string
-  markdown: string
+    executive_summary: string;
+    golden_circle: string;
+    elements_of_value_b2c: string;
+    elements_of_value_b2b: string;
+    clifton_strengths: string;
+    performance: string;
+    seo: string;
+    strategic_recommendations: string;
+    action_roadmap: string;
+  };
+  file_url?: string;
+  markdown: string;
 }
 
 export class ComprehensiveReportService {
@@ -39,18 +39,17 @@ export class ComprehensiveReportService {
    */
   static async generate(analysisId: string): Promise<ComprehensiveReport> {
     // Fetch all analysis data in parallel
-    const [goldenCircle, eovB2C, eovB2B, cliftonStrengths] =
-      await Promise.all([
-        GoldenCircleDetailedService.getByAnalysisId(analysisId),
-        ElementsOfValueB2CService.getByAnalysisId(analysisId),
-        ElementsOfValueB2BService.getByAnalysisId(analysisId),
-        CliftonStrengthsService.getByAnalysisId(analysisId)
-      ])
+    const [goldenCircle, eovB2C, eovB2B, cliftonStrengths] = await Promise.all([
+      GoldenCircleDetailedService.getByAnalysisId(analysisId),
+      ElementsOfValueB2CService.getByAnalysisId(analysisId),
+      ElementsOfValueB2BService.getByAnalysisId(analysisId),
+      CliftonStrengthsService.getByAnalysisId(analysisId),
+    ]);
 
     // Get coming soon modules for missing functionality
     // ComingSoonService archived - using simple placeholders
-    const lighthouseModule = null
-    const seoModule = null
+    const lighthouseModule = null;
+    const seoModule = null;
 
     // Create placeholder data with coming soon information
     const lighthouse = {
@@ -61,8 +60,9 @@ export class ComprehensiveReportService {
       core_web_vitals: null,
       status: 'coming_soon',
       module: lighthouseModule,
-      manualPrompt: 'Lighthouse analysis coming soon - use Google PageSpeed Insights for now'
-    }
+      manualPrompt:
+        'Lighthouse analysis coming soon - use Google PageSpeed Insights for now',
+    };
 
     const seo = {
       overall_seo_score: 0,
@@ -73,8 +73,9 @@ export class ComprehensiveReportService {
       content_gaps: [],
       status: 'coming_soon',
       module: seoModule,
-      manualPrompt: 'SEO opportunities analysis coming soon - use Google Search Console for now'
-    }
+      manualPrompt:
+        'SEO opportunities analysis coming soon - use Google Search Console for now',
+    };
 
     // Build comprehensive markdown
     const markdown = await this.buildMarkdownReport({
@@ -83,11 +84,11 @@ export class ComprehensiveReportService {
       eovB2B,
       cliftonStrengths,
       lighthouse,
-      seo
-    })
+      seo,
+    });
 
     // Pass to Gemini for final synthesis
-    const synthesized = await this.synthesizeWithGemini(markdown)
+    const synthesized = await this.synthesizeWithGemini(markdown);
 
     // Calculate overall score
     const overallScore = this.calculateOverallScore({
@@ -96,18 +97,24 @@ export class ComprehensiveReportService {
       eovB2B,
       cliftonStrengths,
       lighthouse,
-      seo
-    })
+      seo,
+    });
 
     // Store report
-    return await this.storeReport(analysisId, markdown, synthesized, overallScore)
+    return await this.storeReport(
+      analysisId,
+      markdown,
+      synthesized,
+      overallScore
+    );
   }
 
   /**
    * Build comprehensive markdown report
    */
   private static async buildMarkdownReport(data: any): Promise<string> {
-    const { goldenCircle, eovB2C, eovB2B, cliftonStrengths, lighthouse, seo } = data
+    const { goldenCircle, eovB2C, eovB2B, cliftonStrengths, lighthouse, seo } =
+      data;
 
     return `
 # Comprehensive Website Analysis Report
@@ -249,7 +256,9 @@ ${this.formatTopStrengths(cliftonStrengths?.top_5)}
 
 ## 5. Performance Analysis (Lighthouse)
 
-${lighthouse?.status === 'coming_soon' ? `
+${
+  lighthouse?.status === 'coming_soon'
+    ? `
 🚧 **Coming Soon: Automated Lighthouse Analysis**
 
 **Status:** ${lighthouse.module?.name} - ${lighthouse.module?.estimatedCompletion}
@@ -268,7 +277,8 @@ ${lighthouse.manualPrompt}
 - SEO: ${lighthouse?.seo_score || 0}/100
 
 *Use the manual prompt above with Google PageSpeed Insights for immediate analysis.*
-` : `
+`
+    : `
 **Performance Score:** ${lighthouse?.performance_score || 0}/100
 
 **Core Scores:**
@@ -279,13 +289,16 @@ ${lighthouse.manualPrompt}
 
 **Core Web Vitals:**
 ${this.formatCoreWebVitals(lighthouse?.core_web_vitals)}
-`}
+`
+}
 
 ---
 
 ## 6. SEO Analysis
 
-${seo?.status === 'coming_soon' ? `
+${
+  seo?.status === 'coming_soon'
+    ? `
 🚧 **Coming Soon: Automated SEO Analysis**
 
 **Status:** ${seo.module?.name} - ${seo.module?.estimatedCompletion}
@@ -303,7 +316,8 @@ ${seo.manualPrompt}
 - Keyword Optimization: ${seo?.keyword_optimization_score || 0}/100
 
 *Use the manual prompt above with Google Search Console and SEMrush for immediate analysis.*
-` : `
+`
+    : `
 **SEO Score:** ${seo?.overall_seo_score || 0}/100
 
 **Component Scores:**
@@ -316,7 +330,8 @@ ${this.formatKeywordOpportunities(seo?.opportunities)}
 
 **Content Gaps to Address:**
 ${this.formatContentGaps(seo?.content_gaps)}
-`}
+`
+}
 
 ---
 
@@ -363,159 +378,170 @@ ${this.generateRoadmap(data)}
 
 *Generated on ${new Date().toISOString()}*
 *Analysis ID: ${data.goldenCircle?.analysis_id || 'unknown'}*
-`
+`;
   }
 
   /**
    * Helper: Format evidence
    */
   private static formatEvidence(evidence: any): string {
-    if (!evidence) return 'No evidence found'
+    if (!evidence) return 'No evidence found';
 
-    const patterns = evidence.patterns || []
-    const citations = evidence.citations || []
+    const patterns = evidence.patterns || [];
+    const citations = evidence.citations || [];
 
     return `
 Patterns detected: ${patterns.map((p: any) => `"${p.pattern_text || p}"`).join(', ')}
 Citations: ${citations.join(', ') || 'None'}
-`
+`;
   }
 
   /**
    * Helper: Format recommendations
    */
   private static formatRecommendations(recs: any[]): string {
-    if (!recs || recs.length === 0) return 'No recommendations'
-    return recs.map((r, i) => `${i + 1}. ${r}`).join('\n')
+    if (!recs || recs.length === 0) return 'No recommendations';
+    return recs.map((r, i) => `${i + 1}. ${r}`).join('\n');
   }
 
   /**
    * Helper: Format personas
    */
   private static formatPersonas(personas: any): string {
-    if (!personas || personas.length === 0) return 'None identified'
-    return personas.map((p: string, i: number) => `${i + 1}. ${p}`).join('\n')
+    if (!personas || personas.length === 0) return 'None identified';
+    return personas.map((p: string, i: number) => `${i + 1}. ${p}`).join('\n');
   }
 
   /**
    * Helper: Format top elements
    */
   private static formatTopElements(elements: any[]): string {
-    if (!elements || elements.length === 0) return 'None detected'
+    if (!elements || elements.length === 0) return 'None detected';
 
     return elements
       .sort((a: any, b: any) => (b.score || 0) - (a.score || 0))
       .slice(0, 10)
-      .map((e: any, i: number) =>
-        `${i + 1}. **${e.element_name}** - ${e.score || 0}/100`
+      .map(
+        (e: any, i: number) =>
+          `${i + 1}. **${e.element_name}** - ${e.score || 0}/100`
       )
-      .join('\n')
+      .join('\n');
   }
 
   /**
    * Helper: Format top strengths
    */
   private static formatTopStrengths(themes: any[]): string {
-    if (!themes || themes.length === 0) return 'None detected'
+    if (!themes || themes.length === 0) return 'None detected';
 
-    return themes.map((t: any, i: number) => `
+    return themes
+      .map(
+        (t: any, i: number) => `
 ${i + 1}. **${t.theme_name}** (${t.domain}) - ${t.score}/100
    ${t.manifestation_description || 'No description'}
-`).join('\n')
+`
+      )
+      .join('\n');
   }
 
   /**
    * Helper: Format Core Web Vitals
    */
   private static formatCoreWebVitals(cwv: any): string {
-    if (!cwv) return 'Not measured'
+    if (!cwv) return 'Not measured';
 
     return `
 - LCP (Largest Contentful Paint): ${cwv.lcp_ms || 0}ms
 - FCP (First Contentful Paint): ${cwv.fcp_ms || 0}ms
 - TBT (Total Blocking Time): ${cwv.tbt_ms || 0}ms
 - CLS (Cumulative Layout Shift): ${cwv.cls_score || 0}
-`
+`;
   }
 
   /**
    * Helper: Format keyword opportunities
    */
   private static formatKeywordOpportunities(opportunities: any[]): string {
-    if (!opportunities || opportunities.length === 0) return 'None identified'
+    if (!opportunities || opportunities.length === 0) return 'None identified';
 
     return opportunities
       .slice(0, 10)
-      .map((o: any, i: number) =>
-        `${i + 1}. **${o.keyword}** - ${o.search_volume} searches/mo, ${o.priority} priority`
+      .map(
+        (o: any, i: number) =>
+          `${i + 1}. **${o.keyword}** - ${o.search_volume} searches/mo, ${o.priority} priority`
       )
-      .join('\n')
+      .join('\n');
   }
 
   /**
    * Helper: Format content gaps
    */
   private static formatContentGaps(gaps: any[]): string {
-    if (!gaps || gaps.length === 0) return 'None identified'
+    if (!gaps || gaps.length === 0) return 'None identified';
 
-    return gaps.map((g: any, i: number) =>
-      `${i + 1}. **${g.topic}** - Est. ${g.estimated_traffic} visits/mo, ${g.priority} priority`
-    ).join('\n')
+    return gaps
+      .map(
+        (g: any, i: number) =>
+          `${i + 1}. **${g.topic}** - Est. ${g.estimated_traffic} visits/mo, ${g.priority} priority`
+      )
+      .join('\n');
   }
 
   /**
    * Generate quick wins
    */
   private static generateQuickWins(data: any): string {
-    const wins = []
+    const wins = [];
 
     if (data.lighthouse?.accessibility_score < 90) {
-      wins.push('- Fix accessibility issues (quick impact, high visibility)')
+      wins.push('- Fix accessibility issues (quick impact, high visibility)');
     }
     if (data.seo?.technical_seo_score < 80) {
-      wins.push('- Add missing meta descriptions and title tags')
+      wins.push('- Add missing meta descriptions and title tags');
     }
     if (data.goldenCircle?.what?.cta_clarity_rating < 7) {
-      wins.push('- Improve call-to-action clarity and prominence')
+      wins.push('- Improve call-to-action clarity and prominence');
     }
 
-    return wins.length > 0 ? wins.join('\n') : '- Continue current approach'
+    return wins.length > 0 ? wins.join('\n') : '- Continue current approach';
   }
 
   /**
    * Generate medium-term recommendations
    */
   private static generateMediumTerm(data: any): string {
-    const recs = []
+    const recs = [];
 
     if (data.goldenCircle?.why?.clarity_rating < 8) {
-      recs.push('- Clarify and amplify your WHY across all pages')
+      recs.push('- Clarify and amplify your WHY across all pages');
     }
     if (data.eovB2C?.functional_score < 80) {
-      recs.push('- Strengthen functional value propositions')
+      recs.push('- Strengthen functional value propositions');
     }
     if (data.seo?.content_gaps?.length > 0) {
-      recs.push('- Create content for identified gaps')
+      recs.push('- Create content for identified gaps');
     }
 
-    return recs.length > 0 ? recs.join('\n') : '- Maintain current momentum'
+    return recs.length > 0 ? recs.join('\n') : '- Maintain current momentum';
   }
 
   /**
    * Generate long-term strategy
    */
   private static generateLongTerm(data: any): string {
-    const strategy = []
+    const strategy = [];
 
     if (data.cliftonStrengths?.dominant_domain) {
-      strategy.push(`- Build on ${data.cliftonStrengths.dominant_domain} strengths`)
+      strategy.push(
+        `- Build on ${data.cliftonStrengths.dominant_domain} strengths`
+      );
     }
     if (data.eovB2B?.inspirational_score < 75) {
-      strategy.push('- Develop inspirational value propositions for B2B')
+      strategy.push('- Develop inspirational value propositions for B2B');
     }
-    strategy.push('- Establish thought leadership in your space')
+    strategy.push('- Establish thought leadership in your space');
 
-    return strategy.join('\n')
+    return strategy.join('\n');
   }
 
   /**
@@ -537,7 +563,7 @@ ${i + 1}. **${t.theme_name}** (${t.domain}) - ${t.score}/100
 - Launch thought leadership content
 - Expand into new keyword territories
 - Build on organizational strengths
-`
+`;
   }
 
   /**
@@ -550,20 +576,20 @@ ${i + 1}. **${t.theme_name}** (${t.domain}) - ${t.score}/100
       (data.eovB2B?.overall_score || 0) * 0.15,
       (data.cliftonStrengths?.overall_score || 0) * 0.15,
       (data.lighthouse?.performance_score || 0) * 0.15,
-      (data.seo?.overall_seo_score || 0) * 0.15
-    ]
+      (data.seo?.overall_seo_score || 0) * 0.15,
+    ];
 
-    return scores.reduce((sum, score) => sum + score, 0)
+    return scores.reduce((sum, score) => sum + score, 0);
   }
 
   /**
    * Synthesize report with Gemini AI
    */
   private static async synthesizeWithGemini(markdown: string): Promise<string> {
-    const apiKey = process.env.GEMINI_API_KEY
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      return markdown // Return unsynthesized if no API key
+      return markdown; // Return unsynthesized if no API key
     }
 
     const prompt = `
@@ -577,7 +603,7 @@ REPORT TO SYNTHESIZE:
 ${markdown}
 
 Keep the response professional and actionable. Focus on strategic insights.
-`
+`;
 
     try {
       const response = await fetch(
@@ -589,19 +615,19 @@ Keep the response professional and actionable. Focus on strategic insights.
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: {
               temperature: 0.7,
-              maxOutputTokens: 2048
-            }
-          })
+              maxOutputTokens: 2048,
+            },
+          }),
         }
-      )
+      );
 
-      const data = await response.json()
-      const synthesis = data.candidates[0]?.content?.parts[0]?.text || ''
+      const data = await response.json();
+      const synthesis = data.candidates[0]?.content?.parts[0]?.text || '';
 
-      return `${synthesis}\n\n---\n\n${markdown}`
+      return `${synthesis}\n\n---\n\n${markdown}`;
     } catch (error) {
-      console.error('Synthesis failed:', error)
-      return markdown
+      console.error('Synthesis failed:', error);
+      return markdown;
     }
   }
 
@@ -626,10 +652,10 @@ Keep the response professional and actionable. Focus on strategic insights.
           performance: true,
           seo: true,
           recommendations: true,
-          roadmap: true
-        }
-      }
-    })
+          roadmap: true,
+        },
+      },
+    });
 
     return {
       id: report.id,
@@ -646,35 +672,36 @@ Keep the response professional and actionable. Focus on strategic insights.
         performance: 'See full report',
         seo: 'See full report',
         strategic_recommendations: 'See full report',
-        action_roadmap: 'See full report'
+        action_roadmap: 'See full report',
       },
-      markdown: synthesized
-    }
+      markdown: synthesized,
+    };
   }
 
   /**
    * Fetch existing report
    */
-  static async getByAnalysisId(analysisId: string): Promise<ComprehensiveReport | null> {
+  static async getByAnalysisId(
+    analysisId: string
+  ): Promise<ComprehensiveReport | null> {
     try {
       const report = await prisma.generated_reports.findFirst({
         where: {
           analysis_id: analysisId,
-          report_type: 'comprehensive'
+          report_type: 'comprehensive',
         },
         orderBy: {
-          generated_at: 'desc'
-        }
-      })
+          generated_at: 'desc',
+        },
+      });
 
-      if (!report) return null
+      if (!report) return null;
 
       // Reconstruct full report by querying all data
-      return await this.generate(analysisId)
+      return await this.generate(analysisId);
     } catch (error) {
-      console.error('Failed to fetch report:', error)
-      return null
+      console.error('Failed to fetch report:', error);
+      return null;
     }
   }
 }
-

@@ -9,4 +9,3 @@ import { ProgressiveAnalysisPage } from '@/components/analysis/ProgressiveAnalys
 export default function ProgressiveAnalysisPageRoute() {
   return <ProgressiveAnalysisPage />;
 }
-

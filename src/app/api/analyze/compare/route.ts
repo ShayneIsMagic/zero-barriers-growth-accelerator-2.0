@@ -11,13 +11,20 @@ export const maxDuration = 30;
 
 export async function POST(request: NextRequest) {
   try {
-    const { url, proposedContent, analysisType: _analysisType } = await request.json();
+    const {
+      url,
+      proposedContent,
+      analysisType: _analysisType,
+    } = await request.json();
 
     if (!url) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL required',
+        },
+        { status: 400 }
+      );
     }
 
     console.log(`🔄 Starting comparison analysis for: ${url}`);
@@ -41,8 +48,8 @@ export async function POST(request: NextRequest) {
           metaTitle: extractTitle(proposedContent),
           metaDescription: extractMetaDescription(proposedContent),
           extractedKeywords: extractKeywordsFromText(proposedContent),
-          headings: extractHeadings(proposedContent)
-        }
+          headings: extractHeadings(proposedContent),
+        },
       };
     }
 
@@ -64,19 +71,21 @@ export async function POST(request: NextRequest) {
         extractedKeywords: existingData.seo.extractedKeywords,
         headings: existingData.seo.headings,
         cleanText: existingData.cleanText,
-        url: existingData.url
+        url: existingData.url,
       },
       proposed: proposedData,
       comparison: comparisonReport,
-      message: 'Comparison analysis completed'
+      message: 'Comparison analysis completed',
     });
-
   } catch (error) {
     console.error('Comparison analysis error:', error);
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Comparison failed'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Comparison failed',
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -88,17 +97,21 @@ function extractTitle(content: string): string {
 
 function extractMetaDescription(content: string): string {
   const lines = content.split('\n');
-  return lines.slice(0, 3).join(' ').trim().substring(0, 160) || 'Proposed description';
+  return (
+    lines.slice(0, 3).join(' ').trim().substring(0, 160) ||
+    'Proposed description'
+  );
 }
 
 function extractKeywordsFromText(text: string): string[] {
-  const words = text.toLowerCase()
+  const words = text
+    .toLowerCase()
     .replace(/[^\w\s]/g, ' ')
     .split(/\s+/)
-    .filter(word => word.length > 4);
+    .filter((word) => word.length > 4);
 
   const wordFreq: Record<string, number> = {};
-  words.forEach(word => {
+  words.forEach((word) => {
     wordFreq[word] = (wordFreq[word] || 0) + 1;
   });
 
@@ -108,12 +121,22 @@ function extractKeywordsFromText(text: string): string[] {
     .map(([word]) => word);
 }
 
-function extractHeadings(content: string): { h1: string[]; h2: string[]; h3: string[] } {
+function extractHeadings(content: string): {
+  h1: string[];
+  h2: string[];
+  h3: string[];
+} {
   const lines = content.split('\n');
   return {
-    h1: lines.filter(l => l.startsWith('# ')).map(l => l.replace('# ', '').trim()),
-    h2: lines.filter(l => l.startsWith('## ')).map(l => l.replace('## ', '').trim()),
-    h3: lines.filter(l => l.startsWith('### ')).map(l => l.replace('### ', '').trim())
+    h1: lines
+      .filter((l) => l.startsWith('# '))
+      .map((l) => l.replace('# ', '').trim()),
+    h2: lines
+      .filter((l) => l.startsWith('## '))
+      .map((l) => l.replace('## ', '').trim()),
+    h3: lines
+      .filter((l) => l.startsWith('### '))
+      .map((l) => l.replace('### ', '').trim()),
   };
 }
 
@@ -129,7 +152,12 @@ interface _AnalysisData {
 
 // Using imported ScrapedData interface from reliable-content-scraper
 
-async function generateComparisonReport(existing: any, proposed: any, url: string, _analysisType: string) {
+async function generateComparisonReport(
+  existing: any,
+  proposed: any,
+  url: string,
+  _analysisType: string
+) {
   const { analyzeWithGemini } = await import('@/lib/free-ai-analysis');
 
   const prompt = `Compare existing website content vs. proposed new content:
@@ -143,14 +171,18 @@ EXISTING CONTENT:
 - Keywords: ${existing.extractedKeywords.slice(0, 10).join(', ')}
 - Content: ${existing.cleanText.substring(0, 2000)}
 
-${proposed ? `
+${
+  proposed
+    ? `
 PROPOSED CONTENT:
 - Word Count: ${proposed.wordCount}
 - Title: ${proposed.title}
 - Meta Description: ${proposed.metaDescription}
 - Keywords: ${proposed.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
 - Content: ${proposed.cleanText.substring(0, 2000)}
-` : 'No proposed content provided - analyze existing only'}
+`
+    : 'No proposed content provided - analyze existing only'
+}
 
 Provide side-by-side comparison:
 1. SEO Impact: How would proposed content affect search rankings?
@@ -168,7 +200,7 @@ Return structured comparison with scores and specific improvements.`;
   } catch (error) {
     return {
       error: 'AI comparison failed',
-      fallbackPrompt: prompt
+      fallbackPrompt: prompt,
     };
   }
 }

@@ -8,17 +8,23 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-    BarChart3,
-    Clock,
-    Download,
-    ExternalLink,
-    Target,
-    XCircle
+  BarChart3,
+  Clock,
+  Download,
+  ExternalLink,
+  Target,
+  XCircle,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -64,7 +70,7 @@ export default function ElementsOfValuePage() {
       const phase1Response = await fetch('/api/analyze/phase-new', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, phase: 1 })
+        body: JSON.stringify({ url, phase: 1 }),
       });
 
       if (!phase1Response.ok) {
@@ -79,7 +85,7 @@ export default function ElementsOfValuePage() {
       const phase2Response = await fetch('/api/analyze/phase-new', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, phase: 2, analysisId: newAnalysisId })
+        body: JSON.stringify({ url, phase: 2, analysisId: newAnalysisId }),
       });
 
       if (!phase2Response.ok) {
@@ -87,19 +93,22 @@ export default function ElementsOfValuePage() {
       }
 
       // Fetch B2C Elements of Value analysis
-      const b2cResponse = await fetch(`/api/analysis/elements-value-b2c/${newAnalysisId}`);
+      const b2cResponse = await fetch(
+        `/api/analysis/elements-value-b2c/${newAnalysisId}`
+      );
       if (b2cResponse.ok) {
         const b2cData = await b2cResponse.json();
         setB2cAnalysis(b2cData);
       }
 
       // Fetch B2B Elements of Value analysis
-      const b2bResponse = await fetch(`/api/analysis/elements-value-b2b/${newAnalysisId}`);
+      const b2bResponse = await fetch(
+        `/api/analysis/elements-value-b2b/${newAnalysisId}`
+      );
       if (b2bResponse.ok) {
         const b2bData = await b2bResponse.json();
         setB2bAnalysis(b2bData);
       }
-
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Analysis failed');
     } finally {
@@ -114,27 +123,42 @@ export default function ElementsOfValuePage() {
   };
 
   const getScoreBadge = (score: number) => {
-    if (score >= 80) return <Badge className="bg-green-100 text-green-800">Strong</Badge>;
-    if (score >= 60) return <Badge className="bg-yellow-100 text-yellow-800">Moderate</Badge>;
+    if (score >= 80)
+      return <Badge className="bg-green-100 text-green-800">Strong</Badge>;
+    if (score >= 60)
+      return <Badge className="bg-yellow-100 text-yellow-800">Moderate</Badge>;
     return <Badge className="bg-red-100 text-red-800">Weak</Badge>;
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'functional': return 'bg-blue-100 text-blue-800';
-      case 'emotional': return 'bg-purple-100 text-purple-800';
-      case 'life_changing': return 'bg-green-100 text-green-800';
-      case 'social_impact': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'functional':
+        return 'bg-blue-100 text-blue-800';
+      case 'emotional':
+        return 'bg-purple-100 text-purple-800';
+      case 'life_changing':
+        return 'bg-green-100 text-green-800';
+      case 'social_impact':
+        return 'bg-orange-100 text-orange-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const renderElementsTable = (analysis: ElementsAnalysis) => {
     const categories = {
-      functional: analysis.elements.filter(e => e.element_category === 'functional'),
-      emotional: analysis.elements.filter(e => e.element_category === 'emotional'),
-      life_changing: analysis.elements.filter(e => e.element_category === 'life_changing'),
-      social_impact: analysis.elements.filter(e => e.element_category === 'social_impact')
+      functional: analysis.elements.filter(
+        (e) => e.element_category === 'functional'
+      ),
+      emotional: analysis.elements.filter(
+        (e) => e.element_category === 'emotional'
+      ),
+      life_changing: analysis.elements.filter(
+        (e) => e.element_category === 'life_changing'
+      ),
+      social_impact: analysis.elements.filter(
+        (e) => e.element_category === 'social_impact'
+      ),
     };
 
     return (
@@ -143,7 +167,9 @@ export default function ElementsOfValuePage() {
           <Card key={category}>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <span className="capitalize">{category.replace('_', ' ')} Elements</span>
+                <span className="capitalize">
+                  {category.replace('_', ' ')} Elements
+                </span>
                 <Badge className={getCategoryColor(category)}>
                   {elements.length} elements
                 </Badge>
@@ -152,29 +178,38 @@ export default function ElementsOfValuePage() {
             <CardContent>
               <div className="grid gap-4">
                 {elements.map((element, index) => (
-                  <div key={index} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
+                  <div key={index} className="rounded-lg border p-4">
+                    <div className="mb-2 flex items-center justify-between">
                       <h4 className="font-medium capitalize">
                         {element.element_name.replace(/_/g, ' ')}
                       </h4>
                       <div className="flex items-center gap-2">
-                        <span className={`font-bold ${getScoreColor(element.score)}`}>
+                        <span
+                          className={`font-bold ${getScoreColor(element.score)}`}
+                        >
                           {element.score}
                         </span>
                         {getScoreBadge(element.score)}
                       </div>
                     </div>
 
-                    <div className="text-sm text-gray-600 mb-2">
-                      Pyramid Level {element.pyramid_level} • Confidence: {(element.evidence.confidence * 100).toFixed(0)}%
+                    <div className="mb-2 text-sm text-gray-600">
+                      Pyramid Level {element.pyramid_level} • Confidence:{' '}
+                      {(element.evidence.confidence * 100).toFixed(0)}%
                     </div>
 
                     {element.evidence.patterns.length > 0 && (
                       <div className="mb-2">
-                        <div className="text-sm font-medium mb-1">Detected Patterns:</div>
+                        <div className="mb-1 text-sm font-medium">
+                          Detected Patterns:
+                        </div>
                         <div className="flex flex-wrap gap-1">
                           {element.evidence.patterns.map((pattern, i) => (
-                            <Badge key={i} variant="outline" className="text-xs">
+                            <Badge
+                              key={i}
+                              variant="outline"
+                              className="text-xs"
+                            >
                               {pattern}
                             </Badge>
                           ))}
@@ -184,8 +219,10 @@ export default function ElementsOfValuePage() {
 
                     {element.evidence.citations.length > 0 && (
                       <div>
-                        <div className="text-sm font-medium mb-1">Evidence:</div>
-                        <ul className="text-xs text-gray-600 list-disc list-inside">
+                        <div className="mb-1 text-sm font-medium">
+                          Evidence:
+                        </div>
+                        <ul className="list-inside list-disc text-xs text-gray-600">
                           {element.evidence.citations.map((citation, i) => (
                             <li key={i}>{citation}</li>
                           ))}
@@ -203,11 +240,12 @@ export default function ElementsOfValuePage() {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Elements of Value Analysis</h1>
+        <h1 className="mb-2 text-3xl font-bold">Elements of Value Analysis</h1>
         <p className="text-gray-600">
-          Analyze your website&apos;s value proposition using Bain & Company&apos;s 30 B2C and 40 B2B value elements
+          Analyze your website&apos;s value proposition using Bain &
+          Company&apos;s 30 B2C and 40 B2B value elements
         </p>
       </div>
 
@@ -219,7 +257,8 @@ export default function ElementsOfValuePage() {
               Start Elements of Value Analysis
             </CardTitle>
             <CardDescription>
-              Enter your website URL to analyze your value proposition across all elements
+              Enter your website URL to analyze your value proposition across
+              all elements
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -263,14 +302,16 @@ export default function ElementsOfValuePage() {
       ) : (
         <div className="space-y-6">
           {/* Overall Scores */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {b2cAnalysis && (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     <span>B2C Elements Score</span>
                     <div className="flex items-center gap-2">
-                      <span className={`text-3xl font-bold ${getScoreColor(b2cAnalysis.overall_score)}`}>
+                      <span
+                        className={`text-3xl font-bold ${getScoreColor(b2cAnalysis.overall_score)}`}
+                      >
                         {b2cAnalysis.overall_score}
                       </span>
                       {getScoreBadge(b2cAnalysis.overall_score)}
@@ -280,19 +321,27 @@ export default function ElementsOfValuePage() {
                 <CardContent>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center">
-                      <div className="text-xl font-bold text-blue-600">{b2cAnalysis.functional_score}</div>
+                      <div className="text-xl font-bold text-blue-600">
+                        {b2cAnalysis.functional_score}
+                      </div>
                       <div className="text-sm text-gray-600">Functional</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-xl font-bold text-purple-600">{b2cAnalysis.emotional_score}</div>
+                      <div className="text-xl font-bold text-purple-600">
+                        {b2cAnalysis.emotional_score}
+                      </div>
                       <div className="text-sm text-gray-600">Emotional</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-xl font-bold text-green-600">{b2cAnalysis.life_changing_score}</div>
+                      <div className="text-xl font-bold text-green-600">
+                        {b2cAnalysis.life_changing_score}
+                      </div>
                       <div className="text-sm text-gray-600">Life Changing</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-xl font-bold text-orange-600">{b2cAnalysis.social_impact_score}</div>
+                      <div className="text-xl font-bold text-orange-600">
+                        {b2cAnalysis.social_impact_score}
+                      </div>
                       <div className="text-sm text-gray-600">Social Impact</div>
                     </div>
                   </div>
@@ -306,7 +355,9 @@ export default function ElementsOfValuePage() {
                   <CardTitle className="flex items-center justify-between">
                     <span>B2B Elements Score</span>
                     <div className="flex items-center gap-2">
-                      <span className={`text-3xl font-bold ${getScoreColor(b2bAnalysis.overall_score)}`}>
+                      <span
+                        className={`text-3xl font-bold ${getScoreColor(b2bAnalysis.overall_score)}`}
+                      >
                         {b2bAnalysis.overall_score}
                       </span>
                       {getScoreBadge(b2bAnalysis.overall_score)}
@@ -316,19 +367,27 @@ export default function ElementsOfValuePage() {
                 <CardContent>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center">
-                      <div className="text-xl font-bold text-blue-600">{b2bAnalysis.functional_score}</div>
+                      <div className="text-xl font-bold text-blue-600">
+                        {b2bAnalysis.functional_score}
+                      </div>
                       <div className="text-sm text-gray-600">Functional</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-xl font-bold text-purple-600">{b2bAnalysis.emotional_score}</div>
+                      <div className="text-xl font-bold text-purple-600">
+                        {b2bAnalysis.emotional_score}
+                      </div>
                       <div className="text-sm text-gray-600">Emotional</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-xl font-bold text-green-600">{b2bAnalysis.life_changing_score}</div>
+                      <div className="text-xl font-bold text-green-600">
+                        {b2bAnalysis.life_changing_score}
+                      </div>
                       <div className="text-sm text-gray-600">Life Changing</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-xl font-bold text-orange-600">{b2bAnalysis.social_impact_score}</div>
+                      <div className="text-xl font-bold text-orange-600">
+                        {b2bAnalysis.social_impact_score}
+                      </div>
                       <div className="text-sm text-gray-600">Social Impact</div>
                     </div>
                   </div>
@@ -338,14 +397,19 @@ export default function ElementsOfValuePage() {
           </div>
 
           {/* Detailed Analysis Tabs */}
-          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'b2c' | 'b2b')}>
+          <Tabs
+            value={activeTab}
+            onValueChange={(value) => setActiveTab(value as 'b2c' | 'b2b')}
+          >
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="b2c">B2C Elements (30)</TabsTrigger>
               <TabsTrigger value="b2b">B2B Elements (40)</TabsTrigger>
             </TabsList>
 
             <TabsContent value="b2c">
-              {b2cAnalysis ? renderElementsTable(b2cAnalysis) : (
+              {b2cAnalysis ? (
+                renderElementsTable(b2cAnalysis)
+              ) : (
                 <Card>
                   <CardContent className="p-8 text-center">
                     <p className="text-gray-500">B2C analysis not available</p>
@@ -355,7 +419,9 @@ export default function ElementsOfValuePage() {
             </TabsContent>
 
             <TabsContent value="b2b">
-              {b2bAnalysis ? renderElementsTable(b2bAnalysis) : (
+              {b2bAnalysis ? (
+                renderElementsTable(b2bAnalysis)
+              ) : (
                 <Card>
                   <CardContent className="p-8 text-center">
                     <p className="text-gray-500">B2B analysis not available</p>
@@ -367,10 +433,13 @@ export default function ElementsOfValuePage() {
 
           {/* Action Buttons */}
           <div className="flex gap-4">
-            <Button onClick={() => {
-              setB2cAnalysis(null);
-              setB2bAnalysis(null);
-            }} variant="outline">
+            <Button
+              onClick={() => {
+                setB2cAnalysis(null);
+                setB2bAnalysis(null);
+              }}
+              variant="outline"
+            >
               Analyze Another Website
             </Button>
             <Button variant="outline">

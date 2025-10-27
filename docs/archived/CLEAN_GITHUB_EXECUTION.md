@@ -1,11 +1,13 @@
 # 🧹 CLEAN GITHUB EXECUTION PLAN
 
 ## 🚨 **CURRENT BLOAT STATUS**
+
 - **225 markdown files** - Way too many!
 - **327 TypeScript files** - Too many!
 - **Repository is cluttered** with development documentation
 
 ## 🎯 **CLEAN REPOSITORY GOAL**
+
 - **~10 essential markdown files** (95% reduction)
 - **~50 TypeScript files** (85% reduction)
 - **Only production-ready code** in main branch
@@ -14,6 +16,7 @@
 ## 📋 **ESSENTIAL FILES TO KEEP**
 
 ### **Root Level (Keep These)**
+
 ```
 README.md                           # Main project documentation
 package.json                        # Dependencies
@@ -27,6 +30,7 @@ supabase-schema-migration.sql       # Database migration
 ```
 
 ### **Essential Documentation (Move to docs/essential/)**
+
 ```
 CONTENT_COMPARISON_PROTECTION_PLAN.md
 DEPLOYMENT_STRATEGY.md
@@ -36,6 +40,7 @@ BACKEND_ARCHITECTURE_EVALUATION.md
 ```
 
 ### **Working Code (Move to src/working/)**
+
 ```
 src/app/api/scrape-content/         # Universal scraper
 src/app/api/analyze/compare/        # Content comparison
@@ -57,10 +62,12 @@ src/lib/services/structured-storage.service.ts
 ## 🗑️ **FILES TO ARCHIVE (NOT DELETE)**
 
 ### **Development Documentation (Move to docs/archived/)**
+
 - All 200+ development markdown files
 - Keep for reference but not in main branch
 
 ### **Broken/Incomplete Code (Move to src/archived/)**
+
 - Broken API endpoints
 - Incomplete components
 - Duplicate functionality
@@ -69,6 +76,7 @@ src/lib/services/structured-storage.service.ts
 ## 🚀 **EXECUTION STEPS**
 
 ### **Step 1: Archive Documentation Bloat**
+
 ```bash
 # Move all development docs to archived
 mv *.md docs/archived/
@@ -76,6 +84,7 @@ mv docs/essential/*.md .
 ```
 
 ### **Step 2: Archive Broken Code**
+
 ```bash
 # Move broken APIs
 mv src/app/api/analyze/phase-new src/archived/broken-apis/
@@ -91,6 +100,7 @@ mv src/components/analysis/ComprehensiveAnalysisPage.tsx src/archived/broken-com
 ```
 
 ### **Step 3: Move Working Code to Clean Structure**
+
 ```bash
 # Move working APIs
 cp -r src/app/api/scrape-content src/working/api/
@@ -113,11 +123,13 @@ cp src/components/analysis/CliftonStrengthsPage.tsx src/working/components/
 ## 📊 **AFTER CLEANUP RESULTS**
 
 ### **File Count Reduction**
+
 - **Markdown files**: ~10 (down from 225) - **95% reduction**
 - **TypeScript files**: ~50 (down from 327) - **85% reduction**
 - **Clean, focused repository**
 
 ### **Clean Repository Structure**
+
 ```
 zero-barriers-growth-accelerator-2.0/
 ├── README.md                       # Main documentation
@@ -143,6 +155,7 @@ zero-barriers-growth-accelerator-2.0/
 ## 🎯 **SUCCESS CRITERIA**
 
 ### **✅ Clean Repository When:**
+
 - [ ] **Only 10 essential markdown files** in root
 - [ ] **Only working code** in main branch
 - [ ] **All broken code archived** (not deleted)
@@ -151,6 +164,7 @@ zero-barriers-growth-accelerator-2.0/
 - [ ] **All tests passing**
 
 ### **🚨 Rollback Plan:**
+
 - [ ] **All files archived** (not deleted)
 - [ ] **Git branches** for each cleanup phase
 - [ ] **Database backup** before changes

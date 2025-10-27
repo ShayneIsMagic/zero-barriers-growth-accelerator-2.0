@@ -18,7 +18,9 @@ interface LighthouseResult {
     'total-blocking-time': { numericValue: number };
     'cumulative-layout-shift': { numericValue: number };
     'speed-index': { numericValue: number };
-    'render-blocking-resources': { details?: { items: Array<{ url: string }> } };
+    'render-blocking-resources': {
+      details?: { items: Array<{ url: string }> };
+    };
     'unused-css-rules': { details?: { items: Array<{ url: string }> } };
     'unused-javascript': { details?: { items: Array<{ url: string }> } };
     'unminified-css': { details?: { items: Array<{ url: string }> } };
@@ -29,18 +31,22 @@ interface LighthouseResult {
 /**
  * Run Lighthouse analysis on a website
  */
-export async function runLighthouseAnalysis(url: string): Promise<LighthouseAnalysis> {
+export async function runLighthouseAnalysis(
+  url: string
+): Promise<LighthouseAnalysis> {
   try {
     console.log(`Running Lighthouse analysis for: ${url}`);
-    
+
     // Use the existing lighthouse report if available, or run a new analysis
     const lighthouseResult = await performLighthouseAudit(url);
-    
+
     return formatLighthouseResults(lighthouseResult);
   } catch (error) {
     console.error('Lighthouse analysis failed:', error);
     // Return a default analysis with error indicators
-    return createDefaultLighthouseAnalysis(error instanceof Error ? error.message : 'Unknown error');
+    return createDefaultLighthouseAnalysis(
+      error instanceof Error ? error.message : 'Unknown error'
+    );
   }
 }
 
@@ -53,21 +59,21 @@ async function performLighthouseAudit(url: string): Promise<LighthouseResult> {
   try {
     // Simulate a basic performance check
     const startTime = Date.now();
-    const response = await fetch(url, { 
+    const response = await fetch(url, {
       method: 'HEAD',
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; LighthouseBot)' }
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; LighthouseBot)' },
     });
     const loadTime = Date.now() - startTime;
-    
+
     // Basic performance scoring based on response time
-    const performanceScore = Math.max(0, 100 - (loadTime / 10));
-    
+    const performanceScore = Math.max(0, 100 - loadTime / 10);
+
     return {
       categories: {
         performance: { score: Math.round(performanceScore) },
         accessibility: { score: 85 }, // Default good score
         'best-practices': { score: 90 },
-        seo: { score: 88 }
+        seo: { score: 88 },
       },
       audits: {
         'first-contentful-paint': { numericValue: loadTime * 0.7 },
@@ -79,8 +85,8 @@ async function performLighthouseAudit(url: string): Promise<LighthouseResult> {
         'unused-css-rules': { details: { items: [] } },
         'unused-javascript': { details: { items: [] } },
         'unminified-css': { details: { items: [] } },
-        'unminified-javascript': { details: { items: [] } }
-      }
+        'unminified-javascript': { details: { items: [] } },
+      },
     };
   } catch (error) {
     throw new Error(`Failed to analyze website: ${error}`);
@@ -95,36 +101,41 @@ function formatLighthouseResults(result: LighthouseResult): LighthouseAnalysis {
   const accessibilityScore = result.categories.accessibility.score;
   const bestPracticesScore = result.categories['best-practices'].score;
   const seoScore = result.categories.seo.score;
-  
-  const overallScore = Math.round((performanceScore + accessibilityScore + bestPracticesScore + seoScore) / 4);
-  
+
+  const overallScore = Math.round(
+    (performanceScore + accessibilityScore + bestPracticesScore + seoScore) / 4
+  );
+
   return {
     performance: {
       score: performanceScore,
       metrics: {
-        firstContentfulPaint: result.audits['first-contentful-paint'].numericValue,
-        largestContentfulPaint: result.audits['largest-contentful-paint'].numericValue,
+        firstContentfulPaint:
+          result.audits['first-contentful-paint'].numericValue,
+        largestContentfulPaint:
+          result.audits['largest-contentful-paint'].numericValue,
         totalBlockingTime: result.audits['total-blocking-time'].numericValue,
-        cumulativeLayoutShift: result.audits['cumulative-layout-shift'].numericValue,
+        cumulativeLayoutShift:
+          result.audits['cumulative-layout-shift'].numericValue,
         speedIndex: result.audits['speed-index'].numericValue,
       },
       opportunities: generatePerformanceOpportunities(result.audits),
-      diagnostics: generatePerformanceDiagnostics(performanceScore)
+      diagnostics: generatePerformanceDiagnostics(performanceScore),
     },
     accessibility: {
       score: accessibilityScore,
       issues: generateAccessibilityIssues(accessibilityScore),
-      recommendations: generateAccessibilityRecommendations(accessibilityScore)
+      recommendations: generateAccessibilityRecommendations(accessibilityScore),
     },
     bestPractices: {
       score: bestPracticesScore,
       issues: generateBestPracticesIssues(bestPracticesScore),
-      recommendations: generateBestPracticesRecommendations(bestPracticesScore)
+      recommendations: generateBestPracticesRecommendations(bestPracticesScore),
     },
     seo: {
       score: seoScore,
       issues: generateSEOIssues(seoScore),
-      recommendations: generateSEORecommendations(seoScore)
+      recommendations: generateSEORecommendations(seoScore),
     },
     overallScore,
     scores: {
@@ -132,55 +143,60 @@ function formatLighthouseResults(result: LighthouseResult): LighthouseAnalysis {
       accessibility: accessibilityScore,
       bestPractices: bestPracticesScore,
       seo: seoScore,
-      overall: overallScore
+      overall: overallScore,
     },
     executiveSummary: `Website performance analysis completed. Overall score: ${overallScore}/100. Performance: ${performanceScore}/100, Accessibility: ${accessibilityScore}/100, Best Practices: ${bestPracticesScore}/100, SEO: ${seoScore}/100.`,
     recommendations: [
       ...generatePerformanceOpportunities(result.audits),
       ...generateAccessibilityRecommendations(accessibilityScore),
       ...generateBestPracticesRecommendations(bestPracticesScore),
-      ...generateSEORecommendations(seoScore)
+      ...generateSEORecommendations(seoScore),
     ],
     metrics: {
-      firstContentfulPaint: result.audits['first-contentful-paint'].numericValue,
-      largestContentfulPaint: result.audits['largest-contentful-paint'].numericValue,
-      cumulativeLayoutShift: result.audits['cumulative-layout-shift'].numericValue,
+      firstContentfulPaint:
+        result.audits['first-contentful-paint'].numericValue,
+      largestContentfulPaint:
+        result.audits['largest-contentful-paint'].numericValue,
+      cumulativeLayoutShift:
+        result.audits['cumulative-layout-shift'].numericValue,
       speedIndex: result.audits['speed-index'].numericValue,
       totalBlockingTime: result.audits['total-blocking-time'].numericValue,
-    }
+    },
   };
 }
 
 /**
  * Generate performance optimization opportunities
  */
-function generatePerformanceOpportunities(audits: LighthouseResult['audits']): string[] {
+function generatePerformanceOpportunities(
+  audits: LighthouseResult['audits']
+): string[] {
   const opportunities: string[] = [];
-  
+
   if (audits['render-blocking-resources'].details?.items.length) {
     opportunities.push('Eliminate render-blocking resources');
   }
-  
+
   if (audits['unused-css-rules'].details?.items.length) {
     opportunities.push('Remove unused CSS');
   }
-  
+
   if (audits['unused-javascript'].details?.items.length) {
     opportunities.push('Remove unused JavaScript');
   }
-  
+
   if (audits['unminified-css'].details?.items.length) {
     opportunities.push('Minify CSS');
   }
-  
+
   if (audits['unminified-javascript'].details?.items.length) {
     opportunities.push('Minify JavaScript');
   }
-  
+
   if (opportunities.length === 0) {
     opportunities.push('Performance looks good - continue monitoring');
   }
-  
+
   return opportunities;
 }
 
@@ -257,7 +273,9 @@ function generateSEOIssues(score: number): string[] {
 /**
  * Create default Lighthouse analysis for error cases
  */
-function createDefaultLighthouseAnalysis(errorMessage: string): LighthouseAnalysis {
+function createDefaultLighthouseAnalysis(
+  errorMessage: string
+): LighthouseAnalysis {
   return {
     performance: {
       score: 0,
@@ -269,22 +287,22 @@ function createDefaultLighthouseAnalysis(errorMessage: string): LighthouseAnalys
         speedIndex: 0,
       },
       opportunities: [`Analysis failed: ${errorMessage}`],
-      diagnostics: ['Unable to perform performance analysis']
+      diagnostics: ['Unable to perform performance analysis'],
     },
     accessibility: {
       score: 0,
       issues: ['Analysis unavailable'],
-      recommendations: ['Run accessibility audit manually']
+      recommendations: ['Run accessibility audit manually'],
     },
     bestPractices: {
       score: 0,
       issues: ['Analysis unavailable'],
-      recommendations: ['Run best practices audit manually']
+      recommendations: ['Run best practices audit manually'],
     },
     seo: {
       score: 0,
       issues: ['Analysis unavailable'],
-      recommendations: ['Run SEO audit manually']
+      recommendations: ['Run SEO audit manually'],
     },
     overallScore: 0,
     scores: {
@@ -292,16 +310,20 @@ function createDefaultLighthouseAnalysis(errorMessage: string): LighthouseAnalys
       accessibility: 0,
       bestPractices: 0,
       seo: 0,
-      overall: 0
+      overall: 0,
     },
     executiveSummary: `Lighthouse analysis failed: ${errorMessage}`,
-    recommendations: ['Run accessibility audit manually', 'Run best practices audit manually', 'Run SEO audit manually'],
+    recommendations: [
+      'Run accessibility audit manually',
+      'Run best practices audit manually',
+      'Run SEO audit manually',
+    ],
     metrics: {
       firstContentfulPaint: 0,
       largestContentfulPaint: 0,
       cumulativeLayoutShift: 0,
       speedIndex: 0,
       totalBlockingTime: 0,
-    }
+    },
   };
 }

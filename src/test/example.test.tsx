@@ -1,10 +1,20 @@
-import { screen } from '@testing-library/react'
-import { vi } from 'vitest';;
+import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { clearAllMocks, mockUser, renderWithProviders } from './utils/test-helpers';
+import {
+  clearAllMocks,
+  mockUser,
+  renderWithProviders,
+} from './utils/test-helpers';
 
 // Example component to test (you can replace this with your actual components)
-function ExampleButton({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
+function ExampleButton({
+  onClick,
+  children,
+}: {
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
   return (
     <button onClick={onClick} data-testid="example-button">
       {children}
@@ -19,7 +29,9 @@ describe('Example Test Suite', () => {
 
   it('should render a button', () => {
     const handleClick = vi.fn();
-    renderWithProviders(<ExampleButton onClick={handleClick}>Click me</ExampleButton>);
+    renderWithProviders(
+      <ExampleButton onClick={handleClick}>Click me</ExampleButton>
+    );
 
     const button = screen.getByTestId('example-button');
     expect(button).toBeInTheDocument();
@@ -28,7 +40,9 @@ describe('Example Test Suite', () => {
 
   it('should call onClick when button is clicked', async () => {
     const handleClick = vi.fn();
-    renderWithProviders(<ExampleButton onClick={handleClick}>Click me</ExampleButton>);
+    renderWithProviders(
+      <ExampleButton onClick={handleClick}>Click me</ExampleButton>
+    );
 
     const button = screen.getByTestId('example-button');
     await button.click();
@@ -45,4 +59,3 @@ describe('Example Test Suite', () => {
     });
   });
 });
-

@@ -13,13 +13,14 @@ export async function POST(request: NextRequest) {
 
     // Find user
     const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() }
+      where: { email: email.toLowerCase() },
     });
 
     if (!user) {
       // Don't reveal if user exists or not (security best practice)
       return NextResponse.json({
-        message: 'If an account exists with this email, a password reset link has been sent.'
+        message:
+          'If an account exists with this email, a password reset link has been sent.',
       });
     }
 
@@ -34,17 +35,22 @@ export async function POST(request: NextRequest) {
 
     // For now, return success (in production, always return same message)
     return NextResponse.json({
-      message: 'If an account exists with this email, a password reset link has been sent.',
+      message:
+        'If an account exists with this email, a password reset link has been sent.',
       // TODO: Remove this in production
-      debug: process.env.NODE_ENV === 'development' ? {
-        token: resetToken,
-        expiry: resetTokenExpiry
-      } : undefined
+      debug:
+        process.env.NODE_ENV === 'development'
+          ? {
+              token: resetToken,
+              expiry: resetTokenExpiry,
+            }
+          : undefined,
     });
-
   } catch (error) {
     console.error('Forgot password error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
-

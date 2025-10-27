@@ -9,57 +9,96 @@ export async function POST(request: NextRequest) {
     const { url, content, phase1Data } = body;
 
     if (!url || !content) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL and content are required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL and content are required',
+        },
+        { status: 400 }
+      );
     }
 
     console.log(`🎯 Starting Complete Phase 2 analysis for: ${url}`);
 
     if (!process.env.GEMINI_API_KEY) {
-      return NextResponse.json({
-        success: false,
-        error: 'GEMINI_API_KEY not configured'
-      }, { status: 500 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'GEMINI_API_KEY not configured',
+        },
+        { status: 500 }
+      );
     }
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
 
     // Run all framework analyses in parallel
-    const [goldenCircleResult, elementsOfValueResult, b2bElementsResult, cliftonStrengthsResult, contentComparisonResult] = await Promise.allSettled([
+    const [
+      goldenCircleResult,
+      elementsOfValueResult,
+      b2bElementsResult,
+      cliftonStrengthsResult,
+      contentComparisonResult,
+    ] = await Promise.allSettled([
       runGoldenCircleAnalysis(model, url, content, phase1Data),
       runElementsOfValueAnalysis(model, url, content, phase1Data),
       runB2BElementsAnalysis(model, url, content, phase1Data),
       runCliftonStrengthsAnalysis(model, url, content, phase1Data),
-      runContentComparisonAnalysis(model, url, content, phase1Data)
+      runContentComparisonAnalysis(model, url, content, phase1Data),
     ]);
 
     const phase2Result = {
       url,
       timestamp: new Date().toISOString(),
-      goldenCircle: goldenCircleResult.status === 'fulfilled' ? goldenCircleResult.value : { error: 'Golden Circle analysis failed' },
-      elementsOfValue: elementsOfValueResult.status === 'fulfilled' ? elementsOfValueResult.value : { error: 'Elements of Value analysis failed' },
-      b2bElements: b2bElementsResult.status === 'fulfilled' ? b2bElementsResult.value : { error: 'B2B Elements analysis failed' },
-      cliftonStrengths: cliftonStrengthsResult.status === 'fulfilled' ? cliftonStrengthsResult.value : { error: 'CliftonStrengths analysis failed' },
-      contentComparison: contentComparisonResult.status === 'fulfilled' ? contentComparisonResult.value : { error: 'Content Comparison analysis failed' },
+      goldenCircle:
+        goldenCircleResult.status === 'fulfilled'
+          ? goldenCircleResult.value
+          : { error: 'Golden Circle analysis failed' },
+      elementsOfValue:
+        elementsOfValueResult.status === 'fulfilled'
+          ? elementsOfValueResult.value
+          : { error: 'Elements of Value analysis failed' },
+      b2bElements:
+        b2bElementsResult.status === 'fulfilled'
+          ? b2bElementsResult.value
+          : { error: 'B2B Elements analysis failed' },
+      cliftonStrengths:
+        cliftonStrengthsResult.status === 'fulfilled'
+          ? cliftonStrengthsResult.value
+          : { error: 'CliftonStrengths analysis failed' },
+      contentComparison:
+        contentComparisonResult.status === 'fulfilled'
+          ? contentComparisonResult.value
+          : { error: 'Content Comparison analysis failed' },
       summary: {
         completedAnalyses: [
           goldenCircleResult.status === 'fulfilled' ? 'Golden Circle' : null,
-          elementsOfValueResult.status === 'fulfilled' ? 'Elements of Value' : null,
+          elementsOfValueResult.status === 'fulfilled'
+            ? 'Elements of Value'
+            : null,
           b2bElementsResult.status === 'fulfilled' ? 'B2B Elements' : null,
-          cliftonStrengthsResult.status === 'fulfilled' ? 'CliftonStrengths' : null,
-          contentComparisonResult.status === 'fulfilled' ? 'Content Comparison' : null
+          cliftonStrengthsResult.status === 'fulfilled'
+            ? 'CliftonStrengths'
+            : null,
+          contentComparisonResult.status === 'fulfilled'
+            ? 'Content Comparison'
+            : null,
         ].filter(Boolean),
         failedAnalyses: [
           goldenCircleResult.status === 'rejected' ? 'Golden Circle' : null,
-          elementsOfValueResult.status === 'rejected' ? 'Elements of Value' : null,
+          elementsOfValueResult.status === 'rejected'
+            ? 'Elements of Value'
+            : null,
           b2bElementsResult.status === 'rejected' ? 'B2B Elements' : null,
-          cliftonStrengthsResult.status === 'rejected' ? 'CliftonStrengths' : null,
-          contentComparisonResult.status === 'rejected' ? 'Content Comparison' : null
-        ].filter(Boolean)
-      }
+          cliftonStrengthsResult.status === 'rejected'
+            ? 'CliftonStrengths'
+            : null,
+          contentComparisonResult.status === 'rejected'
+            ? 'Content Comparison'
+            : null,
+        ].filter(Boolean),
+      },
     };
 
     console.log(`✅ Complete Phase 2 analysis completed for: ${url}`);
@@ -69,21 +108,28 @@ export async function POST(request: NextRequest) {
       url,
       phase: 2,
       data: phase2Result,
-      message: 'Complete Phase 2 analysis completed successfully'
+      message: 'Complete Phase 2 analysis completed successfully',
     });
-
   } catch (error) {
     console.error('Complete Phase 2 analysis error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Complete Phase 2 analysis failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Complete Phase 2 analysis failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }
 
 // Golden Circle Analysis
-async function runGoldenCircleAnalysis(model: any, url: string, content: any, phase1Data: any) {
+async function runGoldenCircleAnalysis(
+  model: any,
+  url: string,
+  content: any,
+  phase1Data: any
+) {
   const prompt = `
 # GOLDEN CIRCLE ANALYSIS (Simon Sinek)
 
@@ -202,12 +248,20 @@ Return a JSON object with this exact structure:
     }
   } catch (parseError) {
     console.error('Failed to parse Golden Circle response:', parseError);
-    return { error: 'Failed to parse Golden Circle response', rawResponse: text };
+    return {
+      error: 'Failed to parse Golden Circle response',
+      rawResponse: text,
+    };
   }
 }
 
 // Elements of Value Analysis
-async function runElementsOfValueAnalysis(model: any, url: string, content: any, phase1Data: any) {
+async function runElementsOfValueAnalysis(
+  model: any,
+  url: string,
+  content: any,
+  phase1Data: any
+) {
   const prompt = `
 # ELEMENTS OF VALUE ANALYSIS (Bain & Company)
 
@@ -354,12 +408,20 @@ Return a JSON object with this exact structure:
     }
   } catch (parseError) {
     console.error('Failed to parse Elements of Value response:', parseError);
-    return { error: 'Failed to parse Elements of Value response', rawResponse: text };
+    return {
+      error: 'Failed to parse Elements of Value response',
+      rawResponse: text,
+    };
   }
 }
 
 // B2B Elements Analysis
-async function runB2BElementsAnalysis(model: any, url: string, content: any, phase1Data: any) {
+async function runB2BElementsAnalysis(
+  model: any,
+  url: string,
+  content: any,
+  phase1Data: any
+) {
   const prompt = `
 # B2B ELEMENTS OF VALUE ANALYSIS
 
@@ -527,12 +589,20 @@ Return a JSON object with this exact structure:
     }
   } catch (parseError) {
     console.error('Failed to parse B2B Elements response:', parseError);
-    return { error: 'Failed to parse B2B Elements response', rawResponse: text };
+    return {
+      error: 'Failed to parse B2B Elements response',
+      rawResponse: text,
+    };
   }
 }
 
 // CliftonStrengths Analysis
-async function runCliftonStrengthsAnalysis(model: any, url: string, content: any, phase1Data: any) {
+async function runCliftonStrengthsAnalysis(
+  model: any,
+  url: string,
+  content: any,
+  phase1Data: any
+) {
   const prompt = `
 # CLIFTONSTRENGTHS ANALYSIS (Gallup)
 
@@ -684,12 +754,20 @@ Return a JSON object with this exact structure:
     }
   } catch (parseError) {
     console.error('Failed to parse CliftonStrengths response:', parseError);
-    return { error: 'Failed to parse CliftonStrengths response', rawResponse: text };
+    return {
+      error: 'Failed to parse CliftonStrengths response',
+      rawResponse: text,
+    };
   }
 }
 
 // Content Comparison Analysis
-async function runContentComparisonAnalysis(model: any, url: string, content: any, phase1Data: any) {
+async function runContentComparisonAnalysis(
+  model: any,
+  url: string,
+  content: any,
+  phase1Data: any
+) {
   const prompt = `
 # CONTENT COMPARISON ANALYSIS
 
@@ -789,6 +867,9 @@ Return a JSON object with this exact structure:
     }
   } catch (parseError) {
     console.error('Failed to parse Content Comparison response:', parseError);
-    return { error: 'Failed to parse Content Comparison response', rawResponse: text };
+    return {
+      error: 'Failed to parse Content Comparison response',
+      rawResponse: text,
+    };
   }
 }

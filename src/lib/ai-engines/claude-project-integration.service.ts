@@ -34,9 +34,10 @@ export interface AssessmentResult {
 export class ClaudeProjectIntegrationService {
   private static config: ClaudeProjectConfig = {
     projectId: '0199eeed-2813-7556-982f-f4773a045d86',
-    projectUrl: 'https://claude.ai/project/0199eeed-2813-7556-982f-f4773a045d86',
+    projectUrl:
+      'https://claude.ai/project/0199eeed-2813-7556-982f-f4773a045d86',
     apiKey: process.env.CLAUDE_API_KEY || '',
-    baseUrl: 'https://api.anthropic.com/v1'
+    baseUrl: 'https://api.anthropic.com/v1',
   };
 
   /**
@@ -51,7 +52,10 @@ export class ClaudeProjectIntegrationService {
 
     try {
       // Initialize Claude chat with project context
-      const claudeResponse = await this.initializeClaudeChat(sessionId, websiteUrl);
+      const claudeResponse = await this.initializeClaudeChat(
+        sessionId,
+        websiteUrl
+      );
 
       const session: ClientSession = {
         clientId,
@@ -60,7 +64,7 @@ export class ClaudeProjectIntegrationService {
         sessionId,
         createdAt: new Date().toISOString(),
         assessmentRules: [],
-        status: 'active'
+        status: 'active',
       };
 
       console.log(`✅ Claude session created: ${sessionId}`);
@@ -79,17 +83,27 @@ export class ClaudeProjectIntegrationService {
     assessmentType: string,
     scrapedData: any
   ): Promise<AssessmentResult> {
-    console.log(`🎯 Running ${assessmentType} assessment for client: ${session.clientId}`);
+    console.log(
+      `🎯 Running ${assessmentType} assessment for client: ${session.clientId}`
+    );
 
     try {
       // Load assessment rules
       const rules = await this.loadAssessmentRules(assessmentType);
 
       // Build prompt for Claude
-      const prompt = this.buildClaudePrompt(rules, scrapedData, session.websiteUrl);
+      const prompt = this.buildClaudePrompt(
+        rules,
+        scrapedData,
+        session.websiteUrl
+      );
 
       // Send to Claude project
-      const claudeResponse = await this.sendToClaudeProject(session, prompt, assessmentType);
+      const claudeResponse = await this.sendToClaudeProject(
+        session,
+        prompt,
+        assessmentType
+      );
 
       // Parse and validate response
       const analysis = this.parseClaudeResponse(claudeResponse, assessmentType);
@@ -100,10 +114,12 @@ export class ClaudeProjectIntegrationService {
         success: true,
         analysis,
         timestamp: new Date().toISOString(),
-        claudeChatUrl: this.generateChatUrl(session.sessionId)
+        claudeChatUrl: this.generateChatUrl(session.sessionId),
       };
 
-      console.log(`✅ Assessment completed for ${session.clientId}: ${assessmentType}`);
+      console.log(
+        `✅ Assessment completed for ${session.clientId}: ${assessmentType}`
+      );
       return result;
     } catch (error) {
       console.error(`❌ Assessment failed for ${session.clientId}:`, error);
@@ -114,7 +130,7 @@ export class ClaudeProjectIntegrationService {
         success: false,
         analysis: null,
         timestamp: new Date().toISOString(),
-        error: error instanceof Error ? error.message : 'Assessment failed'
+        error: error instanceof Error ? error.message : 'Assessment failed',
       };
     }
   }
@@ -125,7 +141,7 @@ export class ClaudeProjectIntegrationService {
   private static generateClientId(domain: string): string {
     const cleanDomain = domain.replace(/\.(com|org|net|co|io)$/, '');
     const hash = cleanDomain.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
+      a = (a << 5) - a + b.charCodeAt(0);
       return a & a;
     }, 0);
     return `client_${Math.abs(hash).toString(36)}`;
@@ -134,7 +150,10 @@ export class ClaudeProjectIntegrationService {
   /**
    * Initialize Claude chat with project context
    */
-  private static async initializeClaudeChat(sessionId: string, websiteUrl: string): Promise<any> {
+  private static async initializeClaudeChat(
+    sessionId: string,
+    websiteUrl: string
+  ): Promise<any> {
     const initPrompt = `You are working within the Zero Barriers Growth Accelerator project.
 
 PROJECT CONTEXT:
@@ -154,26 +173,36 @@ Please confirm you understand the project context and are ready to perform busin
     return {
       success: true,
       sessionId,
-      message: 'Claude session initialized successfully'
+      message: 'Claude session initialized successfully',
     };
   }
 
   /**
    * Load assessment rules from project files
    */
-  private static async loadAssessmentRules(assessmentType: string): Promise<any> {
+  private static async loadAssessmentRules(
+    assessmentType: string
+  ): Promise<any> {
     try {
-      const rules = await import(`./assessment-rules/${assessmentType}-rules.json`);
+      const rules = await import(
+        `./assessment-rules/${assessmentType}-rules.json`
+      );
       return rules.default;
     } catch (error) {
-      throw new Error(`Failed to load assessment rules for ${assessmentType}: ${error}`);
+      throw new Error(
+        `Failed to load assessment rules for ${assessmentType}: ${error}`
+      );
     }
   }
 
   /**
    * Build Claude-specific prompt
    */
-  private static buildClaudePrompt(rules: any, scrapedData: any, websiteUrl: string): string {
+  private static buildClaudePrompt(
+    rules: any,
+    scrapedData: any,
+    websiteUrl: string
+  ): string {
     const context = rules.context_template
       .replace('{url}', websiteUrl)
       .replace('{title}', scrapedData.title || '')
@@ -184,7 +213,10 @@ Please confirm you understand the project context and are ready to perform busin
       .replace('{keywords}', scrapedData.keywords || '')
       .replace('{trendsData}', JSON.stringify(scrapedData.trends || {}))
       .replace('{pageSpeedData}', JSON.stringify(scrapedData.pageSpeed || {}))
-      .replace('{searchConsoleData}', JSON.stringify(scrapedData.searchConsole || {}))
+      .replace(
+        '{searchConsoleData}',
+        JSON.stringify(scrapedData.searchConsole || {})
+      )
       .replace('{analyticsData}', JSON.stringify(scrapedData.analytics || {}));
 
     return `PROJECT: Zero Barriers Growth Accelerator
@@ -215,21 +247,26 @@ Please provide a comprehensive analysis following the exact JSON format specifie
     // 2. Send the prompt to that chat
     // 3. Wait for and return the response
 
-    console.log(`📤 Sending ${assessmentType} prompt to Claude project for ${session.clientId}`);
+    console.log(
+      `📤 Sending ${assessmentType} prompt to Claude project for ${session.clientId}`
+    );
 
     // Mock response for now
     return {
       success: true,
       response: 'Mock Claude response - would contain actual analysis',
       chatId: `chat_${session.sessionId}`,
-      projectUrl: this.config.projectUrl
+      projectUrl: this.config.projectUrl,
     };
   }
 
   /**
    * Parse Claude response and validate structure
    */
-  private static parseClaudeResponse(response: any, assessmentType: string): any {
+  private static parseClaudeResponse(
+    response: any,
+    assessmentType: string
+  ): any {
     try {
       // In a real implementation, this would parse the actual Claude response
       // For now, return a mock analysis structure
@@ -239,8 +276,8 @@ Please provide a comprehensive analysis following the exact JSON format specifie
         status: 'completed',
         data: {
           mock: true,
-          message: 'This would contain the actual Claude analysis results'
-        }
+          message: 'This would contain the actual Claude analysis results',
+        },
       };
     } catch (error) {
       throw new Error(`Failed to parse Claude response: ${error}`);
@@ -266,7 +303,9 @@ Please provide a comprehensive analysis following the exact JSON format specifie
   /**
    * Get client session by ID
    */
-  static async getClientSession(clientId: string): Promise<ClientSession | null> {
+  static async getClientSession(
+    clientId: string
+  ): Promise<ClientSession | null> {
     // In a real implementation, this would query a database
     // For now, return null
     return null;

@@ -83,10 +83,13 @@ export class MarkdownReportGenerator {
   /**
    * Generate B2C Elements of Value markdown report
    */
-  static generateB2CReport(analysisResult: B2CAnalysisData, websiteUrl: string): string {
-  const timestamp = new Date().toISOString();
+  static generateB2CReport(
+    analysisResult: B2CAnalysisData,
+    websiteUrl: string
+  ): string {
+    const timestamp = new Date().toISOString();
     const domain = new URL(websiteUrl).hostname;
-    
+
     return `# B2C Elements of Value Analysis Report
 
 **Website:** ${websiteUrl}  
@@ -112,7 +115,9 @@ This analysis evaluates the website's performance across the 30 B2C Elements of 
 
 ## Revenue Opportunities
 
-${analysisResult.revenue_opportunities.map((opportunity, index) => `
+${analysisResult.revenue_opportunities
+  .map(
+    (opportunity, index) => `
 ### ${index + 1}. ${opportunity.element}
 
 - **Current Strength:** ${opportunity.current_strength}/10
@@ -120,20 +125,26 @@ ${analysisResult.revenue_opportunities.map((opportunity, index) => `
 - **Implementation Effort:** ${opportunity.implementation_effort}
 - **Estimated ROI:** ${opportunity.estimated_roi}
 - **Target Audience:** ${opportunity.target_audience}
-`).join('')}
+`
+  )
+  .join('')}
 
 ---
 
 ## Strategic Recommendations
 
-${analysisResult.recommendations.map((recommendation, index) => `
+${analysisResult.recommendations
+  .map(
+    (recommendation, index) => `
 ### ${index + 1}. ${recommendation.action} (${recommendation.priority} Priority)
 
 - **Expected Revenue Impact:** ${recommendation.expected_revenue_impact}
 - **Implementation Cost:** ${recommendation.implementation_cost}
 - **Timeline:** ${recommendation.timeline}
 - **ROI Estimate:** ${recommendation.roi_estimate}
-`).join('')}
+`
+  )
+  .join('')}
 
 ---
 
@@ -164,10 +175,13 @@ This analysis is based on the Harvard Business Review's 30 B2C Elements of Value
   /**
    * Generate B2B Elements of Value markdown report
    */
-  static generateB2BReport(analysisResult: B2BAnalysisData, websiteUrl: string): string {
+  static generateB2BReport(
+    analysisResult: B2BAnalysisData,
+    websiteUrl: string
+  ): string {
     const timestamp = new Date().toISOString();
     const domain = new URL(websiteUrl).hostname;
-    
+
     return `# B2B Elements of Value Analysis Report
 
 **Website:** ${websiteUrl}  
@@ -194,7 +208,9 @@ This analysis evaluates the website's performance across the 40 B2B Elements of 
 
 ## Revenue Opportunities
 
-${analysisResult.revenue_opportunities.map((opportunity, index) => `
+${analysisResult.revenue_opportunities
+  .map(
+    (opportunity, index) => `
 ### ${index + 1}. ${opportunity.element}
 
 - **Current Strength:** ${opportunity.current_strength}/10
@@ -202,20 +218,26 @@ ${analysisResult.revenue_opportunities.map((opportunity, index) => `
 - **Implementation Effort:** ${opportunity.implementation_effort}
 - **Estimated ROI:** ${opportunity.estimated_roi}
 - **Target Audience:** ${opportunity.target_audience}
-`).join('')}
+`
+  )
+  .join('')}
 
 ---
 
 ## Strategic Recommendations
 
-${analysisResult.recommendations.map((recommendation, index) => `
+${analysisResult.recommendations
+  .map(
+    (recommendation, index) => `
 ### ${index + 1}. ${recommendation.action} (${recommendation.priority} Priority)
 
 - **Expected Revenue Impact:** ${recommendation.expected_revenue_impact}
 - **Implementation Cost:** ${recommendation.implementation_cost}
 - **Timeline:** ${recommendation.timeline}
 - **ROI Estimate:** ${recommendation.roi_estimate}
-`).join('')}
+`
+  )
+  .join('')}
 
 ---
 
@@ -247,10 +269,13 @@ This analysis is based on the Harvard Business Review's 40 B2B Elements of Value
   /**
    * Generate Golden Circle markdown report
    */
-  static generateGoldenCircleReport(analysisResult: GoldenCircleData, websiteUrl: string): string {
+  static generateGoldenCircleReport(
+    analysisResult: GoldenCircleData,
+    websiteUrl: string
+  ): string {
     const timestamp = new Date().toISOString();
     const domain = new URL(websiteUrl).hostname;
-    
+
     return `# Golden Circle Analysis Report
 
 **Website:** ${websiteUrl}  
@@ -316,9 +341,13 @@ This analysis evaluates the website's messaging and positioning using Simon Sine
 
 ## Strategic Recommendations
 
-${analysisResult.recommendations.map((recommendation, index) => `
+${analysisResult.recommendations
+  .map(
+    (recommendation, index) => `
 ### ${index + 1}. ${recommendation}
-`).join('')}
+`
+  )
+  .join('')}
 
 ---
 
@@ -358,7 +387,7 @@ This analysis is based on Simon Sinek's Golden Circle framework:
   ): string {
     const timestamp = new Date().toISOString();
     const domain = new URL(websiteUrl).hostname;
-    
+
     return `# Comprehensive Website Analysis Report
 
 **Website:** ${websiteUrl}  

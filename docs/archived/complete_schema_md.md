@@ -1434,26 +1434,26 @@ DECLARE
 BEGIN
     SELECT credits_remaining INTO v_current_balance
     FROM users WHERE id = p_user_id FOR UPDATE;
-    
+
     IF v_current_balance < p_amount THEN
         RETURN FALSE;
     END IF;
-    
+
     v_new_balance := v_current_balance - p_amount;
-    
-    UPDATE users 
+
+    UPDATE users
     SET credits_remaining = v_new_balance,
         updated_at = CURRENT_TIMESTAMP
     WHERE id = p_user_id;
-    
+
     INSERT INTO credit_transactions (
-        user_id, analysis_id, transaction_type, 
+        user_id, analysis_id, transaction_type,
         amount, balance_after, description
     ) VALUES (
         p_user_id, p_analysis_id, 'debit',
         -p_amount, v_new_balance, p_description
     );
-    
+
     RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql;
@@ -1472,21 +1472,21 @@ DECLARE
     v_perf_score DECIMAL;
     v_overall DECIMAL;
 BEGIN
-    SELECT overall_score INTO v_gc_score 
+    SELECT overall_score INTO v_gc_score
     FROM golden_circle_analyses WHERE analysis_id = p_analysis_id;
-    
-    SELECT COALESCE(overall_score, 0) INTO v_eov_score 
+
+    SELECT COALESCE(overall_score, 0) INTO v_eov_score
     FROM elements_of_value_b2c WHERE analysis_id = p_analysis_id;
-    
-    SELECT COALESCE(overall_score, 0) INTO v_cs_score 
+
+    SELECT COALESCE(overall_score, 0) INTO v_cs_score
     FROM clifton_strengths_analyses WHERE analysis_id = p_analysis_id;
-    
-    SELECT COALESCE(overall_seo_score, 0) INTO v_seo_score 
+
+    SELECT COALESCE(overall_seo_score, 0) INTO v_seo_score
     FROM seo_analyses WHERE analysis_id = p_analysis_id;
-    
-    SELECT AVG(performance_score) INTO v_perf_score 
+
+    SELECT AVG(performance_score) INTO v_perf_score
     FROM lighthouse_analyses WHERE analysis_id = p_analysis_id;
-    
+
     v_overall := (
         (COALESCE(v_gc_score, 0) * 10) * 0.25 +
         COALESCE(v_eov_score, 0) * 0.20 +
@@ -1494,7 +1494,7 @@ BEGIN
         COALESCE(v_seo_score, 0) * 0.20 +
         COALESCE(v_perf_score, 0) * 0.15
     );
-    
+
     RETURN ROUND(v_overall, 2);
 END;
 $$ LANGUAGE plpgsql;
@@ -1516,7 +1516,7 @@ RETURNS TABLE(
 BEGIN
     RETURN QUERY
     WITH pattern_matches AS (
-        SELECT 
+        SELECT
             ver.element_name,
             vep.pattern_text,
             (LENGTH(p_content) - LENGTH(REPLACE(LOWER(p_content), LOWER(vep.pattern_text), ''))) / LENGTH(vep.pattern_text) AS match_count,
@@ -1524,20 +1524,20 @@ BEGIN
         FROM value_element_patterns vep
         JOIN value_element_reference ver ON vep.element_id = ver.id
         WHERE LOWER(p_content) LIKE '%' || LOWER(vep.pattern_text) || '%'
-        
+
         UNION ALL
-        
+
         SELECT
             it.standard_term AS element_name,
             it.industry_term AS pattern_text,
             (LENGTH(p_content) - LENGTH(REPLACE(LOWER(p_content), LOWER(it.industry_term), ''))) / LENGTH(it.industry_term) AS match_count,
             it.confidence_score AS pattern_weight
         FROM industry_terminology it
-        WHERE p_industry IS NOT NULL 
+        WHERE p_industry IS NOT NULL
         AND it.industry = p_industry
         AND LOWER(p_content) LIKE '%' || LOWER(it.industry_term) || '%'
     )
-    SELECT 
+    SELECT
         pm.element_name,
         pm.pattern_text,
         pm.match_count::INT,
@@ -1557,8 +1557,8 @@ $$ LANGUAGE plpgsql;
 
 ```sql
 -- Count tables
-SELECT COUNT(*) as table_count 
-FROM information_schema.tables 
+SELECT COUNT(*) as table_count
+FROM information_schema.tables
 WHERE table_schema = 'public';
 -- Should return 80+
 

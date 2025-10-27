@@ -14,13 +14,16 @@ export async function GET(_request: NextRequest) {
     return NextResponse.json({
       success: true,
       result,
-      message: 'Simple Prisma test successful'
+      message: 'Simple Prisma test successful',
     });
   } catch (error) {
-    return NextResponse.json({
-      success: false,
-      error: 'Prisma test failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Prisma test failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

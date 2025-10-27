@@ -11,10 +11,13 @@ export async function POST(request: NextRequest) {
     const { url } = await request.json();
 
     if (!url) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL is required',
+        },
+        { status: 400 }
+      );
     }
 
     console.log(`Generating executive report for: ${url}`);
@@ -30,7 +33,11 @@ export async function POST(request: NextRequest) {
     // Step 3: Run PageAudit analysis
     console.log('Step 3: Running PageAudit analysis...');
     const pageAuditData = await new Promise((resolve, _reject) => {
-      const scriptPath = path.join(process.cwd(), 'scripts', 'pageaudit-analysis.js');
+      const scriptPath = path.join(
+        process.cwd(),
+        'scripts',
+        'pageaudit-analysis.js'
+      );
       const child = spawn('node', [scriptPath, url]);
 
       let output = '';
@@ -62,7 +69,10 @@ export async function POST(request: NextRequest) {
 
     // Step 4: Run AI analysis with scraped data
     console.log('Step 4: Running AI analysis...');
-    const aiAnalysis = await analyzeWithGemini(scrapedContent.content, 'comprehensive');
+    const aiAnalysis = await analyzeWithGemini(
+      scrapedContent.content,
+      'comprehensive'
+    );
 
     // Step 5: Combine all analysis data
     const comprehensiveAnalysis = {
@@ -76,20 +86,26 @@ export async function POST(request: NextRequest) {
         title: scrapedContent.title,
         metaDescription: scrapedContent.metaDescription,
         wordCount: scrapedContent.wordCount,
-        technicalInfo: scrapedContent.technicalInfo
-      }
+        technicalInfo: scrapedContent.technicalInfo,
+      },
     };
 
     // Step 6: Generate executive report
     console.log('Step 6: Generating executive report...');
     const reportGenerator = new ExecutiveReportGenerator();
-    const markdownReport = reportGenerator.generateMarkdownReport(comprehensiveAnalysis);
+    const markdownReport = reportGenerator.generateMarkdownReport(
+      comprehensiveAnalysis
+    );
     const htmlReport = reportGenerator.generateHtmlReport(markdownReport);
 
     // Step 7: Save report to file system
     const reportId = `executive-report-${Date.now()}`;
     const reportPath = path.join(process.cwd(), 'reports', `${reportId}.md`);
-    const htmlReportPath = path.join(process.cwd(), 'reports', `${reportId}.html`);
+    const htmlReportPath = path.join(
+      process.cwd(),
+      'reports',
+      `${reportId}.html`
+    );
 
     // Ensure reports directory exists
     const fs = require('fs');
@@ -124,25 +140,27 @@ export async function POST(request: NextRequest) {
           'CliftonStrengths',
           'Lighthouse Performance',
           'PageAudit Analysis',
-          'SEO Analysis'
+          'SEO Analysis',
         ],
         dataSources: [
           'Website Content Scraping',
           'Lighthouse Performance Audit',
           'PageAudit Technical Analysis',
           'Google Gemini AI Analysis',
-          'Comprehensive Framework Analysis'
-        ]
-      }
+          'Comprehensive Framework Analysis',
+        ],
+      },
     });
-
   } catch (error) {
     console.error('Failed to generate executive report:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to generate executive report',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to generate executive report',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -160,7 +178,7 @@ export async function GET(request: NextRequest) {
       if (!fs.existsSync(reportsDir)) {
         return NextResponse.json({
           success: true,
-          reports: []
+          reports: [],
         });
       }
 
@@ -174,14 +192,17 @@ export async function GET(request: NextRequest) {
             reportId,
             filename: file,
             createdAt: stats.birthtime,
-            size: stats.size
+            size: stats.size,
           };
         })
-        .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        .sort(
+          (a: any, b: any) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
 
       return NextResponse.json({
         success: true,
-        reports
+        reports,
       });
     }
 
@@ -189,13 +210,20 @@ export async function GET(request: NextRequest) {
     const fs = require('fs');
     const path = require('path');
     const reportPath = path.join(process.cwd(), 'reports', `${reportId}.md`);
-    const htmlReportPath = path.join(process.cwd(), 'reports', `${reportId}.html`);
+    const htmlReportPath = path.join(
+      process.cwd(),
+      'reports',
+      `${reportId}.html`
+    );
 
     if (!fs.existsSync(reportPath)) {
-      return NextResponse.json({
-        success: false,
-        error: 'Report not found'
-      }, { status: 404 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Report not found',
+        },
+        { status: 404 }
+      );
     }
 
     const markdownContent = fs.readFileSync(reportPath, 'utf8');
@@ -213,16 +241,18 @@ export async function GET(request: NextRequest) {
       metadata: {
         createdAt: stats.birthtime,
         size: stats.size,
-        lastModified: stats.mtime
-      }
+        lastModified: stats.mtime,
+      },
     });
-
   } catch (error) {
     console.error('Failed to retrieve report:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to retrieve report',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to retrieve report',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

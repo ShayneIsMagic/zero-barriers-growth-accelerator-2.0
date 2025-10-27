@@ -3,6 +3,7 @@
 ## What You're Probably Seeing:
 
 **Two navigation bars visible at the same time:**
+
 1. Main desktop navigation (should show on desktop)
 2. Mobile navigation button/menu (should only show on mobile)
 
@@ -13,6 +14,7 @@
 Looking at `src/components/layout/header.tsx`:
 
 ### Line 20-27: Desktop Nav
+
 ```typescript
 <div className="mr-4 hidden md:flex">  // ← Should hide on mobile
   <Link href="/">
@@ -23,11 +25,13 @@ Looking at `src/components/layout/header.tsx`:
 ```
 
 ### Line 56: Mobile Nav
+
 ```typescript
 <MobileNav />  // ← Should only show on mobile (md:hidden)
 ```
 
 **The Issue**: Both might be showing due to:
+
 1. CSS not loading properly
 2. Tailwind classes not working
 3. Responsive breakpoint issues
@@ -39,6 +43,7 @@ Looking at `src/components/layout/header.tsx`:
 **What are you seeing exactly?**
 
 ### Scenario A: Two Full Headers Stacked
+
 ```
 ┌─────────────────────────────────┐
 │ Zero Barriers  [Sign In] [Start]│  ← Header 1
@@ -48,6 +53,7 @@ Looking at `src/components/layout/header.tsx`:
 ```
 
 ### Scenario B: Desktop Nav + Mobile Menu Button Both Visible
+
 ```
 ┌─────────────────────────────────┐
 │ Zero Barriers [Sign In] [☰]     │
@@ -58,6 +64,7 @@ Looking at `src/components/layout/header.tsx`:
 ```
 
 ### Scenario C: Header + Page Navigation
+
 ```
 ┌─────────────────────────────────┐
 │ Zero Barriers  [Sign In]        │  ← Real header
@@ -137,4 +144,3 @@ Let me implement the simple fix right now:
 **Should I implement Option 1 (wrap MobileNav to hide on desktop)?**
 
 Or tell me which scenario (A, B, or C) matches what you're seeing and I'll fix it accordingly!
-

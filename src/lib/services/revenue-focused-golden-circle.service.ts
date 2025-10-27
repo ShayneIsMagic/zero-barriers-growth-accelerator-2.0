@@ -99,31 +99,39 @@ export class RevenueFocusedGoldenCircleService {
    */
   static async analyzeWebsite(url: string): Promise<RevenueGoldenCircleResult> {
     try {
-      console.log(`💰 Starting Revenue-Focused Golden Circle analysis for: ${url}`);
+      console.log(
+        `💰 Starting Revenue-Focused Golden Circle analysis for: ${url}`
+      );
 
       // Step 1: Scrape website content
       console.log('📊 Step 1: Scraping website content...');
       const scrapedData = await scrapeWebsiteContent(url);
 
       // Step 2: Run revenue-focused AI analysis
-      console.log('🤖 Step 2: Running Revenue-Focused Golden Circle AI analysis...');
-      const analysisResult = await this.runRevenueGoldenCircleAnalysis(scrapedData, url);
+      console.log(
+        '🤖 Step 2: Running Revenue-Focused Golden Circle AI analysis...'
+      );
+      const analysisResult = await this.runRevenueGoldenCircleAnalysis(
+        scrapedData,
+        url
+      );
 
-      console.log(`✅ Revenue-Focused Golden Circle analysis completed for: ${url}`);
+      console.log(
+        `✅ Revenue-Focused Golden Circle analysis completed for: ${url}`
+      );
 
       return {
         success: true,
         url,
-        data: analysisResult
+        data: analysisResult,
       };
-
     } catch (error) {
       console.error('Revenue-Focused Golden Circle analysis failed:', error);
       return {
         success: false,
         url,
         data: {} as any,
-        error: error instanceof Error ? error.message : 'Analysis failed'
+        error: error instanceof Error ? error.message : 'Analysis failed',
       };
     }
   }
@@ -131,7 +139,10 @@ export class RevenueFocusedGoldenCircleService {
   /**
    * Run revenue-focused Golden Circle analysis using Gemini AI
    */
-  private static async runRevenueGoldenCircleAnalysis(scrapedData: any, url: string): Promise<any> {
+  private static async runRevenueGoldenCircleAnalysis(
+    scrapedData: any,
+    url: string
+  ): Promise<any> {
     if (!this.genAI) {
       this.initialize();
     }
@@ -155,7 +166,10 @@ export class RevenueFocusedGoldenCircleService {
 
       return JSON.parse(jsonText);
     } catch (error) {
-      console.error('Gemini Revenue-Focused Golden Circle analysis failed:', error);
+      console.error(
+        'Gemini Revenue-Focused Golden Circle analysis failed:',
+        error
+      );
       throw new Error('AI analysis failed');
     }
   }
@@ -163,7 +177,10 @@ export class RevenueFocusedGoldenCircleService {
   /**
    * Build revenue-focused Golden Circle prompt using PTCF framework
    */
-  private static buildRevenueGoldenCirclePrompt(scrapedData: any, url: string): string {
+  private static buildRevenueGoldenCirclePrompt(
+    scrapedData: any,
+    url: string
+  ): string {
     // PERSONA: Define the expert role
     const persona = `You are a Senior Business Model Architect and Revenue Growth Strategist. Your expertise is in identifying core business drivers and translating them into specific, high-impact revenue opportunities. You focus on market differentiation, competitive advantage, and ROI-driven recommendations.`;
 

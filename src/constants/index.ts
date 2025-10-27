@@ -123,7 +123,7 @@ export const CONSUMER_VALUE_ELEMENTS = {
 export const B2B_VALUE_ELEMENTS = {
   // TABLE STAKES (4 elements) - Base Level
   REGULATORY_COMPLIANCE: 'Regulatory Compliance',
-  ETHICAL_STANDARDS: 'Ethical Standards', 
+  ETHICAL_STANDARDS: 'Ethical Standards',
   MEETING_SPECIFICATIONS: 'Meeting Specifications',
   ACCEPTABLE_PRICE: 'Acceptable Price',
 
@@ -391,5 +391,3 @@ export const CONSTANTS = {
 } as const;
 
 export default CONSTANTS;
-
-

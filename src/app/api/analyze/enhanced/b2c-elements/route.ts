@@ -15,20 +15,28 @@ export async function POST(request: NextRequest) {
     const { url, scrapedContent, comparisonData: _comparisonData } = body;
 
     if (!url) {
-      return NextResponse.json({
-        success: false,
-        error: 'URL is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'URL is required',
+        },
+        { status: 400 }
+      );
     }
 
     if (!scrapedContent) {
-      return NextResponse.json({
-        success: false,
-        error: 'Scraped content is required'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Scraped content is required',
+        },
+        { status: 400 }
+      );
     }
 
-    console.log(`💰 Starting ENHANCED B2C Elements of Value analysis for: ${url}`);
+    console.log(
+      `💰 Starting ENHANCED B2C Elements of Value analysis for: ${url}`
+    );
 
     const analysisId = uuidv4();
 
@@ -37,7 +45,7 @@ export async function POST(request: NextRequest) {
     if (typeof scrapedContent === 'string') {
       normalizedContent = {
         title: url.split('/')[2] || 'Website',
-        cleanText: scrapedContent
+        cleanText: scrapedContent,
       };
     } else {
       normalizedContent = scrapedContent;
@@ -52,11 +60,13 @@ export async function POST(request: NextRequest) {
     );
 
     // Enhance with comparison data if provided
-    const enhancedAnalysis = _comparisonData ? 
-      enhanceWithComparisonData(analysis, _comparisonData) : 
-      analysis;
+    const enhancedAnalysis = _comparisonData
+      ? enhanceWithComparisonData(analysis, _comparisonData)
+      : analysis;
 
-    console.log(`✅ ENHANCED B2C Elements of Value analysis completed for: ${url}`);
+    console.log(
+      `✅ ENHANCED B2C Elements of Value analysis completed for: ${url}`
+    );
 
     const frontendData = {
       overall_score: enhancedAnalysis.overall_score,
@@ -68,51 +78,65 @@ export async function POST(request: NextRequest) {
         functional: {
           score: enhancedAnalysis.functional_score,
           elements: enhancedAnalysis.elements
-            .filter(e => e.element_category === 'functional')
-            .map(e => ({
+            .filter((e) => e.element_category === 'functional')
+            .map((e) => ({
               name: e.element_name,
               score: e.score,
               evidence: e.evidence?.patterns?.join(', ') || 'No evidence found',
-              comparison_insight: getComparisonInsight(e.element_name, _comparisonData)
-            }))
+              comparison_insight: getComparisonInsight(
+                e.element_name,
+                _comparisonData
+              ),
+            })),
         },
         emotional: {
           score: enhancedAnalysis.emotional_score,
           elements: enhancedAnalysis.elements
-            .filter(e => e.element_category === 'emotional')
-            .map(e => ({
+            .filter((e) => e.element_category === 'emotional')
+            .map((e) => ({
               name: e.element_name,
               score: e.score,
               evidence: e.evidence?.patterns?.join(', ') || 'No evidence found',
-              comparison_insight: getComparisonInsight(e.element_name, _comparisonData)
-            }))
+              comparison_insight: getComparisonInsight(
+                e.element_name,
+                _comparisonData
+              ),
+            })),
         },
         life_changing: {
           score: enhancedAnalysis.life_changing_score,
           elements: enhancedAnalysis.elements
-            .filter(e => e.element_category === 'life_changing')
-            .map(e => ({
+            .filter((e) => e.element_category === 'life_changing')
+            .map((e) => ({
               name: e.element_name,
               score: e.score,
               evidence: e.evidence?.patterns?.join(', ') || 'No evidence found',
-              comparison_insight: getComparisonInsight(e.element_name, _comparisonData)
-            }))
+              comparison_insight: getComparisonInsight(
+                e.element_name,
+                _comparisonData
+              ),
+            })),
         },
         social_impact: {
           score: enhancedAnalysis.social_impact_score,
           elements: enhancedAnalysis.elements
-            .filter(e => e.element_category === 'social_impact')
-            .map(e => ({
+            .filter((e) => e.element_category === 'social_impact')
+            .map((e) => ({
               name: e.element_name,
               score: e.score,
               evidence: e.evidence?.patterns?.join(', ') || 'No evidence found',
-              comparison_insight: getComparisonInsight(e.element_name, _comparisonData)
-            }))
-        }
+              comparison_insight: getComparisonInsight(
+                e.element_name,
+                _comparisonData
+              ),
+            })),
+        },
       },
       revenue_opportunities: enhancedAnalysis.revenue_opportunities || [],
       recommendations: enhancedAnalysis.recommendations || [],
-      comparison_insights: _comparisonData ? generateComparisonInsights(enhancedAnalysis, _comparisonData) : null
+      comparison_insights: _comparisonData
+        ? generateComparisonInsights(enhancedAnalysis, _comparisonData)
+        : null,
     };
 
     return NextResponse.json({
@@ -120,16 +144,18 @@ export async function POST(request: NextRequest) {
       url,
       data: frontendData,
       analysisId,
-      message: 'Enhanced B2C Elements of Value analysis completed successfully'
+      message: 'Enhanced B2C Elements of Value analysis completed successfully',
     });
-
   } catch (error) {
     console.error('Enhanced B2C Elements of Value API execution error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Enhanced B2C Elements of Value analysis failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Enhanced B2C Elements of Value analysis failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -139,22 +165,26 @@ export async function POST(request: NextRequest) {
 function enhanceWithComparisonData(analysis: any, _comparisonData: any): any {
   // Apply comparison-based scoring adjustments
   const enhanced = { ...analysis };
-  
+
   // Boost scores for elements that perform well in comparison
   if (_comparisonData.competitive_advantages) {
     enhanced.elements = enhanced.elements.map((element: any) => {
-      const isCompetitive = _comparisonData.competitive_advantages.some((advantage: string) => 
-        advantage.toLowerCase().includes(element.element_name.toLowerCase())
+      const isCompetitive = _comparisonData.competitive_advantages.some(
+        (advantage: string) =>
+          advantage.toLowerCase().includes(element.element_name.toLowerCase())
       );
-      
+
       if (isCompetitive) {
         return {
           ...element,
           score: Math.min(100, element.score + 10), // Boost by 10 points
           evidence: {
             ...element.evidence,
-            patterns: [...(element.evidence?.patterns || []), 'competitive-advantage']
-          }
+            patterns: [
+              ...(element.evidence?.patterns || []),
+              'competitive-advantage',
+            ],
+          },
         };
       }
       return element;
@@ -167,13 +197,16 @@ function enhanceWithComparisonData(analysis: any, _comparisonData: any): any {
 /**
  * Get comparison insight for specific element
  */
-function getComparisonInsight(elementName: string, _comparisonData: any): string | null {
+function getComparisonInsight(
+  elementName: string,
+  _comparisonData: any
+): string | null {
   if (!_comparisonData) return null;
-  
+
   // Look for specific insights about this element
   const insights = _comparisonData.element_insights || [];
   const insight = insights.find((i: any) => i.element === elementName);
-  
+
   return insight ? insight.insight : null;
 }
 
@@ -182,44 +215,69 @@ function getComparisonInsight(elementName: string, _comparisonData: any): string
  */
 function generateComparisonInsights(analysis: any, _comparisonData: any): any {
   return {
-    competitive_position: analysis.overall_score > 80 ? 'Strong' : analysis.overall_score > 60 ? 'Moderate' : 'Weak',
+    competitive_position:
+      analysis.overall_score > 80
+        ? 'Strong'
+        : analysis.overall_score > 60
+          ? 'Moderate'
+          : 'Weak',
     improvement_potential: calculateImprovementPotential(analysis),
-    market_opportunities: identifyMarketOpportunities(analysis, _comparisonData),
-    strategic_recommendations: generateStrategicRecommendations(analysis, _comparisonData)
+    market_opportunities: identifyMarketOpportunities(
+      analysis,
+      _comparisonData
+    ),
+    strategic_recommendations: generateStrategicRecommendations(
+      analysis,
+      _comparisonData
+    ),
   };
 }
 
 function calculateImprovementPotential(analysis: any): string[] {
   const opportunities = [];
-  
+
   if (analysis.functional_score < 70) {
-    opportunities.push('Focus on functional value elements to improve core value proposition');
+    opportunities.push(
+      'Focus on functional value elements to improve core value proposition'
+    );
   }
   if (analysis.emotional_score < 70) {
-    opportunities.push('Enhance emotional connection to increase customer loyalty');
+    opportunities.push(
+      'Enhance emotional connection to increase customer loyalty'
+    );
   }
   if (analysis.life_changing_score < 70) {
-    opportunities.push('Develop life-changing value elements to create deeper customer impact');
+    opportunities.push(
+      'Develop life-changing value elements to create deeper customer impact'
+    );
   }
-  
+
   return opportunities;
 }
 
-function identifyMarketOpportunities(analysis: any, _comparisonData: any): string[] {
+function identifyMarketOpportunities(
+  analysis: any,
+  _comparisonData: any
+): string[] {
   const opportunities = [];
-  
+
   // Identify gaps in current analysis
   const lowScoringElements = analysis.elements.filter((e: any) => e.score < 50);
   lowScoringElements.forEach((element: any) => {
-    opportunities.push(`Improve ${element.element_name} to capture market opportunity`);
+    opportunities.push(
+      `Improve ${element.element_name} to capture market opportunity`
+    );
   });
-  
+
   return opportunities;
 }
 
-function generateStrategicRecommendations(analysis: any, _comparisonData: any): string[] {
+function generateStrategicRecommendations(
+  analysis: any,
+  _comparisonData: any
+): string[] {
   const recommendations = [];
-  
+
   // High-level strategic recommendations based on scores
   if (analysis.overall_score < 60) {
     recommendations.push('Implement comprehensive value proposition redesign');
@@ -227,6 +285,6 @@ function generateStrategicRecommendations(analysis: any, _comparisonData: any): 
   if (analysis.functional_score > analysis.emotional_score) {
     recommendations.push('Balance functional and emotional value elements');
   }
-  
+
   return recommendations;
 }

@@ -15,7 +15,7 @@ console.log('================================================');
 const protectedFiles = [
   'src/components/analysis/ContentComparisonPage.tsx',
   'src/app/api/analyze/compare/route.ts',
-  'src/lib/universal-puppeteer-scraper.ts'
+  'src/lib/universal-puppeteer-scraper.ts',
 ];
 
 // Key functionality to check
@@ -27,25 +27,25 @@ const requiredPatterns = {
     'generateComparisonMarkdown',
     'URL input',
     'Proposed New Content',
-    'Analyze Existing Content'
+    'Analyze Existing Content',
   ],
   'compare/route.ts': [
     'UniversalPuppeteerScraper',
     'generateComparisonReport',
     'analyzeWithGemini',
     'maxDuration',
-    'POST'
+    'POST',
   ],
   'universal-puppeteer-scraper.ts': [
     'scrapeWebsite',
     'UniversalPuppeteerScraper',
-    'export'
-  ]
+    'export',
+  ],
 };
 
 let allChecksPassed = true;
 
-protectedFiles.forEach(filePath => {
+protectedFiles.forEach((filePath) => {
   console.log(`\n📁 Checking: ${filePath}`);
 
   if (!fs.existsSync(filePath)) {
@@ -58,7 +58,7 @@ protectedFiles.forEach(filePath => {
   const fileName = path.basename(filePath);
   const patterns = requiredPatterns[fileName] || [];
 
-  patterns.forEach(pattern => {
+  patterns.forEach((pattern) => {
     if (content.includes(pattern)) {
       console.log(`  ✅ ${pattern}`);
     } else {
@@ -72,10 +72,10 @@ protectedFiles.forEach(filePath => {
 console.log('\n📦 Checking Backup Files:');
 const backupFiles = [
   'src/components/analysis/ContentComparisonPage.tsx.backup',
-  'src/app/api/analyze/compare/route.ts.backup'
+  'src/app/api/analyze/compare/route.ts.backup',
 ];
 
-backupFiles.forEach(backupPath => {
+backupFiles.forEach((backupPath) => {
   if (fs.existsSync(backupPath)) {
     console.log(`  ✅ ${backupPath}`);
   } else {

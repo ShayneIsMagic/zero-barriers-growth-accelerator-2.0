@@ -430,17 +430,21 @@ export class PuppeteerComprehensiveCollector {
   private maxDepth: number = 3;
   private timeout: number = 30000;
 
-  constructor(options: {
-    maxPages?: number;
-    maxDepth?: number;
-    timeout?: number;
-  } = {}) {
+  constructor(
+    options: {
+      maxPages?: number;
+      maxDepth?: number;
+      timeout?: number;
+    } = {}
+  ) {
     this.maxPages = options.maxPages || 50;
     this.maxDepth = options.maxDepth || 3;
     this.timeout = options.timeout || 30000;
   }
 
-  async collectComprehensiveData(url: string): Promise<ComprehensiveCollectionResult> {
+  async collectComprehensiveData(
+    url: string
+  ): Promise<ComprehensiveCollectionResult> {
     console.log(`🚀 Starting comprehensive data collection for: ${url}`);
 
     try {
@@ -453,13 +457,15 @@ export class PuppeteerComprehensiveCollector {
           '--disable-accelerated-2d-canvas',
           '--no-first-run',
           '--no-zygote',
-          '--disable-gpu'
-        ]
+          '--disable-gpu',
+        ],
       });
 
       const page = await this.browser.newPage();
       await page.setViewport({ width: 1920, height: 1080 });
-      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+      await page.setUserAgent(
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      );
 
       // Enable performance monitoring
       await page.evaluateOnNewDocument(() => {
@@ -501,7 +507,14 @@ export class PuppeteerComprehensiveCollector {
       const userExperience = await this.collectUserExperienceData(pages);
 
       // Generate summary
-      const summary = this.generateSummary(pages, performance, seo, content, technical, userExperience);
+      const summary = this.generateSummary(
+        pages,
+        performance,
+        seo,
+        content,
+        technical,
+        userExperience
+      );
 
       return {
         url,
@@ -513,9 +526,8 @@ export class PuppeteerComprehensiveCollector {
         content,
         technical,
         userExperience,
-        summary
+        summary,
       };
-
     } catch (error) {
       console.error('Comprehensive data collection failed:', error);
       throw error;
@@ -526,7 +538,10 @@ export class PuppeteerComprehensiveCollector {
     }
   }
 
-  private async collectSiteMap(page: Page, startUrl: string): Promise<SiteMapData> {
+  private async collectSiteMap(
+    page: Page,
+    startUrl: string
+  ): Promise<SiteMapData> {
     console.log('🗺️ Collecting site map...');
 
     const visited = new Set<string>();
@@ -544,7 +559,7 @@ export class PuppeteerComprehensiveCollector {
       try {
         const response = await page.goto(url, {
           waitUntil: 'networkidle2',
-          timeout: this.timeout
+          timeout: this.timeout,
         });
 
         if (!response) {
@@ -560,7 +575,7 @@ export class PuppeteerComprehensiveCollector {
               from: url,
               to: location,
               status,
-              type: status === 301 ? 'permanent' : 'temporary'
+              type: status === 301 ? 'permanent' : 'temporary',
             });
           }
         }
@@ -574,28 +589,30 @@ export class PuppeteerComprehensiveCollector {
           url,
           lastModified: response.headers().date || new Date().toISOString(),
           changeFrequency: 'weekly',
-          priority: depth === 0 ? 1.0 : Math.max(0.1, 1.0 - (depth * 0.2)),
-          depth
+          priority: depth === 0 ? 1.0 : Math.max(0.1, 1.0 - depth * 0.2),
+          depth,
         });
 
         // Find new links to visit
         const links = await page.evaluate(() => {
           const linkElements = Array.from(document.querySelectorAll('a[href]'));
-          return linkElements.map(link => {
-            const href = link.getAttribute('href');
-            if (!href) return null;
+          return linkElements
+            .map((link) => {
+              const href = link.getAttribute('href');
+              if (!href) return null;
 
-            try {
-              const url = new URL(href, window.location.origin);
-              return {
-                href: url.href,
-                text: link.textContent?.trim() || '',
-                isInternal: url.origin === window.location.origin
-              };
-            } catch {
-              return null;
-            }
-          }).filter(Boolean);
+              try {
+                const url = new URL(href, window.location.origin);
+                return {
+                  href: url.href,
+                  text: link.textContent?.trim() || '',
+                  isInternal: url.origin === window.location.origin,
+                };
+              } catch {
+                return null;
+              }
+            })
+            .filter(Boolean);
         });
 
         for (const link of links) {
@@ -603,7 +620,6 @@ export class PuppeteerComprehensiveCollector {
             toVisit.push({ url: link.href, depth: depth + 1 });
           }
         }
-
       } catch (error) {
         console.error(`Error visiting ${url}:`, error);
         brokenLinks.push(url);
@@ -612,11 +628,11 @@ export class PuppeteerComprehensiveCollector {
 
     return {
       totalPages: sitemap.length,
-      depth: Math.max(...sitemap.map(entry => entry.depth)),
+      depth: Math.max(...sitemap.map((entry) => entry.depth)),
       orphanedPages: [], // Would need more complex analysis
       brokenLinks,
       redirects,
-      sitemap
+      sitemap,
     };
   }
 
@@ -629,68 +645,82 @@ export class PuppeteerComprehensiveCollector {
     const pageData = await page.evaluate(() => {
       const getTextContent = (selector: string) => {
         const elements = document.querySelectorAll(selector);
-        return Array.from(elements).map(el => el.textContent?.trim() || '');
+        return Array.from(elements).map((el) => el.textContent?.trim() || '');
       };
 
       const getImages = () => {
         const images = document.querySelectorAll('img');
-        return Array.from(images).map(img => ({
+        return Array.from(images).map((img) => ({
           src: img.src,
           alt: img.alt || '',
           title: img.title || '',
           width: img.naturalWidth || 0,
           height: img.naturalHeight || 0,
-          loading: img.loading || 'eager'
+          loading: img.loading || 'eager',
         }));
       };
 
       const getLinks = () => {
         const links = document.querySelectorAll('a[href]');
-        return Array.from(links).map(link => {
-          const href = link.getAttribute('href');
-          if (!href) return null;
+        return Array.from(links)
+          .map((link) => {
+            const href = link.getAttribute('href');
+            if (!href) return null;
 
-          try {
-            const url = new URL(href, window.location.origin);
-            return {
-              href: url.href,
-              text: link.textContent?.trim() || '',
-              title: (link as HTMLAnchorElement).title || '',
-              target: (link as HTMLAnchorElement).target || '',
-              rel: (link as HTMLAnchorElement).rel || '',
-              isInternal: url.origin === window.location.origin,
-              isBroken: false // Would need to check
-            };
-          } catch {
-            return null;
-          }
-        }).filter(Boolean);
+            try {
+              const url = new URL(href, window.location.origin);
+              return {
+                href: url.href,
+                text: link.textContent?.trim() || '',
+                title: (link as HTMLAnchorElement).title || '',
+                target: (link as HTMLAnchorElement).target || '',
+                rel: (link as HTMLAnchorElement).rel || '',
+                isInternal: url.origin === window.location.origin,
+                isBroken: false, // Would need to check
+              };
+            } catch {
+              return null;
+            }
+          })
+          .filter(Boolean);
       };
 
       const getForms = () => {
         const forms = document.querySelectorAll('form');
-        return Array.from(forms).map(form => ({
+        return Array.from(forms).map((form) => ({
           action: form.action || '',
           method: form.method || 'get',
-          inputs: Array.from(form.querySelectorAll('input, select, textarea')).map(input => ({
+          inputs: Array.from(
+            form.querySelectorAll('input, select, textarea')
+          ).map((input) => ({
             type: (input as HTMLInputElement).type || 'text',
             name: (input as HTMLInputElement).name || '',
             placeholder: (input as HTMLInputElement).placeholder || '',
             required: (input as HTMLInputElement).required || false,
-            label: (input as HTMLInputElement).labels?.[0]?.textContent?.trim() || ''
+            label:
+              (input as HTMLInputElement).labels?.[0]?.textContent?.trim() ||
+              '',
           })),
-          submitButton: form.querySelector('button[type="submit"], input[type="submit"]')?.textContent?.trim() || ''
+          submitButton:
+            form
+              .querySelector('button[type="submit"], input[type="submit"]')
+              ?.textContent?.trim() || '',
         }));
       };
 
       const getButtons = () => {
-        const buttons = document.querySelectorAll('button, input[type="button"], input[type="submit"]');
-        return Array.from(buttons).map(button => ({
-          text: button.textContent?.trim() || (button as HTMLInputElement).value || '',
+        const buttons = document.querySelectorAll(
+          'button, input[type="button"], input[type="submit"]'
+        );
+        return Array.from(buttons).map((button) => ({
+          text:
+            button.textContent?.trim() ||
+            (button as HTMLInputElement).value ||
+            '',
           type: (button as HTMLInputElement).type || 'button',
           class: button.className || '',
           onclick: (button as HTMLElement).onclick?.toString() || '',
-          ariaLabel: button.getAttribute('aria-label') || ''
+          ariaLabel: button.getAttribute('aria-label') || '',
         }));
       };
 
@@ -701,50 +731,56 @@ export class PuppeteerComprehensiveCollector {
           h3: getTextContent('h3'),
           h4: getTextContent('h4'),
           h5: getTextContent('h5'),
-          h6: getTextContent('h6')
+          h6: getTextContent('h6'),
         };
       };
 
       const getMetaContent = (name: string) => {
-        const meta = document.querySelector(`meta[name="${name}"], meta[property="${name}"]`);
+        const meta = document.querySelector(
+          `meta[name="${name}"], meta[property="${name}"]`
+        );
         return meta?.getAttribute('content') || '';
       };
 
       const getMetaTags = () => {
-
         return {
           title: document.title,
           description: getMetaContent('description'),
           keywords: getMetaContent('keywords'),
           author: getMetaContent('author'),
           robots: getMetaContent('robots'),
-          canonical: document.querySelector('link[rel="canonical"]')?.getAttribute('href') || '',
+          canonical:
+            document
+              .querySelector('link[rel="canonical"]')
+              ?.getAttribute('href') || '',
           ogTitle: getMetaContent('og:title'),
           ogDescription: getMetaContent('og:description'),
           ogImage: getMetaContent('og:image'),
           twitterCard: getMetaContent('twitter:card'),
           twitterTitle: getMetaContent('twitter:title'),
           twitterDescription: getMetaContent('twitter:description'),
-          twitterImage: getMetaContent('twitter:image')
+          twitterImage: getMetaContent('twitter:image'),
         };
       };
 
       const getStructuredData = () => {
-        const scripts = document.querySelectorAll('script[type="application/ld+json"]');
-        return Array.from(scripts).map(script => {
+        const scripts = document.querySelectorAll(
+          'script[type="application/ld+json"]'
+        );
+        return Array.from(scripts).map((script) => {
           try {
             return {
               type: 'unknown',
               content: JSON.parse(script.textContent || '{}'),
               valid: true,
-              errors: []
+              errors: [],
             };
           } catch {
             return {
               type: 'unknown',
               content: {},
               valid: false,
-              errors: ['Invalid JSON']
+              errors: ['Invalid JSON'],
             };
           }
         });
@@ -755,27 +791,38 @@ export class PuppeteerComprehensiveCollector {
         const elementsWithAria = document.querySelectorAll('[aria-label]');
 
         return {
-          altTexts: Array.from(images).map(img => img.alt || ''),
-          ariaLabels: Array.from(elementsWithAria).map(el => el.getAttribute('aria-label') || ''),
+          altTexts: Array.from(images).map((img) => img.alt || ''),
+          ariaLabels: Array.from(elementsWithAria).map(
+            (el) => el.getAttribute('aria-label') || ''
+          ),
           headingHierarchy: true, // Would need more complex analysis
           colorContrast: {}, // Would need specialized tools
-          keyboardNavigation: true // Would need testing
+          keyboardNavigation: true, // Would need testing
         };
       };
 
       const getTechnicalData = () => {
         return {
-          viewport: document.querySelector('meta[name="viewport"]')?.getAttribute('content') || '',
+          viewport:
+            document
+              .querySelector('meta[name="viewport"]')
+              ?.getAttribute('content') || '',
           language: document.documentElement.lang || '',
           charset: document.characterSet || '',
-          cssFiles: Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(link => (link as HTMLLinkElement).href),
-          jsFiles: Array.from(document.querySelectorAll('script[src]')).map(script => (script as HTMLScriptElement).src),
-          errors: [] // Would need to capture console errors
+          cssFiles: Array.from(
+            document.querySelectorAll('link[rel="stylesheet"]')
+          ).map((link) => (link as HTMLLinkElement).href),
+          jsFiles: Array.from(document.querySelectorAll('script[src]')).map(
+            (script) => (script as HTMLScriptElement).src
+          ),
+          errors: [], // Would need to capture console errors
         };
       };
 
       const text = document.body.textContent || '';
-      const wordCount = text.split(/\s+/).filter(word => word.length > 0).length;
+      const wordCount = text
+        .split(/\s+/)
+        .filter((word) => word.length > 0).length;
 
       return {
         title: document.title,
@@ -787,60 +834,78 @@ export class PuppeteerComprehensiveCollector {
           images: getImages(),
           links: getLinks(),
           forms: getForms(),
-          buttons: getButtons()
+          buttons: getButtons(),
         },
         seo: {
           titleLength: document.title.length,
           metaDescriptionLength: getMetaContent('description').length,
           headingStructure: getTextContent('h1, h2, h3, h4, h5, h6'),
-          imageAltTexts: Array.from(document.querySelectorAll('img')).map(img => img.alt || ''),
-          internalLinks: getLinks().filter(link => link?.isInternal).length,
-          externalLinks: getLinks().filter(link => !link?.isInternal).length,
-          canonicalUrl: document.querySelector('link[rel="canonical"]')?.getAttribute('href') || '',
+          imageAltTexts: Array.from(document.querySelectorAll('img')).map(
+            (img) => img.alt || ''
+          ),
+          internalLinks: getLinks().filter((link) => link?.isInternal).length,
+          externalLinks: getLinks().filter((link) => !link?.isInternal).length,
+          canonicalUrl:
+            document
+              .querySelector('link[rel="canonical"]')
+              ?.getAttribute('href') || '',
           robotsMeta: getMetaContent('robots'),
-          schemaMarkup: getStructuredData()
+          schemaMarkup: getStructuredData(),
         },
         accessibility: getAccessibilityData(),
-        technical: getTechnicalData()
+        technical: getTechnicalData(),
       };
     });
 
     // Collect performance metrics
     const performanceMetrics = await page.evaluate(() => {
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      const navigation = performance.getEntriesByType(
+        'navigation'
+      )[0] as PerformanceNavigationTiming;
       const paint = performance.getEntriesByType('paint');
 
       return {
         loadTime: navigation.loadEventEnd - navigation.loadEventStart,
-        domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
-        firstContentfulPaint: paint.find(p => p.name === 'first-contentful-paint')?.startTime || 0,
+        domContentLoaded:
+          navigation.domContentLoadedEventEnd -
+          navigation.domContentLoadedEventStart,
+        firstContentfulPaint:
+          paint.find((p) => p.name === 'first-contentful-paint')?.startTime ||
+          0,
         largestContentfulPaint: 0, // Would need LCP API
-        cumulativeLayoutShift: 0 // Would need CLS API
+        cumulativeLayoutShift: 0, // Would need CLS API
       };
     });
 
     return {
       url,
       ...pageData,
-      performance: performanceMetrics
+      performance: performanceMetrics,
     };
   }
 
-  private async collectPerformanceData(page: Page, url: string): Promise<PerformanceData> {
+  private async collectPerformanceData(
+    page: Page,
+    url: string
+  ): Promise<PerformanceData> {
     console.log('⚡ Collecting performance data...');
 
     await page.goto(url, { waitUntil: 'networkidle2', timeout: this.timeout });
 
     const performanceData = await page.evaluate(() => {
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      const navigation = performance.getEntriesByType(
+        'navigation'
+      )[0] as PerformanceNavigationTiming;
       const paint = performance.getEntriesByType('paint');
 
       return {
-        firstContentfulPaint: paint.find(p => p.name === 'first-contentful-paint')?.startTime || 0,
+        firstContentfulPaint:
+          paint.find((p) => p.name === 'first-contentful-paint')?.startTime ||
+          0,
         largestContentfulPaint: 0,
         firstInputDelay: 0,
         cumulativeLayoutShift: 0,
-        speedIndex: 0
+        speedIndex: 0,
       };
     });
 
@@ -848,7 +913,7 @@ export class PuppeteerComprehensiveCollector {
       overallScore: 85, // Would need actual Lighthouse integration
       metrics: performanceData,
       opportunities: [],
-      diagnostics: []
+      diagnostics: [],
     };
   }
 
@@ -859,7 +924,9 @@ export class PuppeteerComprehensiveCollector {
 
     const seoData = await page.evaluate(() => {
       const getMetaContent = (name: string) => {
-        const meta = document.querySelector(`meta[name="${name}"], meta[property="${name}"]`);
+        const meta = document.querySelector(
+          `meta[name="${name}"], meta[property="${name}"]`
+        );
         return meta?.getAttribute('content') || '';
       };
 
@@ -869,14 +936,17 @@ export class PuppeteerComprehensiveCollector {
         keywords: getMetaContent('keywords'),
         author: getMetaContent('author'),
         robots: getMetaContent('robots'),
-        canonical: document.querySelector('link[rel="canonical"]')?.getAttribute('href') || '',
+        canonical:
+          document
+            .querySelector('link[rel="canonical"]')
+            ?.getAttribute('href') || '',
         ogTitle: getMetaContent('og:title'),
         ogDescription: getMetaContent('og:description'),
         ogImage: getMetaContent('og:image'),
         twitterCard: getMetaContent('twitter:card'),
         twitterTitle: getMetaContent('twitter:title'),
         twitterDescription: getMetaContent('twitter:description'),
-        twitterImage: getMetaContent('twitter:image')
+        twitterImage: getMetaContent('twitter:image'),
       };
     });
 
@@ -888,20 +958,20 @@ export class PuppeteerComprehensiveCollector {
         totalLinks: 0,
         averagePerPage: 0,
         anchorTexts: [],
-        linkEquity: 0
+        linkEquity: 0,
       },
       externalLinking: {
         totalLinks: 0,
         nofollow: 0,
         dofollow: 0,
-        domains: []
+        domains: [],
       },
       contentQuality: {
         uniqueness: 0,
         depth: 0,
         freshness: 0,
         relevance: 0,
-        engagement: 0
+        engagement: 0,
       },
       technicalSEO: {
         robotsTxt: false,
@@ -909,15 +979,18 @@ export class PuppeteerComprehensiveCollector {
         https: location.protocol === 'https:',
         wwwRedirect: false,
         trailingSlash: false,
-        duplicateContent: false
-      }
+        duplicateContent: false,
+      },
     };
   }
 
   private collectContentData(pages: PageData[]): ContentData {
     console.log('📝 Analyzing content data...');
 
-    const totalWords = pages.reduce((sum, page) => sum + page.content.wordCount, 0);
+    const totalWords = pages.reduce(
+      (sum, page) => sum + page.content.wordCount,
+      0
+    );
     const averageWordsPerPage = totalWords / pages.length;
 
     return {
@@ -929,21 +1002,27 @@ export class PuppeteerComprehensiveCollector {
         overall: 0,
         positive: 0,
         negative: 0,
-        neutral: 0
+        neutral: 0,
       },
       readability: {
         fleschScore: 0,
         gradeLevel: 0,
         averageSentenceLength: 0,
-        averageSyllablesPerWord: 0
-      }
+        averageSyllablesPerWord: 0,
+      },
     };
   }
 
-  private async collectTechnicalData(page: Page, url: string): Promise<TechnicalData> {
+  private async collectTechnicalData(
+    page: Page,
+    url: string
+  ): Promise<TechnicalData> {
     console.log('🔧 Collecting technical data...');
 
-    const response = await page.goto(url, { waitUntil: 'networkidle2', timeout: this.timeout });
+    const response = await page.goto(url, {
+      waitUntil: 'networkidle2',
+      timeout: this.timeout,
+    });
     const headers = response?.headers() || {};
 
     return {
@@ -951,32 +1030,32 @@ export class PuppeteerComprehensiveCollector {
         server: headers.server || 'Unknown',
         poweredBy: headers['x-powered-by'] || 'Unknown',
         responseTime: 0,
-        statusCode: response?.status() || 0
+        statusCode: response?.status() || 0,
       },
       security: {
         https: url.startsWith('https://'),
         hsts: !!headers['strict-transport-security'],
         csp: !!headers['content-security-policy'],
         xssProtection: !!headers['x-xss-protection'],
-        contentTypeOptions: !!headers['x-content-type-options']
+        contentTypeOptions: !!headers['x-content-type-options'],
       },
       mobileOptimization: {
         responsive: true,
         viewport: '',
         touchFriendly: true,
-        mobileFriendly: true
+        mobileFriendly: true,
       },
       caching: {
         cacheControl: headers['cache-control'] || '',
         etag: headers.etag || '',
         lastModified: headers['last-modified'] || '',
-        expires: headers.expires || ''
+        expires: headers.expires || '',
       },
       compression: {
         gzip: !!headers['content-encoding'],
         brotli: false,
-        compressionRatio: 0
-      }
+        compressionRatio: 0,
+      },
     };
   }
 
@@ -988,33 +1067,33 @@ export class PuppeteerComprehensiveCollector {
         mainMenu: {
           items: [],
           depth: 0,
-          mobileFriendly: true
+          mobileFriendly: true,
         },
         breadcrumbs: [],
         pagination: {
           current: 1,
           total: 1,
           next: '',
-          previous: ''
+          previous: '',
         },
         search: {
           present: false,
           placeholder: '',
-          results: []
-        }
+          results: [],
+        },
       },
       forms: {
         totalForms: 0,
         averageFields: 0,
         validation: false,
         errorHandling: false,
-        successMessages: false
+        successMessages: false,
       },
       callsToAction: {
         total: 0,
         primary: [],
         secondary: [],
-        averagePerPage: 0
+        averagePerPage: 0,
       },
       visualHierarchy: {
         headingStructure: true,
@@ -1023,20 +1102,20 @@ export class PuppeteerComprehensiveCollector {
           fontFamily: '',
           fontSize: 0,
           lineHeight: 0,
-          fontWeight: ''
+          fontWeight: '',
         },
         spacing: {
           margin: '',
           padding: '',
-          lineHeight: 0
-        }
+          lineHeight: 0,
+        },
       },
       loadingStates: {
         skeletonScreens: false,
         progressIndicators: false,
         errorStates: false,
-        emptyStates: false
-      }
+        emptyStates: false,
+      },
     };
   }
 
@@ -1051,9 +1130,17 @@ export class PuppeteerComprehensiveCollector {
     return {
       totalPages: pages.length,
       totalWords: content.totalWords,
-      totalImages: pages.reduce((sum, page) => sum + page.content.images.length, 0),
-      totalLinks: pages.reduce((sum, page) => sum + page.content.links.length, 0),
-      averageLoadTime: pages.reduce((sum, page) => sum + page.performance.loadTime, 0) / pages.length,
+      totalImages: pages.reduce(
+        (sum, page) => sum + page.content.images.length,
+        0
+      ),
+      totalLinks: pages.reduce(
+        (sum, page) => sum + page.content.links.length,
+        0
+      ),
+      averageLoadTime:
+        pages.reduce((sum, page) => sum + page.performance.loadTime, 0) /
+        pages.length,
       seoScore: seo.overallScore,
       performanceScore: performance.overallScore,
       accessibilityScore: 75, // Would need actual calculation
@@ -1061,7 +1148,7 @@ export class PuppeteerComprehensiveCollector {
       technicalScore: 85, // Would need actual calculation
       uxScore: 70, // Would need actual calculation
       criticalIssues: 0,
-      recommendations: 0
+      recommendations: 0,
     };
   }
 }

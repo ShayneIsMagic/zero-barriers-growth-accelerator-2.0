@@ -5,80 +5,83 @@
  * Stores detailed breakdowns with evidence and recommendations
  */
 
-import { prisma } from '@/lib/prisma'
-import { PatternMatch, SimpleSynonymDetectionService } from './simple-synonym-detection.service'
+import { prisma } from '@/lib/prisma';
+import {
+  PatternMatch,
+  SimpleSynonymDetectionService,
+} from './simple-synonym-detection.service';
 
 export interface GoldenCircleAnalysis {
-  id: string
-  analysis_id: string
-  overall_score: number
-  alignment_score: number
-  clarity_score: number
-  why: WhyDimension
-  how: HowDimension
-  what: WhatDimension
-  who: WhoDimension
+  id: string;
+  analysis_id: string;
+  overall_score: number;
+  alignment_score: number;
+  clarity_score: number;
+  why: WhyDimension;
+  how: HowDimension;
+  what: WhatDimension;
+  who: WhoDimension;
 }
 
 export interface WhyDimension {
-  id: string
-  score: number
-  current_state: string
-  clarity_rating: number
-  authenticity_rating: number
-  emotional_resonance_rating: number
-  differentiation_rating: number
+  id: string;
+  score: number;
+  current_state: string;
+  clarity_rating: number;
+  authenticity_rating: number;
+  emotional_resonance_rating: number;
+  differentiation_rating: number;
   evidence: {
-    patterns: PatternMatch[]
-    citations: string[]
-  }
-  recommendations: string[]
+    patterns: PatternMatch[];
+    citations: string[];
+  };
+  recommendations: string[];
 }
 
 export interface HowDimension {
-  id: string
-  score: number
-  current_state: string
-  uniqueness_rating: number
-  clarity_rating: number
-  credibility_rating: number
-  specificity_rating: number
+  id: string;
+  score: number;
+  current_state: string;
+  uniqueness_rating: number;
+  clarity_rating: number;
+  credibility_rating: number;
+  specificity_rating: number;
   evidence: {
-    patterns: PatternMatch[]
-    citations: string[]
-  }
-  recommendations: string[]
+    patterns: PatternMatch[];
+    citations: string[];
+  };
+  recommendations: string[];
 }
 
 export interface WhatDimension {
-  id: string
-  score: number
-  current_state: string
-  clarity_rating: number
-  completeness_rating: number
-  value_articulation_rating: number
-  cta_clarity_rating: number
+  id: string;
+  score: number;
+  current_state: string;
+  clarity_rating: number;
+  completeness_rating: number;
+  value_articulation_rating: number;
+  cta_clarity_rating: number;
   evidence: {
-    patterns: PatternMatch[]
-    citations: string[]
-  }
-  recommendations: string[]
+    patterns: PatternMatch[];
+    citations: string[];
+  };
+  recommendations: string[];
 }
 
 export interface WhoDimension {
-  id: string
-  score: number
-  current_state: string
-  specificity_rating: number
-  resonance_rating: number
-  accessibility_rating: number
-  conversion_path_rating: number
-  target_personas: string[]
+  id: string;
+  score: number;
+  current_state: string;
+  specificity_rating: number;
+  resonance_rating: number;
+  accessibility_rating: number;
+  conversion_path_rating: number;
+  target_personas: string[];
   evidence: {
-    patterns: PatternMatch[]
-    citations: string[]
-  }
-  recommendations: string[]
+    patterns: PatternMatch[];
+    citations: string[];
+  };
+  recommendations: string[];
 }
 
 export class GoldenCircleDetailedService {
@@ -96,21 +99,25 @@ export class GoldenCircleDetailedService {
       patterns = await SimpleSynonymDetectionService.findValuePatterns(
         content.text || content.content,
         industry
-      )
+      );
     }
 
     // Build enhanced prompt
-    const prompt = await this.buildGoldenCirclePrompt(content, industry, patterns)
+    const prompt = await this.buildGoldenCirclePrompt(
+      content,
+      industry,
+      patterns
+    );
 
     // Call Gemini AI
-    const aiResponse = await this.callGeminiForGoldenCircle(prompt)
+    const aiResponse = await this.callGeminiForGoldenCircle(prompt);
 
     // Store in database
     return await this.storeGoldenCircleAnalysis(
       analysisId,
       aiResponse,
       patterns
-    )
+    );
   }
 
   /**
@@ -233,19 +240,19 @@ Return response as valid JSON with this structure:
     ...
   }
 }
-`
+`;
 
-    return basePrompt
+    return basePrompt;
   }
 
   /**
    * Call Gemini AI for Golden Circle analysis
    */
   private static async callGeminiForGoldenCircle(prompt: string): Promise<any> {
-    const apiKey = process.env.GEMINI_API_KEY
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      throw new Error('GEMINI_API_KEY not configured')
+      throw new Error('GEMINI_API_KEY not configured');
     }
 
     const response = await fetch(
@@ -257,32 +264,32 @@ Return response as valid JSON with this structure:
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 4096
-          }
-        })
+            maxOutputTokens: 4096,
+          },
+        }),
       }
-    )
+    );
 
     if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.statusText}`)
+      throw new Error(`Gemini API error: ${response.statusText}`);
     }
 
-    const data = await response.json()
-    const text = data.candidates[0]?.content?.parts[0]?.text
+    const data = await response.json();
+    const text = data.candidates[0]?.content?.parts[0]?.text;
 
     if (!text) {
-      throw new Error('No response from Gemini')
+      throw new Error('No response from Gemini');
     }
 
     // Parse JSON from response (handle markdown code blocks)
-    const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/) ||
-                     text.match(/\{[\s\S]*\}/)
+    const jsonMatch =
+      text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/\{[\s\S]*\}/);
 
     if (jsonMatch) {
-      return JSON.parse(jsonMatch[1] || jsonMatch[0])
+      return JSON.parse(jsonMatch[1] || jsonMatch[0]);
     }
 
-    throw new Error('Could not parse Gemini response as JSON')
+    throw new Error('Could not parse Gemini response as JSON');
   }
 
   /**
@@ -299,9 +306,9 @@ Return response as valid JSON with this structure:
         analysis_id: analysisId,
         overall_score: aiResponse.overall_score || 0,
         alignment_score: aiResponse.alignment_score || 0,
-        clarity_score: aiResponse.clarity_score || 0
-      }
-    })
+        clarity_score: aiResponse.clarity_score || 0,
+      },
+    });
 
     // Store WHY dimension
     const why = await prisma.golden_circle_why.create({
@@ -311,20 +318,21 @@ Return response as valid JSON with this structure:
         current_state: aiResponse.why.statement || '',
         clarity_rating: aiResponse.why.clarity_rating || 0,
         authenticity_rating: aiResponse.why.authenticity_rating || 0,
-        emotional_resonance_rating: aiResponse.why.emotional_resonance_rating || 0,
+        emotional_resonance_rating:
+          aiResponse.why.emotional_resonance_rating || 0,
         differentiation_rating: aiResponse.why.differentiation_rating || 0,
         evidence: {
-          patterns: patterns.slice(0, 5).map(p => ({
+          patterns: patterns.slice(0, 5).map((p) => ({
             element_name: p.element_name,
             pattern_text: p.pattern_text,
             match_count: p.match_count,
-            confidence: p.confidence
+            confidence: p.confidence,
           })),
-          citations: aiResponse.why.evidence?.citations || []
+          citations: aiResponse.why.evidence?.citations || [],
         },
-        recommendations: aiResponse.why.recommendations || []
-      }
-    })
+        recommendations: aiResponse.why.recommendations || [],
+      },
+    });
 
     // Store HOW dimension
     const how = await prisma.golden_circle_how.create({
@@ -337,17 +345,22 @@ Return response as valid JSON with this structure:
         credibility_rating: aiResponse.how.credibility_rating || 0,
         specificity_rating: aiResponse.how.specificity_rating || 0,
         evidence: {
-          patterns: patterns.filter(p => p.element_name === 'simplifies' || p.element_name === 'quality').map(p => ({
-            element_name: p.element_name,
-            pattern_text: p.pattern_text,
-            match_count: p.match_count,
-            confidence: p.confidence
-          })),
-          citations: aiResponse.how.evidence?.citations || []
+          patterns: patterns
+            .filter(
+              (p) =>
+                p.element_name === 'simplifies' || p.element_name === 'quality'
+            )
+            .map((p) => ({
+              element_name: p.element_name,
+              pattern_text: p.pattern_text,
+              match_count: p.match_count,
+              confidence: p.confidence,
+            })),
+          citations: aiResponse.how.evidence?.citations || [],
         },
-        recommendations: aiResponse.how.recommendations || []
-      }
-    })
+        recommendations: aiResponse.how.recommendations || [],
+      },
+    });
 
     // Store WHAT dimension
     const what = await prisma.golden_circle_what.create({
@@ -357,20 +370,21 @@ Return response as valid JSON with this structure:
         current_state: aiResponse.what.statement || '',
         clarity_rating: aiResponse.what.clarity_rating || 0,
         completeness_rating: aiResponse.what.completeness_rating || 0,
-        value_articulation_rating: aiResponse.what.value_articulation_rating || 0,
+        value_articulation_rating:
+          aiResponse.what.value_articulation_rating || 0,
         cta_clarity_rating: aiResponse.what.cta_clarity_rating || 0,
         evidence: {
-          patterns: patterns.slice(5, 10).map(p => ({
+          patterns: patterns.slice(5, 10).map((p) => ({
             element_name: p.element_name,
             pattern_text: p.pattern_text,
             match_count: p.match_count,
-            confidence: p.confidence
+            confidence: p.confidence,
           })),
-          citations: aiResponse.what.evidence?.citations || []
+          citations: aiResponse.what.evidence?.citations || [],
         },
-        recommendations: aiResponse.what.recommendations || []
-      }
-    })
+        recommendations: aiResponse.what.recommendations || [],
+      },
+    });
 
     // Store WHO dimension
     const who = await prisma.golden_circle_who.create({
@@ -385,11 +399,11 @@ Return response as valid JSON with this structure:
         target_personas: aiResponse.who.target_personas || [],
         evidence: {
           patterns: [],
-          citations: aiResponse.who.evidence?.citations || []
+          citations: aiResponse.who.evidence?.citations || [],
         },
-        recommendations: aiResponse.who.recommendations || []
-      }
-    })
+        recommendations: aiResponse.who.recommendations || [],
+      },
+    });
 
     return {
       id: gc.id,
@@ -401,62 +415,116 @@ Return response as valid JSON with this structure:
         ...why,
         score: why.score ? Number(why.score) : 0,
         clarity_rating: why.clarity_rating ? Number(why.clarity_rating) : 0,
-        authenticity_rating: why.authenticity_rating ? Number(why.authenticity_rating) : 0,
-        emotional_resonance_rating: why.emotional_resonance_rating ? Number(why.emotional_resonance_rating) : 0,
-        differentiation_rating: why.differentiation_rating ? Number(why.differentiation_rating) : 0,
+        authenticity_rating: why.authenticity_rating
+          ? Number(why.authenticity_rating)
+          : 0,
+        emotional_resonance_rating: why.emotional_resonance_rating
+          ? Number(why.emotional_resonance_rating)
+          : 0,
+        differentiation_rating: why.differentiation_rating
+          ? Number(why.differentiation_rating)
+          : 0,
         evidence: {
-          patterns: Array.isArray((why.evidence as any)?.patterns) ? (why.evidence as any).patterns : [],
-          citations: Array.isArray((why.evidence as any)?.citations) ? (why.evidence as any).citations : []
+          patterns: Array.isArray((why.evidence as any)?.patterns)
+            ? (why.evidence as any).patterns
+            : [],
+          citations: Array.isArray((why.evidence as any)?.citations)
+            ? (why.evidence as any).citations
+            : [],
         },
-        recommendations: Array.isArray(why.recommendations) ? why.recommendations as string[] : []
+        recommendations: Array.isArray(why.recommendations)
+          ? (why.recommendations as string[])
+          : [],
       },
       how: {
         ...how,
         score: how.score ? Number(how.score) : 0,
-        uniqueness_rating: how.uniqueness_rating ? Number(how.uniqueness_rating) : 0,
+        uniqueness_rating: how.uniqueness_rating
+          ? Number(how.uniqueness_rating)
+          : 0,
         clarity_rating: how.clarity_rating ? Number(how.clarity_rating) : 0,
-        credibility_rating: how.credibility_rating ? Number(how.credibility_rating) : 0,
-        specificity_rating: how.specificity_rating ? Number(how.specificity_rating) : 0,
+        credibility_rating: how.credibility_rating
+          ? Number(how.credibility_rating)
+          : 0,
+        specificity_rating: how.specificity_rating
+          ? Number(how.specificity_rating)
+          : 0,
         evidence: {
-          patterns: Array.isArray((how.evidence as any)?.patterns) ? (how.evidence as any).patterns : [],
-          citations: Array.isArray((how.evidence as any)?.citations) ? (how.evidence as any).citations : []
+          patterns: Array.isArray((how.evidence as any)?.patterns)
+            ? (how.evidence as any).patterns
+            : [],
+          citations: Array.isArray((how.evidence as any)?.citations)
+            ? (how.evidence as any).citations
+            : [],
         },
-        recommendations: Array.isArray(how.recommendations) ? how.recommendations as string[] : []
+        recommendations: Array.isArray(how.recommendations)
+          ? (how.recommendations as string[])
+          : [],
       },
       what: {
         ...what,
         score: what.score ? Number(what.score) : 0,
         clarity_rating: what.clarity_rating ? Number(what.clarity_rating) : 0,
-        completeness_rating: what.completeness_rating ? Number(what.completeness_rating) : 0,
-        value_articulation_rating: what.value_articulation_rating ? Number(what.value_articulation_rating) : 0,
-        cta_clarity_rating: what.cta_clarity_rating ? Number(what.cta_clarity_rating) : 0,
+        completeness_rating: what.completeness_rating
+          ? Number(what.completeness_rating)
+          : 0,
+        value_articulation_rating: what.value_articulation_rating
+          ? Number(what.value_articulation_rating)
+          : 0,
+        cta_clarity_rating: what.cta_clarity_rating
+          ? Number(what.cta_clarity_rating)
+          : 0,
         evidence: {
-          patterns: Array.isArray((what.evidence as any)?.patterns) ? (what.evidence as any).patterns : [],
-          citations: Array.isArray((what.evidence as any)?.citations) ? (what.evidence as any).citations : []
+          patterns: Array.isArray((what.evidence as any)?.patterns)
+            ? (what.evidence as any).patterns
+            : [],
+          citations: Array.isArray((what.evidence as any)?.citations)
+            ? (what.evidence as any).citations
+            : [],
         },
-        recommendations: Array.isArray(what.recommendations) ? what.recommendations as string[] : []
+        recommendations: Array.isArray(what.recommendations)
+          ? (what.recommendations as string[])
+          : [],
       },
       who: {
         ...who,
         score: who.score ? Number(who.score) : 0,
-        specificity_rating: who.specificity_rating ? Number(who.specificity_rating) : 0,
-        resonance_rating: who.resonance_rating ? Number(who.resonance_rating) : 0,
-        accessibility_rating: who.accessibility_rating ? Number(who.accessibility_rating) : 0,
-        conversion_path_rating: who.conversion_path_rating ? Number(who.conversion_path_rating) : 0,
+        specificity_rating: who.specificity_rating
+          ? Number(who.specificity_rating)
+          : 0,
+        resonance_rating: who.resonance_rating
+          ? Number(who.resonance_rating)
+          : 0,
+        accessibility_rating: who.accessibility_rating
+          ? Number(who.accessibility_rating)
+          : 0,
+        conversion_path_rating: who.conversion_path_rating
+          ? Number(who.conversion_path_rating)
+          : 0,
         evidence: {
-          patterns: Array.isArray((who.evidence as any)?.patterns) ? (who.evidence as any).patterns : [],
-          citations: Array.isArray((who.evidence as any)?.citations) ? (who.evidence as any).citations : []
+          patterns: Array.isArray((who.evidence as any)?.patterns)
+            ? (who.evidence as any).patterns
+            : [],
+          citations: Array.isArray((who.evidence as any)?.citations)
+            ? (who.evidence as any).citations
+            : [],
         },
-        recommendations: Array.isArray(who.recommendations) ? who.recommendations as string[] : [],
-        target_personas: Array.isArray(who.target_personas) ? who.target_personas as string[] : []
-      }
-    }
+        recommendations: Array.isArray(who.recommendations)
+          ? (who.recommendations as string[])
+          : [],
+        target_personas: Array.isArray(who.target_personas)
+          ? (who.target_personas as string[])
+          : [],
+      },
+    };
   }
 
   /**
    * Fetch existing Golden Circle analysis
    */
-  static async getByAnalysisId(analysisId: string): Promise<GoldenCircleAnalysis | null> {
+  static async getByAnalysisId(
+    analysisId: string
+  ): Promise<GoldenCircleAnalysis | null> {
     try {
       const gc = await prisma.golden_circle_analyses.findFirst({
         where: { analysis_id: analysisId },
@@ -464,11 +532,11 @@ Return response as valid JSON with this structure:
           golden_circle_why: true,
           golden_circle_how: true,
           golden_circle_what: true,
-          golden_circle_who: true
-        }
-      })
+          golden_circle_who: true,
+        },
+      });
 
-      if (!gc) return null
+      if (!gc) return null;
 
       return {
         id: gc.id,
@@ -476,64 +544,167 @@ Return response as valid JSON with this structure:
         overall_score: gc.overall_score ? Number(gc.overall_score) : 0,
         alignment_score: gc.alignment_score ? Number(gc.alignment_score) : 0,
         clarity_score: gc.clarity_score ? Number(gc.clarity_score) : 0,
-        why: gc.golden_circle_why ? {
-          ...gc.golden_circle_why,
-          score: gc.golden_circle_why.score ? Number(gc.golden_circle_why.score) : 0,
-          clarity_rating: gc.golden_circle_why.clarity_rating ? Number(gc.golden_circle_why.clarity_rating) : 0,
-          authenticity_rating: gc.golden_circle_why.authenticity_rating ? Number(gc.golden_circle_why.authenticity_rating) : 0,
-          emotional_resonance_rating: gc.golden_circle_why.emotional_resonance_rating ? Number(gc.golden_circle_why.emotional_resonance_rating) : 0,
-          differentiation_rating: gc.golden_circle_why.differentiation_rating ? Number(gc.golden_circle_why.differentiation_rating) : 0,
-          evidence: {
-            patterns: Array.isArray((gc.golden_circle_why.evidence as any)?.patterns) ? (gc.golden_circle_why.evidence as any).patterns : [],
-            citations: Array.isArray((gc.golden_circle_why.evidence as any)?.citations) ? (gc.golden_circle_why.evidence as any).citations : []
-          },
-          recommendations: Array.isArray(gc.golden_circle_why.recommendations) ? gc.golden_circle_why.recommendations as string[] : []
-        } : null,
-        how: gc.golden_circle_how ? {
-          ...gc.golden_circle_how,
-          score: gc.golden_circle_how.score ? Number(gc.golden_circle_how.score) : 0,
-          uniqueness_rating: gc.golden_circle_how.uniqueness_rating ? Number(gc.golden_circle_how.uniqueness_rating) : 0,
-          clarity_rating: gc.golden_circle_how.clarity_rating ? Number(gc.golden_circle_how.clarity_rating) : 0,
-          credibility_rating: gc.golden_circle_how.credibility_rating ? Number(gc.golden_circle_how.credibility_rating) : 0,
-          specificity_rating: gc.golden_circle_how.specificity_rating ? Number(gc.golden_circle_how.specificity_rating) : 0,
-          evidence: {
-            patterns: Array.isArray((gc.golden_circle_how.evidence as any)?.patterns) ? (gc.golden_circle_how.evidence as any).patterns : [],
-            citations: Array.isArray((gc.golden_circle_how.evidence as any)?.citations) ? (gc.golden_circle_how.evidence as any).citations : []
-          },
-          recommendations: Array.isArray(gc.golden_circle_how.recommendations) ? gc.golden_circle_how.recommendations as string[] : []
-        } : null,
-        what: gc.golden_circle_what ? {
-          ...gc.golden_circle_what,
-          score: gc.golden_circle_what.score ? Number(gc.golden_circle_what.score) : 0,
-          clarity_rating: gc.golden_circle_what.clarity_rating ? Number(gc.golden_circle_what.clarity_rating) : 0,
-          completeness_rating: gc.golden_circle_what.completeness_rating ? Number(gc.golden_circle_what.completeness_rating) : 0,
-          value_articulation_rating: gc.golden_circle_what.value_articulation_rating ? Number(gc.golden_circle_what.value_articulation_rating) : 0,
-          cta_clarity_rating: gc.golden_circle_what.cta_clarity_rating ? Number(gc.golden_circle_what.cta_clarity_rating) : 0,
-          evidence: {
-            patterns: Array.isArray((gc.golden_circle_what.evidence as any)?.patterns) ? (gc.golden_circle_what.evidence as any).patterns : [],
-            citations: Array.isArray((gc.golden_circle_what.evidence as any)?.citations) ? (gc.golden_circle_what.evidence as any).citations : []
-          },
-          recommendations: Array.isArray(gc.golden_circle_what.recommendations) ? gc.golden_circle_what.recommendations as string[] : []
-        } : null,
-        who: gc.golden_circle_who ? {
-          ...gc.golden_circle_who,
-          score: gc.golden_circle_who.score ? Number(gc.golden_circle_who.score) : 0,
-          specificity_rating: gc.golden_circle_who.specificity_rating ? Number(gc.golden_circle_who.specificity_rating) : 0,
-          resonance_rating: gc.golden_circle_who.resonance_rating ? Number(gc.golden_circle_who.resonance_rating) : 0,
-          accessibility_rating: gc.golden_circle_who.accessibility_rating ? Number(gc.golden_circle_who.accessibility_rating) : 0,
-          conversion_path_rating: gc.golden_circle_who.conversion_path_rating ? Number(gc.golden_circle_who.conversion_path_rating) : 0,
-          evidence: {
-            patterns: Array.isArray((gc.golden_circle_who.evidence as any)?.patterns) ? (gc.golden_circle_who.evidence as any).patterns : [],
-            citations: Array.isArray((gc.golden_circle_who.evidence as any)?.citations) ? (gc.golden_circle_who.evidence as any).citations : []
-          },
-          recommendations: Array.isArray(gc.golden_circle_who.recommendations) ? gc.golden_circle_who.recommendations as string[] : [],
-          target_personas: Array.isArray(gc.golden_circle_who.target_personas) ? gc.golden_circle_who.target_personas as string[] : []
-        } : null
-      }
+        why: gc.golden_circle_why
+          ? {
+              ...gc.golden_circle_why,
+              score: gc.golden_circle_why.score
+                ? Number(gc.golden_circle_why.score)
+                : 0,
+              clarity_rating: gc.golden_circle_why.clarity_rating
+                ? Number(gc.golden_circle_why.clarity_rating)
+                : 0,
+              authenticity_rating: gc.golden_circle_why.authenticity_rating
+                ? Number(gc.golden_circle_why.authenticity_rating)
+                : 0,
+              emotional_resonance_rating: gc.golden_circle_why
+                .emotional_resonance_rating
+                ? Number(gc.golden_circle_why.emotional_resonance_rating)
+                : 0,
+              differentiation_rating: gc.golden_circle_why
+                .differentiation_rating
+                ? Number(gc.golden_circle_why.differentiation_rating)
+                : 0,
+              evidence: {
+                patterns: Array.isArray(
+                  (gc.golden_circle_why.evidence as any)?.patterns
+                )
+                  ? (gc.golden_circle_why.evidence as any).patterns
+                  : [],
+                citations: Array.isArray(
+                  (gc.golden_circle_why.evidence as any)?.citations
+                )
+                  ? (gc.golden_circle_why.evidence as any).citations
+                  : [],
+              },
+              recommendations: Array.isArray(
+                gc.golden_circle_why.recommendations
+              )
+                ? (gc.golden_circle_why.recommendations as string[])
+                : [],
+            }
+          : null,
+        how: gc.golden_circle_how
+          ? {
+              ...gc.golden_circle_how,
+              score: gc.golden_circle_how.score
+                ? Number(gc.golden_circle_how.score)
+                : 0,
+              uniqueness_rating: gc.golden_circle_how.uniqueness_rating
+                ? Number(gc.golden_circle_how.uniqueness_rating)
+                : 0,
+              clarity_rating: gc.golden_circle_how.clarity_rating
+                ? Number(gc.golden_circle_how.clarity_rating)
+                : 0,
+              credibility_rating: gc.golden_circle_how.credibility_rating
+                ? Number(gc.golden_circle_how.credibility_rating)
+                : 0,
+              specificity_rating: gc.golden_circle_how.specificity_rating
+                ? Number(gc.golden_circle_how.specificity_rating)
+                : 0,
+              evidence: {
+                patterns: Array.isArray(
+                  (gc.golden_circle_how.evidence as any)?.patterns
+                )
+                  ? (gc.golden_circle_how.evidence as any).patterns
+                  : [],
+                citations: Array.isArray(
+                  (gc.golden_circle_how.evidence as any)?.citations
+                )
+                  ? (gc.golden_circle_how.evidence as any).citations
+                  : [],
+              },
+              recommendations: Array.isArray(
+                gc.golden_circle_how.recommendations
+              )
+                ? (gc.golden_circle_how.recommendations as string[])
+                : [],
+            }
+          : null,
+        what: gc.golden_circle_what
+          ? {
+              ...gc.golden_circle_what,
+              score: gc.golden_circle_what.score
+                ? Number(gc.golden_circle_what.score)
+                : 0,
+              clarity_rating: gc.golden_circle_what.clarity_rating
+                ? Number(gc.golden_circle_what.clarity_rating)
+                : 0,
+              completeness_rating: gc.golden_circle_what.completeness_rating
+                ? Number(gc.golden_circle_what.completeness_rating)
+                : 0,
+              value_articulation_rating: gc.golden_circle_what
+                .value_articulation_rating
+                ? Number(gc.golden_circle_what.value_articulation_rating)
+                : 0,
+              cta_clarity_rating: gc.golden_circle_what.cta_clarity_rating
+                ? Number(gc.golden_circle_what.cta_clarity_rating)
+                : 0,
+              evidence: {
+                patterns: Array.isArray(
+                  (gc.golden_circle_what.evidence as any)?.patterns
+                )
+                  ? (gc.golden_circle_what.evidence as any).patterns
+                  : [],
+                citations: Array.isArray(
+                  (gc.golden_circle_what.evidence as any)?.citations
+                )
+                  ? (gc.golden_circle_what.evidence as any).citations
+                  : [],
+              },
+              recommendations: Array.isArray(
+                gc.golden_circle_what.recommendations
+              )
+                ? (gc.golden_circle_what.recommendations as string[])
+                : [],
+            }
+          : null,
+        who: gc.golden_circle_who
+          ? {
+              ...gc.golden_circle_who,
+              score: gc.golden_circle_who.score
+                ? Number(gc.golden_circle_who.score)
+                : 0,
+              specificity_rating: gc.golden_circle_who.specificity_rating
+                ? Number(gc.golden_circle_who.specificity_rating)
+                : 0,
+              resonance_rating: gc.golden_circle_who.resonance_rating
+                ? Number(gc.golden_circle_who.resonance_rating)
+                : 0,
+              accessibility_rating: gc.golden_circle_who.accessibility_rating
+                ? Number(gc.golden_circle_who.accessibility_rating)
+                : 0,
+              conversion_path_rating: gc.golden_circle_who
+                .conversion_path_rating
+                ? Number(gc.golden_circle_who.conversion_path_rating)
+                : 0,
+              evidence: {
+                patterns: Array.isArray(
+                  (gc.golden_circle_who.evidence as any)?.patterns
+                )
+                  ? (gc.golden_circle_who.evidence as any).patterns
+                  : [],
+                citations: Array.isArray(
+                  (gc.golden_circle_who.evidence as any)?.citations
+                )
+                  ? (gc.golden_circle_who.evidence as any).citations
+                  : [],
+              },
+              recommendations: Array.isArray(
+                gc.golden_circle_who.recommendations
+              )
+                ? (gc.golden_circle_who.recommendations as string[])
+                : [],
+              target_personas: Array.isArray(
+                gc.golden_circle_who.target_personas
+              )
+                ? (gc.golden_circle_who.target_personas as string[])
+                : [],
+            }
+          : null,
+      };
     } catch (error) {
-      console.error('Failed to fetch Golden Circle:', error)
-      return null
+      console.error('Failed to fetch Golden Circle:', error);
+      return null;
     }
   }
 }
-

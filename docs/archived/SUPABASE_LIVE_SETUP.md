@@ -7,6 +7,7 @@
 1. **Click "+ New Project"** (green button)
 
 2. **Fill in the form:**
+
    ```
    Name: zero-barriers-growth
    Database Password: [CREATE A STRONG PASSWORD - SAVE IT!]
@@ -37,6 +38,7 @@ Once the green "Project is ready" appears:
 5. **Click "Copy"** to copy the connection string
 
 6. **It will look like this:**
+
    ```
    postgresql://postgres.xxxxxxxxxxxxx:[YOUR-PASSWORD]@aws-0-us-west-1.pooler.supabase.com:6543/postgres
    ```
@@ -48,6 +50,7 @@ Once the green "Project is ready" appears:
 ### Step 3: Come Back Here
 
 **Once you have the connection string, paste it in chat and I'll:**
+
 - Add it to Vercel
 - Push the database schema
 - Create your users
@@ -70,4 +73,3 @@ Then I'll handle the rest! (another 5 minutes)
 **Waiting for your Supabase connection string...** 🔄
 
 **Tip**: The connection string is safe to share with me - I'll add it to Vercel's encrypted environment variables where it will be protected.
-

@@ -11,6 +11,7 @@
 ### What the README Files Do:
 
 The framework files like:
+
 - `GOLDEN_CIRCLE_COMPLETE.md`
 - `B2B_ELEMENTS_OF_VALUE_COMPLETE.md`
 - `B2C_ELEMENTS_OF_VALUE_COMPLETE.md`
@@ -19,6 +20,7 @@ The framework files like:
 **These are NOT database schemas!**
 
 **They are:**
+
 - 📚 Reference guides for the AI
 - 🎯 Framework definitions
 - 📋 Scoring criteria
@@ -35,6 +37,7 @@ The framework files like:
 **Just 2 tables:**
 
 #### 1. User Table
+
 ```sql
 User
 ├── id (unique ID)
@@ -45,6 +48,7 @@ User
 ```
 
 #### 2. Analysis Table
+
 ```sql
 Analysis
 ├── id (unique ID)
@@ -84,6 +88,7 @@ Analysis
 ### **Option 2: Complex (We DON'T Use This)** ❌
 
 Would need 20+ tables:
+
 ```
 User
 Analysis
@@ -122,6 +127,7 @@ PageAuditAnalysis
 ### How It Works:
 
 #### 1. AI Analyzes Using Frameworks
+
 ```
 README files (Golden Circle, Elements of Value, etc.)
          ↓
@@ -133,6 +139,7 @@ Returns structured JSON result
 ```
 
 #### 2. We Store the Complete Result
+
 ```
 JSON result from AI
          ↓
@@ -142,6 +149,7 @@ One record = Complete analysis with ALL frameworks
 ```
 
 #### 3. When User Views Report
+
 ```
 Fetch Analysis from database
          ↓
@@ -220,11 +228,13 @@ SELECT id, email, name, role, "createdAt" FROM "User";
 ## How README Files Are Used
 
 ### They DON'T:
+
 - ❌ Create database tables
 - ❌ Define database schema
 - ❌ Store data structure
 
 ### They DO:
+
 - ✅ Guide the AI analysis
 - ✅ Define framework concepts
 - ✅ Provide scoring criteria
@@ -285,6 +295,7 @@ await prisma.analysis.create({
 4. **Click "Run" or "Execute"** (green button)
 
 5. **You should see**:
+
    ```
    ✓ CREATE TABLE "User"
    ✓ CREATE TABLE "Analysis"
@@ -303,6 +314,7 @@ Go back to Table Editor:
 https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/editor
 
 You should now see:
+
 - "User" table (2 rows)
 - "Analysis" table (0 rows initially)
 
@@ -311,4 +323,3 @@ You should now see:
 **Copy the SQL above, paste it in the SQL Editor, and click "Run"!**
 
 Then tell me what happens! 🚀
-

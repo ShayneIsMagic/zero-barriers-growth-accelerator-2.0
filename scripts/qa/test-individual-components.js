@@ -2,7 +2,7 @@
 
 /**
  * QA Tool: Test Individual Components
- * 
+ *
  * This script tests each component individually to isolate broken functionality
  * instead of running the full analysis pipeline.
  */
@@ -12,7 +12,8 @@ const path = require('path');
 
 // Test configuration
 const TEST_URL = process.argv[2] || 'https://example.com';
-const VERBOSE = process.argv.includes('--verbose') || process.argv.includes('-v');
+const VERBOSE =
+  process.argv.includes('--verbose') || process.argv.includes('-v');
 
 console.log('🧪 QA Tool: Testing Individual Components');
 console.log('==================================================');
@@ -24,7 +25,7 @@ console.log('');
 const testResults = {
   passed: 0,
   failed: 0,
-  errors: []
+  errors: [],
 };
 
 /**
@@ -52,24 +53,26 @@ async function runTest(testName, testFunction) {
  */
 async function testWebsiteScraping() {
   return new Promise((resolve, reject) => {
-    const child = spawn('node', ['scripts/pageaudit-analysis.js', TEST_URL], { stdio: 'pipe' });
-    
+    const child = spawn('node', ['scripts/pageaudit-analysis.js', TEST_URL], {
+      stdio: 'pipe',
+    });
+
     let output = '';
     let errorOutput = '';
-    
+
     child.stdout.on('data', (data) => {
       output += data.toString();
     });
-    
+
     child.stderr.on('data', (data) => {
       errorOutput += data.toString();
     });
-    
+
     child.on('close', (code) => {
       if (code === 0) {
         try {
           const lines = output.trim().split('\n');
-          const jsonLine = lines.find(line => line.trim().startsWith('{'));
+          const jsonLine = lines.find((line) => line.trim().startsWith('{'));
           if (jsonLine) {
             const result = JSON.parse(jsonLine);
             resolve(result);
@@ -83,7 +86,7 @@ async function testWebsiteScraping() {
         reject(new Error(`Script failed with code ${code}: ${errorOutput}`));
       }
     });
-    
+
     child.on('error', (error) => {
       reject(new Error(`Failed to start script: ${error.message}`));
     });
@@ -95,24 +98,26 @@ async function testWebsiteScraping() {
  */
 async function testLighthouseAnalysis() {
   return new Promise((resolve, reject) => {
-    const child = spawn('node', ['scripts/lighthouse-per-page.js', TEST_URL], { stdio: 'pipe' });
-    
+    const child = spawn('node', ['scripts/lighthouse-per-page.js', TEST_URL], {
+      stdio: 'pipe',
+    });
+
     let output = '';
     let errorOutput = '';
-    
+
     child.stdout.on('data', (data) => {
       output += data.toString();
     });
-    
+
     child.stderr.on('data', (data) => {
       errorOutput += data.toString();
     });
-    
+
     child.on('close', (code) => {
       if (code === 0) {
         try {
           const lines = output.trim().split('\n');
-          const jsonLine = lines.find(line => line.trim().startsWith('{'));
+          const jsonLine = lines.find((line) => line.trim().startsWith('{'));
           if (jsonLine) {
             const result = JSON.parse(jsonLine);
             resolve(result);
@@ -126,7 +131,7 @@ async function testLighthouseAnalysis() {
         reject(new Error(`Script failed with code ${code}: ${errorOutput}`));
       }
     });
-    
+
     child.on('error', (error) => {
       reject(new Error(`Failed to start script: ${error.message}`));
     });
@@ -138,24 +143,26 @@ async function testLighthouseAnalysis() {
  */
 async function testAIConnectivity() {
   return new Promise((resolve, reject) => {
-    const child = spawn('node', ['scripts/test-ai-connectivity.js'], { stdio: 'pipe' });
-    
+    const child = spawn('node', ['scripts/test-ai-connectivity.js'], {
+      stdio: 'pipe',
+    });
+
     let output = '';
     let errorOutput = '';
-    
+
     child.stdout.on('data', (data) => {
       output += data.toString();
     });
-    
+
     child.stderr.on('data', (data) => {
       errorOutput += data.toString();
     });
-    
+
     child.on('close', (code) => {
       if (code === 0) {
         try {
           const lines = output.trim().split('\n');
-          const jsonLine = lines.find(line => line.trim().startsWith('{'));
+          const jsonLine = lines.find((line) => line.trim().startsWith('{'));
           if (jsonLine) {
             const result = JSON.parse(jsonLine);
             resolve(result);
@@ -169,7 +176,7 @@ async function testAIConnectivity() {
         reject(new Error(`Script failed with code ${code}: ${errorOutput}`));
       }
     });
-    
+
     child.on('error', (error) => {
       reject(new Error(`Failed to start script: ${error.message}`));
     });
@@ -202,17 +209,17 @@ async function testContentExtraction() {
           contactInfo: {
             phone: [],
             email: [],
-            address: []
+            address: [],
           },
           technicalInfo: {
             loadTime: 1500,
             hasSSL: true,
             mobileFriendly: true,
             hasSchema: false,
-            viewport: { width: 1920, height: 1080 }
+            viewport: { width: 1920, height: 1080 },
           },
           extractedAt: new Date().toISOString(),
-          method: 'fetch'
+          method: 'fetch',
         };
         resolve(mockResult);
       } catch (error) {
@@ -233,29 +240,46 @@ async function testSEOAnalysis() {
         const mockResult = {
           searchConsole: {
             currentRankings: [
-              { keyword: 'test keyword', position: 5, impressions: 1000, clicks: 50, ctr: 5 }
+              {
+                keyword: 'test keyword',
+                position: 5,
+                impressions: 1000,
+                clicks: 50,
+                ctr: 5,
+              },
             ],
             topPerformingPages: [
-              { page: `${TEST_URL}/test`, impressions: 2000, clicks: 100, ctr: 5, position: 3 }
-            ]
+              {
+                page: `${TEST_URL}/test`,
+                impressions: 2000,
+                clicks: 100,
+                ctr: 5,
+                position: 3,
+              },
+            ],
           },
           keywordResearch: {
             targetKeywords: [
-              { keyword: 'test keyword', searchVolume: 1000, competition: 'Medium', opportunity: 7 }
+              {
+                keyword: 'test keyword',
+                searchVolume: 1000,
+                competition: 'Medium',
+                opportunity: 7,
+              },
             ],
             contentGaps: [],
-            trendingKeywords: []
+            trendingKeywords: [],
           },
           competitiveAnalysis: {
             competitors: [],
-            keywordComparison: []
+            keywordComparison: [],
           },
           recommendations: {
             immediateActions: ['Test action 1'],
             contentOpportunities: ['Test opportunity 1'],
             technicalImprovements: ['Test improvement 1'],
-            competitiveAdvantages: ['Test advantage 1']
-          }
+            competitiveAdvantages: ['Test advantage 1'],
+          },
         };
         resolve(mockResult);
       } catch (error) {
@@ -270,36 +294,38 @@ async function testSEOAnalysis() {
  */
 async function runAllTests() {
   console.log('🚀 Starting Individual Component Tests...\n');
-  
+
   // Test 1: Website Scraping
   await runTest('Website Scraping (PageAudit)', testWebsiteScraping);
-  
+
   // Test 2: Lighthouse Analysis
   await runTest('Lighthouse Analysis', testLighthouseAnalysis);
-  
+
   // Test 3: AI API Connectivity
   await runTest('AI API Connectivity', testAIConnectivity);
-  
+
   // Test 4: Content Extraction
   await runTest('Content Extraction', testContentExtraction);
-  
+
   // Test 5: SEO Analysis Service
   await runTest('SEO Analysis Service', testSEOAnalysis);
-  
+
   // Print summary
   console.log('📊 Test Summary');
   console.log('==================================================');
   console.log(`✅ Passed: ${testResults.passed}`);
   console.log(`❌ Failed: ${testResults.failed}`);
-  console.log(`📈 Success Rate: ${((testResults.passed / (testResults.passed + testResults.failed)) * 100).toFixed(1)}%`);
-  
+  console.log(
+    `📈 Success Rate: ${((testResults.passed / (testResults.passed + testResults.failed)) * 100).toFixed(1)}%`
+  );
+
   if (testResults.errors.length > 0) {
     console.log('\n❌ Failed Tests:');
-    testResults.errors.forEach(error => {
+    testResults.errors.forEach((error) => {
       console.log(`   - ${error.test}: ${error.error}`);
     });
   }
-  
+
   if (testResults.failed === 0) {
     console.log('\n🎉 All tests passed! Components are working correctly.');
     process.exit(0);
@@ -310,7 +336,7 @@ async function runAllTests() {
 }
 
 // Run the tests
-runAllTests().catch(error => {
+runAllTests().catch((error) => {
   console.error('💥 Test runner failed:', error);
   process.exit(1);
 });

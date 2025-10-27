@@ -16,7 +16,10 @@ export interface IndividualReport {
 /**
  * Phase 1: Content Collection Report
  */
-export function generateContentCollectionReport(scrapedContent: any, url: string): IndividualReport {
+export function generateContentCollectionReport(
+  scrapedContent: any,
+  url: string
+): IndividualReport {
   const markdown = `# Content & SEO Data Collection Report
 
 **URL:** ${url}
@@ -65,9 +68,11 @@ ${scrapedContent.metaDescription || 'Not found'}
 ## 🔑 Keywords & Rankings
 
 ### Meta Keywords Tag
-${scrapedContent.metaKeywords && scrapedContent.metaKeywords.length > 0
-  ? scrapedContent.metaKeywords.join(', ')
-  : 'No meta keywords set'}
+${
+  scrapedContent.metaKeywords && scrapedContent.metaKeywords.length > 0
+    ? scrapedContent.metaKeywords.join(', ')
+    : 'No meta keywords set'
+}
 
 ### Extracted Keywords (What You Might Rank For)
 ${scrapedContent.extractedKeywords?.slice(0, 20).join(', ') || 'None extracted'}
@@ -102,7 +107,12 @@ ${scrapedContent.topicClusters?.map((topic: string) => `- ${topic}`).join('\n') 
 ${scrapedContent.headings?.h1?.map((h: string) => `- ${h}`).join('\n') || '- None found'}
 
 ### H2 (Section Headers)
-${scrapedContent.headings?.h2?.slice(0, 10).map((h: string) => `- ${h}`).join('\n') || '- None found'}
+${
+  scrapedContent.headings?.h2
+    ?.slice(0, 10)
+    .map((h: string) => `- ${h}`)
+    .join('\n') || '- None found'
+}
 
 ---
 
@@ -141,14 +151,17 @@ Use the copy buttons in the app to save:
     phase: 'Phase 1',
     prompt: 'N/A - Direct web scraping, no AI prompt',
     markdown,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 }
 
 /**
  * Lighthouse Performance Report
  */
-export function generateLighthouseReport(lighthouseData: any, url: string): IndividualReport {
+export function generateLighthouseReport(
+  lighthouseData: any,
+  url: string
+): IndividualReport {
   const markdown = `# Lighthouse Performance Report
 
 **URL:** ${url}
@@ -170,9 +183,13 @@ export function generateLighthouseReport(lighthouseData: any, url: string): Indi
 
 ## Key Metrics
 
-${lighthouseData?.metrics ? Object.entries(lighthouseData.metrics).map(([key, value]) =>
-  `- **${key}:** ${value}`
-).join('\n') : 'No metrics available'}
+${
+  lighthouseData?.metrics
+    ? Object.entries(lighthouseData.metrics)
+        .map(([key, value]) => `- **${key}:** ${value}`)
+        .join('\n')
+    : 'No metrics available'
+}
 
 ---
 
@@ -190,14 +207,18 @@ Enter: ${url}
     prompt: 'N/A - Google Lighthouse automated tool',
     markdown,
     timestamp: new Date().toISOString(),
-    score: lighthouseData?.scores?.performance || 0
+    score: lighthouseData?.scores?.performance || 0,
   };
 }
 
 /**
  * Golden Circle Analysis Report
  */
-export function generateGoldenCircleReport(analysis: any, url: string, prompt: string): IndividualReport {
+export function generateGoldenCircleReport(
+  analysis: any,
+  url: string,
+  prompt: string
+): IndividualReport {
   const markdown = `# Golden Circle Analysis
 
 **URL:** ${url}
@@ -258,14 +279,18 @@ ${prompt}
     prompt,
     markdown,
     timestamp: new Date().toISOString(),
-    score: analysis.overallScore || 0
+    score: analysis.overallScore || 0,
   };
 }
 
 /**
  * Elements of Value (B2C) Report
  */
-export function generateElementsB2CReport(analysis: any, url: string, prompt: string): IndividualReport {
+export function generateElementsB2CReport(
+  analysis: any,
+  url: string,
+  prompt: string
+): IndividualReport {
   const markdown = `# Elements of Value Analysis (B2C)
 
 **URL:** ${url}
@@ -283,24 +308,52 @@ export function generateElementsB2CReport(analysis: any, url: string, prompt: st
 ## Value Pyramid
 
 ### Functional Value
-${analysis.functional ? Object.entries(analysis.functional).map(([key, value]: [string, any]) =>
-  `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence found'}`
-).join('\n') : 'Not analyzed'}
+${
+  analysis.functional
+    ? Object.entries(analysis.functional)
+        .map(
+          ([key, value]: [string, any]) =>
+            `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence found'}`
+        )
+        .join('\n')
+    : 'Not analyzed'
+}
 
 ### Emotional Value
-${analysis.emotional ? Object.entries(analysis.emotional).map(([key, value]: [string, any]) =>
-  `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence found'}`
-).join('\n') : 'Not analyzed'}
+${
+  analysis.emotional
+    ? Object.entries(analysis.emotional)
+        .map(
+          ([key, value]: [string, any]) =>
+            `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence found'}`
+        )
+        .join('\n')
+    : 'Not analyzed'
+}
 
 ### Life Changing Value
-${analysis.lifeChanging ? Object.entries(analysis.lifeChanging).map(([key, value]: [string, any]) =>
-  `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence found'}`
-).join('\n') : 'Not analyzed'}
+${
+  analysis.lifeChanging
+    ? Object.entries(analysis.lifeChanging)
+        .map(
+          ([key, value]: [string, any]) =>
+            `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence found'}`
+        )
+        .join('\n')
+    : 'Not analyzed'
+}
 
 ### Social Impact
-${analysis.socialImpact ? Object.entries(analysis.socialImpact).map(([key, value]: [string, any]) =>
-  `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence found'}`
-).join('\n') : 'Not analyzed'}
+${
+  analysis.socialImpact
+    ? Object.entries(analysis.socialImpact)
+        .map(
+          ([key, value]: [string, any]) =>
+            `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence found'}`
+        )
+        .join('\n')
+    : 'Not analyzed'
+}
 
 ---
 
@@ -323,14 +376,18 @@ ${prompt}
     prompt,
     markdown,
     timestamp: new Date().toISOString(),
-    score: analysis.overallScore || 0
+    score: analysis.overallScore || 0,
   };
 }
 
 /**
  * B2B Elements Report
  */
-export function generateB2BElementsReport(analysis: any, url: string, prompt: string): IndividualReport {
+export function generateB2BElementsReport(
+  analysis: any,
+  url: string,
+  prompt: string
+): IndividualReport {
   const markdown = `# B2B Elements of Value Analysis
 
 **URL:** ${url}
@@ -348,29 +405,64 @@ export function generateB2BElementsReport(analysis: any, url: string, prompt: st
 ## B2B Value Stack
 
 ### Table Stakes
-${analysis.tableStakes ? Object.entries(analysis.tableStakes).map(([key, value]: [string, any]) =>
-  `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence'}`
-).join('\n') : 'Not analyzed'}
+${
+  analysis.tableStakes
+    ? Object.entries(analysis.tableStakes)
+        .map(
+          ([key, value]: [string, any]) =>
+            `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence'}`
+        )
+        .join('\n')
+    : 'Not analyzed'
+}
 
 ### Functional Value
-${analysis.functional ? Object.entries(analysis.functional).map(([key, value]: [string, any]) =>
-  `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence'}`
-).join('\n') : 'Not analyzed'}
+${
+  analysis.functional
+    ? Object.entries(analysis.functional)
+        .map(
+          ([key, value]: [string, any]) =>
+            `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence'}`
+        )
+        .join('\n')
+    : 'Not analyzed'
+}
 
 ### Ease of Doing Business
-${analysis.ease ? Object.entries(analysis.ease).map(([key, value]: [string, any]) =>
-  `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence'}`
-).join('\n') : 'Not analyzed'}
+${
+  analysis.ease
+    ? Object.entries(analysis.ease)
+        .map(
+          ([key, value]: [string, any]) =>
+            `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence'}`
+        )
+        .join('\n')
+    : 'Not analyzed'
+}
 
 ### Individual Value
-${analysis.individual ? Object.entries(analysis.individual).map(([key, value]: [string, any]) =>
-  `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence'}`
-).join('\n') : 'Not analyzed'}
+${
+  analysis.individual
+    ? Object.entries(analysis.individual)
+        .map(
+          ([key, value]: [string, any]) =>
+            `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence'}`
+        )
+        .join('\n')
+    : 'Not analyzed'
+}
 
 ### Inspirational Value
-${analysis.inspirational ? Object.entries(analysis.inspirational).map(([key, value]: [string, any]) =>
-  `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence'}`
-).join('\n') : 'Not analyzed'}
+${
+  analysis.inspirational
+    ? Object.entries(analysis.inspirational)
+        .map(
+          ([key, value]: [string, any]) =>
+            `- **${key}:** ${value.score}/10 - ${value.evidence || 'No evidence'}`
+        )
+        .join('\n')
+    : 'Not analyzed'
+}
 
 ---
 
@@ -388,14 +480,18 @@ ${prompt}
     prompt,
     markdown,
     timestamp: new Date().toISOString(),
-    score: analysis.overallScore || 0
+    score: analysis.overallScore || 0,
   };
 }
 
 /**
  * CliftonStrengths Report
  */
-export function generateCliftonStrengthsReport(analysis: any, url: string, prompt: string): IndividualReport {
+export function generateCliftonStrengthsReport(
+  analysis: any,
+  url: string,
+  prompt: string
+): IndividualReport {
   const markdown = `# CliftonStrengths Brand Analysis
 
 **URL:** ${url}
@@ -412,37 +508,60 @@ export function generateCliftonStrengthsReport(analysis: any, url: string, promp
 
 ## Top 5 Brand Strengths
 
-${analysis.topStrengths ? analysis.topStrengths.map((strength: any, i: number) =>
-  `### ${i + 1}. ${strength.name}
+${
+  analysis.topStrengths
+    ? analysis.topStrengths
+        .map(
+          (strength: any, i: number) =>
+            `### ${i + 1}. ${strength.name}
 **Domain:** ${strength.domain}
 **Score:** ${strength.score}/10
 **Evidence:** ${strength.evidence || 'Not specified'}
 `
-).join('\n') : 'Not analyzed'}
+        )
+        .join('\n')
+    : 'Not analyzed'
+}
 
 ---
 
 ## All Themes by Domain
 
 ### Executing Themes
-${analysis.executing ? analysis.executing.map((theme: any) =>
-  `- **${theme.name}:** ${theme.score}/10`
-).join('\n') : 'Not analyzed'}
+${
+  analysis.executing
+    ? analysis.executing
+        .map((theme: any) => `- **${theme.name}:** ${theme.score}/10`)
+        .join('\n')
+    : 'Not analyzed'
+}
 
 ### Influencing Themes
-${analysis.influencing ? analysis.influencing.map((theme: any) =>
-  `- **${theme.name}:** ${theme.score}/10`
-).join('\n') : 'Not analyzed'}
+${
+  analysis.influencing
+    ? analysis.influencing
+        .map((theme: any) => `- **${theme.name}:** ${theme.score}/10`)
+        .join('\n')
+    : 'Not analyzed'
+}
 
 ### Relationship Building Themes
-${analysis.relationshipBuilding ? analysis.relationshipBuilding.map((theme: any) =>
-  `- **${theme.name}:** ${theme.score}/10`
-).join('\n') : 'Not analyzed'}
+${
+  analysis.relationshipBuilding
+    ? analysis.relationshipBuilding
+        .map((theme: any) => `- **${theme.name}:** ${theme.score}/10`)
+        .join('\n')
+    : 'Not analyzed'
+}
 
 ### Strategic Thinking Themes
-${analysis.strategicThinking ? analysis.strategicThinking.map((theme: any) =>
-  `- **${theme.name}:** ${theme.score}/10`
-).join('\n') : 'Not analyzed'}
+${
+  analysis.strategicThinking
+    ? analysis.strategicThinking
+        .map((theme: any) => `- **${theme.name}:** ${theme.score}/10`)
+        .join('\n')
+    : 'Not analyzed'
+}
 
 ---
 
@@ -465,14 +584,18 @@ ${prompt}
     prompt,
     markdown,
     timestamp: new Date().toISOString(),
-    score: analysis.overallScore || 0
+    score: analysis.overallScore || 0,
   };
 }
 
 /**
  * Final Comprehensive Report
  */
-export function generateComprehensiveReport(analysis: any, url: string, prompt: string): IndividualReport {
+export function generateComprehensiveReport(
+  analysis: any,
+  url: string,
+  prompt: string
+): IndividualReport {
   const markdown = `# Comprehensive Strategic Analysis
 
 **URL:** ${url}
@@ -491,41 +614,57 @@ export function generateComprehensiveReport(analysis: any, url: string, prompt: 
 
 ## Priority Recommendations
 
-${analysis.priorityRecommendations ? analysis.priorityRecommendations.map((rec: string, i: number) =>
-  `${i + 1}. **${rec}**`
-).join('\n') : 'No recommendations'}
+${
+  analysis.priorityRecommendations
+    ? analysis.priorityRecommendations
+        .map((rec: string, i: number) => `${i + 1}. **${rec}**`)
+        .join('\n')
+    : 'No recommendations'
+}
 
 ---
 
 ## Quick Wins (< 1 Week)
 
-${analysis.quickWins ? analysis.quickWins.map((win: string) =>
-  `- 🎯 ${win}`
-).join('\n') : 'No quick wins identified'}
+${
+  analysis.quickWins
+    ? analysis.quickWins.map((win: string) => `- 🎯 ${win}`).join('\n')
+    : 'No quick wins identified'
+}
 
 ---
 
 ## Long-Term Improvements (3-6 Months)
 
-${analysis.longTermImprovements ? analysis.longTermImprovements.map((improvement: string) =>
-  `- 📈 ${improvement}`
-).join('\n') : 'No long-term improvements identified'}
+${
+  analysis.longTermImprovements
+    ? analysis.longTermImprovements
+        .map((improvement: string) => `- 📈 ${improvement}`)
+        .join('\n')
+    : 'No long-term improvements identified'
+}
 
 ---
 
 ## Performance Optimizations
 
-${analysis.performanceOptimizations ? analysis.performanceOptimizations.map((opt: string) =>
-  `- ⚡ ${opt}`
-).join('\n') : 'No performance optimizations identified'}
+${
+  analysis.performanceOptimizations
+    ? analysis.performanceOptimizations
+        .map((opt: string) => `- ⚡ ${opt}`)
+        .join('\n')
+    : 'No performance optimizations identified'
+}
 
 ---
 
 ## SEO Improvements
 
-${analysis.seoImprovements ? analysis.seoImprovements.map((seo: string) =>
-  `- 🔍 ${seo}`
-).join('\n') : 'No SEO improvements identified'}
+${
+  analysis.seoImprovements
+    ? analysis.seoImprovements.map((seo: string) => `- 🔍 ${seo}`).join('\n')
+    : 'No SEO improvements identified'
+}
 
 ---
 
@@ -543,7 +682,7 @@ ${prompt}
     prompt,
     markdown,
     timestamp: new Date().toISOString(),
-    score: analysis.overallScore || 0
+    score: analysis.overallScore || 0,
   };
 }
 
@@ -555,4 +694,3 @@ function getScoreStatus(score?: number): string {
   if (score >= 60) return '🟠 Needs Work';
   return '🔴 Critical';
 }
-

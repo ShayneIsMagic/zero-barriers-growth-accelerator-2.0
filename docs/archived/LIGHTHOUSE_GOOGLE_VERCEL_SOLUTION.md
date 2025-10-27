@@ -8,12 +8,16 @@
 ## ✅ ANSWER: YES - Using Google's FREE APIs
 
 ### **The Problem:**
+
 Vercel serverless functions don't have Chrome browser, so:
+
 - ❌ Can't run Puppeteer-based Lighthouse locally
 - ❌ Can't run Puppeteer-based Google Tools scraping
 
 ### **The Solution:**
+
 Use Google's FREE public APIs that work on Vercel:
+
 - ✅ **PageSpeed Insights API** for Lighthouse (Google's own service)
 - ✅ **Google Trends API** for keyword insights (no auth needed)
 
@@ -52,6 +56,7 @@ Includes: Whatever data you collected above
 ## ✅ METHOD 1: PageSpeed Insights API (Lighthouse)
 
 ### **How It Works:**
+
 ```typescript
 // In Phase 3
 async function runLighthouse(url: string) {
@@ -71,6 +76,7 @@ async function runLighthouse(url: string) {
 ```
 
 **Benefits:**
+
 - ✅ Works 100% on Vercel (no Chrome needed)
 - ✅ Google runs Lighthouse on their servers
 - ✅ Same data as running Lighthouse locally
@@ -85,6 +91,7 @@ async function runLighthouse(url: string) {
 ## ✅ METHOD 2: Google Trends API
 
 ### **How It Works:**
+
 ```typescript
 // In Phase 3
 async function runGoogleTrends(keywords: string[]) {
@@ -93,23 +100,24 @@ async function runGoogleTrends(keywords: string[]) {
   // Get related queries
   const relatedQueries = await googleTrends.relatedQueries({
     keyword: keywords[0],
-    startTime: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000) // Last 90 days
+    startTime: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000), // Last 90 days
   });
 
   // Get interest over time
   const interestData = await googleTrends.interestOverTime({
-    keyword: keywords[0]
+    keyword: keywords[0],
   });
 
   return {
     relatedQueries,
     risingQueries,
-    interestOverTime
+    interestOverTime,
   };
 }
 ```
 
 **Benefits:**
+
 - ✅ Works 100% on Vercel
 - ✅ No Chrome/Puppeteer needed
 - ✅ Uses Phase 1 keywords (already collected)
@@ -182,6 +190,7 @@ If APIs fail, show manual instructions:
 ### **Use AUTOMATIC with GRACEFUL FALLBACK:**
 
 **Phase 3 Implementation:**
+
 ```typescript
 async executePhase3(phase1Data, phase2Data) {
   // Try Lighthouse (won't fail whole phase if it errors)
@@ -214,6 +223,7 @@ async executePhase3(phase1Data, phase2Data) {
 ```
 
 **Benefits:**
+
 - ✅ Tries to get Lighthouse/Trends data
 - ✅ If they work, great! Enhanced recommendations
 - ✅ If they fail, no problem! Still get good recommendations
@@ -228,13 +238,14 @@ async executePhase3(phase1Data, phase2Data) {
 ### **Step 1: Update Phase 3 in three-phase-analyzer.ts**
 
 Add this to `executePhase3()`:
+
 ```typescript
 // Try Lighthouse via PageSpeed API (graceful failure)
 let lighthouseData = null;
 try {
   const response = await fetch('/api/tools/lighthouse', {
     method: 'POST',
-    body: JSON.stringify({ url: this.url })
+    body: JSON.stringify({ url: this.url }),
   });
   if (response.ok) {
     const result = await response.json();
@@ -250,7 +261,10 @@ try {
   const keywords = phase1Report.scrapedContent.extractedKeywords;
   const response = await fetch('/api/tools/trends', {
     method: 'POST',
-    body: JSON.stringify({ keywords, content: phase1Report.scrapedContent.content })
+    body: JSON.stringify({
+      keywords,
+      content: phase1Report.scrapedContent.content,
+    }),
   });
   if (response.ok) {
     const result = await response.json();
@@ -272,16 +286,19 @@ const comprehensiveAnalysis = await this.generateComprehensiveAnalysis(
 ## ✅ WHAT THIS MEANS
 
 ### **Phase 1 (NOW WORKING):**
+
 - ✅ 35 seconds
 - ✅ 100% success rate
 - ✅ Collects all content Phase 2 needs
 
 ### **Phase 2 (WORKING):**
+
 - ✅ 4-6 minutes
 - ✅ 100% success rate
 - ✅ All 4 Gemini AI frameworks
 
 ### **Phase 3 (TO BE ADDED):**
+
 - ✅ Tries PageSpeed API (Lighthouse)
 - ✅ Tries Google Trends API
 - ✅ Generates recommendations (Gemini)
@@ -297,6 +314,7 @@ const comprehensiveAnalysis = await this.generateComprehensiveAnalysis(
 ✅ **YES - Using Google's FREE APIs:**
 
 **Lighthouse:**
+
 - Uses PageSpeed Insights API
 - Google runs Lighthouse on their servers
 - No Chrome needed on Vercel
@@ -304,6 +322,7 @@ const comprehensiveAnalysis = await this.generateComprehensiveAnalysis(
 - FREE, no API key
 
 **Google Trends:**
+
 - Uses Google Trends API package
 - Pure API calls
 - No Chrome/Puppeteer needed
@@ -319,6 +338,7 @@ const comprehensiveAnalysis = await this.generateComprehensiveAnalysis(
 **Want me to implement Phase 3 with these APIs now?** (30 minutes)
 
 This will:
+
 1. ✅ Add Lighthouse via PageSpeed API to Phase 3
 2. ✅ Add Google Trends via Trends API to Phase 3
 3. ✅ Update recommendations to use optional data

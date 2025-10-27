@@ -236,7 +236,8 @@ export interface UniversalScrapedData {
 
 export class UniversalPuppeteerScraper {
   private static browser: Browser | null = null;
-  private static isServerless: boolean = process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
+  private static isServerless: boolean =
+    process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
 
   /**
    * Get browser instance (serverless compatible)
@@ -248,11 +249,14 @@ export class UniversalPuppeteerScraper {
 
     if (this.isServerless) {
       // Use browserless.io for serverless environments
-      const browserWSEndpoint = process.env.BROWSERLESS_WS_ENDPOINT || 'wss://chrome.browserless.io';
+      const browserWSEndpoint =
+        process.env.BROWSERLESS_WS_ENDPOINT || 'wss://chrome.browserless.io';
       const token = process.env.BROWSERLESS_TOKEN;
 
       this.browser = await puppeteer.connect({
-        browserWSEndpoint: token ? `${browserWSEndpoint}?token=${token}` : browserWSEndpoint,
+        browserWSEndpoint: token
+          ? `${browserWSEndpoint}?token=${token}`
+          : browserWSEndpoint,
       });
     } else {
       // Local development
@@ -265,8 +269,8 @@ export class UniversalPuppeteerScraper {
           '--disable-accelerated-2d-canvas',
           '--no-first-run',
           '--no-zygote',
-          '--disable-gpu'
-        ]
+          '--disable-gpu',
+        ],
       });
     }
 
@@ -285,15 +289,18 @@ export class UniversalPuppeteerScraper {
 
       // Set viewport and user agent with better anti-detection
       await page.setViewport({ width: 1920, height: 1080 });
-      await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+      await page.setUserAgent(
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      );
 
       // Add extra headers to look more like a real browser
       await page.setExtraHTTPHeaders({
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+        Accept:
+          'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.9',
         'Accept-Encoding': 'gzip, deflate, br',
-        'DNT': '1',
-        'Connection': 'keep-alive',
+        DNT: '1',
+        Connection: 'keep-alive',
         'Upgrade-Insecure-Requests': '1',
       });
 
@@ -319,24 +326,33 @@ export class UniversalPuppeteerScraper {
       const startTime = Date.now();
       await page.goto(url, {
         waitUntil: 'domcontentloaded',
-        timeout: 30000
+        timeout: 30000,
       });
 
       // Wait a bit for dynamic content
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       const loadTime = Date.now() - startTime;
 
       // Check if we got blocked
       const pageContent = await page.content();
-      if (pageContent.includes('Access Denied') || pageContent.includes('blocked') || pageContent.includes('403') || pageContent.includes('Forbidden')) {
-        throw new Error(`Website blocked the scraper: ${url}. Try a different website or contact support.`);
+      if (
+        pageContent.includes('Access Denied') ||
+        pageContent.includes('blocked') ||
+        pageContent.includes('403') ||
+        pageContent.includes('Forbidden')
+      ) {
+        throw new Error(
+          `Website blocked the scraper: ${url}. Try a different website or contact support.`
+        );
       }
 
       // Extract comprehensive data
       const scrapedData = await page.evaluate(() => {
         // Helper functions
         const getTextContent = (selector: string): string[] => {
-          return Array.from(document.querySelectorAll(selector)).map(el => el.textContent?.trim() || '');
+          return Array.from(document.querySelectorAll(selector)).map(
+            (el) => el.textContent?.trim() || ''
+          );
         };
 
         const getAttribute = (selector: string, attr: string): string => {
@@ -345,17 +361,22 @@ export class UniversalPuppeteerScraper {
         };
 
         const getAllAttributes = (selector: string, attr: string): string[] => {
-          return Array.from(document.querySelectorAll(selector)).map(el => el.getAttribute(attr) || '');
+          return Array.from(document.querySelectorAll(selector)).map(
+            (el) => el.getAttribute(attr) || ''
+          );
         };
 
-        const extractKeywords = (text: string): { keywords: string[]; density: Record<string, number> } => {
-          const words = text.toLowerCase()
+        const extractKeywords = (
+          text: string
+        ): { keywords: string[]; density: Record<string, number> } => {
+          const words = text
+            .toLowerCase()
             .replace(/[^\w\s]/g, ' ')
             .split(/\s+/)
-            .filter(word => word.length > 3);
+            .filter((word) => word.length > 3);
 
           const wordFreq: Record<string, number> = {};
-          words.forEach(word => {
+          words.forEach((word) => {
             wordFreq[word] = (wordFreq[word] || 0) + 1;
           });
 
@@ -370,71 +391,127 @@ export class UniversalPuppeteerScraper {
               .sort(([, a], [, b]) => b - a)
               .slice(0, 50)
               .map(([word]) => word),
-            density
+            density,
           };
         };
 
         const extractContactInfo = () => {
           const text = document.body.innerText;
-          const phoneRegex = /(\+?1[-.\s]?)?\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})/g;
+          const phoneRegex =
+            /(\+?1[-.\s]?)?\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})/g;
           const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
 
           return {
-            phone: Array.from(text.matchAll(phoneRegex)).map(match => match[0]),
-            email: Array.from(text.matchAll(emailRegex)).map(match => match[0]),
-            address: getTextContent('[itemprop="address"], .address, .contact-address')
+            phone: Array.from(text.matchAll(phoneRegex)).map(
+              (match) => match[0]
+            ),
+            email: Array.from(text.matchAll(emailRegex)).map(
+              (match) => match[0]
+            ),
+            address: getTextContent(
+              '[itemprop="address"], .address, .contact-address'
+            ),
           };
         };
 
         const extractSocialMedia = () => {
-          const socialLinks = Array.from(document.querySelectorAll('a[href*="facebook"], a[href*="twitter"], a[href*="linkedin"], a[href*="instagram"], a[href*="youtube"], a[href*="tiktok"]'));
-          return socialLinks.map(link => {
+          const socialLinks = Array.from(
+            document.querySelectorAll(
+              'a[href*="facebook"], a[href*="twitter"], a[href*="linkedin"], a[href*="instagram"], a[href*="youtube"], a[href*="tiktok"]'
+            )
+          );
+          return socialLinks.map((link) => {
             const href = link.getAttribute('href') || '';
-            const platform = href.includes('facebook') ? 'facebook' :
-                           href.includes('twitter') ? 'twitter' :
-                           href.includes('linkedin') ? 'linkedin' :
-                           href.includes('instagram') ? 'instagram' :
-                           href.includes('youtube') ? 'youtube' :
-                           href.includes('tiktok') ? 'tiktok' : 'unknown';
+            const platform = href.includes('facebook')
+              ? 'facebook'
+              : href.includes('twitter')
+                ? 'twitter'
+                : href.includes('linkedin')
+                  ? 'linkedin'
+                  : href.includes('instagram')
+                    ? 'instagram'
+                    : href.includes('youtube')
+                      ? 'youtube'
+                      : href.includes('tiktok')
+                        ? 'tiktok'
+                        : 'unknown';
             return {
               platform,
               url: href,
-              handle: link.textContent?.trim() || ''
+              handle: link.textContent?.trim() || '',
             };
           });
         };
 
         const extractSchema = () => {
-          const scripts = Array.from(document.querySelectorAll('script[type="application/ld+json"]'));
-          return scripts.map(script => {
-            try {
-              return JSON.parse(script.textContent || '');
-            } catch {
-              return null;
-            }
-          }).filter(Boolean);
+          const scripts = Array.from(
+            document.querySelectorAll('script[type="application/ld+json"]')
+          );
+          return scripts
+            .map((script) => {
+              try {
+                return JSON.parse(script.textContent || '');
+              } catch {
+                return null;
+              }
+            })
+            .filter(Boolean);
         };
 
         const extractMicrodata = () => {
           const items = Array.from(document.querySelectorAll('[itemscope]'));
-          return items.map(item => ({
+          return items.map((item) => ({
             type: item.getAttribute('itemtype') || '',
-            properties: Array.from(item.querySelectorAll('[itemprop]')).reduce((acc, prop) => {
-              const name = prop.getAttribute('itemprop') || '';
-              const value = prop.getAttribute('content') || prop.textContent?.trim() || '';
-              acc[name] = value;
-              return acc;
-            }, {} as Record<string, any>)
+            properties: Array.from(item.querySelectorAll('[itemprop]')).reduce(
+              (acc, prop) => {
+                const name = prop.getAttribute('itemprop') || '';
+                const value =
+                  prop.getAttribute('content') ||
+                  prop.textContent?.trim() ||
+                  '';
+                acc[name] = value;
+                return acc;
+              },
+              {} as Record<string, any>
+            ),
           }));
         };
 
-        const detectBusinessType = (text: string): { type: 'B2B' | 'B2C' | 'BOTH' | 'UNKNOWN'; confidence: number } => {
-          const b2bKeywords = ['enterprise', 'business', 'corporate', 'wholesale', 'b2b', 'api', 'integration', 'solution', 'platform', 'saas'];
-          const b2cKeywords = ['consumer', 'personal', 'individual', 'retail', 'b2c', 'shopping', 'buy now', 'add to cart', 'customer', 'user'];
+        const detectBusinessType = (
+          text: string
+        ): { type: 'B2B' | 'B2C' | 'BOTH' | 'UNKNOWN'; confidence: number } => {
+          const b2bKeywords = [
+            'enterprise',
+            'business',
+            'corporate',
+            'wholesale',
+            'b2b',
+            'api',
+            'integration',
+            'solution',
+            'platform',
+            'saas',
+          ];
+          const b2cKeywords = [
+            'consumer',
+            'personal',
+            'individual',
+            'retail',
+            'b2c',
+            'shopping',
+            'buy now',
+            'add to cart',
+            'customer',
+            'user',
+          ];
 
           const lowerText = text.toLowerCase();
-          const b2bScore = b2bKeywords.filter(keyword => lowerText.includes(keyword)).length;
-          const b2cScore = b2cKeywords.filter(keyword => lowerText.includes(keyword)).length;
+          const b2bScore = b2bKeywords.filter((keyword) =>
+            lowerText.includes(keyword)
+          ).length;
+          const b2cScore = b2cKeywords.filter((keyword) =>
+            lowerText.includes(keyword)
+          ).length;
           const totalScore = b2bScore + b2cScore;
 
           let type: 'B2B' | 'B2C' | 'BOTH' | 'UNKNOWN' = 'UNKNOWN';
@@ -449,25 +526,113 @@ export class UniversalPuppeteerScraper {
               confidence = (b2cScore / totalScore) * 100;
             } else if (b2bScore > 1 && b2cScore > 1) {
               type = 'BOTH';
-              confidence = Math.min(b2bScore, b2cScore) / totalScore * 100;
+              confidence = (Math.min(b2bScore, b2cScore) / totalScore) * 100;
             }
           }
 
           return { type, confidence };
         };
 
-        const detectIndustry = (text: string): { industries: string[]; confidence: number } => {
+        const detectIndustry = (
+          text: string
+        ): { industries: string[]; confidence: number } => {
           const industries = {
-            'construction': ['construction', 'building', 'contractor', 'concrete', 'steel', 'excavation', 'project', 'facility'],
-            'healthcare': ['healthcare', 'medical', 'hospital', 'clinic', 'doctor', 'patient', 'health', 'treatment'],
-            'technology': ['software', 'tech', 'digital', 'app', 'platform', 'saas', 'development', 'programming'],
-            'finance': ['financial', 'banking', 'investment', 'loan', 'credit', 'insurance', 'money', 'finance'],
-            'retail': ['retail', 'store', 'shop', 'product', 'inventory', 'sales', 'shopping', 'commerce'],
-            'education': ['education', 'school', 'university', 'learning', 'training', 'course', 'student', 'academic'],
-            'manufacturing': ['manufacturing', 'production', 'factory', 'assembly', 'quality', 'industrial', 'machinery'],
-            'real-estate': ['real estate', 'property', 'housing', 'commercial', 'residential', 'realty', 'broker'],
-            'consulting': ['consulting', 'advisory', 'strategy', 'management', 'expertise', 'consultant', 'services'],
-            'nonprofit': ['nonprofit', 'charity', 'foundation', 'volunteer', 'donation', 'cause', 'mission']
+            construction: [
+              'construction',
+              'building',
+              'contractor',
+              'concrete',
+              'steel',
+              'excavation',
+              'project',
+              'facility',
+            ],
+            healthcare: [
+              'healthcare',
+              'medical',
+              'hospital',
+              'clinic',
+              'doctor',
+              'patient',
+              'health',
+              'treatment',
+            ],
+            technology: [
+              'software',
+              'tech',
+              'digital',
+              'app',
+              'platform',
+              'saas',
+              'development',
+              'programming',
+            ],
+            finance: [
+              'financial',
+              'banking',
+              'investment',
+              'loan',
+              'credit',
+              'insurance',
+              'money',
+              'finance',
+            ],
+            retail: [
+              'retail',
+              'store',
+              'shop',
+              'product',
+              'inventory',
+              'sales',
+              'shopping',
+              'commerce',
+            ],
+            education: [
+              'education',
+              'school',
+              'university',
+              'learning',
+              'training',
+              'course',
+              'student',
+              'academic',
+            ],
+            manufacturing: [
+              'manufacturing',
+              'production',
+              'factory',
+              'assembly',
+              'quality',
+              'industrial',
+              'machinery',
+            ],
+            'real-estate': [
+              'real estate',
+              'property',
+              'housing',
+              'commercial',
+              'residential',
+              'realty',
+              'broker',
+            ],
+            consulting: [
+              'consulting',
+              'advisory',
+              'strategy',
+              'management',
+              'expertise',
+              'consultant',
+              'services',
+            ],
+            nonprofit: [
+              'nonprofit',
+              'charity',
+              'foundation',
+              'volunteer',
+              'donation',
+              'cause',
+              'mission',
+            ],
           };
 
           const lowerText = text.toLowerCase();
@@ -475,7 +640,9 @@ export class UniversalPuppeteerScraper {
           let totalConfidence = 0;
 
           Object.entries(industries).forEach(([industry, keywords]) => {
-            const score = keywords.filter(keyword => lowerText.includes(keyword)).length;
+            const score = keywords.filter((keyword) =>
+              lowerText.includes(keyword)
+            ).length;
             if (score >= 2) {
               detectedIndustries.push(industry);
               totalConfidence += score;
@@ -484,7 +651,10 @@ export class UniversalPuppeteerScraper {
 
           return {
             industries: detectedIndustries,
-            confidence: detectedIndustries.length > 0 ? (totalConfidence / detectedIndustries.length) * 10 : 0
+            confidence:
+              detectedIndustries.length > 0
+                ? (totalConfidence / detectedIndustries.length) * 10
+                : 0,
           };
         };
 
@@ -493,7 +663,7 @@ export class UniversalPuppeteerScraper {
 
           // Check for common frameworks and libraries
           const scripts = Array.from(document.querySelectorAll('script[src]'));
-          scripts.forEach(script => {
+          scripts.forEach((script) => {
             const src = script.getAttribute('src') || '';
             if (src.includes('jquery')) technologies.push('jQuery');
             if (src.includes('react')) technologies.push('React');
@@ -517,7 +687,8 @@ export class UniversalPuppeteerScraper {
         const calculateReadability = (text: string): number => {
           const sentences = text.split(/[.!?]+/).length;
           const words = text.split(/\s+/).length;
-          const syllables = text.toLowerCase().replace(/[^a-z]/g, '').length * 0.6; // Rough estimate
+          const syllables =
+            text.toLowerCase().replace(/[^a-z]/g, '').length * 0.6; // Rough estimate
 
           if (sentences === 0 || words === 0) return 0;
 
@@ -525,7 +696,8 @@ export class UniversalPuppeteerScraper {
           const avgSyllablesPerWord = syllables / words;
 
           // Flesch Reading Ease Score
-          const score = 206.835 - (1.015 * avgWordsPerSentence) - (84.6 * avgSyllablesPerWord);
+          const score =
+            206.835 - 1.015 * avgWordsPerSentence - 84.6 * avgSyllablesPerWord;
           return Math.max(0, Math.min(100, score));
         };
 
@@ -544,33 +716,48 @@ export class UniversalPuppeteerScraper {
           query: urlObj.search,
           fragment: urlObj.hash,
           protocol: urlObj.protocol,
-          port: parseInt(urlObj.port) || (urlObj.protocol === 'https:' ? 443 : 80),
+          port:
+            parseInt(urlObj.port) || (urlObj.protocol === 'https:' ? 443 : 80),
           tld: urlObj.hostname.split('.').pop() || '',
           isHttps: urlObj.protocol === 'https:',
           redirectChain: [], // Would need to track redirects
-          finalUrl: url
+          finalUrl: url,
         };
 
         // SEO data
         const seo = {
           metaTitle: title,
           metaDescription: getAttribute('meta[name="description"]', 'content'),
-          metaKeywords: getAttribute('meta[name="keywords"]', 'content').split(',').map(k => k.trim()).filter(Boolean),
+          metaKeywords: getAttribute('meta[name="keywords"]', 'content')
+            .split(',')
+            .map((k) => k.trim())
+            .filter(Boolean),
           metaRobots: getAttribute('meta[name="robots"]', 'content'),
           canonicalUrl: getAttribute('link[rel="canonical"]', 'href'),
           ogTitle: getAttribute('meta[property="og:title"]', 'content'),
-          ogDescription: getAttribute('meta[property="og:description"]', 'content'),
+          ogDescription: getAttribute(
+            'meta[property="og:description"]',
+            'content'
+          ),
           ogImage: getAttribute('meta[property="og:image"]', 'content'),
           ogType: getAttribute('meta[property="og:type"]', 'content'),
           twitterCard: getAttribute('meta[name="twitter:card"]', 'content'),
           twitterTitle: getAttribute('meta[name="twitter:title"]', 'content'),
-          twitterDescription: getAttribute('meta[name="twitter:description"]', 'content'),
+          twitterDescription: getAttribute(
+            'meta[name="twitter:description"]',
+            'content'
+          ),
           twitterImage: getAttribute('meta[name="twitter:image"]', 'content'),
-          hreflang: getAllAttributes('link[rel="alternate"][hreflang]', 'hreflang'),
+          hreflang: getAllAttributes(
+            'link[rel="alternate"][hreflang]',
+            'hreflang'
+          ),
           alternateUrls: getAllAttributes('link[rel="alternate"]', 'href'),
           viewport: getAttribute('meta[name="viewport"]', 'content'),
-          charset: getAttribute('meta[charset]', 'charset') || getAttribute('meta[http-equiv="Content-Type"]', 'content'),
-          language: getAttribute('html', 'lang') || 'en'
+          charset:
+            getAttribute('meta[charset]', 'charset') ||
+            getAttribute('meta[http-equiv="Content-Type"]', 'content'),
+          language: getAttribute('html', 'lang') || 'en',
         };
 
         // Content analysis
@@ -579,105 +766,152 @@ export class UniversalPuppeteerScraper {
         const industryAnalysis = detectIndustry(bodyText);
 
         // Images and media
-        const images = Array.from(document.querySelectorAll('img')).map(img => ({
-          src: img.src,
-          alt: img.alt,
-          title: img.title,
-          width: img.naturalWidth || 0,
-          height: img.naturalHeight || 0,
-          loading: img.loading || 'eager'
-        }));
+        const images = Array.from(document.querySelectorAll('img')).map(
+          (img) => ({
+            src: img.src,
+            alt: img.alt,
+            title: img.title,
+            width: img.naturalWidth || 0,
+            height: img.naturalHeight || 0,
+            loading: img.loading || 'eager',
+          })
+        );
 
-        const videos = Array.from(document.querySelectorAll('video')).map(video => ({
-          src: video.src,
-          poster: video.poster,
-          title: video.title,
-          duration: video.duration || 0
-        }));
+        const videos = Array.from(document.querySelectorAll('video')).map(
+          (video) => ({
+            src: video.src,
+            poster: video.poster,
+            title: video.title,
+            duration: video.duration || 0,
+          })
+        );
 
         // Links analysis
-        const internalLinks = Array.from(document.querySelectorAll('a[href^="/"], a[href*="' + domain + '"]')).map((link: any) => ({
-          url: link.href,
-          text: link.textContent?.trim() || '',
-          title: link.title || '',
-          isNofollow: link.rel?.includes('nofollow') || false
-        }));
-
-        const externalLinks = Array.from(document.querySelectorAll('a[href^="http"]:not([href*="' + domain + '"])')).map((link: any) => ({
+        const internalLinks = Array.from(
+          document.querySelectorAll('a[href^="/"], a[href*="' + domain + '"]')
+        ).map((link: any) => ({
           url: link.href,
           text: link.textContent?.trim() || '',
           title: link.title || '',
           isNofollow: link.rel?.includes('nofollow') || false,
-          isSponsored: link.rel?.includes('sponsored') || false
+        }));
+
+        const externalLinks = Array.from(
+          document.querySelectorAll(
+            'a[href^="http"]:not([href*="' + domain + '"])'
+          )
+        ).map((link: any) => ({
+          url: link.href,
+          text: link.textContent?.trim() || '',
+          title: link.title || '',
+          isNofollow: link.rel?.includes('nofollow') || false,
+          isSponsored: link.rel?.includes('sponsored') || false,
         }));
 
         // Forms analysis
-        const forms = Array.from(document.querySelectorAll('form')).map(form => ({
-          action: form.action,
-          method: form.method,
-          inputs: Array.from(form.querySelectorAll('input, select, textarea')).map(input => ({
-            name: input.getAttribute('name') || '',
-            type: input.getAttribute('type') || input.tagName.toLowerCase(),
-            required: input.hasAttribute('required'),
-            placeholder: input.getAttribute('placeholder') || ''
-          }))
-        }));
+        const forms = Array.from(document.querySelectorAll('form')).map(
+          (form) => ({
+            action: form.action,
+            method: form.method,
+            inputs: Array.from(
+              form.querySelectorAll('input, select, textarea')
+            ).map((input) => ({
+              name: input.getAttribute('name') || '',
+              type: input.getAttribute('type') || input.tagName.toLowerCase(),
+              required: input.hasAttribute('required'),
+              placeholder: input.getAttribute('placeholder') || '',
+            })),
+          })
+        );
 
         // CTAs analysis
-        const ctas = Array.from(document.querySelectorAll('button, .btn, .button, .cta, [class*="call-to-action"], a[class*="btn"]')).map(cta => ({
+        const ctas = Array.from(
+          document.querySelectorAll(
+            'button, .btn, .button, .cta, [class*="call-to-action"], a[class*="btn"]'
+          )
+        ).map((cta) => ({
           text: cta.textContent?.trim() || '',
           type: cta.tagName.toLowerCase(),
           href: cta.getAttribute('href') || '',
-          class: cta.className
+          class: cta.className,
         }));
 
         // Structured data
         const jsonLd = extractSchema();
         const microdata = extractMicrodata();
-        const breadcrumbs = Array.from(document.querySelectorAll('[itemtype*="BreadcrumbList"] a, .breadcrumb a')).map((link: any) => ({
+        const breadcrumbs = Array.from(
+          document.querySelectorAll(
+            '[itemtype*="BreadcrumbList"] a, .breadcrumb a'
+          )
+        ).map((link: any) => ({
           name: link.textContent?.trim() || '',
-          url: link.href
+          url: link.href,
         }));
 
         // Performance data
         const performance = {
           domSize: document.querySelectorAll('*').length,
-          domDepth: Math.max(...Array.from(document.querySelectorAll('*')).map(el => {
-            let depth = 0;
-            let parent = el.parentElement;
-            while (parent) {
-              depth++;
-              parent = parent.parentElement;
-            }
-            return depth;
-          })),
+          domDepth: Math.max(
+            ...Array.from(document.querySelectorAll('*')).map((el) => {
+              let depth = 0;
+              let parent = el.parentElement;
+              while (parent) {
+                depth++;
+                parent = parent.parentElement;
+              }
+              return depth;
+            })
+          ),
           cssFiles: document.querySelectorAll('link[rel="stylesheet"]').length,
           jsFiles: document.querySelectorAll('script[src]').length,
           totalRequests: 0, // Would need network monitoring
           totalSize: 0, // Would need network monitoring
-          renderBlockingResources: Array.from(document.querySelectorAll('link[rel="stylesheet"], script[src]')).map(el => el.getAttribute('href') || el.getAttribute('src') || '')
+          renderBlockingResources: Array.from(
+            document.querySelectorAll('link[rel="stylesheet"], script[src]')
+          ).map(
+            (el) => el.getAttribute('href') || el.getAttribute('src') || ''
+          ),
         };
 
         // Business data
         const businessData = {
           companyName: title.split(' - ')[0].split(' | ')[0],
-          tagline: getTextContent('.tagline, .hero h2, .subtitle').join(' ').substring(0, 200),
-          aboutContent: getTextContent('.about, #about, [class*="about"]').join(' ').substring(0, 1000),
-          missionStatement: getTextContent('.mission, #mission, [class*="mission"]').join(' ').substring(0, 500),
-          valueProposition: getTextContent('.value-prop, .value-proposition, .hero p').join(' ').substring(0, 300),
-          services: getTextContent('.services li, .service-item, [class*="service"]').slice(0, 10),
-          products: getTextContent('.products li, .product-item, [class*="product"]').slice(0, 10),
-          pricing: getTextContent('.pricing, .price, [class*="price"]').slice(0, 5),
+          tagline: getTextContent('.tagline, .hero h2, .subtitle')
+            .join(' ')
+            .substring(0, 200),
+          aboutContent: getTextContent('.about, #about, [class*="about"]')
+            .join(' ')
+            .substring(0, 1000),
+          missionStatement: getTextContent(
+            '.mission, #mission, [class*="mission"]'
+          )
+            .join(' ')
+            .substring(0, 500),
+          valueProposition: getTextContent(
+            '.value-prop, .value-proposition, .hero p'
+          )
+            .join(' ')
+            .substring(0, 300),
+          services: getTextContent(
+            '.services li, .service-item, [class*="service"]'
+          ).slice(0, 10),
+          products: getTextContent(
+            '.products li, .product-item, [class*="product"]'
+          ).slice(0, 10),
+          pricing: getTextContent('.pricing, .price, [class*="price"]').slice(
+            0,
+            5
+          ),
           contactInfo: {
             ...extractContactInfo(),
-            socialMedia: extractSocialMedia()
+            socialMedia: extractSocialMedia(),
           },
           location: {
             country: 'US', // Would need geolocation API
             state: '',
             city: '',
-            coordinates: { lat: 0, lng: 0 }
-          }
+            coordinates: { lat: 0, lng: 0 },
+          },
         };
 
         // Content tags
@@ -694,13 +928,26 @@ export class UniversalPuppeteerScraper {
           currency: '$',
           technologies: detectTechnologies(),
           cms: getAttribute('meta[name="generator"]', 'content') || 'Unknown',
-          framework: detectTechnologies().find(tech => ['React', 'Vue.js', 'Angular'].includes(tech)) || 'Unknown',
-          analytics: Array.from(document.querySelectorAll('script')).map(script => script.src).filter(src =>
-            src.includes('google-analytics') || src.includes('gtag') || src.includes('ga.js')
-          ),
-          tracking: Array.from(document.querySelectorAll('script')).map(script => script.src).filter(src =>
-            src.includes('facebook') || src.includes('pixel') || src.includes('tracking')
-          )
+          framework:
+            detectTechnologies().find((tech) =>
+              ['React', 'Vue.js', 'Angular'].includes(tech)
+            ) || 'Unknown',
+          analytics: Array.from(document.querySelectorAll('script'))
+            .map((script) => script.src)
+            .filter(
+              (src) =>
+                src.includes('google-analytics') ||
+                src.includes('gtag') ||
+                src.includes('ga.js')
+            ),
+          tracking: Array.from(document.querySelectorAll('script'))
+            .map((script) => script.src)
+            .filter(
+              (src) =>
+                src.includes('facebook') ||
+                src.includes('pixel') ||
+                src.includes('tracking')
+            ),
         };
 
         return {
@@ -717,12 +964,14 @@ export class UniversalPuppeteerScraper {
               h3: getTextContent('h3'),
               h4: getTextContent('h4'),
               h5: getTextContent('h5'),
-              h6: getTextContent('h6')
+              h6: getTextContent('h6'),
             },
-            headingStructure: Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6')).map(heading => ({
+            headingStructure: Array.from(
+              document.querySelectorAll('h1, h2, h3, h4, h5, h6')
+            ).map((heading) => ({
               level: parseInt(heading.tagName.charAt(1)),
               text: heading.textContent?.trim() || '',
-              id: heading.id || ''
+              id: heading.id || '',
             })),
             extractedKeywords: keywordAnalysis.keywords,
             keywordDensity: keywordAnalysis.density,
@@ -733,18 +982,20 @@ export class UniversalPuppeteerScraper {
             images,
             videos,
             forms,
-            ctas
+            ctas,
           },
           structuredData: {
             jsonLd,
             microdata,
             rdfa: [], // Would need RDFa extraction
-            schemaTypes: jsonLd.map(schema => schema['@type']).filter(Boolean),
-            breadcrumbs
+            schemaTypes: jsonLd
+              .map((schema) => schema['@type'])
+              .filter(Boolean),
+            breadcrumbs,
           },
           performance: {
             ...performance,
-            loadTime: 0 // Will be set by the caller
+            loadTime: 0, // Will be set by the caller
           },
           urlAnalysis,
           contentTags,
@@ -753,31 +1004,38 @@ export class UniversalPuppeteerScraper {
             competitors: [],
             marketPosition: '',
             uniqueValueProps: [],
-            differentiators: []
+            differentiators: [],
           },
           scrapedAt: new Date().toISOString(),
           userAgent: navigator.userAgent,
           viewport: {
             width: window.innerWidth,
-            height: window.innerHeight
+            height: window.innerHeight,
           },
           errors: [],
-          warnings: []
+          warnings: [],
         };
       });
 
       // Add load time to performance data
       scrapedData.performance.loadTime = loadTime;
 
-      console.log(`✅ Scraped ${scrapedData.wordCount} words, ${scrapedData.seo.images.length} images, ${scrapedData.seo.internalLinks.length + scrapedData.seo.externalLinks.length} links`);
-      console.log(`📊 SEO: ${scrapedData.seo.extractedKeywords.length} keywords, ${scrapedData.seo.headings.h1.length} H1s, ${scrapedData.structuredData.schemaTypes.length} schema types`);
-      console.log(`🏢 Business: ${scrapedData.contentTags.businessType} (${scrapedData.contentTags.businessTypeConfidence.toFixed(1)}%), ${scrapedData.contentTags.industry.join(', ')}`);
+      console.log(
+        `✅ Scraped ${scrapedData.wordCount} words, ${scrapedData.seo.images.length} images, ${scrapedData.seo.internalLinks.length + scrapedData.seo.externalLinks.length} links`
+      );
+      console.log(
+        `📊 SEO: ${scrapedData.seo.extractedKeywords.length} keywords, ${scrapedData.seo.headings.h1.length} H1s, ${scrapedData.structuredData.schemaTypes.length} schema types`
+      );
+      console.log(
+        `🏢 Business: ${scrapedData.contentTags.businessType} (${scrapedData.contentTags.businessTypeConfidence.toFixed(1)}%), ${scrapedData.contentTags.industry.join(', ')}`
+      );
 
       return scrapedData as UniversalScrapedData;
-
     } catch (error) {
       console.error('Scraping error:', error);
-      throw new Error(`Failed to scrape ${url}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to scrape ${url}: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     } finally {
       await page.close();
     }
@@ -800,17 +1058,20 @@ export class UniversalPuppeteerScraper {
     try {
       const browser = await this.getBrowser();
       const page = await browser.newPage();
-      await page.goto('https://example.com', { waitUntil: 'networkidle2', timeout: 10000 });
+      await page.goto('https://example.com', {
+        waitUntil: 'networkidle2',
+        timeout: 10000,
+      });
       await page.close();
 
       return {
         status: 'healthy',
-        message: 'Puppeteer scraping service is working'
+        message: 'Puppeteer scraping service is working',
       };
     } catch (error) {
       return {
         status: 'unhealthy',
-        message: `Scraping service error: ${error instanceof Error ? error.message : 'Unknown error'}`
+        message: `Scraping service error: ${error instanceof Error ? error.message : 'Unknown error'}`,
       };
     }
   }

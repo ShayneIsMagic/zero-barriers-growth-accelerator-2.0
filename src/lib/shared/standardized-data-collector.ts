@@ -77,7 +77,9 @@ export class StandardizedDataCollector {
    * Collect website data using the same approach as content-comparison
    * Primary method with backup fallback
    */
-  static async collectWebsiteData(url: string): Promise<StandardizedWebsiteData> {
+  static async collectWebsiteData(
+    url: string
+  ): Promise<StandardizedWebsiteData> {
     console.log(`🔍 Collecting standardized data for: ${url}`);
 
     try {
@@ -92,8 +94,13 @@ export class StandardizedDataCollector {
         const scrapedData = await this.backupScrapeWebsite(url);
         return this.transformToStandardizedFormat(scrapedData, url);
       } catch (backupError) {
-        console.error(`❌ Both primary and backup scrapers failed:`, { primaryError, backupError });
-        throw new Error(`Data collection failed: ${backupError instanceof Error ? backupError.message : 'Unknown error'}`);
+        console.error(`❌ Both primary and backup scrapers failed:`, {
+          primaryError,
+          backupError,
+        });
+        throw new Error(
+          `Data collection failed: ${backupError instanceof Error ? backupError.message : 'Unknown error'}`
+        );
       }
     }
   }
@@ -113,12 +120,13 @@ export class StandardizedDataCollector {
         console.log(`🔄 Backup attempt ${attempt}/${maxRetries}`);
         return await UniversalPuppeteerScraper.scrapeWebsite(url);
       } catch (error) {
-        lastError = error instanceof Error ? error : new Error('Unknown backup error');
+        lastError =
+          error instanceof Error ? error : new Error('Unknown backup error');
         console.warn(`⚠️ Backup attempt ${attempt} failed:`, lastError.message);
 
         if (attempt < maxRetries) {
           // Wait before retry
-          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+          await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
         }
       }
     }
@@ -129,7 +137,10 @@ export class StandardizedDataCollector {
   /**
    * Transform scraped data to standardized format
    */
-  private static transformToStandardizedFormat(scrapedData: any, url: string): StandardizedWebsiteData {
+  private static transformToStandardizedFormat(
+    scrapedData: any,
+    url: string
+  ): StandardizedWebsiteData {
     const standardizedData: StandardizedWebsiteData = {
       url: scrapedData.url,
       title: scrapedData.title,
@@ -142,30 +153,34 @@ export class StandardizedDataCollector {
         metaTitle: scrapedData.title,
         metaDescription: scrapedData.seo.metaDescription,
         extractedKeywords: scrapedData.seo.extractedKeywords,
-        headings: scrapedData.seo.headings
+        headings: scrapedData.seo.headings,
       },
       business: {
         industry: scrapedData.business?.industry || 'UNKNOWN',
         confidence: scrapedData.business?.confidence || 0,
-        tags: scrapedData.business?.tags || []
+        tags: scrapedData.business?.tags || [],
       },
       technical: {
         images: scrapedData.images || 0,
         links: scrapedData.links || 0,
-        schemaTypes: scrapedData.seo?.schemaTypes || 0
+        schemaTypes: scrapedData.seo?.schemaTypes || 0,
       },
       scrapedAt: new Date().toISOString(),
-      analysisId: `analysis_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      analysisId: `analysis_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     };
 
-    console.log(`✅ Collected standardized data: ${standardizedData.wordCount} words, ${standardizedData.extractedKeywords.length} keywords`);
+    console.log(
+      `✅ Collected standardized data: ${standardizedData.wordCount} words, ${standardizedData.extractedKeywords.length} keywords`
+    );
     return standardizedData;
   }
 
   /**
    * Process proposed content into standardized format
    */
-  static processProposedContent(proposedContent: string): StandardizedProposedData {
+  static processProposedContent(
+    proposedContent: string
+  ): StandardizedProposedData {
     const cleanText = proposedContent.trim();
     const wordCount = cleanText.split(/\s+/).length;
 
@@ -175,7 +190,7 @@ export class StandardizedDataCollector {
       title: this.extractTitle(cleanText),
       metaDescription: this.extractMetaDescription(cleanText),
       extractedKeywords: this.extractKeywordsFromText(cleanText),
-      headings: this.extractHeadings(cleanText)
+      headings: this.extractHeadings(cleanText),
     };
   }
 
@@ -203,19 +218,26 @@ EXISTING CONTENT:
 - Keywords: ${existingData.extractedKeywords.slice(0, 10).join(', ')}
 - Content: ${existingData.cleanText.substring(0, 2000)}
 
-${proposedData ? `
+${
+  proposedData
+    ? `
 PROPOSED CONTENT:
 - Word Count: ${proposedData.wordCount}
 - Title: ${proposedData.title}
 - Meta Description: ${proposedData.metaDescription}
 - Keywords: ${proposedData.extractedKeywords.slice(0, 10).join(', ')}
 - Content: ${proposedData.cleanText.substring(0, 2000)}
-` : 'No proposed content provided - analyze existing only'}
+`
+    : 'No proposed content provided - analyze existing only'
+}
 
 FRAMEWORK ELEMENTS (${elements.length} total):
-${Object.entries(categories).map(([category, categoryElements]) =>
-  `${category.toUpperCase()} (${categoryElements.length} elements): ${categoryElements.join(', ')}`
-).join('\n')}
+${Object.entries(categories)
+  .map(
+    ([category, categoryElements]) =>
+      `${category.toUpperCase()} (${categoryElements.length} elements): ${categoryElements.join(', ')}`
+  )
+  .join('\n')}
 
 For each element, provide:
 - Present (Yes/No)
@@ -234,17 +256,21 @@ Return structured analysis with overall scores and recommendations.`;
 
   private static extractMetaDescription(content: string): string {
     const lines = content.split('\n');
-    return lines.slice(0, 3).join(' ').trim().substring(0, 160) || 'Proposed description';
+    return (
+      lines.slice(0, 3).join(' ').trim().substring(0, 160) ||
+      'Proposed description'
+    );
   }
 
   private static extractKeywordsFromText(text: string): string[] {
-    const words = text.toLowerCase()
+    const words = text
+      .toLowerCase()
       .replace(/[^\w\s]/g, ' ')
       .split(/\s+/)
-      .filter(word => word.length > 4);
+      .filter((word) => word.length > 4);
 
     const wordFreq: Record<string, number> = {};
-    words.forEach(word => {
+    words.forEach((word) => {
       wordFreq[word] = (wordFreq[word] || 0) + 1;
     });
 
@@ -254,12 +280,22 @@ Return structured analysis with overall scores and recommendations.`;
       .map(([word]) => word);
   }
 
-  private static extractHeadings(content: string): { h1: string[]; h2: string[]; h3: string[] } {
+  private static extractHeadings(content: string): {
+    h1: string[];
+    h2: string[];
+    h3: string[];
+  } {
     const lines = content.split('\n');
     return {
-      h1: lines.filter(l => l.startsWith('# ')).map(l => l.replace('# ', '').trim()),
-      h2: lines.filter(l => l.startsWith('## ')).map(l => l.replace('## ', '').trim()),
-      h3: lines.filter(l => l.startsWith('### ')).map(l => l.replace('### ', '').trim())
+      h1: lines
+        .filter((l) => l.startsWith('# '))
+        .map((l) => l.replace('# ', '').trim()),
+      h2: lines
+        .filter((l) => l.startsWith('## '))
+        .map((l) => l.replace('## ', '').trim()),
+      h3: lines
+        .filter((l) => l.startsWith('### '))
+        .map((l) => l.replace('### ', '').trim()),
     };
   }
 }

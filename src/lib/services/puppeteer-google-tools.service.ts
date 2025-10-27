@@ -122,8 +122,8 @@ export class PuppeteerGoogleToolsService {
           '--disable-accelerated-2d-canvas',
           '--no-first-run',
           '--no-zygote',
-          '--disable-gpu'
-        ]
+          '--disable-gpu',
+        ],
       });
     }
     return this.browser;
@@ -151,14 +151,19 @@ export class PuppeteerGoogleToolsService {
       const trendsUrl = `https://trends.google.com/trends/explore?q=${encodeURIComponent(keywordString)}&geo=US&date=today%2012-m`;
 
       await page.goto(trendsUrl, { waitUntil: 'networkidle2' });
-      await new Promise(resolve => setTimeout(resolve, 3000)); // Wait for data to load
+      await new Promise((resolve) => setTimeout(resolve, 3000)); // Wait for data to load
 
       // Extract related queries - ACTUALLY SCRAPE REAL DATA
       const relatedQueries = await page.evaluate(() => {
-        const queries: Array<{ query: string; value: number; type: 'rising' | 'top' }> = [];
+        const queries: Array<{
+          query: string;
+          value: number;
+          type: 'rising' | 'top';
+        }> = [];
 
         // Strategy 1: Look for the actual Google Trends data structure
-        const trendData = (window as any).trends?.embed?.renderExploreWidget?.trendsData;
+        const trendData = (window as any).trends?.embed?.renderExploreWidget
+          ?.trendsData;
         if (trendData && trendData.default?.rankedList) {
           trendData.default.rankedList.forEach((list: any) => {
             if (list.rankedKeyword) {
@@ -166,7 +171,8 @@ export class PuppeteerGoogleToolsService {
                 queries.push({
                   query: keyword.query,
                   value: keyword.value || 0,
-                  type: list.rankedKeyword.indexOf(keyword) < 5 ? 'top' : 'rising'
+                  type:
+                    list.rankedKeyword.indexOf(keyword) < 5 ? 'top' : 'rising',
                 });
               });
             }
@@ -180,27 +186,31 @@ export class PuppeteerGoogleToolsService {
 
           allElements.forEach((element) => {
             const text = element.textContent?.trim();
-            if (text &&
-                text.length > 3 &&
-                text.length < 50 &&
-                !text.includes('Google') &&
-                !text.includes('Trends') &&
-                !text.includes('Search') &&
-                !text.includes('Explore') &&
-                !text.includes('More') &&
-                !text.includes('Less') &&
-                /^[a-zA-Z\s]+$/.test(text)) {
+            if (
+              text &&
+              text.length > 3 &&
+              text.length < 50 &&
+              !text.includes('Google') &&
+              !text.includes('Trends') &&
+              !text.includes('Search') &&
+              !text.includes('Explore') &&
+              !text.includes('More') &&
+              !text.includes('Less') &&
+              /^[a-zA-Z\s]+$/.test(text)
+            ) {
               potentialQueries.add(text);
             }
           });
 
-          Array.from(potentialQueries).slice(0, 10).forEach(query => {
-            queries.push({
-              query,
-              value: Math.floor(Math.random() * 100) + 10,
-              type: 'top'
+          Array.from(potentialQueries)
+            .slice(0, 10)
+            .forEach((query) => {
+              queries.push({
+                query,
+                value: Math.floor(Math.random() * 100) + 10,
+                type: 'top',
+              });
             });
-          });
         }
 
         return queries.slice(0, 10);
@@ -208,16 +218,22 @@ export class PuppeteerGoogleToolsService {
 
       // Extract related topics
       const relatedTopics = await page.evaluate(() => {
-        const topics: Array<{ topic: string; value: number; type: 'rising' | 'top' }> = [];
+        const topics: Array<{
+          topic: string;
+          value: number;
+          type: 'rising' | 'top';
+        }> = [];
 
-        const topicElements = document.querySelectorAll('[data-entityname], .related-topics-item, .trends-related-topics-item');
+        const topicElements = document.querySelectorAll(
+          '[data-entityname], .related-topics-item, .trends-related-topics-item'
+        );
         topicElements.forEach((element) => {
           const text = element.textContent?.trim();
           if (text && text.length > 0) {
             topics.push({
               topic: text,
               value: Math.floor(Math.random() * 100), // Placeholder
-              type: 'top'
+              type: 'top',
             });
           }
         });
@@ -229,7 +245,7 @@ export class PuppeteerGoogleToolsService {
         relatedQueries,
         relatedTopics,
         interestOverTime: [], // Would need specific extraction
-        geoData: [] // Would need specific extraction
+        geoData: [], // Would need specific extraction
       };
     } finally {
       await page.close();
@@ -246,7 +262,7 @@ export class PuppeteerGoogleToolsService {
     try {
       const pageSpeedUrl = `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(url)}&form_factor=desktop`;
       await page.goto(pageSpeedUrl, { waitUntil: 'networkidle2' });
-      await new Promise(resolve => setTimeout(resolve, 5000)); // Wait for analysis to complete
+      await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait for analysis to complete
 
       const pageSpeedData = await page.evaluate(() => {
         console.log('🔍 Extracting PageSpeed data from DOM...');
@@ -267,7 +283,7 @@ export class PuppeteerGoogleToolsService {
           '.metric-value',
           '.score-value',
           '.score-circle',
-          '.score-text'
+          '.score-text',
         ];
 
         for (const selector of scoreSelectors) {
@@ -289,7 +305,9 @@ export class PuppeteerGoogleToolsService {
           const allText = document.body.textContent || '';
           const scoreMatches = allText.match(/\b(\d{1,3})\b/g);
           if (scoreMatches) {
-            const scores = scoreMatches.map(s => parseInt(s)).filter(s => s >= 0 && s <= 100);
+            const scores = scoreMatches
+              .map((s) => parseInt(s))
+              .filter((s) => s >= 0 && s <= 100);
             if (scores.length >= 4) {
               performanceScore = scores[0];
               accessibilityScore = scores[1];
@@ -304,18 +322,38 @@ export class PuppeteerGoogleToolsService {
         const fidElement = document.querySelector('[data-testid="fid"]');
         const clsElement = document.querySelector('[data-testid="cls"]');
 
-        const lcp = parseFloat(lcpElement?.textContent?.replace(/[^\d.]/g, '') || '0');
-        const fid = parseFloat(fidElement?.textContent?.replace(/[^\d.]/g, '') || '0');
-        const cls = parseFloat(clsElement?.textContent?.replace(/[^\d.]/g, '') || '0');
+        const lcp = parseFloat(
+          lcpElement?.textContent?.replace(/[^\d.]/g, '') || '0'
+        );
+        const fid = parseFloat(
+          fidElement?.textContent?.replace(/[^\d.]/g, '') || '0'
+        );
+        const cls = parseFloat(
+          clsElement?.textContent?.replace(/[^\d.]/g, '') || '0'
+        );
 
         // Extract opportunities
-        const opportunities: Array<{ title: string; description: string; impact: string; savings: string }> = [];
-        const opportunityElements = document.querySelectorAll('[data-testid="opportunity"]');
+        const opportunities: Array<{
+          title: string;
+          description: string;
+          impact: string;
+          savings: string;
+        }> = [];
+        const opportunityElements = document.querySelectorAll(
+          '[data-testid="opportunity"]'
+        );
         opportunityElements.forEach((element) => {
           const title = element.querySelector('h3')?.textContent?.trim() || '';
-          const description = element.querySelector('p')?.textContent?.trim() || '';
-          const impact = element.querySelector('[data-testid="impact"]')?.textContent?.trim() || '';
-          const savings = element.querySelector('[data-testid="savings"]')?.textContent?.trim() || '';
+          const description =
+            element.querySelector('p')?.textContent?.trim() || '';
+          const impact =
+            element
+              .querySelector('[data-testid="impact"]')
+              ?.textContent?.trim() || '';
+          const savings =
+            element
+              .querySelector('[data-testid="savings"]')
+              ?.textContent?.trim() || '';
 
           if (title) {
             opportunities.push({ title, description, impact, savings });
@@ -323,12 +361,22 @@ export class PuppeteerGoogleToolsService {
         });
 
         // Extract diagnostics
-        const diagnostics: Array<{ title: string; description: string; impact: string }> = [];
-        const diagnosticElements = document.querySelectorAll('[data-testid="diagnostic"]');
+        const diagnostics: Array<{
+          title: string;
+          description: string;
+          impact: string;
+        }> = [];
+        const diagnosticElements = document.querySelectorAll(
+          '[data-testid="diagnostic"]'
+        );
         diagnosticElements.forEach((element) => {
           const title = element.querySelector('h3')?.textContent?.trim() || '';
-          const description = element.querySelector('p')?.textContent?.trim() || '';
-          const impact = element.querySelector('[data-testid="impact"]')?.textContent?.trim() || '';
+          const description =
+            element.querySelector('p')?.textContent?.trim() || '';
+          const impact =
+            element
+              .querySelector('[data-testid="impact"]')
+              ?.textContent?.trim() || '';
 
           if (title) {
             diagnostics.push({ title, description, impact });
@@ -342,7 +390,7 @@ export class PuppeteerGoogleToolsService {
           seoScore,
           coreWebVitals: { lcp, fid, cls },
           opportunities: opportunities.slice(0, 10),
-          diagnostics: diagnostics.slice(0, 10)
+          diagnostics: diagnostics.slice(0, 10),
         };
       });
 
@@ -355,7 +403,9 @@ export class PuppeteerGoogleToolsService {
   /**
    * Scrape Search Console data (requires authentication)
    */
-  static async scrapeSearchConsoleData(domain: string): Promise<SearchConsoleData> {
+  static async scrapeSearchConsoleData(
+    domain: string
+  ): Promise<SearchConsoleData> {
     const browser = await this.getBrowser();
     const page = await browser.newPage();
 
@@ -369,7 +419,7 @@ export class PuppeteerGoogleToolsService {
         queries: [],
         pages: [],
         countries: [],
-        devices: []
+        devices: [],
       };
     } finally {
       await page.close();
@@ -395,11 +445,11 @@ export class PuppeteerGoogleToolsService {
           users: 0,
           pageviews: 0,
           bounceRate: 0,
-          avgSessionDuration: 0
+          avgSessionDuration: 0,
         },
         topPages: [],
         trafficSources: [],
-        conversions: []
+        conversions: [],
       };
     } finally {
       await page.close();
@@ -411,7 +461,7 @@ export class PuppeteerGoogleToolsService {
    */
   private static generatePropertyId(domain: string): string {
     const hash = domain.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
+      a = (a << 5) - a + b.charCodeAt(0);
       return a & a;
     }, 0);
     return Math.abs(hash).toString().padStart(10, '0');
@@ -420,19 +470,25 @@ export class PuppeteerGoogleToolsService {
   /**
    * Scrape all Google Tools data for a website
    */
-  static async scrapeAllGoogleToolsData(url: string, keywords: string[] = []): Promise<{
+  static async scrapeAllGoogleToolsData(
+    url: string,
+    keywords: string[] = []
+  ): Promise<{
     trends?: GoogleTrendsData;
     pageSpeed?: PageSpeedData;
   }> {
-    const keywordArray = keywords.length > 0 ? keywords : this.extractKeywordsFromUrl(url);
+    const keywordArray =
+      keywords.length > 0 ? keywords : this.extractKeywordsFromUrl(url);
 
     try {
       console.log(`🌐 Scraping useful Google Tools data for: ${url}`);
-      console.log(`📊 Focus: PageSpeed Insights (performance) + Google Trends (market research)`);
+      console.log(
+        `📊 Focus: PageSpeed Insights (performance) + Google Trends (market research)`
+      );
 
       const [trends, pageSpeed] = await Promise.allSettled([
         this.scrapeTrendsData(keywordArray),
-        this.scrapePageSpeedData(url)
+        this.scrapePageSpeedData(url),
       ]);
 
       const result: any = {};
@@ -451,7 +507,9 @@ export class PuppeteerGoogleToolsService {
         console.error('❌ PageSpeed Insights failed:', pageSpeed.reason);
       }
 
-      console.log('ℹ️ Note: Search Console, Analytics, and GTmetrix removed - require authentication or provide no additional value');
+      console.log(
+        'ℹ️ Note: Search Console, Analytics, and GTmetrix removed - require authentication or provide no additional value'
+      );
 
       return result;
     } catch (error) {
@@ -467,7 +525,7 @@ export class PuppeteerGoogleToolsService {
     try {
       const urlObj = new URL(url);
       const domain = urlObj.hostname.replace(/\.(com|org|net|co|io)$/, '');
-      return domain.split(/[.-]/).filter(word => word.length > 2);
+      return domain.split(/[.-]/).filter((word) => word.length > 2);
     } catch {
       return [];
     }

@@ -11,7 +11,13 @@ export interface StoredReport {
   id: string;
   url: string;
   timestamp: string;
-  reportType: 'comprehensive' | 'phase1' | 'phase2' | 'phase3' | 'controlled-analysis' | 'enhanced-analysis';
+  reportType:
+    | 'comprehensive'
+    | 'phase1'
+    | 'phase2'
+    | 'phase3'
+    | 'controlled-analysis'
+    | 'enhanced-analysis';
   data: any;
   summary: {
     overallScore: number;
@@ -25,7 +31,17 @@ export class ReportStorage {
   /**
    * Store a comprehensive analysis report in database
    */
-  async storeReport(reportData: any, url: string, reportType: 'comprehensive' | 'phase1' | 'phase2' | 'phase3' | 'controlled-analysis' | 'enhanced-analysis' = 'comprehensive'): Promise<StoredReport> {
+  async storeReport(
+    reportData: any,
+    url: string,
+    reportType:
+      | 'comprehensive'
+      | 'phase1'
+      | 'phase2'
+      | 'phase3'
+      | 'controlled-analysis'
+      | 'enhanced-analysis' = 'comprehensive'
+  ): Promise<StoredReport> {
     const timestamp = new Date().toISOString();
     const reportId = this.generateReportId(url, timestamp);
 
@@ -38,7 +54,7 @@ export class ReportStorage {
       timestamp,
       reportType,
       data: reportData,
-      summary
+      summary,
     };
 
     // Store in database
@@ -49,8 +65,8 @@ export class ReportStorage {
           content: JSON.stringify(storedReport),
           contentType: reportType,
           score: summary.overallScore,
-          status: 'COMPLETED'
-        }
+          status: 'COMPLETED',
+        },
       });
 
       console.log(`📄 Report stored in database: ${reportId}`);
@@ -67,7 +83,7 @@ export class ReportStorage {
   async getReport(reportId: string): Promise<StoredReport | null> {
     try {
       const analysis = await prisma.analysis.findUnique({
-        where: { id: reportId }
+        where: { id: reportId },
       });
 
       if (!analysis || !analysis.content) {
@@ -89,15 +105,15 @@ export class ReportStorage {
       const analyses = await prisma.analysis.findMany({
         where: {
           content: {
-            contains: url
-          }
+            contains: url,
+          },
         },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
       });
 
       return analyses
-        .filter(analysis => analysis.content)
-        .map(analysis => JSON.parse(analysis.content!));
+        .filter((analysis) => analysis.content)
+        .map((analysis) => JSON.parse(analysis.content!));
     } catch (error) {
       console.error('Failed to retrieve reports by URL:', error);
       return [];
@@ -107,7 +123,15 @@ export class ReportStorage {
   /**
    * Get all reports (paginated) from database
    */
-  async getAllReports(page: number = 1, limit: number = 10): Promise<{ reports: StoredReport[], total: number, page: number, totalPages: number }> {
+  async getAllReports(
+    page: number = 1,
+    limit: number = 10
+  ): Promise<{
+    reports: StoredReport[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
     try {
       const total = await prisma.analysis.count();
       const totalPages = Math.ceil(total / limit);
@@ -116,18 +140,18 @@ export class ReportStorage {
       const analyses = await prisma.analysis.findMany({
         orderBy: { createdAt: 'desc' },
         skip,
-        take: limit
+        take: limit,
       });
 
       const reports = analyses
-        .filter(analysis => analysis.content)
-        .map(analysis => JSON.parse(analysis.content!));
+        .filter((analysis) => analysis.content)
+        .map((analysis) => JSON.parse(analysis.content!));
 
       return {
         reports,
         total,
         page,
-        totalPages
+        totalPages,
       };
     } catch (error) {
       console.error('Failed to retrieve all reports:', error);
@@ -141,7 +165,7 @@ export class ReportStorage {
   async deleteReport(reportId: string): Promise<boolean> {
     try {
       await prisma.analysis.delete({
-        where: { id: reportId }
+        where: { id: reportId },
       });
 
       console.log(`🗑️ Report deleted: ${reportId}`);
@@ -191,7 +215,7 @@ export class ReportStorage {
         '70-79': 0,
         '60-69': 0,
         '50-59': 0,
-        '0-49': 0
+        '0-49': 0,
       };
 
       analyses.forEach((analysis) => {
@@ -214,14 +238,17 @@ export class ReportStorage {
         else scoreDistribution['0-49'] += 1;
       });
 
-      const averageScore = scores.length > 0 ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 0;
+      const averageScore =
+        scores.length > 0
+          ? scores.reduce((sum, score) => sum + score, 0) / scores.length
+          : 0;
 
       return {
         totalReports,
         reportsByType,
         reportsByUrl,
         averageScore: Math.round(averageScore * 100) / 100,
-        scoreDistribution
+        scoreDistribution,
       };
     } catch (error) {
       console.error('Failed to get report stats:', error);
@@ -230,7 +257,7 @@ export class ReportStorage {
         reportsByType: {},
         reportsByUrl: {},
         averageScore: 0,
-        scoreDistribution: {}
+        scoreDistribution: {},
       };
     }
   }
@@ -241,7 +268,12 @@ export class ReportStorage {
   private generateReportId(url: string, timestamp: string): string {
     const domain = new URL(url).hostname.replace(/[^a-zA-Z0-9]/g, '');
     const date = new Date(timestamp).toISOString().split('T')[0];
-    const time = new Date(timestamp).toISOString().split('T')[1]?.split('.')[0]?.replace(/:/g, '') || '';
+    const time =
+      new Date(timestamp)
+        .toISOString()
+        .split('T')[1]
+        ?.split('.')[0]
+        ?.replace(/:/g, '') || '';
     return `${domain}-${date}-${time}`;
   }
 
@@ -254,8 +286,14 @@ export class ReportStorage {
     keyFindings: string[];
     priorityRecommendations: string[];
   } {
-    const overallScore = reportData.overallScore || reportData.evaluationFramework?.overallScore || 0;
-    const rating = reportData.rating || reportData.evaluationFramework?.rating || 'Not Rated';
+    const overallScore =
+      reportData.overallScore ||
+      reportData.evaluationFramework?.overallScore ||
+      0;
+    const rating =
+      reportData.rating ||
+      reportData.evaluationFramework?.rating ||
+      'Not Rated';
 
     const keyFindings: string[] = [];
     const priorityRecommendations: string[] = [];
@@ -264,13 +302,19 @@ export class ReportStorage {
     if (reportData.evaluationFramework) {
       const evalFramework = reportData.evaluationFramework;
       if (evalFramework.categoryScores) {
-        Object.entries(evalFramework.categoryScores).forEach(([category, score]: [string, any]) => {
-          if (score.score < 60) {
-            keyFindings.push(`${category}: Low score (${score.score}/100) - Needs attention`);
-          } else if (score.score > 80) {
-            keyFindings.push(`${category}: Strong performance (${score.score}/100)`);
+        Object.entries(evalFramework.categoryScores).forEach(
+          ([category, score]: [string, any]) => {
+            if (score.score < 60) {
+              keyFindings.push(
+                `${category}: Low score (${score.score}/100) - Needs attention`
+              );
+            } else if (score.score > 80) {
+              keyFindings.push(
+                `${category}: Strong performance (${score.score}/100)`
+              );
+            }
           }
-        });
+        );
       }
 
       if (evalFramework.priorityRecommendations) {
@@ -280,17 +324,18 @@ export class ReportStorage {
 
     // Extract from comprehensive analysis
     if (reportData.comprehensiveAnalysis?.combinedRecommendations) {
-      priorityRecommendations.push(...reportData.comprehensiveAnalysis.combinedRecommendations);
+      priorityRecommendations.push(
+        ...reportData.comprehensiveAnalysis.combinedRecommendations
+      );
     }
 
     return {
       overallScore,
       rating,
       keyFindings: [...new Set(keyFindings)],
-      priorityRecommendations: [...new Set(priorityRecommendations)]
+      priorityRecommendations: [...new Set(priorityRecommendations)],
     };
   }
-
 }
 
 // Export singleton instance

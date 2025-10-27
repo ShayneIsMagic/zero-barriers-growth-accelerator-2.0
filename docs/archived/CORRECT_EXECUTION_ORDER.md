@@ -7,9 +7,11 @@
 ## 🎯 **The Correct Order**
 
 ### **Step 1: Gather Raw Content** (Foundation)
+
 **Tools:** QA tools, Google Tools, Web Scraping
 
 **What to Collect:**
+
 1. ✅ Website HTML/text content
 2. ✅ Google Lighthouse scores (Performance, SEO, Accessibility)
 3. ✅ Google Trends keyword data
@@ -23,23 +25,27 @@
 ---
 
 ### **Step 2: Analyze Through Each Lens** (Framework Application)
+
 **Tools:** Gemini AI with specific prompts
 
 **Each Assessment Looks At Same Content, Different Lens:**
 
 **Golden Circle Lens:**
+
 - Why: Look for purpose statements
 - How: Look for methodology descriptions
 - What: Look for product/service listings
 - Who: Look for audience language
 
 **Elements of Value Lens (B2C):**
+
 - Functional: Time-saving, cost, quality language
 - Emotional: Anxiety reduction, fun, design
 - Life-Changing: Hope, affiliation, motivation
 - Social Impact: Self-transcendence
 
 **B2B Elements Lens:**
+
 - Table Stakes: Compliance, specifications
 - Functional: Revenue growth, cost reduction
 - Ease of Business: Productivity, transparency
@@ -47,6 +53,7 @@
 - Inspirational: Vision, social responsibility
 
 **CliftonStrengths Lens:**
+
 - Executing themes: Achiever, Discipline language
 - Influencing: Command, Communication tone
 - Relationship: Empathy, Positivity
@@ -57,9 +64,11 @@
 ---
 
 ### **Step 3: Find Patterns & Opportunities** (Strategic Synthesis)
+
 **Tool:** Gemini AI comprehensive analysis
 
 **Look For:**
+
 - **Patterns:** What themes repeat across assessments?
 - **Strengths:** What scores high across all frameworks?
 - **Weaknesses:** What gaps appear in multiple lenses?
@@ -74,13 +83,15 @@
 ### **Problem 1: Content Scraping Fails**
 
 **Why:**
+
 ```javascript
 // Current code (FAILS on modern sites):
-const response = await fetch(url);  // ❌ CORS blocked
+const response = await fetch(url); // ❌ CORS blocked
 const html = await response.text(); // ❌ Client-side rendered = empty
 ```
 
 **Modern websites use:**
+
 - React/Vue (content loads via JavaScript)
 - CORS protection (blocks direct fetch)
 - Bot detection (blocks scrapers)
@@ -92,6 +103,7 @@ const html = await response.text(); // ❌ Client-side rendered = empty
 ### **Problem 2: Wrong Execution Order**
 
 **Current (WRONG):**
+
 ```
 1. Try to scrape (fails)
 2. Run Lighthouse (works)
@@ -100,6 +112,7 @@ const html = await response.text(); // ❌ Client-side rendered = empty
 ```
 
 **Correct (RIGHT):**
+
 ```
 1. Get REAL content first (must succeed)
 2. Verify content is not empty
@@ -115,18 +128,20 @@ const html = await response.text(); // ❌ Client-side rendered = empty
 ### **Option A: Use Puppeteer (Server-Side Browser)**
 
 **Install:**
+
 ```bash
 npm install puppeteer
 ```
 
 **Code:**
+
 ```typescript
 import puppeteer from 'puppeteer';
 
 async function scrapeWithPuppeteer(url: string) {
   const browser = await puppeteer.launch({
     headless: true,
-    args: ['--no-sandbox']
+    args: ['--no-sandbox'],
   });
 
   const page = await browser.newPage();
@@ -135,8 +150,8 @@ async function scrapeWithPuppeteer(url: string) {
   // Get rendered content
   const content = await page.evaluate(() => document.body.innerText);
   const title = await page.title();
-  const metaDesc = await page.$eval('meta[name="description"]',
-    el => el.getAttribute('content')
+  const metaDesc = await page.$eval('meta[name="description"]', (el) =>
+    el.getAttribute('content')
   );
 
   await browser.close();
@@ -152,6 +167,7 @@ async function scrapeWithPuppeteer(url: string) {
 ### **Option B: Manual Content Input** (Immediate Fix)
 
 **Add to UI:**
+
 ```
 [Phase 1]
 Option 1: Auto-scrape (try automatic)
@@ -171,6 +187,7 @@ If auto-scrape fails:
 ### **Two-Option Approach:**
 
 **Phase 1 UI Change:**
+
 ```
 [Start Phase 1]
   ├─ Try auto-scrape
@@ -182,6 +199,7 @@ If auto-scrape fails:
 ```
 
 **This ensures:**
+
 - ✅ Always get content (automated or manual)
 - ✅ User sees what content is being analyzed
 - ✅ Reports are based on real data
@@ -281,11 +299,13 @@ If auto-scrape fails:
 **The scraping is broken** - using basic fetch that fails on modern sites.
 
 **Need to implement:**
+
 1. Puppeteer for real browser scraping
 2. OR manual content input fallback
 3. OR use a scraping API (ScrapingBee, Browserless)
 
 **Without this:**
+
 - ❌ No content collected
 - ❌ AI analyzes empty strings
 - ❌ Reports are meaningless
@@ -302,4 +322,3 @@ If auto-scrape fails:
 5. Show what content is being analyzed (transparency)
 
 **Want me to implement this fix?**
-

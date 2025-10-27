@@ -138,25 +138,30 @@ export function createAnalysisResponse(
       extractedKeywords: existing.extractedKeywords || [],
       headings: existing.headings || [],
       cleanText: existing.cleanText || '',
-      url: existing.url || ''
+      url: existing.url || '',
     },
-    proposed: proposed ? {
-      title: proposed.title || 'Untitled',
-      metaDescription: proposed.metaDescription || '',
-      wordCount: proposed.wordCount || 0,
-      extractedKeywords: proposed.extractedKeywords || [],
-      headings: proposed.headings || [],
-      cleanText: proposed.cleanText || ''
-    } : undefined,
+    proposed: proposed
+      ? {
+          title: proposed.title || 'Untitled',
+          metaDescription: proposed.metaDescription || '',
+          wordCount: proposed.wordCount || 0,
+          extractedKeywords: proposed.extractedKeywords || [],
+          headings: proposed.headings || [],
+          cleanText: proposed.cleanText || '',
+        }
+      : undefined,
     analysis,
-    message
+    message,
   };
 }
 
 /**
  * Create an error response
  */
-export function createErrorResponse(error: string, details?: string): StandardAnalysisResponse {
+export function createErrorResponse(
+  error: string,
+  details?: string
+): StandardAnalysisResponse {
   return {
     success: false,
     existing: {
@@ -166,14 +171,11 @@ export function createErrorResponse(error: string, details?: string): StandardAn
       extractedKeywords: [],
       headings: [],
       cleanText: '',
-      url: ''
+      url: '',
     },
     analysis: '',
     message: '',
     error,
-    details
+    details,
   };
 }
-
-
-

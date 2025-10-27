@@ -55,7 +55,9 @@ function extractTitleFromContent(html: string): string {
  * Extract meta description from HTML content
  */
 function extractMetaDescriptionFromContent(html: string): string {
-  const metaMatch = html.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']*)["']/i);
+  const metaMatch = html.match(
+    /<meta[^>]*name=["']description["'][^>]*content=["']([^"']*)["']/i
+  );
   return metaMatch ? metaMatch[1].trim() : '';
 }
 
@@ -64,22 +66,23 @@ function extractMetaDescriptionFromContent(html: string): string {
  */
 function extractHeadingsFromContent(html: string): string[] {
   const headingMatches = html.match(/<h[1-6][^>]*>(.*?)<\/h[1-6]>/gi) || [];
-  return headingMatches.map(heading =>
-    heading.replace(/<[^>]*>/g, '').trim()
-  ).filter(heading => heading.length > 0);
+  return headingMatches
+    .map((heading) => heading.replace(/<[^>]*>/g, '').trim())
+    .filter((heading) => heading.length > 0);
 }
 
 /**
  * Extract keywords from content
  */
 function extractKeywordsFromContent(content: string): string[] {
-  const words = content.toLowerCase()
+  const words = content
+    .toLowerCase()
     .replace(/[^\w\s]/g, ' ')
     .split(/\s+/)
-    .filter(word => word.length > 4);
+    .filter((word) => word.length > 4);
 
   const wordFreq: Record<string, number> = {};
-  words.forEach(word => {
+  words.forEach((word) => {
     wordFreq[word] = (wordFreq[word] || 0) + 1;
   });
 
@@ -93,7 +96,10 @@ function extractKeywordsFromContent(content: string): string[] {
  * Analyze content using Google Gemini (Free Tier)
  * 15 requests/minute, 1 million tokens/day
  */
-export async function analyzeWithGemini(content: string, analysisType: string): Promise<any> {
+export async function analyzeWithGemini(
+  content: string,
+  analysisType: string
+): Promise<any> {
   try {
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
@@ -112,10 +118,12 @@ export async function analyzeWithGemini(content: string, analysisType: string): 
     }
 
     // Check if response looks like an error message
-    if (jsonText.toLowerCase().startsWith('an error') ||
-        jsonText.toLowerCase().startsWith('error') ||
-        jsonText.toLowerCase().startsWith('failed') ||
-        !jsonText.startsWith('{')) {
+    if (
+      jsonText.toLowerCase().startsWith('an error') ||
+      jsonText.toLowerCase().startsWith('error') ||
+      jsonText.toLowerCase().startsWith('failed') ||
+      !jsonText.startsWith('{')
+    ) {
       throw new Error(`AI analysis failed: ${jsonText.substring(0, 100)}`);
     }
 
@@ -124,7 +132,9 @@ export async function analyzeWithGemini(content: string, analysisType: string): 
     } catch (parseError) {
       console.error('JSON parsing error:', parseError);
       console.error('Raw AI response:', jsonText);
-      throw new Error(`Invalid JSON response from AI: ${jsonText.substring(0, 100)}`);
+      throw new Error(
+        `Invalid JSON response from AI: ${jsonText.substring(0, 100)}`
+      );
     }
   } catch (error) {
     console.error('Gemini analysis error:', error);
@@ -136,7 +146,10 @@ export async function analyzeWithGemini(content: string, analysisType: string): 
  * Analyze content using Anthropic Claude (Free Tier)
  * Limited free usage
  */
-export async function analyzeWithClaude(content: string, analysisType: string): Promise<any> {
+export async function analyzeWithClaude(
+  content: string,
+  analysisType: string
+): Promise<any> {
   try {
     const prompt = createAnalysisPrompt(content, analysisType);
 
@@ -146,12 +159,15 @@ export async function analyzeWithClaude(content: string, analysisType: string): 
       messages: [
         {
           role: 'user',
-          content: prompt
-        }
-      ]
+          content: prompt,
+        },
+      ],
     });
 
-    const text = message.content?.[0]?.type === 'text' ? message.content[0].text || '' : '';
+    const text =
+      message.content?.[0]?.type === 'text'
+        ? message.content[0].text || ''
+        : '';
     return JSON.parse(text);
   } catch (error) {
     console.error('Claude analysis error:', error);
@@ -309,7 +325,10 @@ Provide specific, actionable insights and recommendations for each area.
 /**
  * Main analysis function using free AI services
  */
-export async function performRealAnalysis(url: string, analysisType: string = 'full'): Promise<WebsiteAnalysisResult> {
+export async function performRealAnalysis(
+  url: string,
+  analysisType: string = 'full'
+): Promise<WebsiteAnalysisResult> {
   try {
     console.log(`Starting real analysis for: ${url}`);
 
@@ -331,10 +350,15 @@ export async function performRealAnalysis(url: string, analysisType: string = 'f
     } catch (geminiError) {
       console.log('Gemini failed, trying Claude...');
       // Fallback to Claude if Gemini fails and Claude key is available
-      if (process.env.CLAUDE_API_KEY && process.env.CLAUDE_API_KEY !== 'your-real-key-here') {
+      if (
+        process.env.CLAUDE_API_KEY &&
+        process.env.CLAUDE_API_KEY !== 'your-real-key-here'
+      ) {
         analysisResult = await analyzeWithClaude(scrapedContent, analysisType);
       } else {
-        throw new Error('Gemini analysis failed and Claude API key not configured');
+        throw new Error(
+          'Gemini analysis failed and Claude API key not configured'
+        );
       }
     }
 
@@ -369,15 +393,18 @@ export async function performRealAnalysis(url: string, analysisType: string = 'f
       //   extractedKeywords: extractKeywordsFromContent(scrapedContent),
       //   schemaTypes: []
       // },
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
-    console.log(`Analysis completed with overall score: ${result.overallScore}`);
+    console.log(
+      `Analysis completed with overall score: ${result.overallScore}`
+    );
     return result;
-
   } catch (error) {
     console.error('Real analysis failed:', error);
-    throw new Error(`Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(
+      `Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
   }
 }
 
@@ -391,7 +418,10 @@ function generateId(): string {
 /**
  * Test API connectivity
  */
-export async function testAPIConnectivity(): Promise<{gemini: boolean, claude: boolean}> {
+export async function testAPIConnectivity(): Promise<{
+  gemini: boolean;
+  claude: boolean;
+}> {
   const results = { gemini: false, claude: false };
 
   try {
@@ -404,13 +434,16 @@ export async function testAPIConnectivity(): Promise<{gemini: boolean, claude: b
   }
 
   // Skip Claude test if key is placeholder
-  if (process.env.CLAUDE_API_KEY && process.env.CLAUDE_API_KEY !== 'your-real-key-here') {
+  if (
+    process.env.CLAUDE_API_KEY &&
+    process.env.CLAUDE_API_KEY !== 'your-real-key-here'
+  ) {
     try {
       // Test Claude
       await claude.messages.create({
         model: 'claude-3-haiku-20240307',
         max_tokens: 10,
-        messages: [{ role: 'user', content: 'Test' }]
+        messages: [{ role: 'user', content: 'Test' }],
       });
       results.claude = true;
     } catch (error) {

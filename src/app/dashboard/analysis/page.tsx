@@ -3,18 +3,24 @@
 
 import GoldenCircleAssessment from '@/components/assessments/GoldenCircleAssessment';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-    AlertCircle,
-    BarChart3,
-    Building2,
-    CheckCircle,
-    Download,
-    FileText,
-    Loader2,
-    Target,
-    Users
+  AlertCircle,
+  BarChart3,
+  Building2,
+  CheckCircle,
+  Download,
+  FileText,
+  Loader2,
+  Target,
+  Users,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -72,10 +78,10 @@ export default function AnalysisPage() {
 
       if (data.success) {
         setContent(data.data);
-        setAnalysisData(prev => ({
+        setAnalysisData((prev) => ({
           ...prev,
           url,
-          content: data.data
+          content: data.data,
         }));
 
         // Save to localStorage
@@ -112,9 +118,9 @@ export default function AnalysisPage() {
       const data = await response.json();
 
       if (data.success) {
-        setAnalysisData(prev => ({
+        setAnalysisData((prev) => ({
           ...prev,
-          ...data.data
+          ...data.data,
         }));
 
         // Save to localStorage
@@ -135,10 +141,12 @@ export default function AnalysisPage() {
     const reportData = {
       url: analysisData.url,
       timestamp: new Date().toISOString(),
-      assessments: analysisData
+      assessments: analysisData,
     };
 
-    const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(reportData, null, 2)], {
+      type: 'application/json',
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -150,22 +158,28 @@ export default function AnalysisPage() {
   };
 
   const getAssessmentStatus = (assessment: any) => {
-    if (!assessment) return { status: 'pending', icon: AlertCircle, color: 'text-gray-500' };
-    if (assessment.success) return { status: 'completed', icon: CheckCircle, color: 'text-green-500' };
+    if (!assessment)
+      return { status: 'pending', icon: AlertCircle, color: 'text-gray-500' };
+    if (assessment.success)
+      return {
+        status: 'completed',
+        icon: CheckCircle,
+        color: 'text-green-500',
+      };
     return { status: 'failed', icon: AlertCircle, color: 'text-red-500' };
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-      <div className="container mx-auto py-8 px-4">
-
+      <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="mb-8 text-center">
+          <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-white">
             Website Analysis Dashboard
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Comprehensive business framework analysis with separate assessment views
+          <p className="mx-auto max-w-3xl text-xl text-gray-600 dark:text-gray-300">
+            Comprehensive business framework analysis with separate assessment
+            views
           </p>
         </div>
 
@@ -186,7 +200,7 @@ export default function AnalysisPage() {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://example.com"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 aria-label="Enter website URL for analysis"
               />
               <Button
@@ -205,7 +219,7 @@ export default function AnalysisPage() {
               </Button>
             </div>
             {error && (
-              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded flex items-center gap-2">
+              <div className="mt-4 flex items-center gap-2 rounded border border-red-200 bg-red-50 p-3">
                 <AlertCircle className="h-4 w-4 text-red-500" />
                 <span className="text-sm text-red-700">{error}</span>
               </div>
@@ -221,14 +235,14 @@ export default function AnalysisPage() {
                 <FileText className="h-5 w-5" />
                 Content Preview
               </CardTitle>
-              <CardDescription>
-                Scraped content from {url}
-              </CardDescription>
+              <CardDescription>Scraped content from {url}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="max-h-64 overflow-y-auto bg-gray-50 p-4 rounded">
-                <pre className="text-sm whitespace-pre-wrap">
-                  {content.cleanText || content.content || 'No content available'}
+              <div className="max-h-64 overflow-y-auto rounded bg-gray-50 p-4">
+                <pre className="whitespace-pre-wrap text-sm">
+                  {content.cleanText ||
+                    content.content ||
+                    'No content available'}
                 </pre>
               </div>
             </CardContent>
@@ -239,31 +253,49 @@ export default function AnalysisPage() {
         {content && (
           <Tabs defaultValue="golden-circle" className="w-full">
             <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="golden-circle" className="flex items-center gap-2">
+              <TabsTrigger
+                value="golden-circle"
+                className="flex items-center gap-2"
+              >
                 <Target className="h-4 w-4" />
                 Golden Circle
                 {(() => {
-                  const status = getAssessmentStatus(analysisData?.goldenCircle);
+                  const status = getAssessmentStatus(
+                    analysisData?.goldenCircle
+                  );
                   return <status.icon className={`h-3 w-3 ${status.color}`} />;
                 })()}
               </TabsTrigger>
-              <TabsTrigger value="elements-of-value" className="flex items-center gap-2">
+              <TabsTrigger
+                value="elements-of-value"
+                className="flex items-center gap-2"
+              >
                 <BarChart3 className="h-4 w-4" />
                 Elements of Value
                 {(() => {
-                  const status = getAssessmentStatus(analysisData?.elementsOfValue);
+                  const status = getAssessmentStatus(
+                    analysisData?.elementsOfValue
+                  );
                   return <status.icon className={`h-3 w-3 ${status.color}`} />;
                 })()}
               </TabsTrigger>
-              <TabsTrigger value="clifton-strengths" className="flex items-center gap-2">
+              <TabsTrigger
+                value="clifton-strengths"
+                className="flex items-center gap-2"
+              >
                 <Users className="h-4 w-4" />
                 CliftonStrengths
                 {(() => {
-                  const status = getAssessmentStatus(analysisData?.cliftonStrengths);
+                  const status = getAssessmentStatus(
+                    analysisData?.cliftonStrengths
+                  );
                   return <status.icon className={`h-3 w-3 ${status.color}`} />;
                 })()}
               </TabsTrigger>
-              <TabsTrigger value="b2b-elements" className="flex items-center gap-2">
+              <TabsTrigger
+                value="b2b-elements"
+                className="flex items-center gap-2"
+              >
                 <Building2 className="h-4 w-4" />
                 B2B Elements
                 {(() => {
@@ -271,11 +303,16 @@ export default function AnalysisPage() {
                   return <status.icon className={`h-3 w-3 ${status.color}`} />;
                 })()}
               </TabsTrigger>
-              <TabsTrigger value="comprehensive" className="flex items-center gap-2">
+              <TabsTrigger
+                value="comprehensive"
+                className="flex items-center gap-2"
+              >
                 <FileText className="h-4 w-4" />
                 Comprehensive
                 {(() => {
-                  const status = getAssessmentStatus(analysisData?.comprehensive);
+                  const status = getAssessmentStatus(
+                    analysisData?.comprehensive
+                  );
                   return <status.icon className={`h-3 w-3 ${status.color}`} />;
                 })()}
               </TabsTrigger>
@@ -286,9 +323,13 @@ export default function AnalysisPage() {
                 url={url}
                 content={content}
                 onComplete={(data) => {
-                  setAnalysisData(prev => ({
+                  setAnalysisData((prev) => ({
                     ...prev,
-                    goldenCircle: { success: true, data, assessment: 'Golden Circle' }
+                    goldenCircle: {
+                      success: true,
+                      data,
+                      assessment: 'Golden Circle',
+                    },
                   }));
                 }}
               />
@@ -374,10 +415,13 @@ export default function AnalysisPage() {
 
                   {analysisData?.comprehensive && (
                     <div className="space-y-4">
-                      <div className="p-4 bg-green-50 border border-green-200 rounded">
-                        <h3 className="font-semibold text-green-800 mb-2">Report Generated Successfully</h3>
+                      <div className="rounded border border-green-200 bg-green-50 p-4">
+                        <h3 className="mb-2 font-semibold text-green-800">
+                          Report Generated Successfully
+                        </h3>
                         <p className="text-sm text-green-700">
-                          Overall Score: {analysisData.comprehensive.overallScore}/10
+                          Overall Score:{' '}
+                          {analysisData.comprehensive.overallScore}/10
                         </p>
                       </div>
 

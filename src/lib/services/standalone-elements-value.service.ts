@@ -16,7 +16,10 @@ export interface ElementsOfValueResult {
       emotional_score: number;
       life_changing_score: number;
       social_impact_score: number;
-      elements: Record<string, { present: boolean; strength: number; evidence: string[] }>;
+      elements: Record<
+        string,
+        { present: boolean; strength: number; evidence: string[] }
+      >;
       recommendations: string[];
     };
     b2b: {
@@ -26,7 +29,10 @@ export interface ElementsOfValueResult {
       ease_of_doing_business_score: number;
       individual_score: number;
       inspirational_score: number;
-      elements: Record<string, { present: boolean; strength: number; evidence: string[] }>;
+      elements: Record<
+        string,
+        { present: boolean; strength: number; evidence: string[] }
+      >;
       recommendations: string[];
     };
   };
@@ -57,23 +63,25 @@ export class StandaloneElementsOfValueService {
 
       // Step 2: Run AI analysis (like Content-Comparison)
       console.log('🤖 Step 2: Running Elements of Value AI analysis...');
-      const analysisResult = await this.runElementsOfValueAnalysis(scrapedData, url);
+      const analysisResult = await this.runElementsOfValueAnalysis(
+        scrapedData,
+        url
+      );
 
       console.log(`✅ Elements of Value analysis completed for: ${url}`);
 
       return {
         success: true,
         url,
-        data: analysisResult
+        data: analysisResult,
       };
-
     } catch (error) {
       console.error('Elements of Value analysis failed:', error);
       return {
         success: false,
         url,
         data: {} as any,
-        error: error instanceof Error ? error.message : 'Analysis failed'
+        error: error instanceof Error ? error.message : 'Analysis failed',
       };
     }
   }
@@ -81,7 +89,10 @@ export class StandaloneElementsOfValueService {
   /**
    * Run Elements of Value analysis using Gemini AI
    */
-  private static async runElementsOfValueAnalysis(scrapedData: any, url: string): Promise<any> {
+  private static async runElementsOfValueAnalysis(
+    scrapedData: any,
+    url: string
+  ): Promise<any> {
     if (!this.genAI) {
       this.initialize();
     }
@@ -113,7 +124,10 @@ export class StandaloneElementsOfValueService {
   /**
    * Build comprehensive Elements of Value prompt
    */
-  private static buildElementsOfValuePrompt(scrapedData: any, url: string): string {
+  private static buildElementsOfValuePrompt(
+    scrapedData: any,
+    url: string
+  ): string {
     return `
 Analyze this website for B2C and B2B Elements of Value. Provide detailed analysis for both frameworks:
 

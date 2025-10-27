@@ -4,7 +4,10 @@
  * Maps keywords to database tables and runs Gemini analysis
  */
 
-import { UniversalPuppeteerScraper, UniversalScrapedData } from './universal-puppeteer-scraper';
+import {
+  UniversalPuppeteerScraper,
+  UniversalScrapedData,
+} from './universal-puppeteer-scraper';
 
 export interface AssessmentConfig {
   keywords: string[];
@@ -16,61 +19,123 @@ export interface AssessmentConfig {
 
 export const ASSESSMENT_CONFIGS: Record<string, AssessmentConfig> = {
   'content-comparison': {
-    keywords: ['compare', 'comparison', 'versus', 'vs', 'difference', 'improvement'],
+    keywords: [
+      'compare',
+      'comparison',
+      'versus',
+      'vs',
+      'difference',
+      'improvement',
+    ],
     tables: ['analyses', 'content_comparisons'],
     geminiPrompt: 'content-comparison',
     analysisType: 'comparison',
-    description: 'Compare existing vs proposed content'
+    description: 'Compare existing vs proposed content',
   },
   'golden-circle': {
-    keywords: ['why', 'how', 'what', 'who', 'purpose', 'mission', 'vision', 'values'],
+    keywords: [
+      'why',
+      'how',
+      'what',
+      'who',
+      'purpose',
+      'mission',
+      'vision',
+      'values',
+    ],
     tables: ['analyses', 'golden_circle_analyses'],
     geminiPrompt: 'golden-circle',
     analysisType: 'golden-circle',
-    description: 'Simon Sinek Golden Circle analysis'
+    description: 'Simon Sinek Golden Circle analysis',
   },
   'elements-value-b2c': {
-    keywords: ['functional', 'emotional', 'life-changing', 'social-impact', 'value', 'benefit', 'customer'],
+    keywords: [
+      'functional',
+      'emotional',
+      'life-changing',
+      'social-impact',
+      'value',
+      'benefit',
+      'customer',
+    ],
     tables: ['analyses', 'elements_of_value_b2c'],
     geminiPrompt: 'b2c-elements',
     analysisType: 'elements-value-b2c',
-    description: 'B2C Elements of Value analysis'
+    description: 'B2C Elements of Value analysis',
   },
   'elements-value-b2b': {
-    keywords: ['functional', 'emotional', 'life-changing', 'social-impact', 'business', 'enterprise', 'corporate'],
+    keywords: [
+      'functional',
+      'emotional',
+      'life-changing',
+      'social-impact',
+      'business',
+      'enterprise',
+      'corporate',
+    ],
     tables: ['analyses', 'elements_of_value_b2b'],
     geminiPrompt: 'b2b-elements',
     analysisType: 'elements-value-b2b',
-    description: 'B2B Elements of Value analysis'
+    description: 'B2B Elements of Value analysis',
   },
   'clifton-strengths': {
-    keywords: ['executing', 'influencing', 'relationship-building', 'strategic-thinking', 'strengths', 'talents'],
+    keywords: [
+      'executing',
+      'influencing',
+      'relationship-building',
+      'strategic-thinking',
+      'strengths',
+      'talents',
+    ],
     tables: ['analyses', 'clifton_strengths_analyses'],
     geminiPrompt: 'clifton-strengths',
     analysisType: 'clifton-strengths',
-    description: 'CliftonStrengths analysis'
+    description: 'CliftonStrengths analysis',
   },
-  'comprehensive': {
-    keywords: ['comprehensive', 'complete', 'full', 'detailed', 'thorough', 'analysis'],
+  comprehensive: {
+    keywords: [
+      'comprehensive',
+      'complete',
+      'full',
+      'detailed',
+      'thorough',
+      'analysis',
+    ],
     tables: ['analyses', 'comprehensive_analyses'],
     geminiPrompt: 'comprehensive',
     analysisType: 'comprehensive',
-    description: 'Comprehensive multi-framework analysis'
+    description: 'Comprehensive multi-framework analysis',
   },
   'seo-analysis': {
-    keywords: ['seo', 'search', 'optimization', 'ranking', 'keywords', 'meta', 'title', 'description'],
+    keywords: [
+      'seo',
+      'search',
+      'optimization',
+      'ranking',
+      'keywords',
+      'meta',
+      'title',
+      'description',
+    ],
     tables: ['analyses', 'seo_analyses'],
     geminiPrompt: 'seo-analysis',
     analysisType: 'seo',
-    description: 'SEO and search optimization analysis'
+    description: 'SEO and search optimization analysis',
   },
   'lighthouse-performance': {
-    keywords: ['performance', 'speed', 'lighthouse', 'core-web-vitals', 'loading', 'optimization'],
+    keywords: [
+      'performance',
+      'speed',
+      'lighthouse',
+      'core-web-vitals',
+      'loading',
+      'optimization',
+    ],
     tables: ['analyses', 'lighthouse_analyses'],
     geminiPrompt: 'lighthouse-performance',
     analysisType: 'lighthouse',
-    description: 'Lighthouse performance analysis'
-  }
+    description: 'Lighthouse performance analysis',
+  },
 };
 
 export class UniversalAssessmentService {
@@ -103,15 +168,26 @@ export class UniversalAssessmentService {
 
       // Step 2: Extract relevant keywords for this assessment
       console.log('🔍 Step 2: Extracting relevant keywords...');
-      const relevantKeywords = this.extractRelevantKeywords(scrapedData, config.keywords);
+      const relevantKeywords = this.extractRelevantKeywords(
+        scrapedData,
+        config.keywords
+      );
 
       // Step 3: Run Gemini analysis
       console.log('🤖 Step 3: Running Gemini analysis...');
-      const analysis = await this.runGeminiAnalysis(scrapedData, config.geminiPrompt, additionalData);
+      const analysis = await this.runGeminiAnalysis(
+        scrapedData,
+        config.geminiPrompt,
+        additionalData
+      );
 
       // Step 4: Map to database tables
       console.log('💾 Step 4: Mapping to database tables...');
-      const mappedData = this.mapToDatabaseTables(scrapedData, analysis, config.tables);
+      const mappedData = this.mapToDatabaseTables(
+        scrapedData,
+        analysis,
+        config.tables
+      );
 
       console.log(`✅ ${assessmentType} assessment completed successfully`);
 
@@ -123,12 +199,11 @@ export class UniversalAssessmentService {
           relevantKeywords,
           mappedData,
           assessmentType: config.analysisType,
-          description: config.description
+          description: config.description,
         },
         assessmentType: config.analysisType,
-        message: `${config.description} completed successfully`
+        message: `${config.description} completed successfully`,
       };
-
     } catch (error) {
       console.error(`${assessmentType} assessment failed:`, error);
       return {
@@ -136,7 +211,7 @@ export class UniversalAssessmentService {
         data: {} as UniversalScrapedData,
         analysis: {},
         assessmentType,
-        message: `Assessment failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        message: `Assessment failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       };
     }
   }
@@ -152,14 +227,15 @@ export class UniversalAssessmentService {
       ...scrapedData.seo.extractedKeywords,
       ...scrapedData.contentTags.topics,
       ...scrapedData.businessData.services,
-      ...scrapedData.businessData.products
+      ...scrapedData.businessData.products,
     ];
 
     // Find keywords that match assessment type
-    const relevantKeywords = allKeywords.filter(keyword =>
-      assessmentKeywords.some(assessmentKeyword =>
-        keyword.toLowerCase().includes(assessmentKeyword.toLowerCase()) ||
-        assessmentKeyword.toLowerCase().includes(keyword.toLowerCase())
+    const relevantKeywords = allKeywords.filter((keyword) =>
+      assessmentKeywords.some(
+        (assessmentKeyword) =>
+          keyword.toLowerCase().includes(assessmentKeyword.toLowerCase()) ||
+          assessmentKeyword.toLowerCase().includes(keyword.toLowerCase())
       )
     );
 
@@ -177,7 +253,11 @@ export class UniversalAssessmentService {
     try {
       const { analyzeWithGemini } = await import('./free-ai-analysis');
 
-      const prompt = this.buildAssessmentPrompt(scrapedData, promptType, additionalData);
+      const prompt = this.buildAssessmentPrompt(
+        scrapedData,
+        promptType,
+        additionalData
+      );
       const result = await analyzeWithGemini(prompt, promptType);
 
       return result;
@@ -211,7 +291,7 @@ Content: ${scrapedData.cleanText.substring(0, 3000)}
 SEO Data:
 - Keywords: ${scrapedData.seo.extractedKeywords.slice(0, 20).join(', ')}
 - Headings: H1(${scrapedData.seo.headings.h1.length}), H2(${scrapedData.seo.headings.h2.length}), H3(${scrapedData.seo.headings.h3.length})
-- Images: ${scrapedData.seo.images.length} (${scrapedData.seo.images.filter(img => !img.alt).length} missing alt text)
+- Images: ${scrapedData.seo.images.length} (${scrapedData.seo.images.filter((img) => !img.alt).length} missing alt text)
 - Internal Links: ${scrapedData.seo.internalLinks.length}
 - External Links: ${scrapedData.seo.externalLinks.length}
 
@@ -359,7 +439,7 @@ Provide a general analysis of this website including strengths, weaknesses, and 
         industry: scrapedData.contentTags.industry,
         technologies: scrapedData.contentTags.technologies,
         analysis_result: analysis,
-        scraped_at: scrapedData.scrapedAt
+        scraped_at: scrapedData.scrapedAt,
       },
       seo_data: {
         keywords: scrapedData.seo.extractedKeywords,
@@ -370,27 +450,27 @@ Provide a general analysis of this website including strengths, weaknesses, and 
           description: scrapedData.seo.metaDescription,
           keywords: scrapedData.seo.metaKeywords,
           robots: scrapedData.seo.metaRobots,
-          canonical: scrapedData.seo.canonicalUrl
+          canonical: scrapedData.seo.canonicalUrl,
         },
         social_media: {
           og_title: scrapedData.seo.ogTitle,
           og_description: scrapedData.seo.ogDescription,
           og_image: scrapedData.seo.ogImage,
-          twitter_card: scrapedData.seo.twitterCard
+          twitter_card: scrapedData.seo.twitterCard,
         },
         links: {
           internal: scrapedData.seo.internalLinks,
-          external: scrapedData.seo.externalLinks
+          external: scrapedData.seo.externalLinks,
         },
         images: scrapedData.seo.images,
         forms: scrapedData.seo.forms,
-        ctas: scrapedData.seo.ctas
+        ctas: scrapedData.seo.ctas,
       },
       structured_data: {
         json_ld: scrapedData.structuredData.jsonLd,
         microdata: scrapedData.structuredData.microdata,
         schema_types: scrapedData.structuredData.schemaTypes,
-        breadcrumbs: scrapedData.structuredData.breadcrumbs
+        breadcrumbs: scrapedData.structuredData.breadcrumbs,
       },
       performance_data: {
         load_time: scrapedData.performance.loadTime,
@@ -398,7 +478,7 @@ Provide a general analysis of this website including strengths, weaknesses, and 
         dom_depth: scrapedData.performance.domDepth,
         css_files: scrapedData.performance.cssFiles,
         js_files: scrapedData.performance.jsFiles,
-        render_blocking: scrapedData.performance.renderBlockingResources
+        render_blocking: scrapedData.performance.renderBlockingResources,
       },
       business_data: {
         company_name: scrapedData.businessData.companyName,
@@ -409,15 +489,18 @@ Provide a general analysis of this website including strengths, weaknesses, and 
         services: scrapedData.businessData.services,
         products: scrapedData.businessData.products,
         contact_info: scrapedData.businessData.contactInfo,
-        social_media: scrapedData.businessData.contactInfo.socialMedia
-      }
+        social_media: scrapedData.businessData.contactInfo.socialMedia,
+      },
     };
   }
 
   /**
    * Get fallback analysis when Gemini fails
    */
-  private static getFallbackAnalysis(scrapedData: UniversalScrapedData, promptType: string): any {
+  private static getFallbackAnalysis(
+    scrapedData: UniversalScrapedData,
+    promptType: string
+  ): any {
     return {
       type: promptType,
       status: 'fallback',
@@ -428,27 +511,29 @@ Provide a general analysis of this website including strengths, weaknesses, and 
         industry: scrapedData.contentTags.industry,
         keywords: scrapedData.seo.extractedKeywords.slice(0, 10),
         seo_score: this.calculateBasicSEOScore(scrapedData),
-        performance_score: this.calculateBasicPerformanceScore(scrapedData)
+        performance_score: this.calculateBasicPerformanceScore(scrapedData),
       },
       recommendations: [
         'Improve meta description',
         'Add more internal links',
         'Optimize images',
-        'Improve page load speed'
-      ]
+        'Improve page load speed',
+      ],
     };
   }
 
   /**
    * Calculate basic SEO score
    */
-  private static calculateBasicSEOScore(scrapedData: UniversalScrapedData): number {
+  private static calculateBasicSEOScore(
+    scrapedData: UniversalScrapedData
+  ): number {
     let score = 0;
 
     if (scrapedData.seo.metaTitle) score += 20;
     if (scrapedData.seo.metaDescription) score += 20;
     if (scrapedData.seo.headings.h1.length > 0) score += 20;
-    if (scrapedData.seo.images.filter(img => img.alt).length > 0) score += 20;
+    if (scrapedData.seo.images.filter((img) => img.alt).length > 0) score += 20;
     if (scrapedData.structuredData.schemaTypes.length > 0) score += 20;
 
     return score;
@@ -457,7 +542,9 @@ Provide a general analysis of this website including strengths, weaknesses, and 
   /**
    * Calculate basic performance score
    */
-  private static calculateBasicPerformanceScore(scrapedData: UniversalScrapedData): number {
+  private static calculateBasicPerformanceScore(
+    scrapedData: UniversalScrapedData
+  ): number {
     let score = 100;
 
     if (scrapedData.performance.loadTime > 3000) score -= 30;
@@ -472,30 +559,38 @@ Provide a general analysis of this website including strengths, weaknesses, and 
   /**
    * Get available assessment types
    */
-  static getAvailableAssessments(): Array<{ type: string; description: string; keywords: string[] }> {
+  static getAvailableAssessments(): Array<{
+    type: string;
+    description: string;
+    keywords: string[];
+  }> {
     return Object.entries(ASSESSMENT_CONFIGS).map(([type, config]) => ({
       type,
       description: config.description,
-      keywords: config.keywords
+      keywords: config.keywords,
     }));
   }
 
   /**
    * Health check for assessment service
    */
-  static async healthCheck(): Promise<{ status: string; message: string; assessments: number }> {
+  static async healthCheck(): Promise<{
+    status: string;
+    message: string;
+    assessments: number;
+  }> {
     try {
       const scraperHealth = await UniversalPuppeteerScraper.healthCheck();
       return {
         status: scraperHealth.status,
         message: `Assessment service: ${scraperHealth.message}`,
-        assessments: Object.keys(ASSESSMENT_CONFIGS).length
+        assessments: Object.keys(ASSESSMENT_CONFIGS).length,
       };
     } catch (error) {
       return {
         status: 'unhealthy',
         message: `Assessment service error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        assessments: 0
+        assessments: 0,
       };
     }
   }

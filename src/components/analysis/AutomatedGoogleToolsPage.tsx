@@ -7,24 +7,30 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { GoogleToolsDirectService } from '@/lib/services/google-tools-direct.service';
 import {
-    BarChart3,
-    Bot,
-    CheckCircle,
-    Copy,
-    Download,
-    ExternalLink,
-    Loader2,
-    RefreshCw,
-    Search,
-    TrendingUp,
-    X,
-    Zap
+  BarChart3,
+  Bot,
+  CheckCircle,
+  Copy,
+  Download,
+  ExternalLink,
+  Loader2,
+  RefreshCw,
+  Search,
+  TrendingUp,
+  X,
+  Zap,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -69,7 +75,10 @@ export function AutomatedGoogleToolsPage() {
   const handleGenerateLinks = () => {
     if (!url.trim()) return;
 
-    const keywordArray = keywords.split(',').map(k => k.trim()).filter(k => k.length > 0);
+    const keywordArray = keywords
+      .split(',')
+      .map((k) => k.trim())
+      .filter((k) => k.length > 0);
     const links = GoogleToolsDirectService.getToolLinks(url, keywordArray);
     setToolLinks(links);
   };
@@ -79,7 +88,10 @@ export function AutomatedGoogleToolsPage() {
 
     setIsScraping(true);
     try {
-      const keywordArray = keywords.split(',').map(k => k.trim()).filter(k => k.length > 0);
+      const keywordArray = keywords
+        .split(',')
+        .map((k) => k.trim())
+        .filter((k) => k.length > 0);
 
       const response = await fetch('/api/scrape-google-tools', {
         method: 'POST',
@@ -88,7 +100,7 @@ export function AutomatedGoogleToolsPage() {
         },
         body: JSON.stringify({
           url,
-          keywords: keywordArray
+          keywords: keywordArray,
         }),
       });
 
@@ -154,13 +166,20 @@ ${prompt.format}`;
 
   const getToolIcon = (toolName: string) => {
     switch (toolName) {
-      case 'Google Trends': return <TrendingUp className="h-6 w-6" />;
-      case 'PageSpeed Insights': return <Zap className="h-6 w-6" />;
-      case 'Google Search Console': return <Search className="h-6 w-6" />;
-      case 'Google Analytics': return <BarChart3 className="h-6 w-6" />;
-      case 'Lighthouse Audit': return <Zap className="h-6 w-6" />;
-      case 'GTmetrix Analysis': return <BarChart3 className="h-6 w-6" />;
-      default: return <ExternalLink className="h-6 w-6" />;
+      case 'Google Trends':
+        return <TrendingUp className="h-6 w-6" />;
+      case 'PageSpeed Insights':
+        return <Zap className="h-6 w-6" />;
+      case 'Google Search Console':
+        return <Search className="h-6 w-6" />;
+      case 'Google Analytics':
+        return <BarChart3 className="h-6 w-6" />;
+      case 'Lighthouse Audit':
+        return <Zap className="h-6 w-6" />;
+      case 'GTmetrix Analysis':
+        return <BarChart3 className="h-6 w-6" />;
+      default:
+        return <ExternalLink className="h-6 w-6" />;
     }
   };
 
@@ -179,14 +198,15 @@ ${prompt.format}`;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-      <div className="container mx-auto py-8 px-4">
+      <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="mb-8 text-center">
+          <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-white">
             Automated Google Tools Analysis
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Get direct access to Google Tools AND automatically scrape data for AI analysis
+          <p className="mx-auto max-w-3xl text-xl text-gray-600 dark:text-gray-300">
+            Get direct access to Google Tools AND automatically scrape data for
+            AI analysis
           </p>
         </div>
 
@@ -198,7 +218,8 @@ ${prompt.format}`;
               Automated Data Collection
             </CardTitle>
             <CardDescription>
-              Enter your website URL and keywords to get both direct tool links and automated data extraction
+              Enter your website URL and keywords to get both direct tool links
+              and automated data extraction
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -255,7 +276,9 @@ ${prompt.format}`;
                 <Button
                   onClick={handleClearAll}
                   variant="outline"
-                  disabled={!url.trim() && !keywords.trim() && toolLinks.length === 0}
+                  disabled={
+                    !url.trim() && !keywords.trim() && toolLinks.length === 0
+                  }
                 >
                   <X className="mr-2 h-4 w-4" />
                   Clear All
@@ -275,7 +298,8 @@ ${prompt.format}`;
                   <div>
                     <CardTitle>Automatically Scraped Data</CardTitle>
                     <CardDescription>
-                      Data successfully extracted from Google Tools using Puppeteer
+                      Data successfully extracted from Google Tools using
+                      Puppeteer
                     </CardDescription>
                   </div>
                 </div>
@@ -294,16 +318,18 @@ ${prompt.format}`;
                 {scrapedData.trends && (
                   <Card className="border-l-4 border-l-blue-500">
                     <CardContent className="pt-4">
-                      <div className="flex items-center space-x-2 mb-2">
+                      <div className="mb-2 flex items-center space-x-2">
                         <TrendingUp className="h-6 w-6 text-blue-600" />
-                        <h3 className="font-semibold text-lg">Google Trends</h3>
+                        <h3 className="text-lg font-semibold">Google Trends</h3>
                         <Badge variant="secondary">Auto-Scraped</Badge>
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Related queries: {scrapedData.trends.relatedQueries?.length || 0}
+                        Related queries:{' '}
+                        {scrapedData.trends.relatedQueries?.length || 0}
                       </p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Related topics: {scrapedData.trends.relatedTopics?.length || 0}
+                        Related topics:{' '}
+                        {scrapedData.trends.relatedTopics?.length || 0}
                       </p>
                     </CardContent>
                   </Card>
@@ -312,16 +338,20 @@ ${prompt.format}`;
                 {scrapedData.pageSpeed && (
                   <Card className="border-l-4 border-l-green-500">
                     <CardContent className="pt-4">
-                      <div className="flex items-center space-x-2 mb-2">
+                      <div className="mb-2 flex items-center space-x-2">
                         <Zap className="h-6 w-6 text-green-600" />
-                        <h3 className="font-semibold text-lg">PageSpeed Insights</h3>
+                        <h3 className="text-lg font-semibold">
+                          PageSpeed Insights
+                        </h3>
                         <Badge variant="secondary">Auto-Scraped</Badge>
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Performance: {scrapedData.pageSpeed.performanceScore || 0}/100
+                        Performance:{' '}
+                        {scrapedData.pageSpeed.performanceScore || 0}/100
                       </p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Opportunities: {scrapedData.pageSpeed.opportunities?.length || 0}
+                        Opportunities:{' '}
+                        {scrapedData.pageSpeed.opportunities?.length || 0}
                       </p>
                     </CardContent>
                   </Card>
@@ -330,9 +360,11 @@ ${prompt.format}`;
                 {scrapedData.searchConsole && (
                   <Card className="border-l-4 border-l-purple-500">
                     <CardContent className="pt-4">
-                      <div className="flex items-center space-x-2 mb-2">
+                      <div className="mb-2 flex items-center space-x-2">
                         <Search className="h-6 w-6 text-purple-600" />
-                        <h3 className="font-semibold text-lg">Search Console</h3>
+                        <h3 className="text-lg font-semibold">
+                          Search Console
+                        </h3>
                         <Badge variant="outline">Auth Required</Badge>
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -345,9 +377,11 @@ ${prompt.format}`;
                 {scrapedData.analytics && (
                   <Card className="border-l-4 border-l-orange-500">
                     <CardContent className="pt-4">
-                      <div className="flex items-center space-x-2 mb-2">
+                      <div className="mb-2 flex items-center space-x-2">
                         <BarChart3 className="h-6 w-6 text-orange-600" />
-                        <h3 className="font-semibold text-lg">Google Analytics</h3>
+                        <h3 className="text-lg font-semibold">
+                          Google Analytics
+                        </h3>
                         <Badge variant="outline">Auth Required</Badge>
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -371,7 +405,8 @@ ${prompt.format}`;
                   <div>
                     <CardTitle>Google Tools Access</CardTitle>
                     <CardDescription>
-                      Click on any tool to open it in a new tab, or copy the link to share
+                      Click on any tool to open it in a new tab, or copy the
+                      link to share
                     </CardDescription>
                   </div>
                 </div>
@@ -390,10 +425,10 @@ ${prompt.format}`;
                 {toolLinks.map((tool, index) => (
                   <Card key={index} className="border-l-4 border-l-blue-500">
                     <CardContent className="pt-4">
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="mb-2 flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                           {getToolIcon(tool.name)}
-                          <h3 className="font-semibold text-lg">{tool.name}</h3>
+                          <h3 className="text-lg font-semibold">{tool.name}</h3>
                         </div>
                         <div className="flex space-x-2">
                           <Button
@@ -415,10 +450,10 @@ ${prompt.format}`;
                           </Button>
                         </div>
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
                         {tool.description}
                       </p>
-                      <div className="text-xs text-gray-500 font-mono break-all">
+                      <div className="break-all font-mono text-xs text-gray-500">
                         {tool.url}
                       </div>
                     </CardContent>
@@ -460,10 +495,16 @@ ${prompt.format}`;
 
               {selectedTool && (
                 <div>
-                  <Label htmlFor="manual-data">Paste Data from {selectedTool}</Label>
+                  <Label htmlFor="manual-data">
+                    Paste Data from {selectedTool}
+                  </Label>
                   <Textarea
                     id="manual-data"
-                    placeholder={GoogleToolsDirectService.getDataInputPrompts()[selectedTool]}
+                    placeholder={
+                      GoogleToolsDirectService.getDataInputPrompts()[
+                        selectedTool
+                      ]
+                    }
                     value={manualData}
                     onChange={(e) => setManualData(e.target.value)}
                     className="mt-1 min-h-[200px]"
@@ -492,7 +533,7 @@ ${prompt.format}`;
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+              <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
                 <pre className="whitespace-pre-wrap text-sm">
                   {analysisResult}
                 </pre>

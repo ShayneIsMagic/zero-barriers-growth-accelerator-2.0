@@ -2,22 +2,28 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { WebsiteAnalysisResult } from '@/types/analysis';
 import {
-    AlertCircle,
-    CheckCircle,
-    Download,
-    ExternalLink,
-    Gauge,
-    Lightbulb,
-    Share2,
-    Target,
-    TrendingUp,
-    Users,
-    XCircle
+  AlertCircle,
+  CheckCircle,
+  Download,
+  ExternalLink,
+  Gauge,
+  Lightbulb,
+  Share2,
+  Target,
+  TrendingUp,
+  Users,
+  XCircle,
 } from 'lucide-react';
 import { LighthouseAnalysisResults } from './LighthouseAnalysisResults';
 
@@ -25,7 +31,9 @@ interface WebsiteAnalysisResultsProps {
   result: WebsiteAnalysisResult;
 }
 
-export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) {
+export function WebsiteAnalysisResults({
+  result,
+}: WebsiteAnalysisResultsProps) {
   // Early return if result is null or undefined
   if (!result) {
     return (
@@ -33,7 +41,7 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
         <Card>
           <CardContent className="p-6">
             <div className="text-center text-gray-500">
-              <AlertCircle className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <AlertCircle className="mx-auto mb-4 h-12 w-12 text-gray-300" />
               <p>No analysis results available</p>
             </div>
           </CardContent>
@@ -65,7 +73,10 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
             Overall Analysis Score
           </CardTitle>
           <CardDescription>
-            Analysis of {result.url} completed on {result.timestamp ? new Date(result.timestamp).toLocaleDateString() : 'Unknown date'}
+            Analysis of {result.url} completed on{' '}
+            {result.timestamp
+              ? new Date(result.timestamp).toLocaleDateString()
+              : 'Unknown date'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -75,10 +86,14 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
             </div>
             <div className="flex-1">
               <Progress value={result.overallScore * 10} className="h-3" />
-              <p className="text-sm text-gray-600 mt-2">
-                {result.overallScore >= 8 ? 'Excellent' :
-                 result.overallScore >= 6 ? 'Good' :
-                 result.overallScore >= 4 ? 'Needs Improvement' : 'Critical Issues'}
+              <p className="mt-2 text-sm text-gray-600">
+                {result.overallScore >= 8
+                  ? 'Excellent'
+                  : result.overallScore >= 6
+                    ? 'Good'
+                    : result.overallScore >= 4
+                      ? 'Needs Improvement'
+                      : 'Critical Issues'}
               </p>
             </div>
           </div>
@@ -105,115 +120,181 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
                 Simon Sinek&apos;s Golden Circle Analysis
               </CardTitle>
               <CardDescription>
-                Overall Score: {result.goldenCircle?.overallScore?.toFixed(1) || 'N/A'}/10
+                Overall Score:{' '}
+                {result.goldenCircle?.overallScore?.toFixed(1) || 'N/A'}/10
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Why */}
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="mb-2 flex items-center justify-between">
                   <h4 className="font-medium">Why (Purpose)</h4>
-                  <Badge className={getScoreColor(result.goldenCircle?.why?.score || 0)}>
+                  <Badge
+                    className={getScoreColor(
+                      result.goldenCircle?.why?.score || 0
+                    )}
+                  >
                     {result.goldenCircle?.why?.score || 0}/10
                   </Badge>
                 </div>
                 <div className="space-y-3">
-                  <p className="text-sm text-gray-600">{result.goldenCircle?.why?.currentState || 'No current state available'}</p>
+                  <p className="text-sm text-gray-600">
+                    {result.goldenCircle?.why?.currentState ||
+                      'No current state available'}
+                  </p>
                   <div>
-                    <h5 className="text-sm font-medium text-red-600 mb-1">Issues:</h5>
-                    <ul className="text-sm space-y-1">
-                      {(result.goldenCircle?.why?.issues || []).map((issue, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <XCircle className="h-3 w-3 text-red-500 mt-0.5 flex-shrink-0" />
-                          {issue}
-                        </li>
-                      ))}
+                    <h5 className="mb-1 text-sm font-medium text-red-600">
+                      Issues:
+                    </h5>
+                    <ul className="space-y-1 text-sm">
+                      {(result.goldenCircle?.why?.issues || []).map(
+                        (issue, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <XCircle className="mt-0.5 h-3 w-3 flex-shrink-0 text-red-500" />
+                            {issue}
+                          </li>
+                        )
+                      )}
                     </ul>
                   </div>
                   <div>
-                    <h5 className="text-sm font-medium text-green-600 mb-1">Recommended Message:</h5>
-                    <p className="text-sm bg-green-50 p-3 rounded border">{result.goldenCircle?.why?.transformedMessage || 'No transformed message available'}</p>
+                    <h5 className="mb-1 text-sm font-medium text-green-600">
+                      Recommended Message:
+                    </h5>
+                    <p className="rounded border bg-green-50 p-3 text-sm">
+                      {result.goldenCircle?.why?.transformedMessage ||
+                        'No transformed message available'}
+                    </p>
                   </div>
                 </div>
               </div>
 
               {/* How */}
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="mb-2 flex items-center justify-between">
                   <h4 className="font-medium">How (Process)</h4>
-                  <Badge className={getScoreColor(result.goldenCircle?.how?.score || 0)}>
+                  <Badge
+                    className={getScoreColor(
+                      result.goldenCircle?.how?.score || 0
+                    )}
+                  >
                     {result.goldenCircle?.how?.score || 'N/A'}/10
                   </Badge>
                 </div>
                 <div className="space-y-3">
-                  <p className="text-sm text-gray-600">{result.goldenCircle?.how?.currentState || 'No data available'}</p>
+                  <p className="text-sm text-gray-600">
+                    {result.goldenCircle?.how?.currentState ||
+                      'No data available'}
+                  </p>
                   <div>
-                    <h5 className="text-sm font-medium text-green-600 mb-1">Recommended Process:</h5>
-                    <p className="text-sm bg-green-50 p-3 rounded border">{result.goldenCircle?.how?.transformedMessage || 'No recommendations available'}</p>
+                    <h5 className="mb-1 text-sm font-medium text-green-600">
+                      Recommended Process:
+                    </h5>
+                    <p className="rounded border bg-green-50 p-3 text-sm">
+                      {result.goldenCircle?.how?.transformedMessage ||
+                        'No recommendations available'}
+                    </p>
                   </div>
                 </div>
               </div>
 
               {/* What */}
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="mb-2 flex items-center justify-between">
                   <h4 className="font-medium">What (Product)</h4>
-                  <Badge className={getScoreColor(result.goldenCircle?.what?.score || 0)}>
+                  <Badge
+                    className={getScoreColor(
+                      result.goldenCircle?.what?.score || 0
+                    )}
+                  >
                     {result.goldenCircle?.what?.score || 0}/10
                   </Badge>
                 </div>
                 <div className="space-y-3">
-                  <p className="text-sm text-gray-600">{result.goldenCircle?.what?.currentState || 'No current state available'}</p>
+                  <p className="text-sm text-gray-600">
+                    {result.goldenCircle?.what?.currentState ||
+                      'No current state available'}
+                  </p>
                   <div>
-                    <h5 className="text-sm font-medium text-green-600 mb-1">Recommended Offering:</h5>
-                    <p className="text-sm bg-green-50 p-3 rounded border">{result.goldenCircle?.what?.transformedMessage || 'No transformed message available'}</p>
+                    <h5 className="mb-1 text-sm font-medium text-green-600">
+                      Recommended Offering:
+                    </h5>
+                    <p className="rounded border bg-green-50 p-3 text-sm">
+                      {result.goldenCircle?.what?.transformedMessage ||
+                        'No transformed message available'}
+                    </p>
                   </div>
                 </div>
               </div>
 
               {/* Who */}
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="mb-2 flex items-center justify-between">
                   <h4 className="font-medium">Who (Target Audience)</h4>
-                  <Badge className={getScoreColor(result.goldenCircle?.who?.score || 0)}>
+                  <Badge
+                    className={getScoreColor(
+                      result.goldenCircle?.who?.score || 0
+                    )}
+                  >
                     {result.goldenCircle?.who?.score || 0}/10
                   </Badge>
                 </div>
                 <div className="space-y-3">
-                  <p className="text-sm text-gray-600">{result.goldenCircle?.who?.currentState || 'No current state available'}</p>
+                  <p className="text-sm text-gray-600">
+                    {result.goldenCircle?.who?.currentState ||
+                      'No current state available'}
+                  </p>
 
                   <div>
-                    <h5 className="text-sm font-medium text-blue-600 mb-1">Target Audiences:</h5>
-                    <ul className="text-sm space-y-1">
-                      {(result.goldenCircle?.who?.targetAudience || []).map((audience, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <Users className="h-3 w-3 text-blue-500 mt-0.5 flex-shrink-0" />
-                          {audience}
-                        </li>
-                      ))}
+                    <h5 className="mb-1 text-sm font-medium text-blue-600">
+                      Target Audiences:
+                    </h5>
+                    <ul className="space-y-1 text-sm">
+                      {(result.goldenCircle?.who?.targetAudience || []).map(
+                        (audience, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <Users className="mt-0.5 h-3 w-3 flex-shrink-0 text-blue-500" />
+                            {audience}
+                          </li>
+                        )
+                      )}
                     </ul>
                   </div>
 
                   <div>
-                    <h5 className="text-sm font-medium text-purple-600 mb-1">Emotional Connection:</h5>
-                    <p className="text-sm bg-purple-50 p-3 rounded border">{result.goldenCircle?.who?.emotionalConnection || 'No emotional connection strategy identified'}</p>
+                    <h5 className="mb-1 text-sm font-medium text-purple-600">
+                      Emotional Connection:
+                    </h5>
+                    <p className="rounded border bg-purple-50 p-3 text-sm">
+                      {result.goldenCircle?.who?.emotionalConnection ||
+                        'No emotional connection strategy identified'}
+                    </p>
                   </div>
 
                   <div>
-                    <h5 className="text-sm font-medium text-red-600 mb-1">Issues:</h5>
-                    <ul className="text-sm space-y-1">
-                      {(result.goldenCircle?.who?.issues || []).map((issue, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <XCircle className="h-3 w-3 text-red-500 mt-0.5 flex-shrink-0" />
-                          {issue}
-                        </li>
-                      ))}
+                    <h5 className="mb-1 text-sm font-medium text-red-600">
+                      Issues:
+                    </h5>
+                    <ul className="space-y-1 text-sm">
+                      {(result.goldenCircle?.who?.issues || []).map(
+                        (issue, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <XCircle className="mt-0.5 h-3 w-3 flex-shrink-0 text-red-500" />
+                            {issue}
+                          </li>
+                        )
+                      )}
                     </ul>
                   </div>
 
                   <div>
-                    <h5 className="text-sm font-medium text-green-600 mb-1">Recommended Message:</h5>
-                    <p className="text-sm bg-green-50 p-3 rounded border">{result.goldenCircle?.who?.transformedMessage || 'No transformed message available'}</p>
+                    <h5 className="mb-1 text-sm font-medium text-green-600">
+                      Recommended Message:
+                    </h5>
+                    <p className="rounded border bg-green-50 p-3 text-sm">
+                      {result.goldenCircle?.who?.transformedMessage ||
+                        'No transformed message available'}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -230,41 +311,68 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
                 Consumer Elements of Value Analysis
               </CardTitle>
               <CardDescription>
-                Overall Score: {result.elementsOfValue.overallScore.toFixed(1)}/10
+                Overall Score: {result.elementsOfValue.overallScore.toFixed(1)}
+                /10
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {result.elementsOfValue && Object.entries(result.elementsOfValue).filter(([key]) => key !== 'overallScore' && key !== 'insights').map(([category, data]: [string, any]) => (
-                <div key={category} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="font-medium capitalize">{category.replace(/([A-Z])/g, ' $1')}</h4>
-                    <Badge className={getScoreColor(data.score)}>
-                      {data.score}/10
-                    </Badge>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    {data.elements && Object.entries(data.elements).map(([element, value]: [string, any]) => (
-                      <div key={element} className="flex items-center gap-2">
-                        {value ? <CheckCircle className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-red-500" />}
-                        <span className="capitalize">{element.replace(/([A-Z])/g, ' $1')}</span>
+              {result.elementsOfValue &&
+                Object.entries(result.elementsOfValue)
+                  .filter(
+                    ([key]) => key !== 'overallScore' && key !== 'insights'
+                  )
+                  .map(([category, data]: [string, any]) => (
+                    <div key={category} className="rounded-lg border p-4">
+                      <div className="mb-3 flex items-center justify-between">
+                        <h4 className="font-medium capitalize">
+                          {category.replace(/([A-Z])/g, ' $1')}
+                        </h4>
+                        <Badge className={getScoreColor(data.score)}>
+                          {data.score}/10
+                        </Badge>
                       </div>
-                    ))}
-                  </div>
-                  {data.recommendations.length > 0 && (
-                    <div className="mt-3">
-                      <h5 className="text-sm font-medium text-blue-600 mb-1">Recommendations:</h5>
-                      <ul className="text-sm space-y-1">
-                        {data.recommendations.map((rec: string, index: number) => (
-                          <li key={index} className="flex items-start gap-2">
-                            <Lightbulb className="h-3 w-3 text-blue-500 mt-0.5 flex-shrink-0" />
-                            {rec}
-                          </li>
-                        ))}
-                      </ul>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        {data.elements &&
+                          Object.entries(data.elements).map(
+                            ([element, value]: [string, any]) => (
+                              <div
+                                key={element}
+                                className="flex items-center gap-2"
+                              >
+                                {value ? (
+                                  <CheckCircle className="h-4 w-4 text-green-500" />
+                                ) : (
+                                  <XCircle className="h-4 w-4 text-red-500" />
+                                )}
+                                <span className="capitalize">
+                                  {element.replace(/([A-Z])/g, ' $1')}
+                                </span>
+                              </div>
+                            )
+                          )}
+                      </div>
+                      {data.recommendations.length > 0 && (
+                        <div className="mt-3">
+                          <h5 className="mb-1 text-sm font-medium text-blue-600">
+                            Recommendations:
+                          </h5>
+                          <ul className="space-y-1 text-sm">
+                            {data.recommendations.map(
+                              (rec: string, index: number) => (
+                                <li
+                                  key={index}
+                                  className="flex items-start gap-2"
+                                >
+                                  <Lightbulb className="mt-0.5 h-3 w-3 flex-shrink-0 text-blue-500" />
+                                  {rec}
+                                </li>
+                              )
+                            )}
+                          </ul>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              ))}
+                  ))}
             </CardContent>
           </Card>
         </TabsContent>
@@ -278,43 +386,69 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
                 B2B Elements of Value Analysis
               </CardTitle>
               <CardDescription>
-                Overall Score: {result.b2bElements?.overallScore?.toFixed(1) || 'N/A'}/10
+                Overall Score:{' '}
+                {result.b2bElements?.overallScore?.toFixed(1) || 'N/A'}/10
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {result.b2bElements ? Object.entries(result.b2bElements).filter(([key]) => key !== 'overallScore').map(([category, data]: [string, any]) => (
-                <div key={category} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="font-medium capitalize">{category.replace(/([A-Z])/g, ' $1')}</h4>
-                    <Badge className={getScoreColor(data.score)}>
-                      {data.score}/10
-                    </Badge>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    {data.elements && Object.entries(data.elements).map(([element, value]: [string, any]) => (
-                      <div key={element} className="flex items-center gap-2">
-                        {value ? <CheckCircle className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-red-500" />}
-                        <span className="capitalize">{element.replace(/([A-Z])/g, ' $1')}</span>
+              {result.b2bElements ? (
+                Object.entries(result.b2bElements)
+                  .filter(([key]) => key !== 'overallScore')
+                  .map(([category, data]: [string, any]) => (
+                    <div key={category} className="rounded-lg border p-4">
+                      <div className="mb-3 flex items-center justify-between">
+                        <h4 className="font-medium capitalize">
+                          {category.replace(/([A-Z])/g, ' $1')}
+                        </h4>
+                        <Badge className={getScoreColor(data.score)}>
+                          {data.score}/10
+                        </Badge>
                       </div>
-                    ))}
-                  </div>
-                  {data.recommendations.length > 0 && (
-                    <div className="mt-3">
-                      <h5 className="text-sm font-medium text-blue-600 mb-1">Recommendations:</h5>
-                      <ul className="text-sm space-y-1">
-                        {data.recommendations.map((rec: string, index: number) => (
-                          <li key={index} className="flex items-start gap-2">
-                            <Lightbulb className="h-3 w-3 text-blue-500 mt-0.5 flex-shrink-0" />
-                            {rec}
-                          </li>
-                        ))}
-                      </ul>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        {data.elements &&
+                          Object.entries(data.elements).map(
+                            ([element, value]: [string, any]) => (
+                              <div
+                                key={element}
+                                className="flex items-center gap-2"
+                              >
+                                {value ? (
+                                  <CheckCircle className="h-4 w-4 text-green-500" />
+                                ) : (
+                                  <XCircle className="h-4 w-4 text-red-500" />
+                                )}
+                                <span className="capitalize">
+                                  {element.replace(/([A-Z])/g, ' $1')}
+                                </span>
+                              </div>
+                            )
+                          )}
+                      </div>
+                      {data.recommendations.length > 0 && (
+                        <div className="mt-3">
+                          <h5 className="mb-1 text-sm font-medium text-blue-600">
+                            Recommendations:
+                          </h5>
+                          <ul className="space-y-1 text-sm">
+                            {data.recommendations.map(
+                              (rec: string, index: number) => (
+                                <li
+                                  key={index}
+                                  className="flex items-start gap-2"
+                                >
+                                  <Lightbulb className="mt-0.5 h-3 w-3 flex-shrink-0 text-blue-500" />
+                                  {rec}
+                                </li>
+                              )
+                            )}
+                          </ul>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              )) : (
-                <div className="text-center text-gray-500 py-8">
-                  <AlertCircle className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+                  ))
+              ) : (
+                <div className="py-8 text-center text-gray-500">
+                  <AlertCircle className="mx-auto mb-2 h-8 w-8 text-gray-300" />
                   <p>B2B Elements analysis not available</p>
                 </div>
               )}
@@ -331,41 +465,69 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
                 CliftonStrengths Domains Analysis
               </CardTitle>
               <CardDescription>
-                Overall Score: {result.cliftonStrengths.overallScore.toFixed(1)}/10
+                Overall Score: {result.cliftonStrengths.overallScore.toFixed(1)}
+                /10
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {result.cliftonStrengths && Object.entries(result.cliftonStrengths).filter(([key]) => key !== 'overallScore' && key !== 'insights' && key !== 'recommendations' && key !== 'topThemes').map(([domain, data]: [string, any]) => (
-                <div key={domain} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="font-medium capitalize">{domain.replace(/([A-Z])/g, ' $1')}</h4>
-                    <Badge className={getScoreColor(data.score)}>
-                      {data.score}/10
-                    </Badge>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    {Object.entries(data.elements).map(([element, value]: [string, any]) => (
-                      <div key={element} className="flex items-center gap-2">
-                        {value ? <CheckCircle className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-red-500" />}
-                        <span className="capitalize">{element}</span>
+              {result.cliftonStrengths &&
+                Object.entries(result.cliftonStrengths)
+                  .filter(
+                    ([key]) =>
+                      key !== 'overallScore' &&
+                      key !== 'insights' &&
+                      key !== 'recommendations' &&
+                      key !== 'topThemes'
+                  )
+                  .map(([domain, data]: [string, any]) => (
+                    <div key={domain} className="rounded-lg border p-4">
+                      <div className="mb-3 flex items-center justify-between">
+                        <h4 className="font-medium capitalize">
+                          {domain.replace(/([A-Z])/g, ' $1')}
+                        </h4>
+                        <Badge className={getScoreColor(data.score)}>
+                          {data.score}/10
+                        </Badge>
                       </div>
-                    ))}
-                  </div>
-                  {data.recommendations.length > 0 && (
-                    <div className="mt-3">
-                      <h5 className="text-sm font-medium text-blue-600 mb-1">Recommendations:</h5>
-                      <ul className="text-sm space-y-1">
-                        {data.recommendations.map((rec: string, index: number) => (
-                          <li key={index} className="flex items-start gap-2">
-                            <Lightbulb className="h-3 w-3 text-blue-500 mt-0.5 flex-shrink-0" />
-                            {rec}
-                          </li>
-                        ))}
-                      </ul>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        {Object.entries(data.elements).map(
+                          ([element, value]: [string, any]) => (
+                            <div
+                              key={element}
+                              className="flex items-center gap-2"
+                            >
+                              {value ? (
+                                <CheckCircle className="h-4 w-4 text-green-500" />
+                              ) : (
+                                <XCircle className="h-4 w-4 text-red-500" />
+                              )}
+                              <span className="capitalize">{element}</span>
+                            </div>
+                          )
+                        )}
+                      </div>
+                      {data.recommendations.length > 0 && (
+                        <div className="mt-3">
+                          <h5 className="mb-1 text-sm font-medium text-blue-600">
+                            Recommendations:
+                          </h5>
+                          <ul className="space-y-1 text-sm">
+                            {data.recommendations.map(
+                              (rec: string, index: number) => (
+                                <li
+                                  key={index}
+                                  className="flex items-start gap-2"
+                                >
+                                  <Lightbulb className="mt-0.5 h-3 w-3 flex-shrink-0 text-blue-500" />
+                                  {rec}
+                                </li>
+                              )
+                            )}
+                          </ul>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              ))}
+                  ))}
             </CardContent>
           </Card>
         </TabsContent>
@@ -379,42 +541,75 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
                 Transformation Messaging Analysis
               </CardTitle>
               <CardDescription>
-                Overall Score: {result.transformation.overallScore.toFixed(1)}/10
+                Overall Score: {result.transformation.overallScore.toFixed(1)}
+                /10
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Hero Section */}
               <div>
-                <h4 className="font-medium mb-2">Hero Section</h4>
+                <h4 className="mb-2 font-medium">Hero Section</h4>
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600">Current:</span>
-                    <Badge variant="outline">{result.transformation.currentMessaging.heroSection.score}/10</Badge>
+                    <Badge variant="outline">
+                      {result.transformation.currentMessaging.heroSection.score}
+                      /10
+                    </Badge>
                   </div>
-                  <p className="text-sm bg-gray-50 p-3 rounded border">{result.transformation.currentMessaging.heroSection.current}</p>
-                  <p className="text-sm bg-green-50 p-3 rounded border font-medium">{result.transformation.currentMessaging.heroSection.recommended}</p>
+                  <p className="rounded border bg-gray-50 p-3 text-sm">
+                    {result.transformation.currentMessaging.heroSection.current}
+                  </p>
+                  <p className="rounded border bg-green-50 p-3 text-sm font-medium">
+                    {
+                      result.transformation.currentMessaging.heroSection
+                        .recommended
+                    }
+                  </p>
                 </div>
               </div>
 
               {/* Service Descriptions */}
               <div>
-                <h4 className="font-medium mb-2">Service Descriptions</h4>
+                <h4 className="mb-2 font-medium">Service Descriptions</h4>
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600">Current:</span>
-                    <Badge variant="outline">{result.transformation.currentMessaging.serviceDescriptions.score}/10</Badge>
+                    <Badge variant="outline">
+                      {
+                        result.transformation.currentMessaging
+                          .serviceDescriptions.score
+                      }
+                      /10
+                    </Badge>
                   </div>
                   <div className="space-y-2">
-                    {result.transformation.currentMessaging.serviceDescriptions.current.map((desc, index) => (
-                      <p key={index} className="text-sm bg-gray-50 p-2 rounded border">{desc}</p>
-                    ))}
+                    {result.transformation.currentMessaging.serviceDescriptions.current.map(
+                      (desc, index) => (
+                        <p
+                          key={index}
+                          className="rounded border bg-gray-50 p-2 text-sm"
+                        >
+                          {desc}
+                        </p>
+                      )
+                    )}
                   </div>
                   <div>
-                    <h5 className="text-sm font-medium text-green-600 mb-2">Recommended:</h5>
+                    <h5 className="mb-2 text-sm font-medium text-green-600">
+                      Recommended:
+                    </h5>
                     <div className="space-y-2">
-                      {result.transformation.currentMessaging.serviceDescriptions.recommended.map((desc, index) => (
-                        <p key={index} className="text-sm bg-green-50 p-2 rounded border font-medium">{desc}</p>
-                      ))}
+                      {result.transformation.currentMessaging.serviceDescriptions.recommended.map(
+                        (desc, index) => (
+                          <p
+                            key={index}
+                            className="rounded border bg-green-50 p-2 text-sm font-medium"
+                          >
+                            {desc}
+                          </p>
+                        )
+                      )}
                     </div>
                   </div>
                 </div>
@@ -422,18 +617,29 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
 
               {/* Social Media Analysis */}
               <div>
-                <h4 className="font-medium mb-2">Social Media Strategy</h4>
+                <h4 className="mb-2 font-medium">Social Media Strategy</h4>
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600">Score:</span>
-                    <Badge variant="outline">{result.transformation.socialMediaAnalysis.score}/10</Badge>
+                    <Badge variant="outline">
+                      {result.transformation.socialMediaAnalysis.score}/10
+                    </Badge>
                   </div>
                   <div>
-                    <h5 className="text-sm font-medium text-blue-600 mb-2">Recommended Posts:</h5>
+                    <h5 className="mb-2 text-sm font-medium text-blue-600">
+                      Recommended Posts:
+                    </h5>
                     <div className="space-y-2">
-                      {result.transformation.socialMediaAnalysis.recommendedPosts.map((post, index) => (
-                        <p key={index} className="text-sm bg-blue-50 p-3 rounded border">{post}</p>
-                      ))}
+                      {result.transformation.socialMediaAnalysis.recommendedPosts.map(
+                        (post, index) => (
+                          <p
+                            key={index}
+                            className="rounded border bg-blue-50 p-3 text-sm"
+                          >
+                            {post}
+                          </p>
+                        )
+                      )}
                     </div>
                   </div>
                 </div>
@@ -454,12 +660,14 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
                   Performance Analysis
                 </CardTitle>
                 <CardDescription>
-                  Lighthouse performance analysis is not available for this analysis.
+                  Lighthouse performance analysis is not available for this
+                  analysis.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600">
-                  Performance analysis may not be available due to technical limitations or the analysis being performed with mock data.
+                  Performance analysis may not be available due to technical
+                  limitations or the analysis being performed with mock data.
                 </p>
               </CardContent>
             </Card>
@@ -477,11 +685,13 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
-            <h4 className="font-medium text-red-600 mb-3">Immediate (Week 1-2)</h4>
+            <h4 className="mb-3 font-medium text-red-600">
+              Immediate (Week 1-2)
+            </h4>
             <ul className="space-y-2">
               {result.recommendations.immediate.map((rec, index) => (
                 <li key={index} className="flex items-start gap-2">
-                  <CheckCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+                  <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-500" />
                   <span className="text-sm">{rec}</span>
                 </li>
               ))}
@@ -489,11 +699,13 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
           </div>
 
           <div>
-            <h4 className="font-medium text-yellow-600 mb-3">Short-term (Week 3-6)</h4>
+            <h4 className="mb-3 font-medium text-yellow-600">
+              Short-term (Week 3-6)
+            </h4>
             <ul className="space-y-2">
               {result.recommendations.shortTerm.map((rec, index) => (
                 <li key={index} className="flex items-start gap-2">
-                  <CheckCircle className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                  <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-yellow-500" />
                   <span className="text-sm">{rec}</span>
                 </li>
               ))}
@@ -501,11 +713,13 @@ export function WebsiteAnalysisResults({ result }: WebsiteAnalysisResultsProps) 
           </div>
 
           <div>
-            <h4 className="font-medium text-green-600 mb-3">Long-term (Month 2-3)</h4>
+            <h4 className="mb-3 font-medium text-green-600">
+              Long-term (Month 2-3)
+            </h4>
             <ul className="space-y-2">
               {result.recommendations.longTerm.map((rec, index) => (
                 <li key={index} className="flex items-start gap-2">
-                  <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                  <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
                   <span className="text-sm">{rec}</span>
                 </li>
               ))}

@@ -3,11 +3,26 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { BarChart3, Brain, Copy, Download, GitCompare, Loader2, Target, Users } from 'lucide-react';
+import {
+  BarChart3,
+  Brain,
+  Copy,
+  Download,
+  GitCompare,
+  Loader2,
+  Target,
+  Users,
+} from 'lucide-react';
 import { useState } from 'react';
 
 /**
@@ -36,7 +51,7 @@ export function ContentComparisonEnhancedPage() {
     b2c: false,
     b2b: false,
     clifton: false,
-    golden: false
+    golden: false,
   });
 
   const runComparison = async () => {
@@ -56,7 +71,7 @@ export function ContentComparisonEnhancedPage() {
       b2c: true,
       b2b: true,
       clifton: true,
-      golden: true
+      golden: true,
     });
 
     try {
@@ -67,15 +82,17 @@ export function ContentComparisonEnhancedPage() {
         body: JSON.stringify({
           url: url.trim(),
           proposedContent: proposedContent.trim(),
-          analysisType: 'full'
+          analysisType: 'full',
+        }),
+      })
+        .then((r) => {
+          setLoadingFrameworks((prev) => ({ ...prev, general: false }));
+          return r.json();
         })
-      }).then(r => {
-        setLoadingFrameworks(prev => ({ ...prev, general: false }));
-        return r.json();
-      }).catch(err => {
-        setLoadingFrameworks(prev => ({ ...prev, general: false }));
-        return { success: false, error: err.message };
-      });
+        .catch((err) => {
+          setLoadingFrameworks((prev) => ({ ...prev, general: false }));
+          return { success: false, error: err.message };
+        });
 
       const b2cPromise = fetch('/api/analyze/elements-value-b2c-standalone', {
         method: 'POST',
@@ -83,15 +100,17 @@ export function ContentComparisonEnhancedPage() {
         body: JSON.stringify({
           url: url.trim(),
           proposedContent: proposedContent.trim(),
-          analysisType: 'full'
+          analysisType: 'full',
+        }),
+      })
+        .then((r) => {
+          setLoadingFrameworks((prev) => ({ ...prev, b2c: false }));
+          return r.json();
         })
-      }).then(r => {
-        setLoadingFrameworks(prev => ({ ...prev, b2c: false }));
-        return r.json();
-      }).catch(err => {
-        setLoadingFrameworks(prev => ({ ...prev, b2c: false }));
-        return { success: false, error: err.message };
-      });
+        .catch((err) => {
+          setLoadingFrameworks((prev) => ({ ...prev, b2c: false }));
+          return { success: false, error: err.message };
+        });
 
       const b2bPromise = fetch('/api/analyze/elements-value-b2b-standalone', {
         method: 'POST',
@@ -99,31 +118,38 @@ export function ContentComparisonEnhancedPage() {
         body: JSON.stringify({
           url: url.trim(),
           proposedContent: proposedContent.trim(),
-          analysisType: 'full'
+          analysisType: 'full',
+        }),
+      })
+        .then((r) => {
+          setLoadingFrameworks((prev) => ({ ...prev, b2b: false }));
+          return r.json();
         })
-      }).then(r => {
-        setLoadingFrameworks(prev => ({ ...prev, b2b: false }));
-        return r.json();
-      }).catch(err => {
-        setLoadingFrameworks(prev => ({ ...prev, b2b: false }));
-        return { success: false, error: err.message };
-      });
+        .catch((err) => {
+          setLoadingFrameworks((prev) => ({ ...prev, b2b: false }));
+          return { success: false, error: err.message };
+        });
 
-      const cliftonPromise = fetch('/api/analyze/clifton-strengths-standalone', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          url: url.trim(),
-          proposedContent: proposedContent.trim(),
-          analysisType: 'full'
+      const cliftonPromise = fetch(
+        '/api/analyze/clifton-strengths-standalone',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            url: url.trim(),
+            proposedContent: proposedContent.trim(),
+            analysisType: 'full',
+          }),
+        }
+      )
+        .then((r) => {
+          setLoadingFrameworks((prev) => ({ ...prev, clifton: false }));
+          return r.json();
         })
-      }).then(r => {
-        setLoadingFrameworks(prev => ({ ...prev, clifton: false }));
-        return r.json();
-      }).catch(err => {
-        setLoadingFrameworks(prev => ({ ...prev, clifton: false }));
-        return { success: false, error: err.message };
-      });
+        .catch((err) => {
+          setLoadingFrameworks((prev) => ({ ...prev, clifton: false }));
+          return { success: false, error: err.message };
+        });
 
       const goldenPromise = fetch('/api/analyze/golden-circle-standalone', {
         method: 'POST',
@@ -131,31 +157,36 @@ export function ContentComparisonEnhancedPage() {
         body: JSON.stringify({
           url: url.trim(),
           proposedContent: proposedContent.trim(),
-          analysisType: 'full'
+          analysisType: 'full',
+        }),
+      })
+        .then((r) => {
+          setLoadingFrameworks((prev) => ({ ...prev, golden: false }));
+          return r.json();
         })
-      }).then(r => {
-        setLoadingFrameworks(prev => ({ ...prev, golden: false }));
-        return r.json();
-      }).catch(err => {
-        setLoadingFrameworks(prev => ({ ...prev, golden: false }));
-        return { success: false, error: err.message };
-      });
+        .catch((err) => {
+          setLoadingFrameworks((prev) => ({ ...prev, golden: false }));
+          return { success: false, error: err.message };
+        });
 
       // Run all framework analyses in parallel - each completes independently
-      const [general, b2cResult, b2bResult, cliftonResult, goldenResult] = await Promise.allSettled([
-        generalPromise,
-        b2cPromise,
-        b2bPromise,
-        cliftonPromise,
-        goldenPromise
-      ]);
+      const [general, b2cResult, b2bResult, cliftonResult, goldenResult] =
+        await Promise.allSettled([
+          generalPromise,
+          b2cPromise,
+          b2bPromise,
+          cliftonPromise,
+          goldenPromise,
+        ]);
 
       // Extract values from settled promises
       const generalData = general.status === 'fulfilled' ? general.value : null;
       const b2cData = b2cResult.status === 'fulfilled' ? b2cResult.value : null;
       const b2bData = b2bResult.status === 'fulfilled' ? b2bResult.value : null;
-      const cliftonData = cliftonResult.status === 'fulfilled' ? cliftonResult.value : null;
-      const goldenData = goldenResult.status === 'fulfilled' ? goldenResult.value : null;
+      const cliftonData =
+        cliftonResult.status === 'fulfilled' ? cliftonResult.value : null;
+      const goldenData =
+        goldenResult.status === 'fulfilled' ? goldenResult.value : null;
 
       // Set general comparison result
       if (generalData && generalData.success) {
@@ -167,7 +198,7 @@ export function ContentComparisonEnhancedPage() {
         b2c: b2cData?.success ? b2cData : null,
         b2b: b2bData?.success ? b2bData : null,
         cliftonStrengths: cliftonData?.success ? cliftonData : null,
-        goldenCircle: goldenData?.success ? goldenData : null
+        goldenCircle: goldenData?.success ? goldenData : null,
       });
 
       if (generalData && !generalData.success) {
@@ -200,21 +231,25 @@ export function ContentComparisonEnhancedPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className="mx-auto max-w-7xl space-y-6 p-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-2xl">
             <GitCompare className="h-6 w-6" />
             Content Comparison Analysis (Enhanced)
           </CardTitle>
           <CardDescription>
-            Compare existing website content against proposed new content. Get AI-powered side-by-side analysis with latest framework structures.
+            Compare existing website content against proposed new content. Get
+            AI-powered side-by-side analysis with latest framework structures.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* URL Input */}
           <div>
-            <label htmlFor="website-url" className="text-sm font-medium mb-2 block">
+            <label
+              htmlFor="website-url"
+              className="mb-2 block text-sm font-medium"
+            >
               Website URL
             </label>
             <Input
@@ -230,14 +265,17 @@ export function ContentComparisonEnhancedPage() {
               autoComplete="url"
               required
             />
-            <p id="url-help" className="text-xs text-muted-foreground mt-1">
+            <p id="url-help" className="mt-1 text-xs text-muted-foreground">
               Enter the URL of the website you want to analyze
             </p>
           </div>
 
           {/* Proposed Content */}
           <div>
-            <label htmlFor="proposed-content" className="text-sm font-medium mb-2 block">
+            <label
+              htmlFor="proposed-content"
+              className="mb-2 block text-sm font-medium"
+            >
               Proposed New Content (Optional)
             </label>
             <Textarea
@@ -263,8 +301,9 @@ New compelling description that highlights our unique value proposition.
               aria-label="Enter proposed new content for comparison"
               aria-describedby="content-help"
             />
-            <p id="content-help" className="text-xs text-muted-foreground mt-2">
-              💡 Leave empty to just analyze existing content. Add proposed content to see side-by-side comparison.
+            <p id="content-help" className="mt-2 text-xs text-muted-foreground">
+              💡 Leave empty to just analyze existing content. Add proposed
+              content to see side-by-side comparison.
             </p>
           </div>
 
@@ -290,7 +329,9 @@ New compelling description that highlights our unique value proposition.
             ) : (
               <>
                 <GitCompare className="mr-2 h-4 w-4" />
-                {proposedContent ? 'Compare Existing vs. Proposed' : 'Analyze Existing Content'}
+                {proposedContent
+                  ? 'Compare Existing vs. Proposed'
+                  : 'Analyze Existing Content'}
               </>
             )}
           </Button>
@@ -307,7 +348,9 @@ New compelling description that highlights our unique value proposition.
             <TabsTrigger value="clifton">Strengths</TabsTrigger>
             <TabsTrigger value="golden">Golden Circle</TabsTrigger>
             <TabsTrigger value="existing">Existing</TabsTrigger>
-            {result.proposed && <TabsTrigger value="proposed">Proposed</TabsTrigger>}
+            {result.proposed && (
+              <TabsTrigger value="proposed">Proposed</TabsTrigger>
+            )}
             <TabsTrigger value="all-frameworks">All Frameworks</TabsTrigger>
           </TabsList>
 
@@ -318,7 +361,9 @@ New compelling description that highlights our unique value proposition.
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle>AI Comparison Analysis</CardTitle>
-                    <CardDescription>Side-by-side evaluation of content effectiveness</CardDescription>
+                    <CardDescription>
+                      Side-by-side evaluation of content effectiveness
+                    </CardDescription>
                   </div>
                   <Button onClick={downloadMarkdown} variant="outline">
                     <Download className="mr-2 h-4 w-4" />
@@ -330,10 +375,10 @@ New compelling description that highlights our unique value proposition.
                 {result.comparison && (
                   <div className="prose dark:prose-invert max-w-none">
                     {/* Will render AI comparison */}
-                    <div className="grid md:grid-cols-2 gap-4">
+                    <div className="grid gap-4 md:grid-cols-2">
                       {/* Existing Column */}
-                      <div className="p-4 border rounded-lg">
-                        <h3 className="text-lg font-semibold mb-3 flex items-center justify-between">
+                      <div className="rounded-lg border p-4">
+                        <h3 className="mb-3 flex items-center justify-between text-lg font-semibold">
                           Existing Content
                           <Badge variant="outline">Current</Badge>
                         </h3>
@@ -342,17 +387,27 @@ New compelling description that highlights our unique value proposition.
                             <strong>Title:</strong> {result.existing.title}
                           </div>
                           <div>
-                            <strong>Meta Description:</strong> {result.existing.metaDescription}
+                            <strong>Meta Description:</strong>{' '}
+                            {result.existing.metaDescription}
                           </div>
                           <div>
-                            <strong>Word Count:</strong> {result.existing.wordCount}
+                            <strong>Word Count:</strong>{' '}
+                            {result.existing.wordCount}
                           </div>
                           <div>
                             <strong>Top Keywords:</strong>
-                            <div className="flex flex-wrap gap-1 mt-1">
-                              {result.existing.extractedKeywords.slice(0, 10).map((kw: string, i: number) => (
-                                <Badge key={i} variant="secondary" className="text-xs">{kw}</Badge>
-                              ))}
+                            <div className="mt-1 flex flex-wrap gap-1">
+                              {result.existing.extractedKeywords
+                                .slice(0, 10)
+                                .map((kw: string, i: number) => (
+                                  <Badge
+                                    key={i}
+                                    variant="secondary"
+                                    className="text-xs"
+                                  >
+                                    {kw}
+                                  </Badge>
+                                ))}
                             </div>
                           </div>
                         </div>
@@ -360,27 +415,39 @@ New compelling description that highlights our unique value proposition.
 
                       {/* Proposed Column */}
                       {result.proposed && (
-                        <div className="p-4 border rounded-lg bg-green-50 dark:bg-green-950 border-green-500">
-                          <h3 className="text-lg font-semibold mb-3 flex items-center justify-between text-green-900 dark:text-green-100">
+                        <div className="rounded-lg border border-green-500 bg-green-50 p-4 dark:bg-green-950">
+                          <h3 className="mb-3 flex items-center justify-between text-lg font-semibold text-green-900 dark:text-green-100">
                             Proposed Content
-                            <Badge variant="default" className="bg-green-600">New</Badge>
+                            <Badge variant="default" className="bg-green-600">
+                              New
+                            </Badge>
                           </h3>
                           <div className="space-y-3 text-sm text-green-900 dark:text-green-100">
                             <div>
                               <strong>Title:</strong> {result.proposed.title}
                             </div>
                             <div>
-                              <strong>Meta Description:</strong> {result.proposed.metaDescription}
+                              <strong>Meta Description:</strong>{' '}
+                              {result.proposed.metaDescription}
                             </div>
                             <div>
-                              <strong>Word Count:</strong> {result.proposed.wordCount}
+                              <strong>Word Count:</strong>{' '}
+                              {result.proposed.wordCount}
                             </div>
                             <div>
                               <strong>Top Keywords:</strong>
-                              <div className="flex flex-wrap gap-1 mt-1">
-                                {result.proposed.extractedKeywords.slice(0, 10).map((kw: string, i: number) => (
-                                  <Badge key={i} variant="outline" className="text-xs">{kw}</Badge>
-                                ))}
+                              <div className="mt-1 flex flex-wrap gap-1">
+                                {result.proposed.extractedKeywords
+                                  .slice(0, 10)
+                                  .map((kw: string, i: number) => (
+                                    <Badge
+                                      key={i}
+                                      variant="outline"
+                                      className="text-xs"
+                                    >
+                                      {kw}
+                                    </Badge>
+                                  ))}
                               </div>
                             </div>
                           </div>
@@ -391,17 +458,27 @@ New compelling description that highlights our unique value proposition.
                     {/* AI Comparison Results */}
                     {result.comparison && (
                       <div className="mt-6 space-y-4">
-                        <h3 className="text-xl font-semibold">AI Analysis Results</h3>
+                        <h3 className="text-xl font-semibold">
+                          AI Analysis Results
+                        </h3>
 
                         {/* Show comparison data */}
-                        <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-950">
-                          <h4 className="font-semibold mb-2">Overall Recommendation</h4>
-                          <div className="text-sm whitespace-pre-wrap">
+                        <div className="rounded-lg border bg-blue-50 p-4 dark:bg-blue-950">
+                          <h4 className="mb-2 font-semibold">
+                            Overall Recommendation
+                          </h4>
+                          <div className="whitespace-pre-wrap text-sm">
                             {JSON.stringify(result.comparison, null, 2)}
                           </div>
                         </div>
 
-                        <Button onClick={() => copyToClipboard(JSON.stringify(result.comparison, null, 2))}>
+                        <Button
+                          onClick={() =>
+                            copyToClipboard(
+                              JSON.stringify(result.comparison, null, 2)
+                            )
+                          }
+                        >
                           <Copy className="mr-2 h-4 w-4" />
                           Copy Analysis
                         </Button>
@@ -418,28 +495,40 @@ New compelling description that highlights our unique value proposition.
             <Card>
               <CardHeader>
                 <CardTitle>Existing Website Content</CardTitle>
-                <CardDescription>Current live content from {url}</CardDescription>
+                <CardDescription>
+                  Current live content from {url}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="p-3 border rounded-lg">
-                    <h4 className="font-semibold mb-2">Meta Information</h4>
+                  <div className="rounded-lg border p-3">
+                    <h4 className="mb-2 font-semibold">Meta Information</h4>
                     <div className="space-y-2 text-sm">
-                      <div><strong>Title:</strong> {result.existing.title}</div>
-                      <div><strong>Description:</strong> {result.existing.metaDescription}</div>
-                      <div><strong>Keywords:</strong> {result.existing.metaKeywords?.join(', ') || 'None'}</div>
+                      <div>
+                        <strong>Title:</strong> {result.existing.title}
+                      </div>
+                      <div>
+                        <strong>Description:</strong>{' '}
+                        {result.existing.metaDescription}
+                      </div>
+                      <div>
+                        <strong>Keywords:</strong>{' '}
+                        {result.existing.metaKeywords?.join(', ') || 'None'}
+                      </div>
                     </div>
                   </div>
 
-                  <div className="p-3 border rounded-lg">
-                    <h4 className="font-semibold mb-2">Content Preview</h4>
+                  <div className="rounded-lg border p-3">
+                    <h4 className="mb-2 font-semibold">Content Preview</h4>
                     <div className="max-h-96 overflow-y-auto">
-                      <pre className="text-xs whitespace-pre-wrap bg-gray-50 dark:bg-gray-900 p-3 rounded">
+                      <pre className="whitespace-pre-wrap rounded bg-gray-50 p-3 text-xs dark:bg-gray-900">
                         {result.existing.cleanText}
                       </pre>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      📊 Total content length: {result.existing.cleanText.length.toLocaleString()} characters
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      📊 Total content length:{' '}
+                      {result.existing.cleanText.length.toLocaleString()}{' '}
+                      characters
                     </p>
                   </div>
                 </div>
@@ -453,21 +542,30 @@ New compelling description that highlights our unique value proposition.
               <Card>
                 <CardHeader>
                   <CardTitle>Proposed New Content</CardTitle>
-                  <CardDescription>Your suggested content changes</CardDescription>
+                  <CardDescription>
+                    Your suggested content changes
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="p-3 border rounded-lg">
-                      <h4 className="font-semibold mb-2">Proposed Meta Information</h4>
+                    <div className="rounded-lg border p-3">
+                      <h4 className="mb-2 font-semibold">
+                        Proposed Meta Information
+                      </h4>
                       <div className="space-y-2 text-sm">
-                        <div><strong>Title:</strong> {result.proposed.title}</div>
-                        <div><strong>Description:</strong> {result.proposed.metaDescription}</div>
+                        <div>
+                          <strong>Title:</strong> {result.proposed.title}
+                        </div>
+                        <div>
+                          <strong>Description:</strong>{' '}
+                          {result.proposed.metaDescription}
+                        </div>
                       </div>
                     </div>
 
-                    <div className="p-3 border rounded-lg">
-                      <h4 className="font-semibold mb-2">Proposed Content</h4>
-                      <pre className="text-xs whitespace-pre-wrap bg-gray-50 dark:bg-gray-900 p-3 rounded">
+                    <div className="rounded-lg border p-3">
+                      <h4 className="mb-2 font-semibold">Proposed Content</h4>
+                      <pre className="whitespace-pre-wrap rounded bg-gray-50 p-3 text-xs dark:bg-gray-900">
                         {result.proposed.cleanText}
                       </pre>
                     </div>
@@ -483,7 +581,9 @@ New compelling description that highlights our unique value proposition.
               <Card>
                 <CardContent className="flex items-center justify-center p-8">
                   <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-                  <span className="ml-3 text-blue-600">Analyzing B2C Elements...</span>
+                  <span className="ml-3 text-blue-600">
+                    Analyzing B2C Elements...
+                  </span>
                 </CardContent>
               </Card>
             ) : frameworkResults.b2c ? (
@@ -493,14 +593,20 @@ New compelling description that highlights our unique value proposition.
                     <Users className="h-5 w-5 text-blue-600" />
                     B2C Elements of Value Analysis
                   </CardTitle>
-                  <CardDescription>30 B2C Elements framework results</CardDescription>
+                  <CardDescription>
+                    30 B2C Elements framework results
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-950">
-                    <pre className="text-xs whitespace-pre-wrap overflow-auto max-h-96">
+                  <div className="rounded-lg border bg-blue-50 p-4 dark:bg-blue-950">
+                    <pre className="max-h-96 overflow-auto whitespace-pre-wrap text-xs">
                       {typeof frameworkResults.b2c.comparison === 'string'
                         ? frameworkResults.b2c.comparison
-                        : JSON.stringify(frameworkResults.b2c.comparison, null, 2)}
+                        : JSON.stringify(
+                            frameworkResults.b2c.comparison,
+                            null,
+                            2
+                          )}
                     </pre>
                   </div>
                 </CardContent>
@@ -520,7 +626,9 @@ New compelling description that highlights our unique value proposition.
               <Card>
                 <CardContent className="flex items-center justify-center p-8">
                   <Loader2 className="h-8 w-8 animate-spin text-green-600" />
-                  <span className="ml-3 text-green-600">Analyzing B2B Elements...</span>
+                  <span className="ml-3 text-green-600">
+                    Analyzing B2B Elements...
+                  </span>
                 </CardContent>
               </Card>
             ) : frameworkResults.b2b ? (
@@ -530,14 +638,20 @@ New compelling description that highlights our unique value proposition.
                     <BarChart3 className="h-5 w-5 text-green-600" />
                     B2B Elements of Value Analysis
                   </CardTitle>
-                  <CardDescription>40 B2B Elements framework results</CardDescription>
+                  <CardDescription>
+                    40 B2B Elements framework results
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="p-4 border rounded-lg bg-green-50 dark:bg-green-950">
-                    <pre className="text-xs whitespace-pre-wrap overflow-auto max-h-96">
+                  <div className="rounded-lg border bg-green-50 p-4 dark:bg-green-950">
+                    <pre className="max-h-96 overflow-auto whitespace-pre-wrap text-xs">
                       {typeof frameworkResults.b2b.comparison === 'string'
                         ? frameworkResults.b2b.comparison
-                        : JSON.stringify(frameworkResults.b2b.comparison, null, 2)}
+                        : JSON.stringify(
+                            frameworkResults.b2b.comparison,
+                            null,
+                            2
+                          )}
                     </pre>
                   </div>
                 </CardContent>
@@ -560,14 +674,21 @@ New compelling description that highlights our unique value proposition.
                     <Brain className="h-5 w-5 text-purple-600" />
                     CliftonStrengths Analysis
                   </CardTitle>
-                  <CardDescription>34 CliftonStrengths themes results</CardDescription>
+                  <CardDescription>
+                    34 CliftonStrengths themes results
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="p-4 border rounded-lg bg-purple-50 dark:bg-purple-950">
-                    <pre className="text-xs whitespace-pre-wrap overflow-auto max-h-96">
-                      {typeof frameworkResults.cliftonStrengths.comparison === 'string'
+                  <div className="rounded-lg border bg-purple-50 p-4 dark:bg-purple-950">
+                    <pre className="max-h-96 overflow-auto whitespace-pre-wrap text-xs">
+                      {typeof frameworkResults.cliftonStrengths.comparison ===
+                      'string'
                         ? frameworkResults.cliftonStrengths.comparison
-                        : JSON.stringify(frameworkResults.cliftonStrengths.comparison, null, 2)}
+                        : JSON.stringify(
+                            frameworkResults.cliftonStrengths.comparison,
+                            null,
+                            2
+                          )}
                     </pre>
                   </div>
                 </CardContent>
@@ -584,14 +705,21 @@ New compelling description that highlights our unique value proposition.
                     <Target className="h-5 w-5 text-orange-600" />
                     Golden Circle Analysis
                   </CardTitle>
-                  <CardDescription>Why, How, What, WHO framework results</CardDescription>
+                  <CardDescription>
+                    Why, How, What, WHO framework results
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="p-4 border rounded-lg bg-orange-50 dark:bg-orange-950">
-                    <pre className="text-xs whitespace-pre-wrap overflow-auto max-h-96">
-                      {typeof frameworkResults.goldenCircle.comparison === 'string'
+                  <div className="rounded-lg border bg-orange-50 p-4 dark:bg-orange-950">
+                    <pre className="max-h-96 overflow-auto whitespace-pre-wrap text-xs">
+                      {typeof frameworkResults.goldenCircle.comparison ===
+                      'string'
                         ? frameworkResults.goldenCircle.comparison
-                        : JSON.stringify(frameworkResults.goldenCircle.comparison, null, 2)}
+                        : JSON.stringify(
+                            frameworkResults.goldenCircle.comparison,
+                            null,
+                            2
+                          )}
                     </pre>
                   </div>
                 </CardContent>
@@ -608,10 +736,14 @@ New compelling description that highlights our unique value proposition.
                     <CardTitle>B2C Elements of Value</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <pre className="text-xs whitespace-pre-wrap overflow-auto max-h-60">
+                    <pre className="max-h-60 overflow-auto whitespace-pre-wrap text-xs">
                       {typeof frameworkResults.b2c.comparison === 'string'
                         ? frameworkResults.b2c.comparison
-                        : JSON.stringify(frameworkResults.b2c.comparison, null, 2)}
+                        : JSON.stringify(
+                            frameworkResults.b2c.comparison,
+                            null,
+                            2
+                          )}
                     </pre>
                   </CardContent>
                 </Card>
@@ -623,10 +755,14 @@ New compelling description that highlights our unique value proposition.
                     <CardTitle>B2B Elements of Value</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <pre className="text-xs whitespace-pre-wrap overflow-auto max-h-60">
+                    <pre className="max-h-60 overflow-auto whitespace-pre-wrap text-xs">
                       {typeof frameworkResults.b2b.comparison === 'string'
                         ? frameworkResults.b2b.comparison
-                        : JSON.stringify(frameworkResults.b2b.comparison, null, 2)}
+                        : JSON.stringify(
+                            frameworkResults.b2b.comparison,
+                            null,
+                            2
+                          )}
                     </pre>
                   </CardContent>
                 </Card>
@@ -638,10 +774,15 @@ New compelling description that highlights our unique value proposition.
                     <CardTitle>CliftonStrengths</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <pre className="text-xs whitespace-pre-wrap overflow-auto max-h-60">
-                      {typeof frameworkResults.cliftonStrengths.comparison === 'string'
+                    <pre className="max-h-60 overflow-auto whitespace-pre-wrap text-xs">
+                      {typeof frameworkResults.cliftonStrengths.comparison ===
+                      'string'
                         ? frameworkResults.cliftonStrengths.comparison
-                        : JSON.stringify(frameworkResults.cliftonStrengths.comparison, null, 2)}
+                        : JSON.stringify(
+                            frameworkResults.cliftonStrengths.comparison,
+                            null,
+                            2
+                          )}
                     </pre>
                   </CardContent>
                 </Card>
@@ -653,10 +794,15 @@ New compelling description that highlights our unique value proposition.
                     <CardTitle>Golden Circle</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <pre className="text-xs whitespace-pre-wrap overflow-auto max-h-60">
-                      {typeof frameworkResults.goldenCircle.comparison === 'string'
+                    <pre className="max-h-60 overflow-auto whitespace-pre-wrap text-xs">
+                      {typeof frameworkResults.goldenCircle.comparison ===
+                      'string'
                         ? frameworkResults.goldenCircle.comparison
-                        : JSON.stringify(frameworkResults.goldenCircle.comparison, null, 2)}
+                        : JSON.stringify(
+                            frameworkResults.goldenCircle.comparison,
+                            null,
+                            2
+                          )}
                     </pre>
                   </CardContent>
                 </Card>
@@ -684,7 +830,9 @@ function generateComparisonMarkdown(result: any): string {
 **Word Count:** ${result.existing.wordCount}
 **Keywords:** ${result.existing.extractedKeywords.slice(0, 10).join(', ')}
 
-${result.proposed ? `
+${
+  result.proposed
+    ? `
 ## Proposed Content
 
 **Title:** ${result.proposed.title}
@@ -697,7 +845,9 @@ ${result.proposed ? `
 ## AI Comparison Analysis
 
 ${JSON.stringify(result.comparison, null, 2)}
-` : ''}
+`
+    : ''
+}
 
 ---
 

@@ -44,7 +44,10 @@ export class ValueHeadlinesExtractorService {
   /**
    * Extract value-centric headlines from scraped content
    */
-  static async extractHeadlines(scrapedData: any, url: string): Promise<ValueHeadlinesResult> {
+  static async extractHeadlines(
+    scrapedData: any,
+    url: string
+  ): Promise<ValueHeadlinesResult> {
     try {
       console.log(`📰 Starting value-centric headlines extraction for: ${url}`);
 
@@ -128,19 +131,19 @@ ${format}`;
 
         const analysisResult = JSON.parse(jsonText);
 
-        console.log(`✅ Value-centric headlines extraction completed for: ${url}`);
+        console.log(
+          `✅ Value-centric headlines extraction completed for: ${url}`
+        );
 
         return {
           success: true,
           url,
-          data: analysisResult
+          data: analysisResult,
         };
-
       } catch (error) {
         console.error('Gemini headlines extraction failed:', error);
         throw new Error('AI headlines extraction failed');
       }
-
     } catch (error) {
       console.error('Value headlines extraction failed:', error);
       return {
@@ -149,9 +152,12 @@ ${format}`;
         data: {
           why_statements: [],
           how_statements: [],
-          top_headlines: []
+          top_headlines: [],
         },
-        error: error instanceof Error ? error.message : 'Headlines extraction failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Headlines extraction failed',
       };
     }
   }

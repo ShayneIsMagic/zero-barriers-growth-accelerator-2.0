@@ -8,19 +8,25 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-    BarChart3,
-    Bot,
-    CheckCircle,
-    Download,
-    ExternalLink,
-    Loader2,
-    Search,
-    TrendingUp,
-    Zap
+  BarChart3,
+  Bot,
+  CheckCircle,
+  Download,
+  ExternalLink,
+  Loader2,
+  Search,
+  TrendingUp,
+  Zap,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -35,7 +41,12 @@ interface ScrapedGoogleData {
     bestPracticesScore: number;
     seoScore: number;
     coreWebVitals: { lcp: number; fid: number; cls: number };
-    opportunities: Array<{ title: string; description: string; impact: string; savings: string }>;
+    opportunities: Array<{
+      title: string;
+      description: string;
+      impact: string;
+      savings: string;
+    }>;
   };
   analysis?: string;
 }
@@ -45,7 +56,9 @@ export function SimpleGoogleToolsPage() {
   const [keywords, setKeywords] = useState('');
   const [isScraping, setIsScraping] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [scrapedData, setScrapedData] = useState<ScrapedGoogleData | null>(null);
+  const [scrapedData, setScrapedData] = useState<ScrapedGoogleData | null>(
+    null
+  );
   const [error, setError] = useState<string | null>(null);
 
   const handleScrapeData = async () => {
@@ -59,7 +72,10 @@ export function SimpleGoogleToolsPage() {
     setScrapedData(null);
 
     try {
-      const keywordArray = keywords.split(',').map(k => k.trim()).filter(k => k.length > 0);
+      const keywordArray = keywords
+        .split(',')
+        .map((k) => k.trim())
+        .filter((k) => k.length > 0);
 
       const response = await fetch('/api/scrape-google-tools', {
         method: 'POST',
@@ -68,7 +84,7 @@ export function SimpleGoogleToolsPage() {
         },
         body: JSON.stringify({
           url,
-          keywords: keywordArray
+          keywords: keywordArray,
         }),
       });
 
@@ -82,7 +98,11 @@ export function SimpleGoogleToolsPage() {
       }
     } catch (error) {
       console.error('❌ Google Tools scraping failed:', error);
-      setError(error instanceof Error ? error.message : 'Failed to scrape Google Tools data');
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Failed to scrape Google Tools data'
+      );
     } finally {
       setIsScraping(false);
     }
@@ -105,15 +125,20 @@ export function SimpleGoogleToolsPage() {
         },
         body: JSON.stringify({
           url,
-          keywords: keywords.split(',').map(k => k.trim()).filter(k => k.length > 0),
-          scrapedData
+          keywords: keywords
+            .split(',')
+            .map((k) => k.trim())
+            .filter((k) => k.length > 0),
+          scrapedData,
         }),
       });
 
       const result = await response.json();
 
       if (result.success) {
-        setScrapedData(prev => prev ? { ...prev, analysis: result.analysis } : null);
+        setScrapedData((prev) =>
+          prev ? { ...prev, analysis: result.analysis } : null
+        );
         console.log('✅ Google Tools analysis completed');
       } else {
         throw new Error(result.error || 'Analysis failed');
@@ -143,42 +168,43 @@ export function SimpleGoogleToolsPage() {
     if (!url.trim()) return [];
 
     const domain = new URL(url).hostname;
-    const keywordString = keywords || domain.replace(/\.(com|org|net|co|io)$/, '');
+    const keywordString =
+      keywords || domain.replace(/\.(com|org|net|co|io)$/, '');
 
     return [
       {
         name: 'Google Trends',
         url: `https://trends.google.com/trends/explore?q=${encodeURIComponent(keywordString)}&geo=US&date=today%2012-m`,
         icon: TrendingUp,
-        color: 'blue'
+        color: 'blue',
       },
       {
         name: 'PageSpeed Insights',
         url: `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(url)}&form_factor=desktop`,
         icon: Zap,
-        color: 'green'
+        color: 'green',
       },
       {
         name: 'Search Console',
         url: `https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain:${domain}`,
         icon: Search,
-        color: 'purple'
+        color: 'purple',
       },
       {
         name: 'Google Analytics',
         url: `https://analytics.google.com/analytics/web/`,
         icon: BarChart3,
-        color: 'orange'
-      }
+        color: 'orange',
+      },
     ];
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-      <div className="container mx-auto py-8 px-4 max-w-4xl">
+      <div className="container mx-auto max-w-4xl px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="mb-8 text-center">
+          <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-white">
             Google Tools Analysis
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300">
@@ -212,7 +238,7 @@ export function SimpleGoogleToolsPage() {
                 aria-describedby="url-help"
                 required
               />
-              <p id="url-help" className="text-xs text-muted-foreground mt-1">
+              <p id="url-help" className="mt-1 text-xs text-muted-foreground">
                 Enter the URL of the website you want to analyze
               </p>
             </div>
@@ -230,7 +256,10 @@ export function SimpleGoogleToolsPage() {
                 aria-label="Enter keywords for analysis"
                 aria-describedby="keywords-help"
               />
-              <p id="keywords-help" className="text-xs text-muted-foreground mt-1">
+              <p
+                id="keywords-help"
+                className="mt-1 text-xs text-muted-foreground"
+              >
                 💡 Leave empty to auto-extract keywords from your website URL
               </p>
             </div>
@@ -299,11 +328,7 @@ export function SimpleGoogleToolsPage() {
                     </CardDescription>
                   </div>
                 </div>
-                <Button
-                  onClick={downloadData}
-                  variant="outline"
-                  size="sm"
-                >
+                <Button onClick={downloadData} variant="outline" size="sm">
                   <Download className="mr-2 h-4 w-4" />
                   Download
                 </Button>
@@ -313,34 +338,48 @@ export function SimpleGoogleToolsPage() {
               <div className="space-y-4">
                 {/* Trends Data */}
                 {scrapedData.trends && (
-                  <div className="p-4 border rounded-lg bg-white dark:bg-gray-800">
-                    <h4 className="font-semibold mb-2 flex items-center">
+                  <div className="rounded-lg border bg-white p-4 dark:bg-gray-800">
+                    <h4 className="mb-2 flex items-center font-semibold">
                       <TrendingUp className="mr-2 h-5 w-5 text-blue-600" />
                       Google Trends Data
                     </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div>
-                        <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                          Related Queries ({scrapedData.trends.relatedQueries?.length || 0})
+                        <p className="mb-1 text-sm font-medium text-gray-600 dark:text-gray-400">
+                          Related Queries (
+                          {scrapedData.trends.relatedQueries?.length || 0})
                         </p>
                         <div className="flex flex-wrap gap-1">
-                          {scrapedData.trends.relatedQueries?.slice(0, 5).map((query, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {query.query}
-                            </Badge>
-                          ))}
+                          {scrapedData.trends.relatedQueries
+                            ?.slice(0, 5)
+                            .map((query, index) => (
+                              <Badge
+                                key={index}
+                                variant="outline"
+                                className="text-xs"
+                              >
+                                {query.query}
+                              </Badge>
+                            ))}
                         </div>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                          Related Topics ({scrapedData.trends.relatedTopics?.length || 0})
+                        <p className="mb-1 text-sm font-medium text-gray-600 dark:text-gray-400">
+                          Related Topics (
+                          {scrapedData.trends.relatedTopics?.length || 0})
                         </p>
                         <div className="flex flex-wrap gap-1">
-                          {scrapedData.trends.relatedTopics?.slice(0, 5).map((topic, index) => (
-                            <Badge key={index} variant="secondary" className="text-xs">
-                              {topic.topic}
-                            </Badge>
-                          ))}
+                          {scrapedData.trends.relatedTopics
+                            ?.slice(0, 5)
+                            .map((topic, index) => (
+                              <Badge
+                                key={index}
+                                variant="secondary"
+                                className="text-xs"
+                              >
+                                {topic.topic}
+                              </Badge>
+                            ))}
                         </div>
                       </div>
                     </div>
@@ -349,51 +388,73 @@ export function SimpleGoogleToolsPage() {
 
                 {/* PageSpeed Data */}
                 {scrapedData.pageSpeed && (
-                  <div className="p-4 border rounded-lg bg-white dark:bg-gray-800">
-                    <h4 className="font-semibold mb-2 flex items-center">
+                  <div className="rounded-lg border bg-white p-4 dark:bg-gray-800">
+                    <h4 className="mb-2 flex items-center font-semibold">
                       <Zap className="mr-2 h-5 w-5 text-green-600" />
                       PageSpeed Insights Data
                     </h4>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
+                    <div className="mb-3 grid grid-cols-2 gap-4 md:grid-cols-4">
                       <div className="text-center">
-                        <p className="text-2xl font-bold text-green-600">{scrapedData.pageSpeed.performanceScore}</p>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">Performance</p>
+                        <p className="text-2xl font-bold text-green-600">
+                          {scrapedData.pageSpeed.performanceScore}
+                        </p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                          Performance
+                        </p>
                       </div>
                       <div className="text-center">
-                        <p className="text-2xl font-bold text-blue-600">{scrapedData.pageSpeed.accessibilityScore}</p>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">Accessibility</p>
+                        <p className="text-2xl font-bold text-blue-600">
+                          {scrapedData.pageSpeed.accessibilityScore}
+                        </p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                          Accessibility
+                        </p>
                       </div>
                       <div className="text-center">
-                        <p className="text-2xl font-bold text-purple-600">{scrapedData.pageSpeed.bestPracticesScore}</p>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">Best Practices</p>
+                        <p className="text-2xl font-bold text-purple-600">
+                          {scrapedData.pageSpeed.bestPracticesScore}
+                        </p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                          Best Practices
+                        </p>
                       </div>
                       <div className="text-center">
-                        <p className="text-2xl font-bold text-orange-600">{scrapedData.pageSpeed.seoScore}</p>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">SEO</p>
+                        <p className="text-2xl font-bold text-orange-600">
+                          {scrapedData.pageSpeed.seoScore}
+                        </p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                          SEO
+                        </p>
                       </div>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                        Opportunities ({scrapedData.pageSpeed.opportunities?.length || 0})
+                      <p className="mb-1 text-sm font-medium text-gray-600 dark:text-gray-400">
+                        Opportunities (
+                        {scrapedData.pageSpeed.opportunities?.length || 0})
                       </p>
                       <div className="space-y-1">
-                        {scrapedData.pageSpeed.opportunities?.slice(0, 3).map((opp, index) => (
-                          <div key={index} className="text-xs text-gray-600 dark:text-gray-400">
-                            • {opp.title}: {opp.savings}
-                          </div>
-                        ))}
+                        {scrapedData.pageSpeed.opportunities
+                          ?.slice(0, 3)
+                          .map((opp, index) => (
+                            <div
+                              key={index}
+                              className="text-xs text-gray-600 dark:text-gray-400"
+                            >
+                              • {opp.title}: {opp.savings}
+                            </div>
+                          ))}
                       </div>
                     </div>
                   </div>
                 )}
 
                 {/* Direct Tool Links */}
-                <div className="p-4 border rounded-lg bg-white dark:bg-gray-800">
-                  <h4 className="font-semibold mb-2 flex items-center">
+                <div className="rounded-lg border bg-white p-4 dark:bg-gray-800">
+                  <h4 className="mb-2 flex items-center font-semibold">
                     <ExternalLink className="mr-2 h-5 w-5 text-gray-600" />
                     Direct Tool Access
                   </h4>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
                     {getToolLinks().map((tool, index) => (
                       <Button
                         key={index}
@@ -426,7 +487,7 @@ export function SimpleGoogleToolsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg">
+              <div className="rounded-lg bg-white p-4 dark:bg-gray-800">
                 <pre className="whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300">
                   {scrapedData.analysis}
                 </pre>

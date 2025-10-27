@@ -68,15 +68,22 @@ export function useSimpleProgress() {
     return id;
   };
 
-  const updateStep = (analysisId: string, step: keyof SimpleAnalysis['steps'], completed: boolean) => {
-    const updatedAnalyses = analyses.map(analysis => {
+  const updateStep = (
+    analysisId: string,
+    step: keyof SimpleAnalysis['steps'],
+    completed: boolean
+  ) => {
+    const updatedAnalyses = analyses.map((analysis) => {
       if (analysis.id === analysisId) {
         const updatedSteps = { ...analysis.steps, [step]: completed };
-        const completedSteps = Object.values(updatedSteps).filter(Boolean).length;
+        const completedSteps =
+          Object.values(updatedSteps).filter(Boolean).length;
         const progress = Math.round((completedSteps / 4) * 100);
 
-        const status: 'running' | 'completed' | 'failed' = progress === 100 ? 'completed' : 'running';
-        const completedAt = status === 'completed' ? new Date().toISOString() : undefined;
+        const status: 'running' | 'completed' | 'failed' =
+          progress === 100 ? 'completed' : 'running';
+        const completedAt =
+          status === 'completed' ? new Date().toISOString() : undefined;
 
         return {
           ...analysis,
@@ -93,7 +100,7 @@ export function useSimpleProgress() {
   };
 
   const markFailed = (analysisId: string) => {
-    const updatedAnalyses = analyses.map(analysis => {
+    const updatedAnalyses = analyses.map((analysis) => {
       if (analysis.id === analysisId) {
         return {
           ...analysis,
@@ -108,7 +115,9 @@ export function useSimpleProgress() {
   };
 
   const deleteAnalysis = (analysisId: string) => {
-    const updatedAnalyses = analyses.filter(analysis => analysis.id !== analysisId);
+    const updatedAnalyses = analyses.filter(
+      (analysis) => analysis.id !== analysisId
+    );
     saveAnalyses(updatedAnalyses);
   };
 

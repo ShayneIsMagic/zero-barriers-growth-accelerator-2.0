@@ -3,10 +3,24 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertCircle, CheckCircle, Layers, Sparkles, Target, TrendingUp, Users } from 'lucide-react';
+import {
+  AlertCircle,
+  CheckCircle,
+  Layers,
+  Sparkles,
+  Target,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
 import { useState } from 'react';
 
 interface Phase2Data {
@@ -59,7 +73,7 @@ export default function Phase2Page() {
         body: JSON.stringify({
           url,
           content: phase1Data?.scrapedContent,
-          phase1Data
+          phase1Data,
         }),
       });
 
@@ -69,7 +83,6 @@ export default function Phase2Page() {
 
       const phase2Result = await phase2Response.json();
       setPhase2Data(phase2Result.data);
-
     } catch (err: any) {
       setError(err.message || 'Analysis failed');
     } finally {
@@ -78,7 +91,8 @@ export default function Phase2Page() {
   };
 
   const renderScore = (score: number) => {
-    let variant: 'default' | 'secondary' | 'destructive' | 'outline' = 'outline';
+    let variant: 'default' | 'secondary' | 'destructive' | 'outline' =
+      'outline';
     if (score >= 8) variant = 'default';
     else if (score >= 5) variant = 'secondary';
     else if (score > 0) variant = 'destructive';
@@ -91,11 +105,11 @@ export default function Phase2Page() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className="mx-auto max-w-7xl space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Phase 2: Framework Analysis</h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="mt-2 text-muted-foreground">
             AI-powered analysis using proven business frameworks
           </p>
         </div>
@@ -111,7 +125,8 @@ export default function Phase2Page() {
             Start Phase 2 Analysis
           </CardTitle>
           <CardDescription>
-            Run comprehensive framework analysis using Golden Circle, Elements of Value, CliftonStrengths, and more.
+            Run comprehensive framework analysis using Golden Circle, Elements
+            of Value, CliftonStrengths, and more.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -133,16 +148,19 @@ export default function Phase2Page() {
           </div>
 
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-md">
+            <div className="flex items-center gap-2 rounded-md border border-red-200 bg-red-50 p-3">
               <AlertCircle className="h-4 w-4 text-red-500" />
               <span className="text-red-700">{error}</span>
             </div>
           )}
 
           {phase1Data && (
-            <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-md">
+            <div className="flex items-center gap-2 rounded-md border border-green-200 bg-green-50 p-3">
               <CheckCircle className="h-4 w-4 text-green-500" />
-              <span className="text-green-700">Phase 1 completed - {phase1Data.scrapedContent.wordCount} words extracted</span>
+              <span className="text-green-700">
+                Phase 1 completed - {phase1Data.scrapedContent.wordCount} words
+                extracted
+              </span>
             </div>
           )}
         </CardContent>
@@ -154,8 +172,12 @@ export default function Phase2Page() {
             <TabsTrigger value="golden-circle">Golden Circle</TabsTrigger>
             <TabsTrigger value="elements-value">Elements of Value</TabsTrigger>
             <TabsTrigger value="b2b-elements">B2B Elements</TabsTrigger>
-            <TabsTrigger value="clifton-strengths">CliftonStrengths</TabsTrigger>
-            <TabsTrigger value="content-comparison">Content Comparison</TabsTrigger>
+            <TabsTrigger value="clifton-strengths">
+              CliftonStrengths
+            </TabsTrigger>
+            <TabsTrigger value="content-comparison">
+              Content Comparison
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="golden-circle">
@@ -164,7 +186,8 @@ export default function Phase2Page() {
                 <CardTitle className="flex items-center gap-2">
                   <Sparkles className="h-6 w-6 text-yellow-500" />
                   Golden Circle Analysis
-                  {phase2Data.goldenCircle?.overallScore && renderScore(phase2Data.goldenCircle.overallScore)}
+                  {phase2Data.goldenCircle?.overallScore &&
+                    renderScore(phase2Data.goldenCircle.overallScore)}
                 </CardTitle>
                 <CardDescription>
                   Simon Sinek&apos;s framework: Why, How, What, Who
@@ -175,29 +198,56 @@ export default function Phase2Page() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <h4 className="font-semibold text-sm text-muted-foreground">WHY (Purpose)</h4>
-                        <p className="text-sm">{phase2Data.goldenCircle.why?.statement || 'Not analyzed'}</p>
-                        {phase2Data.goldenCircle.why?.score && renderScore(phase2Data.goldenCircle.why.score)}
+                        <h4 className="text-sm font-semibold text-muted-foreground">
+                          WHY (Purpose)
+                        </h4>
+                        <p className="text-sm">
+                          {phase2Data.goldenCircle.why?.statement ||
+                            'Not analyzed'}
+                        </p>
+                        {phase2Data.goldenCircle.why?.score &&
+                          renderScore(phase2Data.goldenCircle.why.score)}
                       </div>
                       <div>
-                        <h4 className="font-semibold text-sm text-muted-foreground">HOW (Methodology)</h4>
-                        <p className="text-sm">{phase2Data.goldenCircle.how?.methodology || 'Not analyzed'}</p>
-                        {phase2Data.goldenCircle.how?.score && renderScore(phase2Data.goldenCircle.how.score)}
+                        <h4 className="text-sm font-semibold text-muted-foreground">
+                          HOW (Methodology)
+                        </h4>
+                        <p className="text-sm">
+                          {phase2Data.goldenCircle.how?.methodology ||
+                            'Not analyzed'}
+                        </p>
+                        {phase2Data.goldenCircle.how?.score &&
+                          renderScore(phase2Data.goldenCircle.how.score)}
                       </div>
                       <div>
-                        <h4 className="font-semibold text-sm text-muted-foreground">WHAT (Offerings)</h4>
-                        <p className="text-sm">{phase2Data.goldenCircle.what?.offerings?.join(', ') || 'Not analyzed'}</p>
-                        {phase2Data.goldenCircle.what?.score && renderScore(phase2Data.goldenCircle.what.score)}
+                        <h4 className="text-sm font-semibold text-muted-foreground">
+                          WHAT (Offerings)
+                        </h4>
+                        <p className="text-sm">
+                          {phase2Data.goldenCircle.what?.offerings?.join(
+                            ', '
+                          ) || 'Not analyzed'}
+                        </p>
+                        {phase2Data.goldenCircle.what?.score &&
+                          renderScore(phase2Data.goldenCircle.what.score)}
                       </div>
                       <div>
-                        <h4 className="font-semibold text-sm text-muted-foreground">WHO (Audience)</h4>
-                        <p className="text-sm">{phase2Data.goldenCircle.who?.targetAudience || 'Not analyzed'}</p>
-                        {phase2Data.goldenCircle.who?.score && renderScore(phase2Data.goldenCircle.who.score)}
+                        <h4 className="text-sm font-semibold text-muted-foreground">
+                          WHO (Audience)
+                        </h4>
+                        <p className="text-sm">
+                          {phase2Data.goldenCircle.who?.targetAudience ||
+                            'Not analyzed'}
+                        </p>
+                        {phase2Data.goldenCircle.who?.score &&
+                          renderScore(phase2Data.goldenCircle.who.score)}
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-muted-foreground">No Golden Circle data available</p>
+                  <p className="text-muted-foreground">
+                    No Golden Circle data available
+                  </p>
                 )}
               </CardContent>
             </Card>
@@ -209,7 +259,8 @@ export default function Phase2Page() {
                 <CardTitle className="flex items-center gap-2">
                   <Layers className="h-6 w-6 text-green-500" />
                   Elements of Value (B2C)
-                  {phase2Data.elementsOfValue?.overallScore && renderScore(phase2Data.elementsOfValue.overallScore)}
+                  {phase2Data.elementsOfValue?.overallScore &&
+                    renderScore(phase2Data.elementsOfValue.overallScore)}
                 </CardTitle>
                 <CardDescription>
                   Harvard Business Review&apos;s 30 B2C value elements
@@ -220,21 +271,44 @@ export default function Phase2Page() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-3 gap-4">
                       <div>
-                        <h4 className="font-semibold text-sm text-muted-foreground">Functional Elements</h4>
-                        <p className="text-sm">Score: {phase2Data.elementsOfValue.functional?.overallScore || 0}/10</p>
+                        <h4 className="text-sm font-semibold text-muted-foreground">
+                          Functional Elements
+                        </h4>
+                        <p className="text-sm">
+                          Score:{' '}
+                          {phase2Data.elementsOfValue.functional
+                            ?.overallScore || 0}
+                          /10
+                        </p>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-sm text-muted-foreground">Emotional Elements</h4>
-                        <p className="text-sm">Score: {phase2Data.elementsOfValue.emotional?.overallScore || 0}/10</p>
+                        <h4 className="text-sm font-semibold text-muted-foreground">
+                          Emotional Elements
+                        </h4>
+                        <p className="text-sm">
+                          Score:{' '}
+                          {phase2Data.elementsOfValue.emotional?.overallScore ||
+                            0}
+                          /10
+                        </p>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-sm text-muted-foreground">Life-Changing Elements</h4>
-                        <p className="text-sm">Score: {phase2Data.elementsOfValue.lifeChanging?.overallScore || 0}/10</p>
+                        <h4 className="text-sm font-semibold text-muted-foreground">
+                          Life-Changing Elements
+                        </h4>
+                        <p className="text-sm">
+                          Score:{' '}
+                          {phase2Data.elementsOfValue.lifeChanging
+                            ?.overallScore || 0}
+                          /10
+                        </p>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-muted-foreground">No Elements of Value data available</p>
+                  <p className="text-muted-foreground">
+                    No Elements of Value data available
+                  </p>
                 )}
               </CardContent>
             </Card>
@@ -246,7 +320,8 @@ export default function Phase2Page() {
                 <CardTitle className="flex items-center gap-2">
                   <Users className="h-6 w-6 text-purple-500" />
                   B2B Elements of Value
-                  {phase2Data.b2bElements?.overallScore && renderScore(phase2Data.b2bElements.overallScore)}
+                  {phase2Data.b2bElements?.overallScore &&
+                    renderScore(phase2Data.b2bElements.overallScore)}
                 </CardTitle>
                 <CardDescription>
                   Harvard Business Review&apos;s 40 B2B value elements
@@ -257,25 +332,53 @@ export default function Phase2Page() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <h4 className="font-semibold text-sm text-muted-foreground">Table Stakes</h4>
-                        <p className="text-sm">Score: {phase2Data.b2bElements.tableStakes?.overallScore || 0}/10</p>
+                        <h4 className="text-sm font-semibold text-muted-foreground">
+                          Table Stakes
+                        </h4>
+                        <p className="text-sm">
+                          Score:{' '}
+                          {phase2Data.b2bElements.tableStakes?.overallScore ||
+                            0}
+                          /10
+                        </p>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-sm text-muted-foreground">Functional</h4>
-                        <p className="text-sm">Score: {phase2Data.b2bElements.functional?.overallScore || 0}/10</p>
+                        <h4 className="text-sm font-semibold text-muted-foreground">
+                          Functional
+                        </h4>
+                        <p className="text-sm">
+                          Score:{' '}
+                          {phase2Data.b2bElements.functional?.overallScore || 0}
+                          /10
+                        </p>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-sm text-muted-foreground">Ease of Business</h4>
-                        <p className="text-sm">Score: {phase2Data.b2bElements.easeOfDoingBusiness?.overallScore || 0}/10</p>
+                        <h4 className="text-sm font-semibold text-muted-foreground">
+                          Ease of Business
+                        </h4>
+                        <p className="text-sm">
+                          Score:{' '}
+                          {phase2Data.b2bElements.easeOfDoingBusiness
+                            ?.overallScore || 0}
+                          /10
+                        </p>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-sm text-muted-foreground">Individual</h4>
-                        <p className="text-sm">Score: {phase2Data.b2bElements.individual?.overallScore || 0}/10</p>
+                        <h4 className="text-sm font-semibold text-muted-foreground">
+                          Individual
+                        </h4>
+                        <p className="text-sm">
+                          Score:{' '}
+                          {phase2Data.b2bElements.individual?.overallScore || 0}
+                          /10
+                        </p>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-muted-foreground">No B2B Elements data available</p>
+                  <p className="text-muted-foreground">
+                    No B2B Elements data available
+                  </p>
                 )}
               </CardContent>
             </Card>
@@ -287,7 +390,8 @@ export default function Phase2Page() {
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="h-6 w-6 text-orange-500" />
                   CliftonStrengths Analysis
-                  {phase2Data.cliftonStrengths?.overallScore && renderScore(phase2Data.cliftonStrengths.overallScore)}
+                  {phase2Data.cliftonStrengths?.overallScore &&
+                    renderScore(phase2Data.cliftonStrengths.overallScore)}
                 </CardTitle>
                 <CardDescription>
                   Gallup&apos;s 34-theme strengths assessment
@@ -298,25 +402,55 @@ export default function Phase2Page() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <h4 className="font-semibold text-sm text-muted-foreground">Strategic Thinking</h4>
-                        <p className="text-sm">Score: {phase2Data.cliftonStrengths.strategicThinking?.overallScore || 0}/10</p>
+                        <h4 className="text-sm font-semibold text-muted-foreground">
+                          Strategic Thinking
+                        </h4>
+                        <p className="text-sm">
+                          Score:{' '}
+                          {phase2Data.cliftonStrengths.strategicThinking
+                            ?.overallScore || 0}
+                          /10
+                        </p>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-sm text-muted-foreground">Executing</h4>
-                        <p className="text-sm">Score: {phase2Data.cliftonStrengths.executing?.overallScore || 0}/10</p>
+                        <h4 className="text-sm font-semibold text-muted-foreground">
+                          Executing
+                        </h4>
+                        <p className="text-sm">
+                          Score:{' '}
+                          {phase2Data.cliftonStrengths.executing
+                            ?.overallScore || 0}
+                          /10
+                        </p>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-sm text-muted-foreground">Influencing</h4>
-                        <p className="text-sm">Score: {phase2Data.cliftonStrengths.influencing?.overallScore || 0}/10</p>
+                        <h4 className="text-sm font-semibold text-muted-foreground">
+                          Influencing
+                        </h4>
+                        <p className="text-sm">
+                          Score:{' '}
+                          {phase2Data.cliftonStrengths.influencing
+                            ?.overallScore || 0}
+                          /10
+                        </p>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-sm text-muted-foreground">Relationship Building</h4>
-                        <p className="text-sm">Score: {phase2Data.cliftonStrengths.relationshipBuilding?.overallScore || 0}/10</p>
+                        <h4 className="text-sm font-semibold text-muted-foreground">
+                          Relationship Building
+                        </h4>
+                        <p className="text-sm">
+                          Score:{' '}
+                          {phase2Data.cliftonStrengths.relationshipBuilding
+                            ?.overallScore || 0}
+                          /10
+                        </p>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-muted-foreground">No CliftonStrengths data available</p>
+                  <p className="text-muted-foreground">
+                    No CliftonStrengths data available
+                  </p>
                 )}
               </CardContent>
             </Card>
@@ -328,7 +462,8 @@ export default function Phase2Page() {
                 <CardTitle className="flex items-center gap-2">
                   <Layers className="h-6 w-6 text-indigo-500" />
                   Content Comparison Analysis
-                  {phase2Data.contentComparison?.overallScore && renderScore(phase2Data.contentComparison.overallScore)}
+                  {phase2Data.contentComparison?.overallScore &&
+                    renderScore(phase2Data.contentComparison.overallScore)}
                 </CardTitle>
                 <CardDescription>
                   Content quality and competitive positioning analysis
@@ -339,17 +474,33 @@ export default function Phase2Page() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <h4 className="font-semibold text-sm text-muted-foreground">Content Quality</h4>
-                        <p className="text-sm">Score: {phase2Data.contentComparison.contentQuality?.overallScore || 0}/10</p>
+                        <h4 className="text-sm font-semibold text-muted-foreground">
+                          Content Quality
+                        </h4>
+                        <p className="text-sm">
+                          Score:{' '}
+                          {phase2Data.contentComparison.contentQuality
+                            ?.overallScore || 0}
+                          /10
+                        </p>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-sm text-muted-foreground">Competitive Positioning</h4>
-                        <p className="text-sm">Score: {phase2Data.contentComparison.competitivePositioning?.overallScore || 0}/10</p>
+                        <h4 className="text-sm font-semibold text-muted-foreground">
+                          Competitive Positioning
+                        </h4>
+                        <p className="text-sm">
+                          Score:{' '}
+                          {phase2Data.contentComparison.competitivePositioning
+                            ?.overallScore || 0}
+                          /10
+                        </p>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-muted-foreground">No Content Comparison data available</p>
+                  <p className="text-muted-foreground">
+                    No Content Comparison data available
+                  </p>
                 )}
               </CardContent>
             </Card>

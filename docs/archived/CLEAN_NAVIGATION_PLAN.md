@@ -85,7 +85,7 @@ const mainNavigation = [
     href: '/dashboard',
     icon: LayoutDashboard,
     description: 'Overview and recent analyses',
-    status: 'working'
+    status: 'working',
   },
   {
     name: 'Phased Analysis',
@@ -93,7 +93,7 @@ const mainNavigation = [
     icon: Layers,
     description: 'Step-by-step analysis with manual control',
     badge: 'Recommended',
-    status: 'working'
+    status: 'working',
   },
   {
     name: 'Content Comparison',
@@ -101,15 +101,15 @@ const mainNavigation = [
     icon: GitCompare,
     description: 'Compare existing vs. proposed content',
     badge: 'New',
-    status: 'working'
+    status: 'working',
   },
   {
     name: 'Quick Analysis',
     href: '/dashboard/progressive-analysis',
     icon: Zap,
     description: 'Automated full analysis',
-    status: 'working'
-  }
+    status: 'working',
+  },
 ];
 ```
 
@@ -120,12 +120,12 @@ const secondaryNavigation = [
   {
     name: 'Website Analysis',
     href: '/dashboard/website-analysis',
-    status: 'testing'
+    status: 'testing',
   },
   {
     name: 'Comprehensive Analysis',
     href: '/dashboard/comprehensive-analysis',
-    status: 'testing'
+    status: 'testing',
   },
   // Only show if they work
 ];
@@ -149,11 +149,13 @@ Create: `src/app/dashboard/[page]/page.tsx.disabled`
 ```
 
 **Pros:**
+
 - ✅ Safe (doesn't break anything)
 - ✅ Easy to re-enable (rename back)
 - ✅ Code preserved
 
 **Cons:**
+
 - ❌ Still shows in file tree
 
 ---
@@ -168,26 +170,28 @@ export const FEATURE_FLAGS = {
   PROGRESSIVE_ANALYSIS: true,
   STEP_BY_STEP_ANALYSIS: false, // Disabled
   STEP_BY_STEP_EXECUTION: false, // Disabled
-  COMPREHENSIVE_ANALYSIS: true,  // Test first
-  WEBSITE_ANALYSIS: true,  // Test first
+  COMPREHENSIVE_ANALYSIS: true, // Test first
+  WEBSITE_ANALYSIS: true, // Test first
   ENHANCED_ANALYSIS: false, // Disabled until tested
   CONTROLLED_ANALYSIS: false, // Disabled until tested
   SEO_ANALYSIS: true, // Test first
 };
 
 // In navigation component:
-const navItems = allNavItems.filter(item =>
-  FEATURE_FLAGS[item.featureFlag] !== false
+const navItems = allNavItems.filter(
+  (item) => FEATURE_FLAGS[item.featureFlag] !== false
 );
 ```
 
 **Pros:**
+
 - ✅ Central control
 - ✅ Easy to enable/disable
 - ✅ Code stays in place
 - ✅ Can A/B test
 
 **Cons:**
+
 - ❌ Need to add feature flag to each component
 
 ---
@@ -204,12 +208,14 @@ export default function StepByStepAnalysisPage() {
 ```
 
 **Pros:**
+
 - ✅ Users don't hit 404
 - ✅ Automatic upgrade to new version
 - ✅ Doesn't break bookmarks
 - ✅ Code can be removed later
 
 **Cons:**
+
 - ❌ No warning to user
 
 ---
@@ -219,6 +225,7 @@ export default function StepByStepAnalysisPage() {
 ### **Step 1: Test Legacy Pages** (10 min)
 
 Visit each page and check if it loads:
+
 - `/dashboard/website-analysis` → Test
 - `/dashboard/comprehensive-analysis` → Test
 - `/dashboard/seo-analysis` → Test
@@ -226,6 +233,7 @@ Visit each page and check if it loads:
 - `/dashboard/controlled-analysis` → Test
 
 **Record:**
+
 - ✅ Working: Keep in nav
 - ❌ Broken: Redirect to phased-analysis
 
@@ -249,6 +257,7 @@ export default function OldPage() {
 ### **Step 3: Update Main Nav** (10 min)
 
 Update `/dashboard/page.tsx` to show:
+
 - ⭐ Phased Analysis (primary)
 - 🆕 Content Comparison (new)
 - ⚡ Progressive Analysis (quick)
@@ -265,16 +274,17 @@ For easy enable/disable of features in future
 ## ✅ WHAT I'LL DO NOW
 
 **Option 1 (Quick - 5 min):**
+
 - Test legacy pages
 - Add redirects for broken ones
 - Update main nav with working pages
 - No breaking changes
 
 **Option 2 (Complete - 30 min):**
+
 - Implement feature flags
 - Create clean navigation component
 - Test all pages
 - Update documentation
 
 **Which do you prefer?**
-

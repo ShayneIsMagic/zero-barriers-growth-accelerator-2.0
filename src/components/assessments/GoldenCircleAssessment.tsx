@@ -2,7 +2,13 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { AlertCircle, Loader2, Target } from 'lucide-react';
 import { useState } from 'react';
@@ -63,7 +69,11 @@ interface GoldenCircleAssessmentProps {
   onComplete?: (data: GoldenCircleData) => void;
 }
 
-export default function GoldenCircleAssessment({ url, content, onComplete }: GoldenCircleAssessmentProps) {
+export default function GoldenCircleAssessment({
+  url,
+  content,
+  onComplete,
+}: GoldenCircleAssessmentProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<GoldenCircleData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -132,7 +142,9 @@ export default function GoldenCircleAssessment({ url, content, onComplete }: Gol
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span>Overall Score</span>
-              <span>{result.overallScore}/10 - {getScoreLabel(result.overallScore)}</span>
+              <span>
+                {result.overallScore}/10 - {getScoreLabel(result.overallScore)}
+              </span>
             </div>
             <Progress value={result.overallScore * 10} className="h-2" />
           </div>
@@ -142,7 +154,7 @@ export default function GoldenCircleAssessment({ url, content, onComplete }: Gol
             {/* WHY */}
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center justify-between">
+                <CardTitle className="flex items-center justify-between text-lg">
                   WHY (Purpose)
                   <Badge className={getScoreColor(result.why.score)}>
                     {result.why.score}/10
@@ -151,19 +163,27 @@ export default function GoldenCircleAssessment({ url, content, onComplete }: Gol
               </CardHeader>
               <CardContent className="space-y-3">
                 <div>
-                  <h4 className="font-semibold text-sm text-gray-600">Statement:</h4>
-                  <p className="text-sm">{result.why.statement || 'Not identified'}</p>
+                  <h4 className="text-sm font-semibold text-gray-600">
+                    Statement:
+                  </h4>
+                  <p className="text-sm">
+                    {result.why.statement || 'Not identified'}
+                  </p>
                 </div>
                 {result.why.evidence && (
                   <div>
-                    <h4 className="font-semibold text-sm text-gray-600">Evidence:</h4>
+                    <h4 className="text-sm font-semibold text-gray-600">
+                      Evidence:
+                    </h4>
                     <p className="text-sm italic">"{result.why.evidence}"</p>
                   </div>
                 )}
                 {result.why.insights.length > 0 && (
                   <div>
-                    <h4 className="font-semibold text-sm text-gray-600">Insights:</h4>
-                    <ul className="text-sm list-disc list-inside space-y-1">
+                    <h4 className="text-sm font-semibold text-gray-600">
+                      Insights:
+                    </h4>
+                    <ul className="list-inside list-disc space-y-1 text-sm">
                       {result.why.insights.map((insight, index) => (
                         <li key={index}>{insight}</li>
                       ))}
@@ -176,7 +196,7 @@ export default function GoldenCircleAssessment({ url, content, onComplete }: Gol
             {/* HOW */}
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center justify-between">
+                <CardTitle className="flex items-center justify-between text-lg">
                   HOW (Methodology)
                   <Badge className={getScoreColor(result.how.score)}>
                     {result.how.score}/10
@@ -185,18 +205,26 @@ export default function GoldenCircleAssessment({ url, content, onComplete }: Gol
               </CardHeader>
               <CardContent className="space-y-3">
                 <div>
-                  <h4 className="font-semibold text-sm text-gray-600">Methodology:</h4>
-                  <p className="text-sm">{result.how.methodology || 'Not identified'}</p>
+                  <h4 className="text-sm font-semibold text-gray-600">
+                    Methodology:
+                  </h4>
+                  <p className="text-sm">
+                    {result.how.methodology || 'Not identified'}
+                  </p>
                 </div>
                 {result.how.framework && (
                   <div>
-                    <h4 className="font-semibold text-sm text-gray-600">Framework:</h4>
+                    <h4 className="text-sm font-semibold text-gray-600">
+                      Framework:
+                    </h4>
                     <p className="text-sm">{result.how.framework}</p>
                   </div>
                 )}
                 {result.how.evidence && (
                   <div>
-                    <h4 className="font-semibold text-sm text-gray-600">Evidence:</h4>
+                    <h4 className="text-sm font-semibold text-gray-600">
+                      Evidence:
+                    </h4>
                     <p className="text-sm italic">"{result.how.evidence}"</p>
                   </div>
                 )}
@@ -206,7 +234,7 @@ export default function GoldenCircleAssessment({ url, content, onComplete }: Gol
             {/* WHAT */}
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center justify-between">
+                <CardTitle className="flex items-center justify-between text-lg">
                   WHAT (Offerings)
                   <Badge className={getScoreColor(result.what.score)}>
                     {result.what.score}/10
@@ -215,8 +243,10 @@ export default function GoldenCircleAssessment({ url, content, onComplete }: Gol
               </CardHeader>
               <CardContent className="space-y-3">
                 <div>
-                  <h4 className="font-semibold text-sm text-gray-600">Offerings:</h4>
-                  <ul className="text-sm list-disc list-inside">
+                  <h4 className="text-sm font-semibold text-gray-600">
+                    Offerings:
+                  </h4>
+                  <ul className="list-inside list-disc text-sm">
                     {result.what.offerings.map((offering, index) => (
                       <li key={index}>{offering}</li>
                     ))}
@@ -224,10 +254,16 @@ export default function GoldenCircleAssessment({ url, content, onComplete }: Gol
                 </div>
                 {result.what.categories.length > 0 && (
                   <div>
-                    <h4 className="font-semibold text-sm text-gray-600">Categories:</h4>
+                    <h4 className="text-sm font-semibold text-gray-600">
+                      Categories:
+                    </h4>
                     <div className="flex flex-wrap gap-1">
                       {result.what.categories.map((category, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
+                        <Badge
+                          key={index}
+                          variant="outline"
+                          className="text-xs"
+                        >
                           {category}
                         </Badge>
                       ))}
@@ -240,7 +276,7 @@ export default function GoldenCircleAssessment({ url, content, onComplete }: Gol
             {/* WHO */}
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center justify-between">
+                <CardTitle className="flex items-center justify-between text-lg">
                   WHO (Testimonials)
                   <Badge className={getScoreColor(result.who.score)}>
                     {result.who.score}/10
@@ -249,18 +285,28 @@ export default function GoldenCircleAssessment({ url, content, onComplete }: Gol
               </CardHeader>
               <CardContent className="space-y-3">
                 <div>
-                  <h4 className="font-semibold text-sm text-gray-600">Target Audience:</h4>
-                  <p className="text-sm">{result.who.targetAudience || 'Not identified'}</p>
+                  <h4 className="text-sm font-semibold text-gray-600">
+                    Target Audience:
+                  </h4>
+                  <p className="text-sm">
+                    {result.who.targetAudience || 'Not identified'}
+                  </p>
                 </div>
                 {result.who.testimonials.length > 0 && (
                   <div>
-                    <h4 className="font-semibold text-sm text-gray-600">Testimonials:</h4>
+                    <h4 className="text-sm font-semibold text-gray-600">
+                      Testimonials:
+                    </h4>
                     <div className="space-y-2">
                       {result.who.testimonials.map((testimonial, index) => (
-                        <div key={index} className="p-2 bg-gray-50 rounded text-sm">
+                        <div
+                          key={index}
+                          className="rounded bg-gray-50 p-2 text-sm"
+                        >
                           <p className="italic">"{testimonial.quote}"</p>
-                          <p className="text-xs text-gray-600 mt-1">
-                            - {testimonial.client}, {testimonial.title} at {testimonial.company}
+                          <p className="mt-1 text-xs text-gray-600">
+                            - {testimonial.client}, {testimonial.title} at{' '}
+                            {testimonial.company}
                           </p>
                         </div>
                       ))}
@@ -281,8 +327,10 @@ export default function GoldenCircleAssessment({ url, content, onComplete }: Gol
 
               {result.strengths.length > 0 && (
                 <div>
-                  <h4 className="font-semibold text-sm text-green-600 mb-2">Strengths:</h4>
-                  <ul className="text-sm list-disc list-inside space-y-1">
+                  <h4 className="mb-2 text-sm font-semibold text-green-600">
+                    Strengths:
+                  </h4>
+                  <ul className="list-inside list-disc space-y-1 text-sm">
                     {result.strengths.map((strength, index) => (
                       <li key={index}>{strength}</li>
                     ))}
@@ -292,8 +340,10 @@ export default function GoldenCircleAssessment({ url, content, onComplete }: Gol
 
               {result.weaknesses.length > 0 && (
                 <div>
-                  <h4 className="font-semibold text-sm text-red-600 mb-2">Areas for Improvement:</h4>
-                  <ul className="text-sm list-disc list-inside space-y-1">
+                  <h4 className="mb-2 text-sm font-semibold text-red-600">
+                    Areas for Improvement:
+                  </h4>
+                  <ul className="list-inside list-disc space-y-1 text-sm">
                     {result.weaknesses.map((weakness, index) => (
                       <li key={index}>{weakness}</li>
                     ))}
@@ -303,13 +353,25 @@ export default function GoldenCircleAssessment({ url, content, onComplete }: Gol
 
               {result.priorityActions.length > 0 && (
                 <div>
-                  <h4 className="font-semibold text-sm text-blue-600 mb-2">Priority Actions:</h4>
+                  <h4 className="mb-2 text-sm font-semibold text-blue-600">
+                    Priority Actions:
+                  </h4>
                   <div className="space-y-2">
                     {result.priorityActions.map((action, index) => (
-                      <div key={index} className="p-2 border rounded">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-medium">{action.action}</span>
-                          <Badge variant={action.priority === 'high' ? 'destructive' : action.priority === 'medium' ? 'default' : 'secondary'}>
+                      <div key={index} className="rounded border p-2">
+                        <div className="mb-1 flex items-center justify-between">
+                          <span className="text-sm font-medium">
+                            {action.action}
+                          </span>
+                          <Badge
+                            variant={
+                              action.priority === 'high'
+                                ? 'destructive'
+                                : action.priority === 'medium'
+                                  ? 'default'
+                                  : 'secondary'
+                            }
+                          >
                             {action.priority}
                           </Badge>
                         </div>
@@ -339,17 +401,13 @@ export default function GoldenCircleAssessment({ url, content, onComplete }: Gol
       </CardHeader>
       <CardContent>
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded flex items-center gap-2">
+          <div className="mb-4 flex items-center gap-2 rounded border border-red-200 bg-red-50 p-3">
             <AlertCircle className="h-4 w-4 text-red-500" />
             <span className="text-sm text-red-700">{error}</span>
           </div>
         )}
 
-        <Button
-          onClick={runAnalysis}
-          disabled={isAnalyzing}
-          className="w-full"
-        >
+        <Button onClick={runAnalysis} disabled={isAnalyzing} className="w-full">
           {isAnalyzing ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

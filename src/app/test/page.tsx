@@ -4,7 +4,13 @@ import { useAuth } from '@/contexts/auth-context';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AnalysisClient } from '@/lib/analysis-client';
 import { CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
@@ -57,7 +63,9 @@ export default function TestPage() {
     <div className="min-h-screen bg-gradient-to-br from-growth-50 to-growth-100 p-8">
       <div className="mx-auto max-w-4xl space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-growth-900">🧪 Test Dashboard</h1>
+          <h1 className="text-3xl font-bold text-growth-900">
+            🧪 Test Dashboard
+          </h1>
           <p className="mt-2 text-growth-600">
             Test all core functionality of the Growth Accelerator
           </p>
@@ -92,9 +100,7 @@ export default function TestPage() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button onClick={handleTestAuth}>
-                Test Sign In
-              </Button>
+              <Button onClick={handleTestAuth}>Test Sign In</Button>
               <Button variant="outline" onClick={signOut}>
                 Sign Out
               </Button>
@@ -103,7 +109,8 @@ export default function TestPage() {
               <Alert>
                 <CheckCircle className="h-4 w-4" />
                 <AlertDescription>
-                  ✅ Logged in as: {user.name} ({user.email}) - Role: {user.role}
+                  ✅ Logged in as: {user.name} ({user.email}) - Role:{' '}
+                  {user.role}
                 </AlertDescription>
               </Alert>
             )}
@@ -127,8 +134,8 @@ export default function TestPage() {
                 placeholder="https://example.com"
               />
             </div>
-            <Button 
-              onClick={handleTestAnalysis} 
+            <Button
+              onClick={handleTestAnalysis}
               disabled={isAnalyzing}
               className="w-full"
             >
@@ -141,7 +148,7 @@ export default function TestPage() {
                 'Test Analysis'
               )}
             </Button>
-            
+
             {error && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
@@ -154,12 +161,13 @@ export default function TestPage() {
                 <Alert>
                   <CheckCircle className="h-4 w-4" />
                   <AlertDescription>
-                    ✅ Analysis completed! Overall Score: {analysisResult.overallScore}/100
+                    ✅ Analysis completed! Overall Score:{' '}
+                    {analysisResult.overallScore}/100
                   </AlertDescription>
                 </Alert>
                 <div className="rounded-lg border p-4">
                   <h4 className="font-medium">Analysis Summary:</h4>
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="mt-1 text-sm text-muted-foreground">
                     {analysisResult.summary}
                   </p>
                 </div>

@@ -32,7 +32,7 @@ export async function saveIndividualReport(
       update: {
         markdown: report.markdown,
         score: report.score || null,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       create: {
         id: report.id,
@@ -42,8 +42,8 @@ export async function saveIndividualReport(
         prompt: report.prompt,
         markdown: report.markdown,
         score: report.score || null,
-        timestamp: report.timestamp
-      }
+        timestamp: report.timestamp,
+      },
     });
 
     console.log(`✅ Saved individual report: ${report.id} (${report.name})`);
@@ -72,21 +72,23 @@ export async function saveIndividualReports(
 /**
  * Get all reports for an analysis
  */
-export async function getAnalysisReports(analysis_id: string): Promise<IndividualReport[]> {
+export async function getAnalysisReports(
+  analysis_id: string
+): Promise<IndividualReport[]> {
   try {
     const reports = await prisma.individual_reports.findMany({
       where: { analysis_id: analysis_id },
-      orderBy: { timestamp: 'asc' }
+      orderBy: { timestamp: 'asc' },
     });
 
-    return reports.map(r => ({
+    return reports.map((r) => ({
       id: r.id,
       name: r.name,
       phase: r.phase,
       prompt: r.prompt,
       markdown: r.markdown,
       score: r.score,
-      timestamp: r.timestamp.toISOString()
+      timestamp: r.timestamp.toISOString(),
     }));
   } catch (error) {
     console.error(`❌ Error fetching reports for ${analysis_id}:`, error);
@@ -105,19 +107,19 @@ export async function getPhaseReports(
     const reports = await prisma.individual_reports.findMany({
       where: {
         analysis_id: analysis_id,
-        phase: phase
+        phase: phase,
       },
-      orderBy: { timestamp: 'asc' }
+      orderBy: { timestamp: 'asc' },
     });
 
-    return reports.map(r => ({
+    return reports.map((r) => ({
       id: r.id,
       name: r.name,
       phase: r.phase,
       prompt: r.prompt,
       markdown: r.markdown,
       score: r.score,
-      timestamp: r.timestamp.toISOString()
+      timestamp: r.timestamp.toISOString(),
     }));
   } catch (error) {
     console.error(`❌ Error fetching ${phase} reports:`, error);
@@ -143,15 +145,15 @@ export async function saveMarkdownExport(
         overall_score: overallScore || null,
         rating: rating || null,
         exported_at: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       create: {
         analysis_id: analysis_id,
         url: url,
         markdown: markdown,
         overall_score: overallScore || null,
-        rating: rating || null
-      }
+        rating: rating || null,
+      },
     });
 
     const exportId = result.id;
@@ -166,10 +168,12 @@ export async function saveMarkdownExport(
 /**
  * Get markdown export for an analysis
  */
-export async function getMarkdownExport(analysis_id: string): Promise<MarkdownExport | null> {
+export async function getMarkdownExport(
+  analysis_id: string
+): Promise<MarkdownExport | null> {
   try {
     const result = await prisma.markdown_exports.findFirst({
-      where: { analysis_id: analysis_id }
+      where: { analysis_id: analysis_id },
     });
 
     if (!result) {
@@ -185,7 +189,7 @@ export async function getMarkdownExport(analysis_id: string): Promise<MarkdownEx
       rating: result.rating,
       exported_at: result.exported_at,
       createdAt: result.createdAt,
-      updatedAt: result.updatedAt
+      updatedAt: result.updatedAt,
     };
   } catch (error) {
     console.error(`❌ Error fetching markdown export:`, error);
@@ -196,40 +200,44 @@ export async function getMarkdownExport(analysis_id: string): Promise<MarkdownEx
 /**
  * Get complete analysis with all reports (as JSON)
  */
-export async function getCompleteAnalysisMarkdown(analysis_id: string): Promise<any> {
+export async function getCompleteAnalysisMarkdown(
+  analysis_id: string
+): Promise<any> {
   try {
     const [exportData, reports] = await Promise.all([
       prisma.markdown_exports.findFirst({
-        where: { analysis_id: analysis_id }
+        where: { analysis_id: analysis_id },
       }),
       prisma.individual_reports.findMany({
         where: { analysis_id: analysis_id },
-        orderBy: { timestamp: 'asc' }
-      })
+        orderBy: { timestamp: 'asc' },
+      }),
     ]);
 
     return {
       analysis_id,
-      export: exportData ? {
-        id: exportData.id,
-        analysis_id: exportData.analysis_id,
-        url: exportData.url,
-        markdown: exportData.markdown,
-        overall_score: exportData.overall_score,
-        rating: exportData.rating,
-        exported_at: exportData.exported_at,
-        createdAt: exportData.createdAt,
-        updatedAt: exportData.updatedAt
-      } : null,
-      individualReports: reports.map(r => ({
+      export: exportData
+        ? {
+            id: exportData.id,
+            analysis_id: exportData.analysis_id,
+            url: exportData.url,
+            markdown: exportData.markdown,
+            overall_score: exportData.overall_score,
+            rating: exportData.rating,
+            exported_at: exportData.exported_at,
+            createdAt: exportData.createdAt,
+            updatedAt: exportData.updatedAt,
+          }
+        : null,
+      individualReports: reports.map((r) => ({
         id: r.id,
         name: r.name,
         phase: r.phase,
         prompt: r.prompt,
         markdown: r.markdown,
         score: r.score,
-        timestamp: r.timestamp.toISOString()
-      }))
+        timestamp: r.timestamp.toISOString(),
+      })),
     };
   } catch (error) {
     console.error(`❌ Error fetching complete analysis:`, error);
@@ -240,15 +248,17 @@ export async function getCompleteAnalysisMarkdown(analysis_id: string): Promise<
 /**
  * Delete all reports for an analysis
  */
-export async function deleteAnalysisReports(analysis_id: string): Promise<void> {
+export async function deleteAnalysisReports(
+  analysis_id: string
+): Promise<void> {
   try {
     await Promise.all([
       prisma.individual_reports.deleteMany({
-        where: { analysis_id: analysis_id }
+        where: { analysis_id: analysis_id },
       }),
       prisma.markdown_exports.deleteMany({
-        where: { analysis_id: analysis_id }
-      })
+        where: { analysis_id: analysis_id },
+      }),
     ]);
 
     console.log(`🗑️ Deleted all reports for analysis: ${analysis_id}`);
@@ -270,17 +280,17 @@ export async function getReportStats(analysis_id: string): Promise<{
   try {
     const [total, phase1, phase2, phase3] = await Promise.all([
       prisma.individual_reports.count({
-        where: { analysis_id: analysis_id }
+        where: { analysis_id: analysis_id },
       }),
       prisma.individual_reports.count({
-        where: { analysis_id: analysis_id, phase: 'Phase 1' }
+        where: { analysis_id: analysis_id, phase: 'Phase 1' },
       }),
       prisma.individual_reports.count({
-        where: { analysis_id: analysis_id, phase: 'Phase 2' }
+        where: { analysis_id: analysis_id, phase: 'Phase 2' },
       }),
       prisma.individual_reports.count({
-        where: { analysis_id: analysis_id, phase: 'Phase 3' }
-      })
+        where: { analysis_id: analysis_id, phase: 'Phase 3' },
+      }),
     ]);
 
     return { total, phase1, phase2, phase3 };
@@ -301,16 +311,15 @@ export async function checkMarkdownTablesExist(): Promise<{
     // Check if tables exist by trying to query them
     const [individualReports, markdownExports] = await Promise.allSettled([
       prisma.individual_reports.findFirst(),
-      prisma.markdown_exports.findFirst()
+      prisma.markdown_exports.findFirst(),
     ]);
 
     return {
       individualReports: individualReports.status === 'fulfilled',
-      markdownExports: markdownExports.status === 'fulfilled'
+      markdownExports: markdownExports.status === 'fulfilled',
     };
   } catch (error) {
     console.error(`❌ Error checking tables:`, error);
     return { individualReports: false, markdownExports: false };
   }
 }
-

@@ -12,4 +12,3 @@ import { PhasedAnalysisPage } from '@/components/analysis/PhasedAnalysisPage';
 export default function PhasedAnalysisRoute() {
   return <PhasedAnalysisPage />;
 }
-

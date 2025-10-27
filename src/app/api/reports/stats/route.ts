@@ -12,15 +12,17 @@ export async function GET(_request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: stats
+      data: stats,
     });
-
   } catch (error) {
     console.error('Failed to get report stats:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to get report stats',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to get report stats',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

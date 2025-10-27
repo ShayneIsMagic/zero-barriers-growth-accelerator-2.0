@@ -63,7 +63,7 @@ export class ControlledAnalyzer {
           stepName: step.name,
           status: 'failed',
           progress: 0,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
 
         // Decide whether to continue or abort
@@ -84,14 +84,17 @@ export class ControlledAnalyzer {
       timestamp: new Date().toISOString(),
       totalDuration,
       results,
-      summary: this.generateSummary(results)
+      summary: this.generateSummary(results),
     };
   }
 
   /**
    * Execute individual step with controlled timing and progress updates
    */
-  private async executeStep(step: AnalysisStep, previousResults: any): Promise<void> {
+  private async executeStep(
+    step: AnalysisStep,
+    previousResults: any
+  ): Promise<void> {
     console.log(`📊 Executing step: ${step.name}`);
 
     this.updateProgress({
@@ -99,7 +102,7 @@ export class ControlledAnalyzer {
       stepName: step.name,
       status: 'running',
       progress: 0,
-      startTime: new Date()
+      startTime: new Date(),
     });
 
     // Check dependencies
@@ -124,7 +127,7 @@ export class ControlledAnalyzer {
       status: 'completed',
       progress: 100,
       endTime: new Date(),
-      result: parsedResult
+      result: parsedResult,
     });
 
     previousResults[step.id] = parsedResult;
@@ -133,7 +136,10 @@ export class ControlledAnalyzer {
   /**
    * Execute AI call with timeout control
    */
-  private async executeWithTimeout(prompt: string, timeoutMs: number): Promise<string> {
+  private async executeWithTimeout(
+    prompt: string,
+    timeoutMs: number
+  ): Promise<string> {
     return new Promise(async (resolve, reject) => {
       const timer = setTimeout(() => {
         reject(new Error(`Step timeout after ${timeoutMs}ms`));
@@ -143,12 +149,17 @@ export class ControlledAnalyzer {
         // Update progress during execution
         const progressInterval = setInterval(() => {
           if (this.currentStep) {
-            this.currentStep.progress = Math.min(this.currentStep.progress + 10, 90);
+            this.currentStep.progress = Math.min(
+              this.currentStep.progress + 10,
+              90
+            );
             this.config.onProgressUpdate(this.currentStep);
           }
         }, timeoutMs / 10);
 
-        const model = this.genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+        const model = this.genAI.getGenerativeModel({
+          model: 'gemini-2.5-flash',
+        });
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const text = response.text();
@@ -177,18 +188,30 @@ export class ControlledAnalyzer {
       const content = previousResults.scraped_content;
       prompt = prompt.replace('{content}', content.content || '');
       prompt = prompt.replace('{title}', content.title || '');
-      prompt = prompt.replace('{metaDescription}', content.metaDescription || '');
-      prompt = prompt.replace('{wordCount}', content.wordCount?.toString() || '0');
+      prompt = prompt.replace(
+        '{metaDescription}',
+        content.metaDescription || ''
+      );
+      prompt = prompt.replace(
+        '{wordCount}',
+        content.wordCount?.toString() || '0'
+      );
     }
 
     // Add lighthouse data if available
     if (previousResults.lighthouse_analysis) {
-      prompt = prompt.replace('{lighthouse}', JSON.stringify(previousResults.lighthouse_analysis, null, 2));
+      prompt = prompt.replace(
+        '{lighthouse}',
+        JSON.stringify(previousResults.lighthouse_analysis, null, 2)
+      );
     }
 
     // Add pageaudit data if available
     if (previousResults.pageaudit_analysis) {
-      prompt = prompt.replace('{pageaudit}', JSON.stringify(previousResults.pageaudit_analysis, null, 2));
+      prompt = prompt.replace(
+        '{pageaudit}',
+        JSON.stringify(previousResults.pageaudit_analysis, null, 2)
+      );
     }
 
     return prompt;
@@ -197,7 +220,10 @@ export class ControlledAnalyzer {
   /**
    * Parse result based on expected format
    */
-  private parseResult(text: string, format: 'json' | 'text' | 'structured'): any {
+  private parseResult(
+    text: string,
+    format: 'json' | 'text' | 'structured'
+  ): any {
     switch (format) {
       case 'json':
         // Handle JSON wrapped in markdown code blocks
@@ -247,22 +273,32 @@ export class ControlledAnalyzer {
   private generateSummary(results: any): any {
     return {
       totalSteps: this.config.steps.length,
-      completedSteps: Object.keys(results).filter(key => results[key] !== null).length,
+      completedSteps: Object.keys(results).filter(
+        (key) => results[key] !== null
+      ).length,
       overallScore: this.calculateOverallScore(results),
       keyFindings: this.extractKeyFindings(results),
       priorityRecommendations: this.extractPriorityRecommendations(results),
-      nextSteps: this.generateNextSteps(results)
+      nextSteps: this.generateNextSteps(results),
     };
   }
 
   private calculateOverallScore(results: any): number {
     const scores = [];
-    if (results.golden_circle_analysis?.overallScore) scores.push(results.golden_circle_analysis.overallScore);
-    if (results.elements_of_value_analysis?.overallScore) scores.push(results.elements_of_value_analysis.overallScore);
-    if (results.b2b_elements_analysis?.overallScore) scores.push(results.b2b_elements_analysis.overallScore);
-    if (results.clifton_strengths_analysis?.overallScore) scores.push(results.clifton_strengths_analysis.overallScore);
+    if (results.golden_circle_analysis?.overallScore)
+      scores.push(results.golden_circle_analysis.overallScore);
+    if (results.elements_of_value_analysis?.overallScore)
+      scores.push(results.elements_of_value_analysis.overallScore);
+    if (results.b2b_elements_analysis?.overallScore)
+      scores.push(results.b2b_elements_analysis.overallScore);
+    if (results.clifton_strengths_analysis?.overallScore)
+      scores.push(results.clifton_strengths_analysis.overallScore);
 
-    return scores.length > 0 ? Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length) : 0;
+    return scores.length > 0
+      ? Math.round(
+          scores.reduce((sum, score) => sum + score, 0) / scores.length
+        )
+      : 0;
   }
 
   private extractKeyFindings(results: any): string[] {
@@ -299,11 +335,11 @@ export class ControlledAnalyzer {
 
   private generateNextSteps(results: any): string[] {
     return [
-      "Review detailed analysis results in each section",
-      "Prioritize recommendations based on impact and effort",
-      "Create implementation timeline for high-impact changes",
-      "Set up monitoring for key performance indicators",
-      "Schedule follow-up analysis in 30-60 days"
+      'Review detailed analysis results in each section',
+      'Prioritize recommendations based on impact and effort',
+      'Create implementation timeline for high-impact changes',
+      'Set up monitoring for key performance indicators',
+      'Schedule follow-up analysis in 30-60 days',
     ];
   }
 }
@@ -334,12 +370,13 @@ Provide a structured analysis of:
 Return JSON format with specific scores and evidence.`,
     expectedDuration: 15000, // 15 seconds
     dependencies: [],
-    outputFormat: 'json'
+    outputFormat: 'json',
   },
   {
     id: 'golden_circle_analysis',
     name: 'Golden Circle Analysis',
-    description: 'Analyze Why, How, What, and Who using Simon Sinek\'s framework',
+    description:
+      "Analyze Why, How, What, and Who using Simon Sinek's framework",
     promptTemplate: `Analyze the website using Simon Sinek's Golden Circle framework:
 
 URL: {url}
@@ -371,7 +408,7 @@ WHO (Target Audience):
 Return JSON format with detailed analysis for each component.`,
     expectedDuration: 20000, // 20 seconds
     dependencies: ['scraped_content'],
-    outputFormat: 'json'
+    outputFormat: 'json',
   },
   {
     id: 'elements_of_value_analysis',
@@ -404,7 +441,7 @@ For each element, provide:
 Return JSON format with detailed evaluation.`,
     expectedDuration: 25000, // 25 seconds
     dependencies: ['scraped_content'],
-    outputFormat: 'json'
+    outputFormat: 'json',
   },
   {
     id: 'b2b_elements_analysis',
@@ -446,7 +483,7 @@ For each element, provide:
 Return JSON format with detailed evaluation.`,
     expectedDuration: 30000, // 30 seconds
     dependencies: ['scraped_content'],
-    outputFormat: 'json'
+    outputFormat: 'json',
   },
   {
     id: 'clifton_strengths_analysis',
@@ -480,12 +517,13 @@ For each domain:
 Return JSON format with detailed analysis.`,
     expectedDuration: 25000, // 25 seconds
     dependencies: ['scraped_content'],
-    outputFormat: 'json'
+    outputFormat: 'json',
   },
   {
     id: 'comprehensive_analysis',
     name: 'Comprehensive Strategic Analysis',
-    description: 'Generate comprehensive insights and strategic recommendations',
+    description:
+      'Generate comprehensive insights and strategic recommendations',
     promptTemplate: `Generate comprehensive strategic analysis based on all previous findings:
 
 URL: {url}
@@ -525,7 +563,12 @@ Provide:
 
 Return JSON format with detailed strategic recommendations.`,
     expectedDuration: 35000, // 35 seconds
-    dependencies: ['golden_circle_analysis', 'elements_of_value_analysis', 'b2b_elements_analysis', 'clifton_strengths_analysis'],
-    outputFormat: 'json'
-  }
+    dependencies: [
+      'golden_circle_analysis',
+      'elements_of_value_analysis',
+      'b2b_elements_analysis',
+      'clifton_strengths_analysis',
+    ],
+    outputFormat: 'json',
+  },
 ];

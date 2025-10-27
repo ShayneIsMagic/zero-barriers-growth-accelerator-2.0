@@ -76,7 +76,9 @@ export interface AnalysisResult {
   cliftonStrengths: {
     executing: { [key: string]: { score: number; evidence: string } };
     influencing: { [key: string]: { score: number; evidence: string } };
-    relationshipBuilding: { [key: string]: { score: number; evidence: string } };
+    relationshipBuilding: {
+      [key: string]: { score: number; evidence: string };
+    };
     strategicThinking: { [key: string]: { score: number; evidence: string } };
     overallScore: number;
     topThemes: string[];
@@ -155,8 +157,12 @@ export class AIProviderService {
   ): Promise<AnalysisResult> {
     // Check cost limits before processing
     const model = this.getModelForProvider(provider);
-    const costCheck = CostMonitor.checkCostLimits(provider, model, request.content.length);
-    
+    const costCheck = CostMonitor.checkCostLimits(
+      provider,
+      model,
+      request.content.length
+    );
+
     if (!costCheck.allowed) {
       throw new Error(`Cost limit exceeded: ${costCheck.reason}`);
     }
@@ -189,14 +195,18 @@ export class AIProviderService {
     }
   }
 
-  private async analyzeWithOpenAI(request: AnalysisRequest): Promise<AnalysisResult> {
+  private async analyzeWithOpenAI(
+    request: AnalysisRequest
+  ): Promise<AnalysisResult> {
     if (!this.openai) {
       throw new Error('OpenAI not configured');
     }
 
     // Cost protection: Limit content length
     if (request.content.length > 50000) {
-      throw new Error('Content too long. Please reduce content size to under 50,000 characters.');
+      throw new Error(
+        'Content too long. Please reduce content size to under 50,000 characters.'
+      );
     }
 
     const prompt = this.buildAnalysisPrompt(request);
@@ -208,7 +218,7 @@ export class AIProviderService {
         messages: [
           {
             role: 'system',
-            content: `You are an expert business analyst specializing in content analysis using proven frameworks. Analyze the provided content using Simon Sinek's Golden Circle, Bain's Elements of Value, and Gallup's CliftonStrengths principles. Return your analysis in valid JSON format.`
+            content: `You are an expert business analyst specializing in content analysis using proven frameworks. Analyze the provided content using Simon Sinek's Golden Circle, Bain's Elements of Value, and Gallup's CliftonStrengths principles. Return your analysis in valid JSON format.`,
           },
           {
             role: 'user',
@@ -230,31 +240,39 @@ export class AIProviderService {
       } catch (parseError) {
         console.error('OpenAI JSON parsing failed:', parseError);
         console.error('Raw response:', rawAnalysis.substring(0, 500) + '...');
-        throw new Error(`OpenAI returned invalid JSON: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
+        throw new Error(
+          `OpenAI returned invalid JSON: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`
+        );
       }
     } catch (error) {
       console.error('OpenAI analysis failed:', error);
-      throw new Error(`OpenAI analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `OpenAI analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
-  private async analyzeWithGemini(request: AnalysisRequest): Promise<AnalysisResult> {
+  private async analyzeWithGemini(
+    request: AnalysisRequest
+  ): Promise<AnalysisResult> {
     if (!this.gemini) {
       throw new Error('Gemini not configured');
     }
 
     // Cost protection: Limit content length
     if (request.content.length > 50000) {
-      throw new Error('Content too long. Please reduce content size to under 50,000 characters.');
+      throw new Error(
+        'Content too long. Please reduce content size to under 50,000 characters.'
+      );
     }
 
     const prompt = this.buildAnalysisPrompt(request);
     const model = this.config.gemini?.model || 'gemini-1.5-flash';
-    const generativeModel = this.gemini.getGenerativeModel({ 
+    const generativeModel = this.gemini.getGenerativeModel({
       model,
       generationConfig: {
         maxOutputTokens: 2000, // Cost control
-      }
+      },
     });
 
     try {
@@ -280,35 +298,49 @@ export class AIProviderService {
           .replace(/^[^{]*/, '') // Remove any text before the first {
           .replace(/[^}]*$/, '') // Remove any text after the last }
           .trim();
-        
+
         // Try to fix common JSON issues
         cleanedJson = cleanedJson
           .replace(/,(\s*[}\]])/g, '$1') // Remove trailing commas
           .replace(/([{,]\s*)(\w+):/g, '$1"$2":') // Quote unquoted keys
           .replace(/:\s*([^",{\[\s][^,}\]]*?)(\s*[,}])/g, ': "$1"$2'); // Quote unquoted string values
-        
-        console.log('Cleaned JSON preview:', cleanedJson.substring(0, 200) + '...');
+
+        console.log(
+          'Cleaned JSON preview:',
+          cleanedJson.substring(0, 200) + '...'
+        );
         return JSON.parse(cleanedJson);
       } catch (parseError) {
         console.error('Gemini JSON parsing failed:', parseError);
         console.error('Raw response:', rawAnalysis.substring(0, 1000) + '...');
-        console.error('Extracted JSON:', jsonMatch[0].substring(0, 1000) + '...');
-        throw new Error(`Gemini returned invalid JSON: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
+        console.error(
+          'Extracted JSON:',
+          jsonMatch[0].substring(0, 1000) + '...'
+        );
+        throw new Error(
+          `Gemini returned invalid JSON: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`
+        );
       }
     } catch (error) {
       console.error('Gemini analysis failed:', error);
-      throw new Error(`Gemini analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Gemini analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
-  private async analyzeWithClaude(request: AnalysisRequest): Promise<AnalysisResult> {
+  private async analyzeWithClaude(
+    request: AnalysisRequest
+  ): Promise<AnalysisResult> {
     if (!this.claude) {
       throw new Error('Claude not configured');
     }
 
     // Cost protection: Limit content length
     if (request.content.length > 50000) {
-      throw new Error('Content too long. Please reduce content size to under 50,000 characters.');
+      throw new Error(
+        'Content too long. Please reduce content size to under 50,000 characters.'
+      );
     }
 
     const prompt = this.buildAnalysisPrompt(request);
@@ -347,11 +379,15 @@ export class AIProviderService {
       } catch (parseError) {
         console.error('Claude JSON parsing failed:', parseError);
         console.error('Raw JSON:', jsonMatch[0].substring(0, 500) + '...');
-        throw new Error(`Claude returned invalid JSON: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
+        throw new Error(
+          `Claude returned invalid JSON: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`
+        );
       }
     } catch (error) {
       console.error('Claude analysis failed:', error);
-      throw new Error(`Claude analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Claude analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -360,7 +396,7 @@ export class AIProviderService {
     return buildComprehensiveAnalysisPrompt({
       url: request.url || '',
       content: request.content,
-      pageType: 'general'
+      pageType: 'general',
     });
   }
 

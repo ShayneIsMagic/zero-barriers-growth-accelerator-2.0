@@ -11,16 +11,20 @@
 **What did you see after clicking "RUN"?**
 
 ✅ **SUCCESS:**
+
 ```
 Success. No rows returned
 Rows: 0
 ```
+
 This is GOOD! It means tables and functions were created.
 
 ❌ **ERROR:**
+
 ```
 Error: relation "Analysis" does not exist
 ```
+
 This means you need the base tables first.
 
 ---
@@ -47,11 +51,13 @@ New tables (just created):
 ### **Step 3: Test the Connection**
 
 **Open this URL in your browser:**
+
 ```
 https://zero-barriers-growth-accelerator-20-shayne-roys-projects.vercel.app/api/test-db
 ```
 
 **Expected response:**
+
 ```json
 {
   "status": "SUCCESS",
@@ -93,12 +99,14 @@ https://zero-barriers-growth-accelerator-20-shayne-roys-projects.vercel.app/api/
 ## 🎯 What Should Happen Next
 
 **If everything is ✅:**
+
 1. Your Supabase has markdown storage tables
 2. Your app can now save reports to database
 3. Reports persist (don't disappear)
 4. You can retrieve them anytime
 
 **Test it:**
+
 ```
 Go to: https://zero-barriers-growth-accelerator-20-shayne-roys-projects.vercel.app/dashboard/phased-analysis
 Enter: https://example.com
@@ -116,12 +124,14 @@ Check Supabase: individual_reports table should have new rows!
 **Meaning:** Base tables aren't created yet
 
 **Fix:**
+
 ```sql
 -- Run this FIRST in Supabase SQL Editor:
 npx prisma db push
 ```
 
 Or create base tables manually:
+
 ```sql
 CREATE TABLE "User" (
   id TEXT PRIMARY KEY,
@@ -154,6 +164,7 @@ Then run the markdown schema again.
 ### Issue 2: Tables exist but app doesn't save
 
 **Check:**
+
 1. Is DATABASE_URL set in Vercel?
 2. Does it point to chkwezsyopfciibifmxx?
 3. Has Vercel deployed latest code?
@@ -163,6 +174,7 @@ Then run the markdown schema again.
 ### Issue 3: "Permission denied"
 
 **Fix:** Grant permissions (uncomment in SQL):
+
 ```sql
 GRANT ALL ON individual_reports TO authenticated;
 GRANT ALL ON markdown_exports TO authenticated;
@@ -239,4 +251,3 @@ Just say:
 **Created:** October 10, 2025
 **Purpose:** Verify Supabase markdown storage setup
 **Next:** Test the app with real data!
-

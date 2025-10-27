@@ -4,20 +4,50 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Loader2, Download, FileText, Globe, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import {
+  Loader2,
+  Download,
+  FileText,
+  Globe,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+} from 'lucide-react';
 import { PageAnalysisResult } from '@/lib/page-analyzer';
 
 interface PageAnalysisFormProps {
   onAnalysisComplete?: (result: PageAnalysisResult) => void;
 }
 
-export function PageAnalysisForm({ onAnalysisComplete }: PageAnalysisFormProps) {
+export function PageAnalysisForm({
+  onAnalysisComplete,
+}: PageAnalysisFormProps) {
   const [url, setUrl] = useState('');
-  const [pageType, setPageType] = useState<'home' | 'testimonials' | 'services' | 'about' | 'contact' | 'case-studies' | 'general'>('general');
+  const [pageType, setPageType] = useState<
+    | 'home'
+    | 'testimonials'
+    | 'services'
+    | 'about'
+    | 'contact'
+    | 'case-studies'
+    | 'general'
+  >('general');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState('');
@@ -52,7 +82,7 @@ export function PageAnalysisForm({ onAnalysisComplete }: PageAnalysisFormProps) 
         body: JSON.stringify({
           url: url.trim(),
           pageType,
-          deepAnalysis: true
+          deepAnalysis: true,
         }),
       });
 
@@ -74,7 +104,6 @@ export function PageAnalysisForm({ onAnalysisComplete }: PageAnalysisFormProps) 
 
       setAnalysis(result);
       onAnalysisComplete?.(result);
-
     } catch (err) {
       console.error('Analysis error:', err);
       setError(err instanceof Error ? err.message : 'Analysis failed');
@@ -123,7 +152,7 @@ export function PageAnalysisForm({ onAnalysisComplete }: PageAnalysisFormProps) 
       about: 'bg-orange-100 text-orange-800',
       contact: 'bg-red-100 text-red-800',
       'case-studies': 'bg-indigo-100 text-indigo-800',
-      general: 'bg-gray-100 text-gray-800'
+      general: 'bg-gray-100 text-gray-800',
     };
     return colors[type] || colors.general;
   };
@@ -137,7 +166,8 @@ export function PageAnalysisForm({ onAnalysisComplete }: PageAnalysisFormProps) 
             Page Analysis
           </CardTitle>
           <CardDescription>
-            Analyze individual pages with specialized AI prompts for comprehensive insights
+            Analyze individual pages with specialized AI prompts for
+            comprehensive insights
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -155,7 +185,11 @@ export function PageAnalysisForm({ onAnalysisComplete }: PageAnalysisFormProps) 
 
           <div className="space-y-2">
             <Label htmlFor="pageType">Page Type</Label>
-            <Select value={pageType} onValueChange={(value: any) => setPageType(value)} disabled={isAnalyzing}>
+            <Select
+              value={pageType}
+              onValueChange={(value: any) => setPageType(value)}
+              disabled={isAnalyzing}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select page type" />
               </SelectTrigger>
@@ -171,8 +205,8 @@ export function PageAnalysisForm({ onAnalysisComplete }: PageAnalysisFormProps) 
             </Select>
           </div>
 
-          <Button 
-            onClick={handleAnalyze} 
+          <Button
+            onClick={handleAnalyze}
             disabled={isAnalyzing || !url.trim()}
             className="w-full"
           >
@@ -200,9 +234,9 @@ export function PageAnalysisForm({ onAnalysisComplete }: PageAnalysisFormProps) 
           )}
 
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-md">
+            <div className="flex items-center gap-2 rounded-md border border-red-200 bg-red-50 p-3">
               <AlertCircle className="h-4 w-4 text-red-600" />
-              <span className="text-red-800 text-sm">{error}</span>
+              <span className="text-sm text-red-800">{error}</span>
             </div>
           )}
         </CardContent>
@@ -233,26 +267,42 @@ export function PageAnalysisForm({ onAnalysisComplete }: PageAnalysisFormProps) 
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">{analysis.overallScore}</div>
-                <div className="text-sm text-muted-foreground">Overall Score</div>
+                <div className="text-2xl font-bold text-blue-600">
+                  {analysis.overallScore}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Overall Score
+                </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">{analysis.goldenCircle.overallScore}</div>
-                <div className="text-sm text-muted-foreground">Golden Circle</div>
+                <div className="text-2xl font-bold text-green-600">
+                  {analysis.goldenCircle.overallScore}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Golden Circle
+                </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-purple-600">{analysis.elementsOfValue.overallScore}</div>
-                <div className="text-sm text-muted-foreground">Elements of Value</div>
+                <div className="text-2xl font-bold text-purple-600">
+                  {analysis.elementsOfValue.overallScore}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Elements of Value
+                </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-orange-600">{analysis.cliftonStrengths.overallScore}</div>
-                <div className="text-sm text-muted-foreground">CliftonStrengths</div>
+                <div className="text-2xl font-bold text-orange-600">
+                  {analysis.cliftonStrengths.overallScore}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  CliftonStrengths
+                </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-3">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-muted-foreground" />
                 <span>Analysis Time: {analysis.loadingTime}ms</span>
@@ -269,58 +319,90 @@ export function PageAnalysisForm({ onAnalysisComplete }: PageAnalysisFormProps) 
 
             <div className="space-y-3">
               <div>
-                <h4 className="font-semibold mb-2">Golden Circle Analysis</h4>
+                <h4 className="mb-2 font-semibold">Golden Circle Analysis</h4>
                 <div className="space-y-2 text-sm">
-                  <div><strong>Why:</strong> {analysis.goldenCircle.why.statement}</div>
-                  <div><strong>How:</strong> {analysis.goldenCircle.how.methodology}</div>
-                  <div><strong>What:</strong> {analysis.goldenCircle.what.offerings.join(', ')}</div>
-                  <div><strong>Who:</strong> {analysis.goldenCircle.who.targetAudience}</div>
+                  <div>
+                    <strong>Why:</strong> {analysis.goldenCircle.why.statement}
+                  </div>
+                  <div>
+                    <strong>How:</strong>{' '}
+                    {analysis.goldenCircle.how.methodology}
+                  </div>
+                  <div>
+                    <strong>What:</strong>{' '}
+                    {analysis.goldenCircle.what.offerings.join(', ')}
+                  </div>
+                  <div>
+                    <strong>Who:</strong>{' '}
+                    {analysis.goldenCircle.who.targetAudience}
+                  </div>
                 </div>
               </div>
 
               <div>
-                <h4 className="font-semibold mb-2">Page-Specific Insights</h4>
-                <div className="text-sm space-y-1">
-                  <div><strong>Analysis:</strong> {analysis.specificInsights.pageSpecificAnalysis}</div>
-                  <div><strong>CTAs:</strong> {analysis.specificInsights.callToActions.join(', ')}</div>
-                  <div><strong>Trust Signals:</strong> {analysis.specificInsights.trustSignals.join(', ')}</div>
+                <h4 className="mb-2 font-semibold">Page-Specific Insights</h4>
+                <div className="space-y-1 text-sm">
+                  <div>
+                    <strong>Analysis:</strong>{' '}
+                    {analysis.specificInsights.pageSpecificAnalysis}
+                  </div>
+                  <div>
+                    <strong>CTAs:</strong>{' '}
+                    {analysis.specificInsights.callToActions.join(', ')}
+                  </div>
+                  <div>
+                    <strong>Trust Signals:</strong>{' '}
+                    {analysis.specificInsights.trustSignals.join(', ')}
+                  </div>
                 </div>
               </div>
 
               <div>
-                <h4 className="font-semibold mb-2">Recommendations</h4>
-                <div className="text-sm space-y-2">
+                <h4 className="mb-2 font-semibold">Recommendations</h4>
+                <div className="space-y-2 text-sm">
                   <div>
                     <strong>High Priority:</strong>
                     <ul className="ml-4 mt-1 space-y-1">
-                      {analysis.recommendations.highPriority.map((rec, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <span className="text-red-600">•</span>
-                          <span>{rec.title}: {rec.description}</span>
-                        </li>
-                      ))}
+                      {analysis.recommendations.highPriority.map(
+                        (rec, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <span className="text-red-600">•</span>
+                            <span>
+                              {rec.title}: {rec.description}
+                            </span>
+                          </li>
+                        )
+                      )}
                     </ul>
                   </div>
                   <div>
                     <strong>Medium Priority:</strong>
                     <ul className="ml-4 mt-1 space-y-1">
-                      {analysis.recommendations.mediumPriority.map((rec, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <span className="text-yellow-600">•</span>
-                          <span>{rec.title}: {rec.description}</span>
-                        </li>
-                      ))}
+                      {analysis.recommendations.mediumPriority.map(
+                        (rec, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <span className="text-yellow-600">•</span>
+                            <span>
+                              {rec.title}: {rec.description}
+                            </span>
+                          </li>
+                        )
+                      )}
                     </ul>
                   </div>
                   <div>
                     <strong>Low Priority:</strong>
                     <ul className="ml-4 mt-1 space-y-1">
-                      {analysis.recommendations.lowPriority.map((rec, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <span className="text-green-600">•</span>
-                          <span>{rec.title}: {rec.description}</span>
-                        </li>
-                      ))}
+                      {analysis.recommendations.lowPriority.map(
+                        (rec, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <span className="text-green-600">•</span>
+                            <span>
+                              {rec.title}: {rec.description}
+                            </span>
+                          </li>
+                        )
+                      )}
                     </ul>
                   </div>
                 </div>

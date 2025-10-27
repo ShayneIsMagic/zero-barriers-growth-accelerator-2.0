@@ -16,10 +16,13 @@
     "jest": true
   },
   "rules": {
-    "@typescript-eslint/no-unused-vars": ["warn", {
-      "argsIgnorePattern": "^_",
-      "varsIgnorePattern": "^_"
-    }],
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
     "@typescript-eslint/no-explicit-any": "off",
     "prefer-const": "warn",
     "no-var": "warn",
@@ -34,7 +37,12 @@
   },
   "overrides": [
     {
-      "files": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"],
+      "files": [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.spec.ts",
+        "**/*.spec.tsx"
+      ],
       "env": {
         "jest": true
       },

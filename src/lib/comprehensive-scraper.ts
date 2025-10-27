@@ -5,7 +5,10 @@
 
 import { WebsiteAnalysisResult } from '@/types/analysis';
 import { runLighthouseAnalysis } from './lighthouse-service';
-import { extractWithProduction, ProductionExtractionResult } from './production-content-extractor';
+import {
+  extractWithProduction,
+  ProductionExtractionResult,
+} from './production-content-extractor';
 
 export interface ComprehensiveAnalysisStep {
   id: string;
@@ -62,7 +65,10 @@ export class ComprehensiveAnalysisPipeline {
   private startTime: string;
   private onProgressUpdate?: (progress: number, currentStep: string) => void;
 
-  constructor(url: string, onProgressUpdate?: (progress: number, currentStep: string) => void) {
+  constructor(
+    url: string,
+    onProgressUpdate?: (progress: number, currentStep: string) => void
+  ) {
     this.url = url;
     this.startTime = new Date().toISOString();
     this.onProgressUpdate = onProgressUpdate || (() => {});
@@ -72,71 +78,75 @@ export class ComprehensiveAnalysisPipeline {
       {
         id: 'scrape_content',
         name: 'Content & SEO Scraping',
-        description: 'Extract website content, metadata, and SEO data using QA tools',
-        status: 'pending'
+        description:
+          'Extract website content, metadata, and SEO data using QA tools',
+        status: 'pending',
       },
       {
         id: 'pageaudit',
         name: 'PageAudit Analysis',
         description: 'Run PageAudit.com technical and content analysis',
-        status: 'pending'
+        status: 'pending',
       },
       {
         id: 'lighthouse',
         name: 'Lighthouse Performance',
         description: 'Run Lighthouse performance, accessibility, and SEO audit',
-        status: 'pending'
+        status: 'pending',
       },
       {
         id: 'phase1_report',
         name: 'Generate Phase 1 Report',
-        description: 'Consolidate all data collection results into Phase 1 report',
-        status: 'pending'
+        description:
+          'Consolidate all data collection results into Phase 1 report',
+        status: 'pending',
       },
       // Phase 2: Framework Analysis (using Phase 1 report)
       {
         id: 'golden_circle',
         name: 'Golden Circle Analysis',
         description: 'Analyze Why, How, What, and Who using Phase 1 data',
-        status: 'pending'
+        status: 'pending',
       },
       {
         id: 'elements_of_value',
         name: 'Elements of Value Analysis',
         description: 'Evaluate 30 B2C Elements of Value framework',
-        status: 'pending'
+        status: 'pending',
       },
       {
         id: 'b2b_elements',
         name: 'B2B Elements Analysis',
         description: 'Evaluate 40 B2B Elements of Value framework',
-        status: 'pending'
+        status: 'pending',
       },
       {
         id: 'clifton_strengths',
         name: 'CliftonStrengths Analysis',
         description: 'Analyze 34 CliftonStrengths themes and domains',
-        status: 'pending'
+        status: 'pending',
       },
       {
         id: 'phase2_report',
         name: 'Generate Phase 2 Report',
         description: 'Consolidate framework analysis into Phase 2 report',
-        status: 'pending'
+        status: 'pending',
       },
       // Phase 3: Strategic Analysis (using Phase 1 & 2 reports)
       {
         id: 'comprehensive_analysis',
         name: 'Comprehensive Strategic Analysis',
-        description: 'Generate comprehensive insights using all previous reports',
-        status: 'pending'
+        description:
+          'Generate comprehensive insights using all previous reports',
+        status: 'pending',
       },
       {
         id: 'final_report',
         name: 'Generate Final Report',
-        description: 'Compile all analysis results into comprehensive final report',
-        status: 'pending'
-      }
+        description:
+          'Compile all analysis results into comprehensive final report',
+        status: 'pending',
+      },
     ];
   }
 
@@ -156,7 +166,9 @@ export class ComprehensiveAnalysisPipeline {
     await this.executeStep('scrape_content', async () => {
       console.log('🔍 Step 1: Scraping website content and SEO data...');
       scrapedContent = await extractWithProduction(this.url);
-      console.log(`✅ Scraped ${scrapedContent.wordCount} words, ${scrapedContent.imageCount} images`);
+      console.log(
+        `✅ Scraped ${scrapedContent.wordCount} words, ${scrapedContent.imageCount} images`
+      );
       return scrapedContent;
     });
 
@@ -164,7 +176,9 @@ export class ComprehensiveAnalysisPipeline {
     await this.executeStep('pageaudit', async () => {
       console.log('🔧 Step 2: Running PageAudit technical analysis...');
       pageAuditResults = await this.runPageAuditAnalysis();
-      console.log(`✅ PageAudit completed - SEO Score: ${pageAuditResults.seoScore}/100`);
+      console.log(
+        `✅ PageAudit completed - SEO Score: ${pageAuditResults.seoScore}/100`
+      );
       return pageAuditResults;
     });
 
@@ -172,30 +186,46 @@ export class ComprehensiveAnalysisPipeline {
     await this.executeStep('lighthouse', async () => {
       console.log('🏗️ Step 3: Running Lighthouse performance analysis...');
       lighthouseResults = await runLighthouseAnalysis(this.url);
-      console.log(`✅ Lighthouse completed - Performance: ${lighthouseResults?.scores?.performance || 'N/A'}/100`);
+      console.log(
+        `✅ Lighthouse completed - Performance: ${lighthouseResults?.scores?.performance || 'N/A'}/100`
+      );
       return lighthouseResults;
     });
 
     // Phase 2: AI Framework Analysis (using ALL collected data from Phase 1)
-    console.log('🎯 Starting Phase 2: AI Framework Analysis with complete dataset...');
-    console.log(`📊 Dataset ready: ${scrapedContent?.wordCount || 0} words, PageAudit SEO: ${pageAuditResults?.seoScore || 'N/A'}/100, Lighthouse: ${lighthouseResults?.scores?.overall || 'N/A'}/100`);
+    console.log(
+      '🎯 Starting Phase 2: AI Framework Analysis with complete dataset...'
+    );
+    console.log(
+      `📊 Dataset ready: ${scrapedContent?.wordCount || 0} words, PageAudit SEO: ${pageAuditResults?.seoScore || 'N/A'}/100, Lighthouse: ${lighthouseResults?.scores?.overall || 'N/A'}/100`
+    );
 
     // Step 4: AI Framework Analysis (using collected data from Phase 1)
     await this.executeStep('golden_circle', async () => {
-      console.log('🧠 Step 4: Running AI framework analysis with complete dataset...');
+      console.log(
+        '🧠 Step 4: Running AI framework analysis with complete dataset...'
+      );
 
       // Create AI analysis using ALL the collected data from Phase 1
       if (!scrapedContent) {
         throw new Error('Scraped content not available');
       }
-      aiAnalysis = await this.performAIAnalysisWithData(scrapedContent, pageAuditResults, lighthouseResults);
-      console.log(`✅ AI analysis completed with score: ${aiAnalysis?.overallScore || 'N/A'}/100`);
+      aiAnalysis = await this.performAIAnalysisWithData(
+        scrapedContent,
+        pageAuditResults,
+        lighthouseResults
+      );
+      console.log(
+        `✅ AI analysis completed with score: ${aiAnalysis?.overallScore || 'N/A'}/100`
+      );
       return aiAnalysis;
     });
 
     // Step 5: Elements of Value Analysis (extract from AI analysis)
     await this.executeStep('elements_of_value', async () => {
-      console.log('💎 Step 5: Extracting Elements of Value from AI analysis...');
+      console.log(
+        '💎 Step 5: Extracting Elements of Value from AI analysis...'
+      );
       return aiAnalysis?.elementsOfValue;
     });
 
@@ -214,14 +244,25 @@ export class ComprehensiveAnalysisPipeline {
     // Step 8: Gemini Deep Analysis (using ALL collected data from Phases 1 & 2)
     let geminiInsights: any;
     await this.executeStep('gemini_insights', async () => {
-      console.log('🤖 Step 8: Generating Gemini deep insights using all collected data...');
-      console.log(`📊 Data sources: Scraped content (${scrapedContent?.wordCount || 0} words), PageAudit (SEO: ${pageAuditResults?.seoScore || 'N/A'}/100), Lighthouse (Performance: ${lighthouseResults?.scores?.performance || 'N/A'}/100), AI Frameworks (${aiAnalysis?.overallScore || 'N/A'}/100)`);
+      console.log(
+        '🤖 Step 8: Generating Gemini deep insights using all collected data...'
+      );
+      console.log(
+        `📊 Data sources: Scraped content (${scrapedContent?.wordCount || 0} words), PageAudit (SEO: ${pageAuditResults?.seoScore || 'N/A'}/100), Lighthouse (Performance: ${lighthouseResults?.scores?.performance || 'N/A'}/100), AI Frameworks (${aiAnalysis?.overallScore || 'N/A'}/100)`
+      );
 
       if (!scrapedContent || !aiAnalysis) {
         throw new Error('Required data not available for Gemini insights');
       }
-      geminiInsights = await this.generateGeminiInsights(scrapedContent, aiAnalysis, lighthouseResults, pageAuditResults);
-      console.log('✅ Gemini insights generated with comprehensive data integration');
+      geminiInsights = await this.generateGeminiInsights(
+        scrapedContent,
+        aiAnalysis,
+        lighthouseResults,
+        pageAuditResults
+      );
+      console.log(
+        '✅ Gemini insights generated with comprehensive data integration'
+      );
       return geminiInsights;
     });
 
@@ -250,8 +291,11 @@ export class ComprehensiveAnalysisPipeline {
   /**
    * Execute a single step in the pipeline
    */
-  private async executeStep(stepId: string, stepFunction: () => Promise<any>): Promise<void> {
-    const step = this.steps.find(s => s.id === stepId);
+  private async executeStep(
+    stepId: string,
+    stepFunction: () => Promise<any>
+  ): Promise<void> {
+    const step = this.steps.find((s) => s.id === stepId);
     if (!step) {
       throw new Error(`Step ${stepId} not found`);
     }
@@ -269,15 +313,16 @@ export class ComprehensiveAnalysisPipeline {
 
       step.status = 'completed';
       step.endTime = new Date().toISOString();
-      step.duration = new Date(step.endTime).getTime() - new Date(step.startTime).getTime();
+      step.duration =
+        new Date(step.endTime).getTime() - new Date(step.startTime).getTime();
       step.result = result;
 
       console.log(`✅ ${step.name} completed in ${step.duration}ms`);
-
     } catch (error) {
       step.status = 'failed';
       step.endTime = new Date().toISOString();
-      step.duration = new Date(step.endTime).getTime() - new Date(step.startTime).getTime();
+      step.duration =
+        new Date(step.endTime).getTime() - new Date(step.startTime).getTime();
       step.error = error instanceof Error ? error.message : 'Unknown error';
 
       console.error(`❌ ${step.name} failed:`, step.error);
@@ -300,10 +345,12 @@ export class ComprehensiveAnalysisPipeline {
    * Update progress and notify callback
    */
   private updateProgress(): void {
-    const completedSteps = this.steps.filter(s => s.status === 'completed').length;
+    const completedSteps = this.steps.filter(
+      (s) => s.status === 'completed'
+    ).length;
     const progress = (completedSteps / this.steps.length) * 100;
 
-    const currentStep = this.steps.find(s => s.status === 'running');
+    const currentStep = this.steps.find((s) => s.status === 'running');
     const currentStepName = currentStep ? currentStep.name : 'Completed';
 
     if (this.onProgressUpdate) {
@@ -321,10 +368,14 @@ export class ComprehensiveAnalysisPipeline {
       const path = require('path');
 
       return new Promise((resolve, reject) => {
-        const scriptPath = path.join(process.cwd(), 'scripts', 'pageaudit-analysis.js');
+        const scriptPath = path.join(
+          process.cwd(),
+          'scripts',
+          'pageaudit-analysis.js'
+        );
         const child = spawn('node', [scriptPath, this.url], {
           cwd: process.cwd(),
-          stdio: ['pipe', 'pipe', 'pipe']
+          stdio: ['pipe', 'pipe', 'pipe'],
         });
 
         let output = '';
@@ -343,21 +394,31 @@ export class ComprehensiveAnalysisPipeline {
             try {
               // Parse the JSON output from the script
               const lines = output.split('\n');
-              const jsonLine = lines.find(line => line.trim().startsWith('{'));
+              const jsonLine = lines.find((line) =>
+                line.trim().startsWith('{')
+              );
               if (jsonLine) {
                 const result = JSON.parse(jsonLine);
                 resolve(result);
               } else {
                 // NEVER use mock data - fail if real analysis is not available
-                reject(new Error('Failed to parse PageAudit output - real analysis required'));
+                reject(
+                  new Error(
+                    'Failed to parse PageAudit output - real analysis required'
+                  )
+                );
               }
             } catch (parseError) {
               console.error('Failed to parse PageAudit output:', parseError);
-              reject(new Error('PageAudit parsing failed - real analysis required'));
+              reject(
+                new Error('PageAudit parsing failed - real analysis required')
+              );
             }
           } else {
             console.error('PageAudit script failed. Error:', errorOutput);
-            reject(new Error('PageAudit analysis failed - real analysis required'));
+            reject(
+              new Error('PageAudit analysis failed - real analysis required')
+            );
           }
         });
       });
@@ -380,21 +441,40 @@ export class ComprehensiveAnalysisPipeline {
   ): Promise<WebsiteAnalysisResult> {
     try {
       // Import the AI analysis function
-      const { analyzeWithGemini, analyzeWithClaude } = await import('./free-ai-analysis');
+      const { analyzeWithGemini, analyzeWithClaude } = await import(
+        './free-ai-analysis'
+      );
 
       // Prepare comprehensive content for AI analysis with enhanced Golden Circle extraction
-      const contentForAI = this.prepareEnhancedGoldenCircleAnalysis(scrapedContent, pageAuditData, lighthouseData);
+      const contentForAI = this.prepareEnhancedGoldenCircleAnalysis(
+        scrapedContent,
+        pageAuditData,
+        lighthouseData
+      );
 
       let analysisResult;
       try {
-        console.log('🤖 Analyzing with Google Gemini using enhanced Golden Circle extraction...');
-        analysisResult = await analyzeWithGemini(contentForAI, 'golden-circle-focused');
+        console.log(
+          '🤖 Analyzing with Google Gemini using enhanced Golden Circle extraction...'
+        );
+        analysisResult = await analyzeWithGemini(
+          contentForAI,
+          'golden-circle-focused'
+        );
       } catch (geminiError) {
         console.log('⚠️ Gemini failed, trying Claude...');
-        if (process.env.CLAUDE_API_KEY && process.env.CLAUDE_API_KEY !== 'your-real-key-here') {
-          analysisResult = await analyzeWithClaude(contentForAI, 'golden-circle-focused');
+        if (
+          process.env.CLAUDE_API_KEY &&
+          process.env.CLAUDE_API_KEY !== 'your-real-key-here'
+        ) {
+          analysisResult = await analyzeWithClaude(
+            contentForAI,
+            'golden-circle-focused'
+          );
         } else {
-          throw new Error('Gemini analysis failed and Claude API key not configured');
+          throw new Error(
+            'Gemini analysis failed and Claude API key not configured'
+          );
         }
       }
 
@@ -404,23 +484,38 @@ export class ComprehensiveAnalysisPipeline {
         url: this.url,
         timestamp: new Date(),
         overallScore: analysisResult.overallScore || 75,
-        executiveSummary: analysisResult.executiveSummary || 'Analysis completed with comprehensive data',
+        executiveSummary:
+          analysisResult.executiveSummary ||
+          'Analysis completed with comprehensive data',
         goldenCircle: analysisResult.goldenCircle,
         elementsOfValue: analysisResult.elementsOfValue,
         b2bElements: analysisResult.b2bElements,
         cliftonStrengths: analysisResult.cliftonStrengths,
         transformation: analysisResult.transformation,
-        recommendations: analysisResult.recommendations || { immediate: [], shortTerm: [], longTerm: [] },
-        socialMediaStrategy: analysisResult.socialMediaStrategy || { postTypes: [], contentCalendar: {} },
-        successMetrics: analysisResult.successMetrics || { currentKPIs: [], targetImprovements: [], abTestingOpportunities: [] },
+        recommendations: analysisResult.recommendations || {
+          immediate: [],
+          shortTerm: [],
+          longTerm: [],
+        },
+        socialMediaStrategy: analysisResult.socialMediaStrategy || {
+          postTypes: [],
+          contentCalendar: {},
+        },
+        successMetrics: analysisResult.successMetrics || {
+          currentKPIs: [],
+          targetImprovements: [],
+          abTestingOpportunities: [],
+        },
         lighthouseAnalysis: lighthouseData,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       };
 
       return result;
     } catch (error) {
       console.error('AI analysis with collected data failed:', error);
-      throw new Error(`AI analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `AI analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -635,15 +730,33 @@ ${scrapedContent.content || 'No content extracted'}
       const { analyzeWithGemini } = await import('./free-ai-analysis');
 
       // Prepare comprehensive analysis prompt with all raw data
-      const analysisPrompt = this.createPatternAnalysisPrompt(content, aiAnalysis, lighthouse, pageAudit);
+      const analysisPrompt = this.createPatternAnalysisPrompt(
+        content,
+        aiAnalysis,
+        lighthouse,
+        pageAudit
+      );
 
-      console.log('🤖 Generating comprehensive pattern analysis with Gemini...');
-      const geminiInsights = await analyzeWithGemini(analysisPrompt, 'pattern-analysis');
+      console.log(
+        '🤖 Generating comprehensive pattern analysis with Gemini...'
+      );
+      const geminiInsights = await analyzeWithGemini(
+        analysisPrompt,
+        'pattern-analysis'
+      );
 
       return geminiInsights;
     } catch (error) {
-      console.warn('Gemini pattern analysis failed, using fallback insights:', error);
-      return this.getFallbackInsights(content, aiAnalysis, lighthouse, pageAudit);
+      console.warn(
+        'Gemini pattern analysis failed, using fallback insights:',
+        error
+      );
+      return this.getFallbackInsights(
+        content,
+        aiAnalysis,
+        lighthouse,
+        pageAudit
+      );
     }
   }
 
@@ -818,22 +931,24 @@ IMPORTANT: Base all analysis on the ACTUAL RAW DATA provided. Use specific score
   ): any {
     return {
       patternAnalysis: {
-        crossToolCorrelations: ['Limited data available for correlation analysis'],
+        crossToolCorrelations: [
+          'Limited data available for correlation analysis',
+        ],
         consistentStrengths: ['Content structure appears solid'],
         consistentWeaknesses: ['Technical performance needs improvement'],
-        performanceGaps: ['SEO and performance optimization required']
+        performanceGaps: ['SEO and performance optimization required'],
       },
       whatIsWorking: {
         technicalStrengths: ['Basic content structure in place'],
         contentStrengths: [`${content.wordCount} words of content available`],
         strategicStrengths: ['Website has clear purpose'],
-        competitiveAdvantages: ['Unique positioning potential']
+        competitiveAdvantages: ['Unique positioning potential'],
       },
       whatIsNotWorking: {
         technicalIssues: ['Performance optimization needed'],
         contentIssues: ['SEO optimization required'],
         strategicGaps: ['Brand messaging could be stronger'],
-        criticalFailures: ['No critical failures identified']
+        criticalFailures: ['No critical failures identified'],
       },
       dataDrivenRecommendations: {
         immediateActions: [
@@ -841,37 +956,37 @@ IMPORTANT: Base all analysis on the ACTUAL RAW DATA provided. Use specific score
             priority: 'high',
             action: 'Optimize page performance based on Lighthouse scores',
             expectedImpact: 'Improved user experience and SEO rankings',
-            dataSource: 'Lighthouse analysis'
-          }
+            dataSource: 'Lighthouse analysis',
+          },
         ],
         quickWins: [
           {
             effort: 'low',
             impact: 'medium',
             action: 'Add meta descriptions and optimize images',
-            metric: 'SEO score improvement'
-          }
+            metric: 'SEO score improvement',
+          },
         ],
         longTermImprovements: [
           {
             timeline: '3-6 months',
             action: 'Implement comprehensive content strategy',
             investment: 'medium',
-            roi: 'improved user engagement and conversions'
-          }
-        ]
+            roi: 'improved user engagement and conversions',
+          },
+        ],
       },
       competitiveOpportunities: {
         uniqueStrengths: ['Content depth and structure'],
         differentiationStrategies: ['Focus on technical excellence'],
-        innovationAreas: ['Performance optimization and user experience']
+        innovationAreas: ['Performance optimization and user experience'],
       },
       successMetrics: {
         currentBaseline: `${pageAudit?.seoScore || 'N/A'}/100 SEO, ${lighthouse?.scores?.performance || 'N/A'}/100 Performance`,
         targetImprovements: ['SEO score >80', 'Performance score >90'],
         trackingStrategy: 'Monthly analysis with same tools',
-        successCriteria: '20% improvement in overall scores within 3 months'
-      }
+        successCriteria: '20% improvement in overall scores within 3 months',
+      },
     };
   }
 
@@ -886,7 +1001,8 @@ IMPORTANT: Base all analysis on the ACTUAL RAW DATA provided. Use specific score
     geminiInsights: any
   ): Promise<RawAnalysisReport> {
     const endTime = new Date().toISOString();
-    const totalDuration = new Date(endTime).getTime() - new Date(this.startTime).getTime();
+    const totalDuration =
+      new Date(endTime).getTime() - new Date(this.startTime).getTime();
 
     return {
       scrapedContent,
@@ -899,24 +1015,30 @@ IMPORTANT: Base all analysis on the ACTUAL RAW DATA provided. Use specific score
       geminiInsights,
       analysisTimestamp: endTime,
       totalAnalysisTime: totalDuration,
-      url: this.url
+      url: this.url,
     };
   }
 
   /**
    * Get current progress
    */
-  getProgress(): { progress: number; currentStep: string; steps: ComprehensiveAnalysisStep[] } {
-    const completedSteps = this.steps.filter(s => s.status === 'completed').length;
+  getProgress(): {
+    progress: number;
+    currentStep: string;
+    steps: ComprehensiveAnalysisStep[];
+  } {
+    const completedSteps = this.steps.filter(
+      (s) => s.status === 'completed'
+    ).length;
     const progress = (completedSteps / this.steps.length) * 100;
 
-    const currentStep = this.steps.find(s => s.status === 'running');
+    const currentStep = this.steps.find((s) => s.status === 'running');
     const currentStepName = currentStep ? currentStep.name : 'Completed';
 
     return {
       progress,
       currentStep: currentStepName,
-      steps: this.steps
+      steps: this.steps,
     };
   }
 }

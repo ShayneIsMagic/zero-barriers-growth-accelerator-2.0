@@ -7,6 +7,7 @@
 ## ✅ STEP 1: Add DATABASE_URL to Vercel (YOU MUST DO THIS)
 
 ### **Go Here:**
+
 ```
 https://vercel.com/settings
 → Find your project: zero-barriers-growth-accelerator-20
@@ -15,6 +16,7 @@ https://vercel.com/settings
 ```
 
 ### **Add This Variable:**
+
 ```
 Name: DATABASE_URL
 
@@ -24,6 +26,7 @@ Environments: ✓ Production  ✓ Preview  ✓ Development
 ```
 
 ### **Then:**
+
 ```
 Click "Save"
 Go to "Deployments"
@@ -37,11 +40,13 @@ Wait 2 minutes
 ## ✅ STEP 2: Create Users in Supabase (SQL)
 
 ### **Go Here:**
+
 ```
 https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/sql/new
 ```
 
 ### **Run This SQL:**
+
 ```sql
 -- Create 3 users with bcrypt-hashed passwords
 INSERT INTO "User" (id, email, password, name, role, "createdAt", "updatedAt")
@@ -74,6 +79,7 @@ SELECT email, role, "createdAt" FROM "User";
 ## ✅ STEP 3: Test Login
 
 ### **After Steps 1 & 2:**
+
 ```
 URL: https://zero-barriers-growth-accelerator-20-mr035qo2m.vercel.app/auth/signin
 
@@ -88,6 +94,7 @@ Password: ZBadmin123!
 ## 🎯 WHY LOGIN FAILS
 
 **Vercel Health Check Says**:
+
 ```json
 {
   "database": "unknown"  ← Vercel can't connect!
@@ -95,12 +102,14 @@ Password: ZBadmin123!
 ```
 
 **This means:**
+
 - ❌ DATABASE_URL not set in Vercel
 - ❌ Vercel API routes can't query database
 - ❌ Prisma.user.findUnique() returns null
 - ❌ Login fails with "Invalid credentials"
 
 **After adding DATABASE_URL:**
+
 - ✅ Vercel connects to Supabase
 - ✅ Finds users in database
 - ✅ Verifies password
@@ -124,4 +133,3 @@ Password: ZBadmin123!
 ---
 
 **I cannot access your Vercel dashboard - YOU must add DATABASE_URL!** 🔑
-

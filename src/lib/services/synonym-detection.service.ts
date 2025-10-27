@@ -5,22 +5,22 @@
  * Supports industry-specific terminology for 40% more accurate analysis
  */
 
-import { prisma } from '@/lib/prisma'
+import { prisma } from '@/lib/prisma';
 
 export interface PatternMatch {
-  element_name: string
-  pattern_text: string
-  match_count: number
-  confidence: number
+  element_name: string;
+  pattern_text: string;
+  match_count: number;
+  confidence: number;
 }
 
 export interface IndustryTerm {
-  id: string
-  industry: string
-  standard_term: string
-  industry_term: string
-  confidence_score: number
-  usage_examples: string
+  id: string;
+  industry: string;
+  standard_term: string;
+  industry_term: string;
+  confidence_score: number;
+  usage_examples: string;
 }
 
 export class SynonymDetectionService {
@@ -41,30 +41,30 @@ export class SynonymDetectionService {
         where: {
           pattern_text: {
             contains: content,
-            mode: 'insensitive'
+            mode: 'insensitive',
           },
           ...(industry && {
             value_element_reference: {
-              business_type: industry
-            }
-          })
+              business_type: industry,
+            },
+          }),
         },
         include: {
-          value_element_reference: true
+          value_element_reference: true,
         },
-        take: 100
-      })
+        take: 100,
+      });
 
       // Transform to PatternMatch format
-      return patterns.map(p => ({
+      return patterns.map((p) => ({
         element_name: p.value_element_reference?.element_name || 'unknown',
         pattern_text: p.pattern_text,
         match_count: 1, // Count occurrences in content
-        confidence: Number(p.pattern_weight || 0.5)
-      }))
+        confidence: Number(p.pattern_weight || 0.5),
+      }));
     } catch (error) {
-      console.error('Pattern matching failed:', error)
-      return []
+      console.error('Pattern matching failed:', error);
+      return [];
     }
   }
 
@@ -74,21 +74,21 @@ export class SynonymDetectionService {
   static async storePatternMatches(
     analysisId: string,
     patterns: Array<{
-      element_name: string
-      pattern_text: string
-      confidence: number
-      matched_text: string
+      element_name: string;
+      pattern_text: string;
+      confidence: number;
+      matched_text: string;
     }>,
     pageUrl?: string
   ): Promise<void> {
     try {
       // Check if patterns already exist for this analysis
       const existingPatterns = await prisma.pattern_matches.findFirst({
-        where: { analysis_id: analysisId }
-      })
+        where: { analysis_id: analysisId },
+      });
 
       if (existingPatterns) {
-        return // Patterns already stored
+        return; // Patterns already stored
       }
 
       // Create pattern matches using Prisma client
@@ -99,14 +99,14 @@ export class SynonymDetectionService {
         context_text: p.pattern_text,
         confidence_score: p.confidence,
         page_url: pageUrl || null,
-        position_in_content: index
-      }))
+        position_in_content: index,
+      }));
 
       await prisma.pattern_matches.createMany({
-        data: patternData
-      })
+        data: patternData,
+      });
     } catch (error) {
-      console.error('Failed to store pattern matches:', error)
+      console.error('Failed to store pattern matches:', error);
     }
   }
 
@@ -118,20 +118,20 @@ export class SynonymDetectionService {
       const terms = await prisma.industry_terminology.findMany({
         where: { industry },
         orderBy: { confidence_score: 'desc' },
-        take: 50
-      })
+        take: 50,
+      });
 
-      return terms.map(term => ({
+      return terms.map((term) => ({
         id: term.id,
         industry: term.industry,
         standard_term: term.standard_term,
         industry_term: term.industry_term,
         confidence_score: Number(term.confidence_score),
-        usage_examples: term.usage_examples || ''
-      }))
+        usage_examples: term.usage_examples || '',
+      }));
     } catch (error) {
-      console.error('Failed to get industry terms:', error)
-      return []
+      console.error('Failed to get industry terms:', error);
+      return [];
     }
   }
 
@@ -148,15 +148,15 @@ export class SynonymDetectionService {
     content: string,
     industry?: string
   ): Promise<string> {
-    if (!industry) return basePrompt
+    if (!industry) return basePrompt;
 
     const [terms, patterns] = await Promise.all([
       this.getIndustryTerms(industry),
-      this.findValuePatterns(content, industry)
-    ])
+      this.findValuePatterns(content, industry),
+    ]);
 
     if (terms.length === 0 && patterns.length === 0) {
-      return basePrompt
+      return basePrompt;
     }
 
     const industryContext = `
@@ -164,14 +164,22 @@ export class SynonymDetectionService {
 INDUSTRY-SPECIFIC CONTEXT (${industry.toUpperCase()}):
 
 Common value propositions in this industry:
-${terms.slice(0, 10).map(t =>
-  `- "${t.industry_term}" → signals ${t.standard_term} (confidence: ${(t.confidence_score * 100).toFixed(0)}%)`
-).join('\n')}
+${terms
+  .slice(0, 10)
+  .map(
+    (t) =>
+      `- "${t.industry_term}" → signals ${t.standard_term} (confidence: ${(t.confidence_score * 100).toFixed(0)}%)`
+  )
+  .join('\n')}
 
 Patterns detected in this content:
-${patterns.slice(0, 15).map(p =>
-  `- "${p.pattern_text}" → ${p.element_name} (${p.match_count} matches, confidence: ${(p.confidence * 100).toFixed(0)}%)`
-).join('\n')}
+${patterns
+  .slice(0, 15)
+  .map(
+    (p) =>
+      `- "${p.pattern_text}" → ${p.element_name} (${p.match_count} matches, confidence: ${(p.confidence * 100).toFixed(0)}%)`
+  )
+  .join('\n')}
 
 IMPORTANT: Use these detected patterns as evidence in your analysis. When scoring elements:
 1. Higher scores for elements with multiple high-confidence pattern matches
@@ -179,9 +187,9 @@ IMPORTANT: Use these detected patterns as evidence in your analysis. When scorin
 3. Adjust language to use industry terminology
 4. Provide recommendations that leverage detected patterns
 
-`
+`;
 
-    return basePrompt + industryContext
+    return basePrompt + industryContext;
   }
 
   /**
@@ -192,25 +200,31 @@ IMPORTANT: Use these detected patterns as evidence in your analysis. When scorin
     industry?: string,
     limit: number = 10
   ): Promise<Array<{ element: string; score: number; evidence: string[] }>> {
-    const patterns = await this.findValuePatterns(content, industry)
+    const patterns = await this.findValuePatterns(content, industry);
 
     // Group by element and calculate aggregate scores
-    const grouped = patterns.reduce((acc, p) => {
-      if (!acc[p.element_name]) {
-        acc[p.element_name] = {
-          element: p.element_name,
-          score: 0,
-          evidence: []
+    const grouped = patterns.reduce(
+      (acc, p) => {
+        if (!acc[p.element_name]) {
+          acc[p.element_name] = {
+            element: p.element_name,
+            score: 0,
+            evidence: [],
+          };
         }
-      }
-      acc[p.element_name].score += p.confidence * p.match_count
-      acc[p.element_name].evidence.push(p.pattern_text)
-      return acc
-    }, {} as Record<string, { element: string; score: number; evidence: string[] }>)
+        acc[p.element_name].score += p.confidence * p.match_count;
+        acc[p.element_name].evidence.push(p.pattern_text);
+        return acc;
+      },
+      {} as Record<
+        string,
+        { element: string; score: number; evidence: string[] }
+      >
+    );
 
     return Object.values(grouped)
       .sort((a, b) => b.score - a.score)
-      .slice(0, limit)
+      .slice(0, limit);
   }
 
   /**
@@ -219,12 +233,12 @@ IMPORTANT: Use these detected patterns as evidence in your analysis. When scorin
   static async isIndustrySupported(industry: string): Promise<boolean> {
     try {
       const count = await prisma.industry_terminology.count({
-        where: { industry }
-      })
+        where: { industry },
+      });
 
-      return count > 0
+      return count > 0;
     } catch {
-      return false
+      return false;
     }
   }
 
@@ -236,14 +250,13 @@ IMPORTANT: Use these detected patterns as evidence in your analysis. When scorin
       const industries = await prisma.industry_terminology.findMany({
         select: { industry: true },
         distinct: ['industry'],
-        orderBy: { industry: 'asc' }
-      })
+        orderBy: { industry: 'asc' },
+      });
 
-      return industries.map(i => i.industry)
+      return industries.map((i) => i.industry);
     } catch (error) {
-      console.error('Failed to get industries:', error)
-      return []
+      console.error('Failed to get industries:', error);
+      return [];
     }
   }
 }
-

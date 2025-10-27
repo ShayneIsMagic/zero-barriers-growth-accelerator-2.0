@@ -19,6 +19,7 @@
 ### Step 1: Create Users in Supabase (SQL)
 
 1. **Open Supabase SQL Editor**:
+
    ```
    https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/sql/new
    ```
@@ -34,6 +35,7 @@
 ### Step 2: Verify in Supabase Table Editor
 
 1. **Go to Table Editor**:
+
    ```
    https://supabase.com/dashboard/project/chkwezsyopfciibifmxx/editor
    ```
@@ -86,6 +88,7 @@
 ## 🎯 After This Fix
 
 **Login will work because**:
+
 1. ✅ Users exist in Supabase
 2. ✅ Vercel connects to Supabase
 3. ✅ Passwords are bcrypt hashed (correct)
@@ -97,4 +100,3 @@
 **Run the SQL file and you're done!** 🚀
 
 **File to run**: `FIX_LOGIN_NOW.sql`
-

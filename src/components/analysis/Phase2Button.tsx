@@ -11,7 +11,12 @@ interface Phase2ButtonProps {
   onPhase2Complete: (result: any) => void;
 }
 
-export function Phase2Button({ scrapedContent, url, industry, onPhase2Complete }: Phase2ButtonProps) {
+export function Phase2Button({
+  scrapedContent,
+  url,
+  industry,
+  onPhase2Complete,
+}: Phase2ButtonProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,7 +33,7 @@ export function Phase2Button({ scrapedContent, url, industry, onPhase2Complete }
         body: JSON.stringify({
           url,
           content: scrapedContent,
-          industry: industry || 'general'
+          industry: industry || 'general',
         }),
       });
 
@@ -54,11 +59,10 @@ export function Phase2Button({ scrapedContent, url, industry, onPhase2Complete }
         b2bElements: result.data.b2bElements,
         recommendations: [],
         scrapedContent: scrapedContent,
-        phase: 2
+        phase: 2,
       };
 
       onPhase2Complete(completeAnalysis);
-
     } catch (err) {
       console.error('Phase 2 analysis error:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
@@ -88,11 +92,7 @@ export function Phase2Button({ scrapedContent, url, industry, onPhase2Complete }
         )}
       </Button>
 
-      {error && (
-        <div className="text-red-600 text-sm">
-          Error: {error}
-        </div>
-      )}
+      {error && <div className="text-sm text-red-600">Error: {error}</div>}
     </div>
   );
 }

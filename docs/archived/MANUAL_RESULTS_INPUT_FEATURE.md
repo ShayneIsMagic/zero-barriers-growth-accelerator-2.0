@@ -9,6 +9,7 @@
 ## 🎯 Proposed Flow
 
 ### **Current Flow (Limited):**
+
 ```
 Phase 1 runs → Lighthouse fails → Shows manual prompt
 ↓
@@ -21,6 +22,7 @@ User has results in Gemini... now what? ❌
 ```
 
 ### **Improved Flow (Better):**
+
 ```
 Phase 1 runs → Lighthouse fails → Shows manual prompt + Input Area
 ↓
@@ -91,7 +93,7 @@ function handleManualLighthouseInput(geminiResponse: string) {
     prompt: lighthouseFallbackPrompt,
     markdown: `# Lighthouse Performance - Manual Analysis\n\n${geminiResponse}`,
     timestamp: new Date().toISOString(),
-    score: parsedData.averageScore
+    score: parsedData.averageScore,
   };
 
   // Add to Phase 1 reports
@@ -113,6 +115,7 @@ function handleManualLighthouseInput(geminiResponse: string) {
 1. **Copy the prompt** from the app
 2. **Run in Gemini:** https://gemini.google.com/
 3. **Paste your Lighthouse scores:**
+
    ```
    - Performance: 82/100
    - Accessibility: 90/100
@@ -142,6 +145,7 @@ function handleManualLighthouseInput(geminiResponse: string) {
 ### **Option 2: Skip Lighthouse for Now**
 
 Since automated Lighthouse often fails:
+
 - ✅ Phase 1 still gives you content collection
 - ✅ Phase 2 still analyzes through frameworks
 - ✅ Phase 3 still gives strategic recommendations
@@ -154,7 +158,9 @@ Since automated Lighthouse often fails:
 ## 🚀 **Quick Answer:**
 
 ### **Q1: Why can't I access Phase 3?**
+
 **A:** You need to complete Phase 2 first:
+
 ```
 1. Run Phase 1 (get content)
 2. Run Phase 2 (get 4 AI frameworks)
@@ -162,7 +168,9 @@ Since automated Lighthouse often fails:
 ```
 
 ### **Q2: Where do I paste manual Lighthouse results?**
+
 **A:** Currently:
+
 - ❌ Can't paste back into the app
 - ✅ Paste into Gemini: https://gemini.google.com/
 - ✅ Save Gemini's response separately
@@ -175,11 +183,13 @@ Since automated Lighthouse often fails:
 **Since latest code is live, test the corrected phase descriptions:**
 
 1. **Open:**
+
    ```
    https://zero-barriers-growth-accelerator-20-shayne-roys-projects.vercel.app/dashboard/phased-analysis
    ```
 
 2. **Check Phase 1 description:**
+
    ```
    Should say:
    ✅ Scrape website content & metadata
@@ -202,6 +212,7 @@ Since automated Lighthouse often fails:
 ---
 
 **Want me to:**
+
 1. ✅ Help you run a complete Phase 1 → 2 → 3 test?
 2. ✅ Build the manual input feature so you can paste results back?
 3. ✅ Both?

@@ -34,10 +34,10 @@ export default function TestLoginPage() {
           <CardTitle className="text-center">🔧 Test Login</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-gray-600 text-center">
+          <p className="text-center text-sm text-gray-600">
             Click any button below to login instantly for testing:
           </p>
-          
+
           <Button
             onClick={() => handleQuickLogin('test@example.com', 'anypassword')}
             disabled={loading}
@@ -46,7 +46,7 @@ export default function TestLoginPage() {
           >
             {loading ? 'Logging in...' : 'Login as Test User'}
           </Button>
-          
+
           <Button
             onClick={() => handleQuickLogin('admin@test.com', 'admin123')}
             disabled={loading}
@@ -55,7 +55,7 @@ export default function TestLoginPage() {
           >
             Login as Admin
           </Button>
-          
+
           <Button
             onClick={() => handleQuickLogin('demo@example.com', 'demo123')}
             disabled={loading}
@@ -64,8 +64,8 @@ export default function TestLoginPage() {
           >
             Login as Demo User
           </Button>
-          
-          <div className="text-center text-xs text-gray-500 mt-4">
+
+          <div className="mt-4 text-center text-xs text-gray-500">
             <p>Any email/password combination will work</p>
             <p>This is for testing only</p>
           </div>

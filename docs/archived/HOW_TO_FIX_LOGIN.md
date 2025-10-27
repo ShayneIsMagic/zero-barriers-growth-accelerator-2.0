@@ -83,6 +83,7 @@ SELECT id, email, name, role FROM "User" ORDER BY role DESC;
 2. Click **"RUN"** button (bottom right)
 
 3. **Expected Output:**
+
    ```
    Success. Rows returned: 3
 
@@ -98,11 +99,13 @@ SELECT id, email, name, role FROM "User" ORDER BY role DESC;
 ### **Step 5: Verify Database Connection**
 
 Wait 30 seconds, then visit:
+
 ```
 https://zero-barriers-growth-accelerator-20.vercel.app/api/test-db
 ```
 
 **Expected Output:**
+
 ```json
 {
   "status": "SUCCESS",
@@ -126,6 +129,7 @@ https://zero-barriers-growth-accelerator-20.vercel.app/api/test-db
 ### **Step 6: Test Login**
 
 Go to:
+
 ```
 https://zero-barriers-growth-accelerator-20.vercel.app/auth/signin
 ```
@@ -133,14 +137,17 @@ https://zero-barriers-growth-accelerator-20.vercel.app/auth/signin
 **Login Credentials:**
 
 **Admin Account:**
+
 - Email: `shayne+1@devpipeline.com`
 - Password: `ZBadmin123!`
 
 **User Account 1:**
+
 - Email: `sk@zerobarriers.io`
 - Password: `ZBuser123!`
 
 **User Account 2:**
+
 - Email: `shayne+2@devpipeline.com`
 - Password: `ZBuser2123!`
 
@@ -182,11 +189,13 @@ VALUES
 ### **Issue: Login still says "Invalid credentials"**
 
 **Check:**
+
 1. Did you run the SQL? (Check Supabase table editor)
 2. Did you use the exact password? (Case sensitive!)
 3. Is DATABASE_URL set in Vercel? (Should be)
 
 **Debug:**
+
 ```
 Visit: /api/test-db
 Look for: "userCount": 3
@@ -199,6 +208,7 @@ If 3: Database issue elsewhere
 ### **Issue: Can't access Supabase dashboard**
 
 **Check:**
+
 - Project URL: https://supabase.com/dashboard/project/chkwezsyopfciibifmxx
 - Make sure you're logged into correct Supabase account
 
@@ -239,4 +249,3 @@ Password: `ZBadmin123!`
 **Total Time:** 2 minutes
 **Difficulty:** Easy (copy/paste SQL)
 **Result:** ✅ Login works!
-

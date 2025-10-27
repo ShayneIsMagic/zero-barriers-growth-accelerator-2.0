@@ -75,14 +75,13 @@ export class StandaloneElementsValueB2BService {
 
       // Analyze with scraped content
       return await this.analyzeWithScrapedContent(url, scrapedData);
-
     } catch (error) {
       console.error('B2B Elements of Value analysis failed:', error);
       return {
         success: false,
         url,
         data: {} as B2BAnalysisData,
-        error: error instanceof Error ? error.message : 'Analysis failed'
+        error: error instanceof Error ? error.message : 'Analysis failed',
       };
     }
   }
@@ -90,12 +89,19 @@ export class StandaloneElementsValueB2BService {
   /**
    * Analyze website using pre-scraped content
    */
-  static async analyzeWithScrapedContent(url: string, scrapedData: any): Promise<B2BAnalysisResult> {
+  static async analyzeWithScrapedContent(
+    url: string,
+    scrapedData: any
+  ): Promise<B2BAnalysisResult> {
     try {
-      console.log(`🏢 Starting B2B Elements of Value analysis with framework knowledge for: ${url}`);
+      console.log(
+        `🏢 Starting B2B Elements of Value analysis with framework knowledge for: ${url}`
+      );
 
       // Use enhanced analysis with framework integration
-      console.log('🧠 Running enhanced analysis with B2B Elements of Value framework...');
+      console.log(
+        '🧠 Running enhanced analysis with B2B Elements of Value framework...'
+      );
       const enhancedResult = await EnhancedAnalysisService.analyzeWithFramework(
         'elements-value-b2b',
         scrapedData,
@@ -113,16 +119,15 @@ export class StandaloneElementsValueB2BService {
       return {
         success: true,
         url,
-        data: enhancedResult.analysis
+        data: enhancedResult.analysis,
       };
-
     } catch (error) {
       console.error('B2B Elements of Value analysis failed:', error);
       return {
         success: false,
         url,
         data: {} as B2BAnalysisData,
-        error: error instanceof Error ? error.message : 'Analysis failed'
+        error: error instanceof Error ? error.message : 'Analysis failed',
       };
     }
   }

@@ -11,23 +11,32 @@ export async function POST(request: NextRequest) {
     const { email, password } = body;
 
     if (!email || !password) {
-      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Email and password are required' },
+        { status: 400 }
+      );
     }
 
     // Find user in database
     const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() }
+      where: { email: email.toLowerCase() },
     });
 
     if (!user || !user.password) {
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Invalid credentials' },
+        { status: 401 }
+      );
     }
 
     // Verify password
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Invalid credentials' },
+        { status: 401 }
+      );
     }
 
     // Generate JWT token
@@ -35,7 +44,7 @@ export async function POST(request: NextRequest) {
       {
         userId: user.id,
         email: user.email,
-        role: user.role
+        role: user.role,
       },
       JWT_SECRET,
       { expiresIn: '7d' }
@@ -49,10 +58,13 @@ export async function POST(request: NextRequest) {
         role: user.role,
       },
       token,
-      message: 'Sign in successful'
+      message: 'Sign in successful',
     });
   } catch (error) {
     console.error('Sign in error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

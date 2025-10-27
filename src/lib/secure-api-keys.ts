@@ -1,6 +1,6 @@
 /**
  * Secure API Key Management
- * 
+ *
  * This module provides secure handling of API keys with:
  * - Environment variable validation
  * - Key masking for logs
@@ -16,7 +16,7 @@ interface ApiKeyConfig {
 
 export class SecureApiKeyManager {
   private static instance: SecureApiKeyManager;
-  
+
   private constructor() {
     // Private constructor for singleton pattern
   }
@@ -36,7 +36,7 @@ export class SecureApiKeyManager {
     return {
       key: key || '',
       isConfigured: !!key,
-      source: key ? 'environment' : 'missing'
+      source: key ? 'environment' : 'missing',
     };
   }
 
@@ -57,7 +57,7 @@ export class SecureApiKeyManager {
         process.env.GOOGLE_SEARCH_CONSOLE_CLIENT_ID &&
         process.env.GOOGLE_SEARCH_CONSOLE_CLIENT_SECRET &&
         process.env.GOOGLE_SEARCH_CONSOLE_REFRESH_TOKEN
-      )
+      ),
     };
   }
 
@@ -81,7 +81,7 @@ export class SecureApiKeyManager {
         process.env.GOOGLE_ADS_CLIENT_SECRET &&
         process.env.GOOGLE_ADS_DEVELOPER_TOKEN &&
         process.env.GOOGLE_ADS_REFRESH_TOKEN
-      )
+      ),
     };
   }
 
@@ -119,7 +119,7 @@ export class SecureApiKeyManager {
       searchConsole,
       googleAds,
       allConfigured: gemini && searchConsole && googleAds,
-      missingKeys
+      missingKeys,
     };
   }
 
@@ -140,22 +140,22 @@ export class SecureApiKeyManager {
     const configured = [
       geminiKey.isConfigured,
       searchConsoleCreds.isConfigured,
-      googleAdsCreds.isConfigured
+      googleAdsCreds.isConfigured,
     ].filter(Boolean).length;
 
     return {
       gemini: {
         configured: geminiKey.isConfigured,
-        masked: this.maskApiKey(geminiKey.key)
+        masked: this.maskApiKey(geminiKey.key),
       },
       searchConsole: {
-        configured: searchConsoleCreds.isConfigured
+        configured: searchConsoleCreds.isConfigured,
       },
       googleAds: {
-        configured: googleAdsCreds.isConfigured
+        configured: googleAdsCreds.isConfigured,
       },
       totalConfigured: configured,
-      totalRequired: 3
+      totalRequired: 3,
     };
   }
 
@@ -164,7 +164,9 @@ export class SecureApiKeyManager {
    */
   public validateServerSideOnly(): void {
     if (typeof window !== 'undefined') {
-      throw new Error('SECURITY ERROR: API keys cannot be accessed in client-side code');
+      throw new Error(
+        'SECURITY ERROR: API keys cannot be accessed in client-side code'
+      );
     }
   }
 
@@ -173,7 +175,11 @@ export class SecureApiKeyManager {
    */
   private rateLimits = new Map<string, { count: number; resetTime: number }>();
 
-  public checkRateLimit(apiName: string, maxCalls: number, windowMs: number): boolean {
+  public checkRateLimit(
+    apiName: string,
+    maxCalls: number,
+    windowMs: number
+  ): boolean {
     const now = Date.now();
     const key = apiName;
     const current = this.rateLimits.get(key);
