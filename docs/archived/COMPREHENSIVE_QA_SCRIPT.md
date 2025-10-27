@@ -24,13 +24,13 @@
 - [ ] Go to /auth/signin
 - [ ] Login: admin@zerobarriers.io / ZBadmin123!
 - [ ] **Expected**: Redirect to dashboard
-- [ ] **Actual**: ****\_\_\_****
+- [ ] **Actual**: \***\*\_\_\_\*\***
 
 #### Test 1.3: Wrong Password Rejected
 
 - [ ] Try: admin@zerobarriers.io / wrongpassword
 - [ ] **Expected**: Error message
-- [ ] **Actual**: ****\_\_\_****
+- [ ] **Actual**: \***\*\_\_\_\*\***
 
 ---
 
@@ -58,7 +58,7 @@
 - [ ] Recommendations show
 - [ ] Export buttons appear
 
-**BREAKS FOUND**: ****\_\_\_****
+**BREAKS FOUND**: \***\*\_\_\_\*\***
 
 ---
 
@@ -80,7 +80,7 @@
   - [ ] Lighthouse
   - [ ] Gemini insights
 
-**BREAKS FOUND**: ****\_\_\_****
+**BREAKS FOUND**: \***\*\_\_\_\*\***
 
 ---
 
@@ -93,7 +93,7 @@
 - [ ] Google Trends integration
 - [ ] Results display
 
-**BREAKS FOUND**: ****\_\_\_****
+**BREAKS FOUND**: \***\*\_\_\_\*\***
 
 ---
 
@@ -107,7 +107,7 @@
 - [ ] Estimated time remaining shows
 - [ ] All deliverables generated
 
-**BREAKS FOUND**: ****\_\_\_****
+**BREAKS FOUND**: \***\*\_\_\_\*\***
 
 ---
 
@@ -118,7 +118,7 @@
 - [ ] After analysis completes
 - [ ] Try to "View Report" (if option exists)
 - [ ] **Expected**: Report displays OR 404 if using file system
-- [ ] **Actual**: ****\_\_\_****
+- [ ] **Actual**: \***\*\_\_\_\*\***
 
 #### Test 3.2: Report Export
 
@@ -132,7 +132,7 @@
 - [ ] Click "Email Report"
   - [ ] Email client opens ✅
 
-**BREAKS FOUND**: ****\_\_\_****
+**BREAKS FOUND**: \***\*\_\_\_\*\***
 
 ---
 
@@ -197,13 +197,13 @@ After analysis:
 **Expected**: Viewing old reports fails with 404
 **Why**: File system storage doesn't work on Vercel
 **Test**: Try to access /api/reports/any-id
-**Result**: ****\_\_\_****
+**Result**: \***\*\_\_\_\*\***
 
 ### Issue 2: Step-by-Step Executes All at Once
 
 **Expected**: All phases run without pausing
 **Test**: Run step-by-step analysis
-**Result**: ****\_\_\_****
+**Result**: \***\*\_\_\_\*\***
 
 ### Issue 3: ESLint Warnings
 
@@ -231,7 +231,7 @@ After analysis:
 
 - [ ] Report viewing (expected - file system issue)
 - [ ] Step-by-step pausing (expected - runs all at once)
-- [ ] Other: ****\_\_\_****
+- [ ] Other: \***\*\_\_\_\*\***
 
 ### Performance Issues ⚠️
 

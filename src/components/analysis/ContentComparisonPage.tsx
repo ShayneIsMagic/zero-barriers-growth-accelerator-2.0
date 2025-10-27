@@ -292,7 +292,7 @@ New compelling description that highlights our unique value proposition.
             <div className="flex gap-2 pt-4 border-t">
               <Button
                 onClick={saveSnapshot}
-                disabled={isSavingSnapshot || snapshotId}
+                disabled={isSavingSnapshot || !!snapshotId}
                 variant="outline"
                 size="sm"
               >
@@ -311,7 +311,7 @@ New compelling description that highlights our unique value proposition.
 
               <Button
                 onClick={createProposedVersion}
-                disabled={isCreatingProposed || !snapshotId || !proposedContent.trim() || proposedContentId}
+                disabled={isCreatingProposed || !snapshotId || !proposedContent.trim() || !!proposedContentId}
                 variant="outline"
                 size="sm"
               >
@@ -330,7 +330,7 @@ New compelling description that highlights our unique value proposition.
 
               <Button
                 onClick={createVersionComparison}
-                disabled={!snapshotId || !proposedContentId}
+                disabled={!snapshotId || !proposedContentId || !!proposedContentId === false}
                 variant="outline"
                 size="sm"
               >
