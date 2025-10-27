@@ -920,7 +920,8 @@ export class WebsiteEvaluationFramework {
 
   private getFirstImpressionStrengths(_checks: any): string[] {
     const strengths = [];
-    if (_checks.valuePropositionClear) strengths.push('Clear value proposition');
+    if (_checks.valuePropositionClear)
+      strengths.push('Clear value proposition');
     if (_checks.primaryCTAVisible) strengths.push('Visible primary CTA');
     if (_checks.trustSignalPresent) strengths.push('Trust signals present');
     return strengths;
