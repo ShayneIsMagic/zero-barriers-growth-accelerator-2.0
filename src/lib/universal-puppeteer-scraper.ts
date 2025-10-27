@@ -248,15 +248,35 @@ export class UniversalPuppeteerScraper {
     }
 
     if (this.isServerless) {
-      // Use browserless.io for serverless environments
-      const browserWSEndpoint =
-        process.env.BROWSERLESS_WS_ENDPOINT || 'wss://chrome.browserless.io';
+      // Try browserless.io first if configured
       const token = process.env.BROWSERLESS_TOKEN;
-
-      this.browser = await puppeteer.connect({
-        browserWSEndpoint: token
-          ? `${browserWSEndpoint}?token=${token}`
-          : browserWSEndpoint,
+      if (token) {
+        const browserWSEndpoint =
+          process.env.BROWSERLESS_WS_ENDPOINT || 'wss://chrome.browserless.io';
+        
+        try {
+          this.browser = await puppeteer.connect({
+            browserWSEndpoint: `${browserWSEndpoint}?token=${token}`,
+          });
+          return this.browser;
+        } catch (error) {
+          console.warn('Browserless.io connection failed, falling back to local launch:', error);
+        }
+      }
+      
+      // Fallback to local launch for Vercel/serverless
+      // This works because Vercel now supports Puppeteer out of the box
+      this.browser = await puppeteer.launch({
+        headless: true,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-accelerated-2d-canvas',
+          '--no-first-run',
+          '--no-zygote',
+          '--disable-gpu',
+        ],
       });
     } else {
       // Local development
