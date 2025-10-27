@@ -169,8 +169,8 @@ MIT License - see LICENSE file for details
 
 ## 📞 **SUPPORT**
 
-- **Email**: hello@zerobarriers.com
-- **Documentation**: [docs.zerobarriers.com](https://docs.zerobarriers.com)
+- **Email**: sk@zerobarriers.io
+- **Documentation**: [docs.zerobarriers.io](https://docs.zerobarriers.io)
 - **Issues**: [GitHub Issues](https://github.com/ShayneIsMagic/zero-barriers-growth-accelerator-2.0/issues)
 
 ---
