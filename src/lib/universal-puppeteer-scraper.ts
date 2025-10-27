@@ -253,7 +253,7 @@ export class UniversalPuppeteerScraper {
       if (token) {
         const browserWSEndpoint =
           process.env.BROWSERLESS_WS_ENDPOINT || 'wss://chrome.browserless.io';
-        
+
         try {
           this.browser = await puppeteer.connect({
             browserWSEndpoint: `${browserWSEndpoint}?token=${token}`,
@@ -263,7 +263,7 @@ export class UniversalPuppeteerScraper {
           console.warn('Browserless.io connection failed, falling back to local launch:', error);
         }
       }
-      
+
       // Fallback to local launch for Vercel/serverless
       // This works because Vercel now supports Puppeteer out of the box
       this.browser = await puppeteer.launch({
