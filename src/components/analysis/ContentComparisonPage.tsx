@@ -3,13 +3,7 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
@@ -40,8 +34,8 @@ export function ContentComparisonPage() {
         body: JSON.stringify({
           url: url.trim(),
           proposedContent: proposedContent.trim(),
-          analysisType: 'full',
-        }),
+          analysisType: 'full'
+        })
       });
 
       const data = await response.json();
@@ -86,17 +80,13 @@ export function ContentComparisonPage() {
             Content Comparison Analysis
           </CardTitle>
           <CardDescription>
-            Compare existing website content against proposed new content. Get
-            AI-powered side-by-side analysis.
+            Compare existing website content against proposed new content. Get AI-powered side-by-side analysis.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* URL Input */}
           <div>
-            <label
-              htmlFor="website-url"
-              className="mb-2 block text-sm font-medium"
-            >
+            <label htmlFor="website-url" className="mb-2 block text-sm font-medium">
               Website URL
             </label>
             <Input
@@ -119,10 +109,7 @@ export function ContentComparisonPage() {
 
           {/* Proposed Content */}
           <div>
-            <label
-              htmlFor="proposed-content"
-              className="mb-2 block text-sm font-medium"
-            >
+            <label htmlFor="proposed-content" className="mb-2 block text-sm font-medium">
               Proposed New Content (Optional)
             </label>
             <Textarea
@@ -149,8 +136,7 @@ New compelling description that highlights our unique value proposition.
               aria-describedby="content-help"
             />
             <p id="content-help" className="mt-2 text-xs text-muted-foreground">
-              💡 Leave empty to just analyze existing content. Add proposed
-              content to see side-by-side comparison.
+              💡 Leave empty to just analyze existing content. Add proposed content to see side-by-side comparison.
             </p>
           </div>
 
@@ -176,9 +162,7 @@ New compelling description that highlights our unique value proposition.
             ) : (
               <>
                 <GitCompare className="mr-2 h-4 w-4" />
-                {proposedContent
-                  ? 'Compare Existing vs. Proposed'
-                  : 'Analyze Existing Content'}
+                {proposedContent ? 'Compare Existing vs. Proposed' : 'Analyze Existing Content'}
               </>
             )}
           </Button>
@@ -189,9 +173,7 @@ New compelling description that highlights our unique value proposition.
       {result && (
         <Tabs defaultValue="comparison" className="space-y-4">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="comparison">
-              Side-by-Side Comparison
-            </TabsTrigger>
+            <TabsTrigger value="comparison">Side-by-Side Comparison</TabsTrigger>
             <TabsTrigger value="existing">Existing Content</TabsTrigger>
             {result.proposed && (
               <TabsTrigger value="proposed">Proposed Content</TabsTrigger>
@@ -231,27 +213,19 @@ New compelling description that highlights our unique value proposition.
                             <strong>Title:</strong> {result.existing.title}
                           </div>
                           <div>
-                            <strong>Meta Description:</strong>{' '}
-                            {result.existing.metaDescription}
+                            <strong>Meta Description:</strong> {result.existing.metaDescription}
                           </div>
                           <div>
-                            <strong>Word Count:</strong>{' '}
-                            {result.existing.wordCount}
+                            <strong>Word Count:</strong> {result.existing.wordCount}
                           </div>
                           <div>
                             <strong>Top Keywords:</strong>
                             <div className="mt-1 flex flex-wrap gap-1">
-                              {result.existing.extractedKeywords
-                                .slice(0, 10)
-                                .map((kw: string, i: number) => (
-                                  <Badge
-                                    key={i}
-                                    variant="secondary"
-                                    className="text-xs"
-                                  >
-                                    {kw}
-                                  </Badge>
-                                ))}
+                              {result.existing.extractedKeywords.slice(0, 10).map((kw: string, i: number) => (
+                                <Badge key={i} variant="secondary" className="text-xs">
+                                  {kw}
+                                </Badge>
+                              ))}
                             </div>
                           </div>
                         </div>
@@ -271,27 +245,19 @@ New compelling description that highlights our unique value proposition.
                               <strong>Title:</strong> {result.proposed.title}
                             </div>
                             <div>
-                              <strong>Meta Description:</strong>{' '}
-                              {result.proposed.metaDescription}
+                              <strong>Meta Description:</strong> {result.proposed.metaDescription}
                             </div>
                             <div>
-                              <strong>Word Count:</strong>{' '}
-                              {result.proposed.wordCount}
+                              <strong>Word Count:</strong> {result.proposed.wordCount}
                             </div>
                             <div>
                               <strong>Top Keywords:</strong>
                               <div className="mt-1 flex flex-wrap gap-1">
-                                {result.proposed.extractedKeywords
-                                  .slice(0, 10)
-                                  .map((kw: string, i: number) => (
-                                    <Badge
-                                      key={i}
-                                      variant="outline"
-                                      className="text-xs"
-                                    >
-                                      {kw}
-                                    </Badge>
-                                  ))}
+                                {result.proposed.extractedKeywords?.slice(0, 10).map((kw: string, i: number) => (
+                                  <Badge key={i} variant="outline" className="text-xs">
+                                    {kw}
+                                  </Badge>
+                                ))}
                               </div>
                             </div>
                           </div>
@@ -302,38 +268,21 @@ New compelling description that highlights our unique value proposition.
                     {/* AI Comparison Results */}
                     {result.comparison && (
                       <div className="mt-6 space-y-4">
-                        <h3 className="text-xl font-semibold">
-                          AI Analysis Results
-                        </h3>
+                        <h3 className="text-xl font-semibold">AI Analysis Results</h3>
 
                         {/* Show comparison data */}
                         <div className="rounded-lg border bg-blue-50 p-4 dark:bg-blue-950">
-                          <h4 className="mb-2 font-semibold">
-                            Overall Recommendation
-                          </h4>
+                          <h4 className="mb-2 font-semibold">Overall Recommendation</h4>
                           <div className="whitespace-pre-wrap text-sm">
                             {JSON.stringify(result.comparison, null, 2)}
                           </div>
                         </div>
 
-                        <Button
-                          onClick={() =>
-                            copyToClipboard(
-                              JSON.stringify(result.comparison, null, 2)
-                            )
-                          }
-                        >
+                        <Button onClick={() => copyToClipboard(JSON.stringify(result.comparison, null, 2))}>
                           <Copy className="mr-2 h-4 w-4" />
                           Copy Analysis
                         </Button>
-                        <Button
-                          onClick={() =>
-                            copyToClipboard(
-                              JSON.stringify(result.existing, null, 2)
-                            )
-                          }
-                          variant="outline"
-                        >
+                        <Button onClick={() => copyToClipboard(JSON.stringify(result.existing, null, 2))} variant="outline">
                           <Copy className="mr-2 h-4 w-4" />
                           Copy Scraped Data
                         </Button>
@@ -363,12 +312,10 @@ New compelling description that highlights our unique value proposition.
                         <strong>Title:</strong> {result.existing.title}
                       </div>
                       <div>
-                        <strong>Description:</strong>{' '}
-                        {result.existing.metaDescription}
+                        <strong>Description:</strong> {result.existing.metaDescription}
                       </div>
                       <div>
-                        <strong>Keywords:</strong>{' '}
-                        {result.existing.metaKeywords?.join(', ') || 'None'}
+                        <strong>Keywords:</strong> {result.existing.metaKeywords?.join(', ') || 'None'}
                       </div>
                     </div>
                   </div>
@@ -381,9 +328,7 @@ New compelling description that highlights our unique value proposition.
                       </pre>
                     </div>
                     <p className="mt-2 text-xs text-muted-foreground">
-                      📊 Total content length:{' '}
-                      {result.existing.cleanText.length.toLocaleString()}{' '}
-                      characters
+                      📊 Total content length: {result.existing.cleanText.length.toLocaleString()} characters
                     </p>
                   </div>
                 </div>
@@ -404,16 +349,13 @@ New compelling description that highlights our unique value proposition.
                 <CardContent>
                   <div className="space-y-4">
                     <div className="rounded-lg border p-3">
-                      <h4 className="mb-2 font-semibold">
-                        Proposed Meta Information
-                      </h4>
+                      <h4 className="mb-2 font-semibold">Proposed Meta Information</h4>
                       <div className="space-y-2 text-sm">
                         <div>
                           <strong>Title:</strong> {result.proposed.title}
                         </div>
                         <div>
-                          <strong>Description:</strong>{' '}
-                          {result.proposed.metaDescription}
+                          <strong>Description:</strong> {result.proposed.metaDescription}
                         </div>
                       </div>
                     </div>
@@ -450,9 +392,7 @@ function generateComparisonMarkdown(result: any): string {
 **Word Count:** ${result.existing.wordCount}
 **Keywords:** ${result.existing.extractedKeywords.slice(0, 10).join(', ')}
 
-${
-  result.proposed
-    ? `
+${result.proposed ? `
 ## Proposed Content
 
 **Title:** ${result.proposed.title}
@@ -465,9 +405,7 @@ ${
 ## AI Comparison Analysis
 
 ${JSON.stringify(result.comparison, null, 2)}
-`
-    : ''
-}
+` : ''}
 
 ---
 
