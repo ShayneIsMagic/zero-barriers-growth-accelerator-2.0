@@ -6,10 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+// import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { AlertCircle, CheckCircle, Copy, FileText, Link, Upload } from 'lucide-react';
+import { AlertCircle, CheckCircle, Copy, FileText, Upload } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -176,7 +176,7 @@ export function Phase1DataUpload({ onDataReceived, onContinue, initialData }: Ph
           {/* Method Selection */}
           <div className="space-y-4">
             <Label className="text-lg font-semibold">Choose Data Source:</Label>
-            <RadioGroup value={uploadMethod} onValueChange={(value: 'url' | 'paste' | 'upload') => setUploadMethod(value)}>
+            {/* <RadioGroup value={uploadMethod} onValueChange={(value: 'url' | 'paste' | 'upload') => setUploadMethod(value)}>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="url" id="url" />
                 <Label htmlFor="url" className="flex items-center gap-2">
@@ -198,7 +198,18 @@ export function Phase1DataUpload({ onDataReceived, onContinue, initialData }: Ph
                   Upload Saved Report
                 </Label>
               </div>
-            </RadioGroup>
+            </RadioGroup> */}
+
+            {/* Temporary replacement with select */}
+            <select
+              value={uploadMethod}
+              onChange={(e) => setUploadMethod(e.target.value as 'url' | 'paste' | 'upload')}
+              className="w-full p-2 border rounded-md"
+            >
+              <option value="url">Collect from New URL</option>
+              <option value="paste">Paste Previous Content</option>
+              <option value="upload">Upload Saved Report</option>
+            </select>
           </div>
 
           {/* Validation Errors */}

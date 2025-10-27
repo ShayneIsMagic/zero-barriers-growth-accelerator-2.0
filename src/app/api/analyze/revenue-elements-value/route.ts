@@ -3,8 +3,8 @@
  * Focuses on identifying revenue opportunities and calculating potential ROI
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { RevenueFocusedElementsOfValueService } from '@/lib/services/revenue-focused-elements-value.service';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 60;
 

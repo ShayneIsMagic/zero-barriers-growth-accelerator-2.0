@@ -3,9 +3,9 @@
  * Focuses on identifying revenue opportunities and calculating potential ROI
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { scrapeWebsiteContent } from '@/lib/reliable-content-scraper';
 import { EnhancedAnalysisService } from '@/lib/ai-engines/enhanced-analysis.service';
+import { scrapeWebsiteContent } from '@/lib/reliable-content-scraper';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export interface RevenueElementsOfValueResult {
   success: boolean;
@@ -100,7 +100,7 @@ export class RevenueFocusedElementsOfValueService {
 
       return {
         success: true,
-        _url,
+        url,
         data: analysisResult
       };
 
@@ -108,7 +108,7 @@ export class RevenueFocusedElementsOfValueService {
       console.error('Revenue-Focused Elements of Value analysis failed:', error);
       return {
         success: false,
-        _url,
+        url,
         data: {} as any,
         error: error instanceof Error ? error.message : 'Analysis failed'
       };
@@ -140,7 +140,7 @@ export class RevenueFocusedElementsOfValueService {
 
       return {
         success: true,
-        _url,
+        url,
         data: enhancedResult.analysis
       };
 
@@ -148,7 +148,7 @@ export class RevenueFocusedElementsOfValueService {
       console.error('Revenue-Focused Elements of Value analysis failed:', error);
       return {
         success: false,
-        _url,
+        url,
         data: {} as any,
         error: error instanceof Error ? error.message : 'Analysis failed'
       };

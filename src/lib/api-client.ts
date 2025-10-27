@@ -61,7 +61,7 @@ class ApiClient {
   ): Promise<ApiResponse<T>> {
     try {
       const response = await this.fetchWithTimeout(url, options);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -80,7 +80,7 @@ class ApiClient {
       }
 
       this.onError?.(error as Error);
-      
+
       return {
         success: false,
         error: 'NETWORK_ERROR',
@@ -144,7 +144,7 @@ export const apiClient = new ApiClient({
 export const analysisApi = {
   async analyzeWebsite(url: string, analysisType: string = 'full') {
     return apiClient.post('/api/analyze/website', {
-      _url,
+      url,
       analysisType,
     });
   },

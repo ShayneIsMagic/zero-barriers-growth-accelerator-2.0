@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { ExecutiveReportGenerator } from '@/lib/executive-report-generator';
 import { analyzeWithGemini } from '@/lib/free-ai-analysis';
-import { extractWithProduction } from '@/lib/production-content-extractor';
 import { runLighthouseAnalysis } from '@/lib/lighthouse-service';
+import { extractWithProduction } from '@/lib/production-content-extractor';
 import { spawn } from 'child_process';
+import { NextRequest, NextResponse } from 'next/server';
 import path from 'path';
 
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     const { url } = await request.json();
 
@@ -22,7 +22,7 @@ export async function POST(_request: NextRequest) {
     // Step 1: Scrape website content
     console.log('Step 1: Scraping website content...');
     const scrapedContent = await extractWithProduction(url);
-    
+
     // Step 2: Run Lighthouse analysis
     console.log('Step 2: Running Lighthouse analysis...');
     const lighthouseData = await runLighthouseAnalysis(url);
@@ -32,18 +32,18 @@ export async function POST(_request: NextRequest) {
     const pageAuditData = await new Promise((resolve, _reject) => {
       const scriptPath = path.join(process.cwd(), 'scripts', 'pageaudit-analysis.js');
       const child = spawn('node', [scriptPath, url]);
-      
+
       let output = '';
       let errorOutput = '';
-      
+
       child.stdout.on('data', (data) => {
         output += data.toString();
       });
-      
+
       child.stderr.on('data', (data) => {
         errorOutput += data.toString();
       });
-      
+
       child.on('close', (code) => {
         if (code === 0) {
           try {
@@ -66,7 +66,7 @@ export async function POST(_request: NextRequest) {
 
     // Step 5: Combine all analysis data
     const comprehensiveAnalysis = {
-      _url,
+      url,
       timestamp: new Date().toISOString(),
       ...aiAnalysis,
       lighthouseAnalysis: lighthouseData,
@@ -100,7 +100,7 @@ export async function POST(_request: NextRequest) {
 
     // Write markdown report
     fs.writeFileSync(reportPath, markdownReport);
-    
+
     // Write HTML report
     fs.writeFileSync(htmlReportPath, htmlReport);
 
@@ -114,7 +114,7 @@ export async function POST(_request: NextRequest) {
       htmlContent: htmlReport,
       analysis: comprehensiveAnalysis,
       metadata: {
-        _url,
+        url,
         generatedAt: new Date().toISOString(),
         reportId,
         frameworks: [
@@ -146,7 +146,7 @@ export async function POST(_request: NextRequest) {
   }
 }
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const reportId = searchParams.get('reportId');
@@ -156,7 +156,7 @@ export async function GET(_request: NextRequest) {
       const fs = require('fs');
       const path = require('path');
       const reportsDir = path.join(process.cwd(), 'reports');
-      
+
       if (!fs.existsSync(reportsDir)) {
         return NextResponse.json({
           success: true,
@@ -199,8 +199,8 @@ export async function GET(_request: NextRequest) {
     }
 
     const markdownContent = fs.readFileSync(reportPath, 'utf8');
-    const htmlContent = fs.existsSync(htmlReportPath) 
-      ? fs.readFileSync(htmlReportPath, 'utf8') 
+    const htmlContent = fs.existsSync(htmlReportPath)
+      ? fs.readFileSync(htmlReportPath, 'utf8')
       : null;
 
     const stats = fs.statSync(reportPath);

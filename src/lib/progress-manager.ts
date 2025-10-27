@@ -3,7 +3,7 @@
  * Manages real-time progress updates, mini deliverables, and cohesive reporting
  */
 
-import { AnalysisProgress, PhaseProgress, MiniDeliverable } from '@/components/analysis/ProgressTracker';
+import { AnalysisProgress } from '@/components/analysis/ProgressTracker';
 
 export interface AnalysisPhase {
   id: string;
@@ -30,10 +30,10 @@ export class ProgressManager {
   constructor(url: string, phases: AnalysisPhase[]) {
     this.phases = phases;
     this.startTime = Date.now();
-    
+
     this.progress = {
       id: `analysis_${Date.now()}`,
-      _url,
+      url,
       overallProgress: 0,
       currentPhase: phases[0]?.name || 'Initializing',
       status: 'pending',
@@ -96,7 +96,7 @@ export class ProgressManager {
       if (phase.startTime && phase.endTime) {
         phase.duration = this.calculateDuration(phase.startTime, phase.endTime);
       }
-      
+
       // Store phase results
       if (results) {
         phase.deliverables.forEach(deliverable => {
@@ -105,7 +105,7 @@ export class ProgressManager {
           }
         });
       }
-      
+
       this.updateOverallProgress();
       this.updateProgress();
     }
@@ -192,7 +192,7 @@ export class ProgressManager {
     this.progress.endTime = new Date().toISOString();
     if (this.progress.startTime && this.progress.endTime) {
       this.progress.totalDuration = this.calculateDuration(
-        this.progress.startTime, 
+        this.progress.startTime,
         this.progress.endTime
       );
     }
@@ -237,7 +237,7 @@ export class ProgressManager {
     const start = new Date(startTime).getTime();
     const end = new Date(endTime).getTime();
     const duration = end - start;
-    
+
     if (duration < 1000) {
       return `${duration}ms`;
     } else if (duration < 60000) {

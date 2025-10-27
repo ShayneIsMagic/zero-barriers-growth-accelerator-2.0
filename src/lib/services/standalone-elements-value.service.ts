@@ -63,7 +63,7 @@ export class StandaloneElementsOfValueService {
 
       return {
         success: true,
-        _url,
+        url,
         data: analysisResult
       };
 
@@ -71,7 +71,7 @@ export class StandaloneElementsOfValueService {
       console.error('Elements of Value analysis failed:', error);
       return {
         success: false,
-        _url,
+        url,
         data: {} as any,
         error: error instanceof Error ? error.message : 'Analysis failed'
       };

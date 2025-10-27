@@ -40,15 +40,52 @@ export class UnifiedAIAnalysisService {
     try {
       console.log(`🔍 Starting ${framework.name} analysis for: ${url}`);
 
-      // Step 1: Collect standardized website data
-      console.log('📊 Step 1: Collecting standardized website data...');
-      const existingData = await StandardizedDataCollector.collectWebsiteData(url);
+      // Step 1: Scrape website data using the same approach as content-comparison
+      console.log('📊 Step 1: Scraping website content...');
+      const { UniversalPuppeteerScraper } = await import('@/lib/universal-puppeteer-scraper');
+      const scrapedData = await UniversalPuppeteerScraper.scrapeWebsite(url);
+
+      // Transform to standardized format
+      const existingData: StandardizedWebsiteData = {
+        url,
+        title: scrapedData.title || 'Untitled',
+        metaDescription: scrapedData.metaDescription || '',
+        wordCount: scrapedData.wordCount || 0,
+        cleanText: scrapedData.cleanText || '',
+        extractedKeywords: scrapedData.seo?.extractedKeywords || [],
+        headings: scrapedData.seo?.headings || { h1: [], h2: [], h3: [] },
+        seo: {
+          metaTitle: scrapedData.title || '',
+          metaDescription: scrapedData.metaDescription || '',
+          extractedKeywords: scrapedData.seo?.extractedKeywords || [],
+          headings: scrapedData.seo?.headings || { h1: [], h2: [], h3: [] }
+        },
+        business: {
+          industry: 'Unknown',
+          confidence: 0.5,
+          tags: []
+        },
+        technical: {
+          images: 0,
+          links: 0,
+          schemaTypes: 0
+        },
+        scrapedAt: new Date().toISOString(),
+        analysisId: `${framework.name}-${Date.now()}`
+      };
 
       // Step 2: Process proposed content (if provided)
       let proposedData: StandardizedProposedData | null = null;
       if (proposedContent && proposedContent.trim().length > 0) {
         console.log('📝 Step 2: Processing proposed content...');
-        proposedData = StandardizedDataCollector.processProposedContent(proposedContent);
+        proposedData = {
+          cleanText: proposedContent.trim(),
+          wordCount: proposedContent.trim().split(/\s+/).length,
+          title: UnifiedAIAnalysisService.extractTitle(proposedContent),
+          metaDescription: UnifiedAIAnalysisService.extractMetaDescription(proposedContent),
+          extractedKeywords: UnifiedAIAnalysisService.extractKeywordsFromText(proposedContent),
+          headings: UnifiedAIAnalysisService.extractHeadings(proposedContent)
+        };
       }
 
       // Step 3: Generate framework-specific analysis
@@ -139,18 +176,44 @@ export class UnifiedAIAnalysisService {
     };
   }
 
-  /**
-   * Format existing data for frontend consumption
-   */
-  private static formatExistingData(existingData: StandardizedWebsiteData) {
+  // Helper methods for proposed content processing
+  private static extractTitle(content: string): string {
+    const lines = content.split('\n');
+    return lines[0]?.trim().substring(0, 60) || 'Proposed Title';
+  }
+
+  private static extractMetaDescription(content: string): string {
+    const lines = content.split('\n');
+    return lines.slice(0, 3).join(' ').trim().substring(0, 160) || 'Proposed description';
+  }
+
+  private static extractKeywordsFromText(text: string): string[] {
+    const words = text.toLowerCase()
+      .replace(/[^\w\s]/g, ' ')
+      .split(/\s+/)
+      .filter(word => word.length > 4);
+
+    const wordCount: { [key: string]: number } = {};
+    words.forEach(word => {
+      wordCount[word] = (wordCount[word] || 0) + 1;
+    });
+
+    return Object.entries(wordCount)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 10)
+      .map(([word]) => word);
+  }
+
+  private static extractHeadings(content: string) {
+    const lines = content.split('\n');
+    const h1 = lines.filter(line => line.trim().startsWith('# ')).map(line => line.trim().replace(/^#+\s*/, ''));
+    const h2 = lines.filter(line => line.trim().startsWith('## ')).map(line => line.trim().replace(/^#+\s*/, ''));
+    const h3 = lines.filter(line => line.trim().startsWith('### ')).map(line => line.trim().replace(/^#+\s*/, ''));
+
     return {
-      title: existingData.title,
-      metaDescription: existingData.metaDescription,
-      wordCount: existingData.wordCount,
-      extractedKeywords: existingData.extractedKeywords,
-      headings: existingData.headings,
-      cleanText: existingData.cleanText,
-      url: existingData.url
+      h1: h1.slice(0, 10),
+      h2: h2.slice(0, 10),
+      h3: h3.slice(0, 10)
     };
   }
 }

@@ -141,7 +141,7 @@ export class SimpleCountScoringService {
   private static isElementPresent(content: string, elementName: string): boolean {
     const keywords = this.getElementKeywords(elementName);
     const lowerContent = content.toLowerCase();
-    
+
     return keywords.some(keyword => lowerContent.includes(keyword.toLowerCase()));
   }
 
@@ -151,9 +151,9 @@ export class SimpleCountScoringService {
   private static extractEvidence(content: string, elementName: string): string {
     const keywords = this.getElementKeywords(elementName);
     const sentences = content.split(/[.!?]+/);
-    
-    const relevantSentences = sentences.filter(sentence => 
-      keywords.some(keyword => 
+
+    const relevantSentences = sentences.filter(sentence =>
+      keywords.some(keyword =>
         sentence.toLowerCase().includes(keyword.toLowerCase())
       )
     );
@@ -181,7 +181,7 @@ export class SimpleCountScoringService {
       'informs': ['informative', 'educational', 'insights', 'knowledge', 'learning', 'understanding'],
       'avoids_hassles': ['hassle-free', 'convenient', 'smooth', 'trouble-free', 'painless'],
       'sensory_appeal': ['beautiful', 'stunning', 'elegant', 'sleek', 'modern', 'stylish'],
-      
+
       // B2C Emotional
       'reduces_anxiety': ['calming', 'soothing', 'reassuring', 'comforting', 'peaceful'],
       'rewards_me': ['rewards', 'incentives', 'bonuses', 'perks', 'benefits', 'gifts'],
@@ -193,23 +193,23 @@ export class SimpleCountScoringService {
       'fun_entertainment': ['fun', 'entertaining', 'enjoyable', 'exciting', 'thrilling', 'amusing'],
       'attractiveness': ['beautiful', 'attractive', 'stunning', 'gorgeous', 'elegant'],
       'provides_access': ['exclusive', 'membership', 'VIP', 'special', 'privileged', 'insider'],
-      
+
       // B2C Life Changing
       'provides_hope': ['hope', 'future', 'potential', 'possibility', 'dream', 'aspiration'],
       'self_actualization': ['potential', 'growth', 'development', 'achievement', 'success'],
       'motivation': ['motivating', 'inspiring', 'encouraging', 'empowering', 'driving'],
       'heirloom': ['legacy', 'lasting', 'timeless', 'permanent', 'enduring', 'heritage'],
       'affiliation': ['belonging', 'community', 'family', 'group', 'team', 'together'],
-      
+
       // B2C Social Impact
       'self_transcendence': ['greater good', 'impact', 'change', 'difference', 'contribution', 'purpose'],
-      
+
       // B2B Table Stakes
       'meeting_specifications': ['meets requirements', 'specifications', 'standards', 'compliance'],
       'acceptable_price': ['competitive', 'affordable', 'value', 'pricing', 'cost-effective'],
       'regulatory_compliance': ['compliant', 'certified', 'approved', 'regulated', 'standards'],
       'ethical_standards': ['ethical', 'responsible', 'integrity', 'transparent', 'honest'],
-      
+
       // B2B Functional
       'improved_top_line': ['revenue', 'growth', 'sales', 'profit', 'income', 'returns'],
       'cost_reduction': ['savings', 'reduce costs', 'efficiency', 'optimization', 'cut expenses'],
@@ -220,7 +220,7 @@ export class SimpleCountScoringService {
       'reach': ['reach', 'scale', 'global', 'worldwide', 'extensive', 'broad'],
       'flexibility': ['flexible', 'adaptable', 'customizable', 'versatile'],
       'component_quality': ['quality', 'reliable', 'durable', 'premium'],
-      
+
       // B2B Ease of Business
       'time_savings': ['time-saving', 'efficient', 'quick', 'fast', 'streamlined', 'rapid'],
       'reduced_effort': ['effortless', 'easy', 'simple', 'straightforward', 'minimal effort'],
@@ -233,14 +233,14 @@ export class SimpleCountScoringService {
       'integration': ['seamless', 'compatible', 'works with', 'connects', 'unified'],
       'access': ['available', 'accessible', '24/7', 'always on', 'reliable'],
       'availability': ['available', 'accessible', '24/7', 'always on', 'reliable'],
-      'variety': ['options', 'choices', 'flexible', 'customizable', 'diverse', 'multiple'],
+      'variety_b2b': ['options', 'choices', 'flexible', 'customizable', 'diverse', 'multiple'],
       'configurability': ['configurable', 'customizable', 'flexible', 'adaptable', 'tailored'],
       'responsiveness': ['responsive', 'quick', 'fast', 'immediate', 'prompt', 'reactive'],
       'expertise': ['expert', 'specialized', 'knowledgeable', 'skilled', 'professional'],
       'commitment': ['committed', 'dedicated', 'loyal', 'reliable', 'consistent', 'devoted'],
       'stability': ['stable', 'reliable', 'consistent', 'dependable', 'secure', 'solid'],
       'cultural_fit': ['culture', 'values', 'alignment', 'compatibility', 'partnership'],
-      
+
       // B2B Individual
       'network_expansion': ['network', 'connections', 'relationships', 'partnerships', 'community'],
       'marketability': ['marketable', 'credible', 'reputable', 'recognized', 'established'],
@@ -249,7 +249,7 @@ export class SimpleCountScoringService {
       'growth_development': ['growth', 'development', 'learning', 'improvement', 'advancement'],
       'reduced_anxiety_b2b': ['peace of mind', 'confidence', 'reassurance', 'security', 'comfort'],
       'fun_perks': ['enjoyable', 'fun', 'engaging', 'exciting', 'rewarding', 'satisfying'],
-      
+
       // B2B Inspirational
       'vision': ['vision', 'future', 'potential', 'possibility', 'aspiration', 'dream'],
       'hope_b2b': ['hope', 'optimism', 'confidence', 'belief', 'faith', 'trust']
@@ -266,14 +266,14 @@ export class SimpleCountScoringService {
     elements: ElementCount[],
     categories: any
   ): SimpleScoringResult {
-    const totalElements = Object.values(categories).reduce((sum: number, cat: any) => sum + cat.total, 0);
+    const totalElements = Object.values(categories).reduce((sum: number, cat: any) => sum + (Number(cat.total) || 0), 0) as number;
     const presentElements = elements.filter(e => e.present).length;
-    const overallPercentage = Math.round((presentElements / totalElements) * 100);
+    const overallPercentage = totalElements > 0 ? Math.round((presentElements / totalElements) * 100) : 0;
 
     const categoryDistributions: CategoryDistribution[] = Object.entries(categories).map(([categoryName, categoryData]: [string, any]) => {
       const categoryElements = elements.filter(e => e.category === categoryName);
       const presentCount = categoryElements.filter(e => e.present).length;
-      
+
       return {
         category: categoryName,
         total_elements: categoryData.total,
@@ -286,11 +286,11 @@ export class SimpleCountScoringService {
     const strongCategories = categoryDistributions
       .filter(cat => cat.percentage >= 70)
       .map(cat => cat.category);
-    
+
     const weakCategories = categoryDistributions
       .filter(cat => cat.percentage < 30)
       .map(cat => cat.category);
-    
+
     const missingCategories = categoryDistributions
       .filter(cat => cat.percentage === 0)
       .map(cat => cat.category);

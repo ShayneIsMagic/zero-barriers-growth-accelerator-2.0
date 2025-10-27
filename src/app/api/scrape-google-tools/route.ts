@@ -11,7 +11,7 @@ export const maxDuration = 120; // 2 minutes for Vercel serverless function
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { _url, keywords = [] } = body;
+    const { url, keywords = [] } = body;
 
     if (!url) {
       return NextResponse.json({
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      _url,
+      url,
       keywords,
       data: scrapedData,
       dataSource,

@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { AlertCircle, CheckCircle, ExternalLink, RefreshCw, Settings } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { AlertCircle, CheckCircle, ExternalLink } from 'lucide-react';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 interface AnalysisNotificationProps {
   type: 'error' | 'success' | 'info';
@@ -19,13 +19,13 @@ interface AnalysisNotificationProps {
   onDismiss?: () => void;
 }
 
-export function AnalysisNotification({ 
-  type, 
-  title, 
-  message, 
-  details, 
-  action, 
-  onDismiss 
+export function AnalysisNotification({
+  type,
+  title,
+  message,
+  details,
+  action,
+  onDismiss
 }: AnalysisNotificationProps) {
   const [isVisible, setIsVisible] = useState(true);
 
@@ -114,7 +114,7 @@ interface SiteIdentificationProps {
   isAnalyzing?: boolean;
 }
 
-export function SiteIdentification({ _url, isAnalyzing = false }: SiteIdentificationProps) {
+export function SiteIdentification({ url, isAnalyzing = false }: SiteIdentificationProps) {
   const [siteInfo, setSiteInfo] = useState<{
     title: string;
     favicon: string;
@@ -126,7 +126,7 @@ export function SiteIdentification({ _url, isAnalyzing = false }: SiteIdentifica
       try {
         const urlObj = new URL(url);
         const domain = urlObj.hostname;
-        
+
         setSiteInfo({
           title: domain.replace('www.', ''),
           favicon: `https://www.google.com/s2/favicons?domain=${domain}`,
@@ -134,7 +134,7 @@ export function SiteIdentification({ _url, isAnalyzing = false }: SiteIdentifica
         });
       } catch (error) {
         setSiteInfo({
-          title: _url,
+          title: url,
           favicon: '',
           domain: url
         });
@@ -149,8 +149,8 @@ export function SiteIdentification({ _url, isAnalyzing = false }: SiteIdentifica
       <CardContent className="p-4">
         <div className="flex items-center gap-3">
           {siteInfo.favicon && (
-            <Image 
-              src={siteInfo.favicon} 
+            <Image
+              src={siteInfo.favicon}
               alt={`${siteInfo.domain} favicon`}
               width={24}
               height={24}

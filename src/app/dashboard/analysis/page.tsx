@@ -74,12 +74,12 @@ export default function AnalysisPage() {
         setContent(data.data);
         setAnalysisData(prev => ({
           ...prev,
-          _url,
+          url,
           content: data.data
         }));
 
         // Save to localStorage
-        const newData = { _url, content: data.data };
+        const newData = { url, content: data.data };
         localStorage.setItem('analysisData', JSON.stringify(newData));
       } else {
         setError(data.error || 'Phase 1 failed');
@@ -106,7 +106,7 @@ export default function AnalysisPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ _url, content }),
+        body: JSON.stringify({ url, content }),
       });
 
       const data = await response.json();

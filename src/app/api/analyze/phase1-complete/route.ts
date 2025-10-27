@@ -4,10 +4,10 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 300; // 5 minutes for complete Phase 1
 
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url } = body;
+    const { url, analysisId } = body;
 
     if (!url) {
       return NextResponse.json({
@@ -44,7 +44,7 @@ export async function POST(_request: NextRequest) {
     const competitionAnalysis = await runCompetitionAnalysis(url, scrapedContent);
 
     const phase1Result = {
-      _url,
+      url,
       timestamp: new Date().toISOString(),
       scrapedContent,
       seoAnalysis,
@@ -68,7 +68,7 @@ export async function POST(_request: NextRequest) {
     console.log(`✅ Complete Phase 1 analysis completed for: ${url}`);
 
     // Store Phase 1 results in database
-    
+
     try {
       // Store in main Analysis table
       await prisma.analysis.create({
@@ -103,7 +103,7 @@ export async function POST(_request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      _url,
+      url,
       phase: 1,
       analysisId,
       data: phase1Result,

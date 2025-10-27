@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
 'use client';
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Sparkles, Target, Layers, Users, TrendingUp, AlertCircle, CheckCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle, Layers, Sparkles, Target, TrendingUp, Users } from 'lucide-react';
+import { useState } from 'react';
 
 interface Phase2Data {
   goldenCircle: any;
@@ -42,11 +42,11 @@ export default function Phase2Page() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url }),
         });
-        
+
         if (!phase1Response.ok) {
           throw new Error('Phase 1 analysis failed');
         }
-        
+
         const phase1Result = await phase1Response.json();
         setPhase1Data(phase1Result.data);
       }
@@ -56,10 +56,10 @@ export default function Phase2Page() {
       const phase2Response = await fetch('/api/analyze/phase2-complete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          _url, 
+        body: JSON.stringify({
+          url,
           content: phase1Data?.scrapedContent,
-          phase1Data 
+          phase1Data
         }),
       });
 
@@ -123,15 +123,15 @@ export default function Phase2Page() {
               onChange={(e) => setUrl(e.target.value)}
               className="flex-grow"
             />
-            <Button 
-              onClick={runPhase2Analysis} 
+            <Button
+              onClick={runPhase2Analysis}
               disabled={loading || !url}
               className="min-w-[200px]"
             >
               {loading ? 'Analyzing...' : 'Run Phase 2 Analysis'}
             </Button>
           </div>
-          
+
           {error && (
             <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-md">
               <AlertCircle className="h-4 w-4 text-red-500" />
@@ -249,7 +249,7 @@ export default function Phase2Page() {
                   {phase2Data.b2bElements?.overallScore && renderScore(phase2Data.b2bElements.overallScore)}
                 </CardTitle>
                 <CardDescription>
-                  Harvard Business Review's 40 B2B value elements
+                  Harvard Business Review&apos;s 40 B2B value elements
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -290,7 +290,7 @@ export default function Phase2Page() {
                   {phase2Data.cliftonStrengths?.overallScore && renderScore(phase2Data.cliftonStrengths.overallScore)}
                 </CardTitle>
                 <CardDescription>
-                  Gallup's 34-theme strengths assessment
+                  Gallup&apos;s 34-theme strengths assessment
                 </CardDescription>
               </CardHeader>
               <CardContent>

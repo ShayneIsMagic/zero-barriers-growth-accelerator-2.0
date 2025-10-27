@@ -1,25 +1,25 @@
 'use client';
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SEOAnalysis } from '@/types/analysis';
-import { 
-  Search, 
-  TrendingUp, 
-  Target, 
-  Users, 
-  ArrowUpRight, 
-  ArrowDownRight, 
-  Minus,
-  Download,
-  ExternalLink,
-  CheckCircle2,
-  AlertCircle,
-  Lightbulb
+import {
+    AlertCircle,
+    ArrowDownRight,
+    ArrowUpRight,
+    CheckCircle2,
+    Download,
+    ExternalLink,
+    Lightbulb,
+    Minus,
+    Search,
+    Target,
+    TrendingUp,
+    Users
 } from 'lucide-react';
+import { useState } from 'react';
 
 interface SEOAnalysisResultsProps {
   analysis: SEOAnalysis;
@@ -27,12 +27,12 @@ interface SEOAnalysisResultsProps {
   timestamp: string;
 }
 
-export default function SEOAnalysisResults({ analysis, _url, timestamp }: SEOAnalysisResultsProps) {
+export default function SEOAnalysisResults({ analysis, url, timestamp }: SEOAnalysisResultsProps) {
   const [activeTab, setActiveTab] = useState('overview');
 
   const downloadReport = () => {
     const reportData = {
-      _url,
+      url,
       timestamp,
       analysis,
       generatedBy: 'Zero Barriers Growth Accelerator SEO Analysis'
@@ -354,7 +354,7 @@ export default function SEOAnalysisResults({ analysis, _url, timestamp }: SEOAna
                       <h4 className="font-semibold">{trend.keyword}</h4>
                       <div className="flex items-center gap-2">
                         {getTrendIcon(trend.trend)}
-                        <Badge 
+                        <Badge
                           className={
                             trend.trend === 'Up' ? 'bg-green-100 text-green-800' :
                             trend.trend === 'Down' ? 'bg-red-100 text-red-800' :

@@ -6,18 +6,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
+// import { Textarea } from '@/components/ui/textarea'; // Unused import
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   FileText, 
   Search, 
   Download, 
   Eye, 
-  Calendar,
-  Clock,
-  CheckCircle,
+  // Calendar, // Unused import
+  // Clock, // Unused import
+  // CheckCircle, // Unused import
   AlertCircle,
-  ExternalLink,
+  // ExternalLink, // Unused import
   Copy,
   Loader2,
   BarChart3,

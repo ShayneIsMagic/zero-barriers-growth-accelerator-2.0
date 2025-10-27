@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { EnhancedAIService } from '@/lib/enhanced-ai-service';
 import { AIProvider } from '@/lib/ai-providers';
+import { EnhancedAIService } from '@/lib/enhanced-ai-service';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { _url, provider = 'openai' } = await request.json();
+    const { url, provider = 'openai' } = await request.json();
 
     if (!url || url.trim().length === 0) {
       return NextResponse.json(

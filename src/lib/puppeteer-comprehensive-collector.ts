@@ -442,7 +442,7 @@ export class PuppeteerComprehensiveCollector {
 
   async collectComprehensiveData(url: string): Promise<ComprehensiveCollectionResult> {
     console.log(`🚀 Starting comprehensive data collection for: ${url}`);
-    
+
     try {
       this.browser = await puppeteer.launch({
         headless: true,
@@ -468,15 +468,15 @@ export class PuppeteerComprehensiveCollector {
 
       // Collect site map and discover all pages
       const siteMap = await this.collectSiteMap(page, url);
-      
+
       // Collect data from each page
       const pages: PageData[] = [];
       const visitedUrls = new Set<string>();
-      
+
       for (const pageUrl of siteMap.sitemap.slice(0, this.maxPages)) {
         if (visitedUrls.has(pageUrl.url)) continue;
         visitedUrls.add(pageUrl.url);
-        
+
         try {
           const pageData = await this.collectPageData(page, pageUrl.url);
           pages.push(pageData);
@@ -487,24 +487,24 @@ export class PuppeteerComprehensiveCollector {
 
       // Collect overall performance data
       const performance = await this.collectPerformanceData(page, url);
-      
+
       // Collect SEO data
       const seo = await this.collectSEOData(page, url);
-      
+
       // Collect content data
       const content = await this.collectContentData(pages);
-      
+
       // Collect technical data
       const technical = await this.collectTechnicalData(page, url);
-      
+
       // Collect UX data
       const userExperience = await this.collectUserExperienceData(pages);
-      
+
       // Generate summary
       const summary = this.generateSummary(pages, performance, seo, content, technical, userExperience);
 
       return {
-        _url,
+        url,
         timestamp: new Date().toISOString(),
         pages,
         siteMap,
@@ -528,7 +528,7 @@ export class PuppeteerComprehensiveCollector {
 
   private async collectSiteMap(page: Page, startUrl: string): Promise<SiteMapData> {
     console.log('🗺️ Collecting site map...');
-    
+
     const visited = new Set<string>();
     const toVisit = [{ url: startUrl, depth: 0 }];
     const sitemap: SitemapEntry[] = [];
@@ -536,15 +536,15 @@ export class PuppeteerComprehensiveCollector {
     const redirects: RedirectData[] = [];
 
     while (toVisit.length > 0 && visited.size < this.maxPages) {
-      const { _url, depth } = toVisit.shift()!;
-      
+      const { url, depth } = toVisit.shift()!;
+
       if (visited.has(url) || depth > this.maxDepth) continue;
       visited.add(url);
 
       try {
-        const response = await page.goto(url, { 
-          waitUntil: 'networkidle2', 
-          timeout: this.timeout 
+        const response = await page.goto(url, {
+          waitUntil: 'networkidle2',
+          timeout: this.timeout
         });
 
         if (!response) {
@@ -557,7 +557,7 @@ export class PuppeteerComprehensiveCollector {
           const location = response.headers().location;
           if (location) {
             redirects.push({
-              from: _url,
+              from: url,
               to: location,
               status,
               type: status === 301 ? 'permanent' : 'temporary'
@@ -571,7 +571,7 @@ export class PuppeteerComprehensiveCollector {
         }
 
         sitemap.push({
-          _url,
+          url,
           lastModified: response.headers().date || new Date().toISOString(),
           changeFrequency: 'weekly',
           priority: depth === 0 ? 1.0 : Math.max(0.1, 1.0 - (depth * 0.2)),
@@ -584,7 +584,7 @@ export class PuppeteerComprehensiveCollector {
           return linkElements.map(link => {
             const href = link.getAttribute('href');
             if (!href) return null;
-            
+
             try {
               const url = new URL(href, window.location.origin);
               return {
@@ -622,7 +622,7 @@ export class PuppeteerComprehensiveCollector {
 
   private async collectPageData(page: Page, url: string): Promise<PageData> {
     console.log(`📄 Collecting data from: ${url}`);
-    
+
     await page.goto(url, { waitUntil: 'networkidle2', timeout: this.timeout });
 
     // Collect basic page data
@@ -649,7 +649,7 @@ export class PuppeteerComprehensiveCollector {
         return Array.from(links).map(link => {
           const href = link.getAttribute('href');
           if (!href) return null;
-          
+
           try {
             const url = new URL(href, window.location.origin);
             return {
@@ -753,7 +753,7 @@ export class PuppeteerComprehensiveCollector {
       const getAccessibilityData = () => {
         const images = document.querySelectorAll('img');
         const elementsWithAria = document.querySelectorAll('[aria-label]');
-        
+
         return {
           altTexts: Array.from(images).map(img => img.alt || ''),
           ariaLabels: Array.from(elementsWithAria).map(el => el.getAttribute('aria-label') || ''),
@@ -809,7 +809,7 @@ export class PuppeteerComprehensiveCollector {
     const performanceMetrics = await page.evaluate(() => {
       const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
       const paint = performance.getEntriesByType('paint');
-      
+
       return {
         loadTime: navigation.loadEventEnd - navigation.loadEventStart,
         domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
@@ -820,7 +820,7 @@ export class PuppeteerComprehensiveCollector {
     });
 
     return {
-      _url,
+      url,
       ...pageData,
       performance: performanceMetrics
     };
@@ -828,13 +828,13 @@ export class PuppeteerComprehensiveCollector {
 
   private async collectPerformanceData(page: Page, url: string): Promise<PerformanceData> {
     console.log('⚡ Collecting performance data...');
-    
+
     await page.goto(url, { waitUntil: 'networkidle2', timeout: this.timeout });
 
     const performanceData = await page.evaluate(() => {
       const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
       const paint = performance.getEntriesByType('paint');
-      
+
       return {
         firstContentfulPaint: paint.find(p => p.name === 'first-contentful-paint')?.startTime || 0,
         largestContentfulPaint: 0,
@@ -854,7 +854,7 @@ export class PuppeteerComprehensiveCollector {
 
   private async collectSEOData(page: Page, url: string): Promise<SEOData> {
     console.log('🔍 Collecting SEO data...');
-    
+
     await page.goto(url, { waitUntil: 'networkidle2', timeout: this.timeout });
 
     const seoData = await page.evaluate(() => {
@@ -916,7 +916,7 @@ export class PuppeteerComprehensiveCollector {
 
   private collectContentData(pages: PageData[]): ContentData {
     console.log('📝 Analyzing content data...');
-    
+
     const totalWords = pages.reduce((sum, page) => sum + page.content.wordCount, 0);
     const averageWordsPerPage = totalWords / pages.length;
 
@@ -942,7 +942,7 @@ export class PuppeteerComprehensiveCollector {
 
   private async collectTechnicalData(page: Page, url: string): Promise<TechnicalData> {
     console.log('🔧 Collecting technical data...');
-    
+
     const response = await page.goto(url, { waitUntil: 'networkidle2', timeout: this.timeout });
     const headers = response?.headers() || {};
 
@@ -982,7 +982,7 @@ export class PuppeteerComprehensiveCollector {
 
   private collectUserExperienceData(pages: PageData[]): UserExperienceData {
     console.log('👤 Analyzing user experience data...');
-    
+
     return {
       navigation: {
         mainMenu: {

@@ -5,17 +5,17 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Clock, CheckCircle, XCircle, Play, Pause, RotateCcw } from 'lucide-react';
+import { CheckCircle, Clock, Pause, Play, XCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface AnalysisStep {
   id: string;
@@ -61,7 +61,7 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
     try {
       const response = await fetch('/api/analyze/controlled?action=steps');
       const data = await response.json();
-      
+
       if (data.success) {
         setAvailableSteps(data.data.availableSteps);
         // Select all steps by default
@@ -110,7 +110,7 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          _url,
+          url,
           steps: selectedSteps,
           timeoutPerStep: 30000
         }),
@@ -121,7 +121,7 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
       if (data.success) {
         setResult(data.data);
         onAnalysisComplete?.(data.data);
-        
+
         // Mark all steps as completed
         setProgress(prev => prev.map(p => ({
           ...p,
@@ -136,10 +136,10 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
     } catch (error) {
       console.error('Analysis error:', error);
       setError(error instanceof Error ? error.message : 'Analysis failed');
-      
+
       // Mark current step as failed
-      setProgress(prev => prev.map(p => 
-        p.stepId === currentStep 
+      setProgress(prev => prev.map(p =>
+        p.stepId === currentStep
           ? { ...p, status: 'failed' as const, error: error instanceof Error ? error.message : 'Unknown error' }
           : p
       ));
@@ -150,8 +150,8 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
   };
 
   const toggleStepSelection = (stepId: string) => {
-    setSelectedSteps(prev => 
-      prev.includes(stepId) 
+    setSelectedSteps(prev =>
+      prev.includes(stepId)
         ? prev.filter(id => id !== stepId)
         : [...prev, stepId]
     );
@@ -280,7 +280,7 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
               <Alert>
                 <Clock className="h-4 w-4" />
                 <AlertDescription>
-                  Total estimated time: {formatDuration(getTotalEstimatedTime())} 
+                  Total estimated time: {formatDuration(getTotalEstimatedTime())}
                   ({selectedSteps.length} steps selected)
                 </AlertDescription>
               </Alert>
@@ -288,8 +288,8 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
           </div>
 
           {/* Execute Button */}
-          <Button 
-            onClick={executeAnalysis} 
+          <Button
+            onClick={executeAnalysis}
             disabled={isAnalyzing || !url || selectedSteps.length === 0}
             className="w-full"
           >
@@ -389,7 +389,7 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
                 <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
                 <TabsTrigger value="raw">Raw Data</TabsTrigger>
               </TabsList>
-              
+
               <TabsContent value="summary" className="space-y-4">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="text-center p-4 border rounded-lg">
@@ -418,7 +418,7 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
                   </div>
                 </div>
               </TabsContent>
-              
+
               <TabsContent value="detailed" className="space-y-4">
                 <div className="space-y-4">
                   {Object.entries(result.results || {}).map(([key, value]: [string, any]) => (
@@ -435,7 +435,7 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
                   ))}
                 </div>
               </TabsContent>
-              
+
               <TabsContent value="recommendations" className="space-y-4">
                 <div className="space-y-4">
                   <Card>
@@ -453,7 +453,7 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
                       </ul>
                     </CardContent>
                   </Card>
-                  
+
                   <Card>
                     <CardHeader>
                       <CardTitle>Priority Recommendations</CardTitle>
@@ -471,7 +471,7 @@ export function ControlledAnalysisPage({ onAnalysisComplete }: ControlledAnalysi
                   </Card>
                 </div>
               </TabsContent>
-              
+
               <TabsContent value="raw" className="space-y-4">
                 <pre className="text-sm bg-muted p-4 rounded-lg overflow-auto max-h-96">
                   {JSON.stringify(result, null, 2)}

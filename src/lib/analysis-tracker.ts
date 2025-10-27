@@ -65,7 +65,7 @@ class AnalysisTracker {
     const id = this.generateId();
     const analysis: AnalysisProgress = {
       id,
-      _url,
+      url,
       startedAt: new Date().toISOString(),
       status: 'running',
       steps: {
@@ -100,10 +100,10 @@ class AnalysisTracker {
     if (!analysis) return;
 
     const stepProgress = analysis.steps[step];
-    
+
     // Update step status
     stepProgress.status = status;
-    
+
     if (status === 'running') {
       stepProgress.startedAt = new Date().toISOString();
     } else if (status === 'completed' || status === 'failed') {
@@ -132,7 +132,7 @@ class AnalysisTracker {
 
     // Calculate overall progress
     this.calculateOverallProgress(analysis);
-    
+
     // Update analysis status
     this.updateAnalysisStatus(analysis);
 
@@ -195,13 +195,13 @@ class AnalysisTracker {
    */
   getMetrics(): AnalysisMetrics {
     const analyses = this.getAllAnalyses();
-    
+
     const totalAnalyses = analyses.length;
     const successfulAnalyses = analyses.filter(a => a.status === 'completed').length;
     const failedAnalyses = analyses.filter(a => a.status === 'failed').length;
-    
+
     const completedAnalyses = analyses.filter(a => a.status === 'completed');
-    const averageScore = completedAnalyses.length > 0 
+    const averageScore = completedAnalyses.length > 0
       ? completedAnalyses.reduce((sum, a) => {
           const scores = Object.values(a.steps)
             .filter(s => s.score !== undefined)
@@ -260,11 +260,11 @@ class AnalysisTracker {
     const steps = Object.values(analysis.steps);
     const completedSteps = steps.filter(s => s.status === 'completed').length;
     const skippedSteps = steps.filter(s => s.status === 'skipped').length;
-    
+
     // Calculate progress based on completed and skipped steps
     const totalSteps = steps.length;
     const progressSteps = completedSteps + skippedSteps;
-    
+
     analysis.overallProgress = Math.round((progressSteps / totalSteps) * 100);
   }
 
@@ -293,12 +293,12 @@ class AnalysisTracker {
    * Calculate success rate for a specific step
    */
   private calculateStepSuccessRate(analyses: AnalysisProgress[], step: keyof AnalysisProgress['steps']): number {
-    const stepAnalyses = analyses.filter(a => 
+    const stepAnalyses = analyses.filter(a =>
       a.steps[step].status === 'completed' || a.steps[step].status === 'failed'
     );
-    
+
     if (stepAnalyses.length === 0) return 0;
-    
+
     const successful = stepAnalyses.filter(a => a.steps[step].status === 'completed').length;
     return Math.round((successful / stepAnalyses.length) * 100);
   }

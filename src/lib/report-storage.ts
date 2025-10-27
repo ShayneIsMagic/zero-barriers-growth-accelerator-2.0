@@ -34,7 +34,7 @@ export class ReportStorage {
 
     const storedReport: StoredReport = {
       id: reportId,
-      _url,
+      url,
       timestamp,
       reportType,
       data: reportData,
@@ -87,7 +87,7 @@ export class ReportStorage {
   async getReportsByUrl(url: string): Promise<StoredReport[]> {
     try {
       const analyses = await prisma.analysis.findMany({
-        where: { 
+        where: {
           content: {
             contains: url
           }

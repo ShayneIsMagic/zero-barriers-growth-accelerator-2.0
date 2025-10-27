@@ -12,7 +12,7 @@ export interface ComprehensiveContentData {
   metaDescription: string;
   content: string;
   wordCount: number;
-  
+
   // Technical Data
   technicalInfo: {
     images: number;
@@ -21,7 +21,7 @@ export interface ComprehensiveContentData {
     scripts: number;
     stylesheets: number;
   };
-  
+
   // SEO Data
   seoData: {
     headings: { level: number; text: string; }[];
@@ -30,7 +30,7 @@ export interface ComprehensiveContentData {
     robotsMeta?: string;
     sitemapUrl?: string;
   };
-  
+
   // Content Structure
   contentStructure: {
     sections: { heading: string; content: string; }[];
@@ -38,14 +38,14 @@ export interface ComprehensiveContentData {
     callToActions: { text: string; url: string; type: string; }[];
     testimonials: { quote: string; author: string; company?: string; }[];
   };
-  
+
   // Performance Data
   performanceData: {
     loadTime?: number;
     pageSize?: number;
     requests?: number;
   };
-  
+
   // Accessibility Data
   accessibilityData: {
     altTexts: { image: string; alt: string; }[];
@@ -69,32 +69,32 @@ export class OptimizedContentCollector {
    */
   async collectComprehensiveContent(): Promise<ComprehensiveContentData> {
     console.log(`🔍 Starting comprehensive content collection for: ${this.url}`);
-    
+
     this.onProgressUpdate?.('Initializing content collection', 0);
-    
+
     // Step 1: Basic content extraction
     this.onProgressUpdate?.('Extracting basic content', 20);
     const basicContent = await this.extractBasicContent();
-    
+
     // Step 2: Technical analysis
     this.onProgressUpdate?.('Analyzing technical structure', 40);
     const technicalInfo = await this.extractTechnicalInfo(basicContent);
-    
+
     // Step 3: SEO analysis
     this.onProgressUpdate?.('Extracting SEO data', 60);
     const seoData = await this.extractSEOData(basicContent);
-    
+
     // Step 4: Content structure analysis
     this.onProgressUpdate?.('Analyzing content structure', 80);
     const contentStructure = await this.extractContentStructure(basicContent);
-    
+
     // Step 5: Performance and accessibility data
     this.onProgressUpdate?.('Collecting performance data', 90);
     const performanceData = await this.extractPerformanceData();
     const accessibilityData = await this.extractAccessibilityData(basicContent);
-    
+
     this.onProgressUpdate?.('Content collection complete', 100);
-    
+
     const comprehensiveData: ComprehensiveContentData = {
       url: this.url,
       title: basicContent.title || '',
@@ -107,9 +107,9 @@ export class OptimizedContentCollector {
       performanceData,
       accessibilityData
     };
-    
+
     console.log(`✅ Comprehensive content collected: ${comprehensiveData.wordCount} words, ${comprehensiveData.technicalInfo.images} images, ${comprehensiveData.technicalInfo.links} links`);
-    
+
     return comprehensiveData;
   }
 
@@ -140,7 +140,7 @@ export class OptimizedContentCollector {
   private async extractSEOData(content: ProductionExtractionResult): Promise<ComprehensiveContentData['seoData']> {
     // Parse headings from content
     const headings = this.parseHeadings(content.content || '');
-    
+
     // Extract meta tags (simplified - in real implementation would parse HTML)
     const metaTags = [
       { name: 'description', content: content.metaDescription || '' },
@@ -148,7 +148,7 @@ export class OptimizedContentCollector {
       { name: 'author', content: '' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' }
     ].filter(meta => meta.content);
-    
+
     return {
       headings,
       metaTags
@@ -164,7 +164,7 @@ export class OptimizedContentCollector {
     const navigation: { text: string; url: string; }[] = []; // Will be extracted from HTML
     const callToActions = this.parseCallToActions(content.content || '');
     const testimonials = this.parseTestimonials(content.content || '');
-    
+
     return {
       sections,
       navigation,
@@ -192,7 +192,7 @@ export class OptimizedContentCollector {
     const altTexts: { image: string; alt: string; }[] = []; // Will be extracted from HTML
     const headings = this.parseHeadings(content.content || '');
     const links: { text: string; url: string; hasTitle: boolean; }[] = []; // Will be extracted from HTML
-    
+
     return {
       altTexts,
       headings,
@@ -207,7 +207,7 @@ export class OptimizedContentCollector {
     const headingRegex = /<(h[1-6])[^>]*>(.*?)<\/h[1-6]>/gi;
     const headings: { level: number; text: string; }[] = [];
     let match;
-    
+
     while ((match = headingRegex.exec(content)) !== null) {
       if (match[1] && match[2]) {
         const level = parseInt(match[1].substring(1));
@@ -217,7 +217,7 @@ export class OptimizedContentCollector {
         }
       }
     }
-    
+
     return headings;
   }
 
@@ -226,20 +226,20 @@ export class OptimizedContentCollector {
    */
   private parseSections(content: string): { heading: string; content: string; }[] {
     const sections: { heading: string; content: string; }[] = [];
-    
+
     // Simple section parsing - in real implementation would be more sophisticated
     const headingMatches = content.match(/<(h[1-3])[^>]*>(.*?)<\/h[1-3]>/gi);
-    
+
     if (headingMatches) {
       headingMatches.forEach((heading, index) => {
         const headingText = heading.replace(/<[^>]*>/g, '').trim();
         const nextHeading = headingMatches[index + 1];
-        
+
         if (headingText) {
           const startIndex = content.indexOf(heading);
           const endIndex = nextHeading ? content.indexOf(nextHeading) : content.length;
           const sectionContent = content.substring(startIndex + heading.length, endIndex).trim();
-          
+
           sections.push({
             heading: headingText,
             content: sectionContent.substring(0, 500) // Limit content length
@@ -247,7 +247,7 @@ export class OptimizedContentCollector {
         }
       });
     }
-    
+
     return sections;
   }
 
@@ -268,23 +268,23 @@ export class OptimizedContentCollector {
     const ctaRegex = /<(a|button)[^>]*>(.*?)<\/(a|button)>/gi;
     const ctas: { text: string; url: string; type: string; }[] = [];
     let match;
-    
+
     while ((match = ctaRegex.exec(content)) !== null) {
       if (match[0] && match[2]) {
         const text = match[2].replace(/<[^>]*>/g, '').trim();
         const hrefMatch = match[0].match(/href=["']([^"']*)["']/);
         const url = hrefMatch && hrefMatch[1] ? hrefMatch[1] : '';
-        
+
         if (text && (text.toLowerCase().includes('click') || text.toLowerCase().includes('get') || text.toLowerCase().includes('start'))) {
           ctas.push({
             text,
-            _url,
+            url,
             type: 'button'
           });
         }
       }
     }
-    
+
     return ctas;
   }
 
@@ -293,11 +293,11 @@ export class OptimizedContentCollector {
    */
   private parseTestimonials(content: string): { quote: string; author: string; company?: string; }[] {
     const testimonials: { quote: string; author: string; company?: string; }[] = [];
-    
+
     // Simple testimonial parsing - look for quoted text with attribution
     const testimonialRegex = /"([^"]{50,200})"\s*[-\u2013]\s*([^,\n]+)(?:,\s*([^,\n]+))?/gi;
     let match;
-    
+
     while ((match = testimonialRegex.exec(content)) !== null) {
       if (match[1] && match[2]) {
         const testimonial: { quote: string; author: string; company?: string } = {
@@ -310,7 +310,7 @@ export class OptimizedContentCollector {
         testimonials.push(testimonial);
       }
     }
-    
+
     return testimonials;
   }
 
@@ -335,7 +335,7 @@ export class OptimizedContentCollector {
       const textMatch = link.match(/>([^<]+)</);
       const urlMatch = link.match(/href=["']([^"']*)["']/);
       const titleMatch = link.match(/title=["']([^"']*)["']/);
-      
+
       return {
         text: textMatch && textMatch[1] ? textMatch[1].trim() : '',
         url: urlMatch && urlMatch[1] ? urlMatch[1] : '',

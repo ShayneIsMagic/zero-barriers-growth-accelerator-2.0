@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2, Brain } from 'lucide-react';
+import { Brain, Loader2 } from 'lucide-react';
+import { useState } from 'react';
 
 interface Phase2ButtonProps {
   scrapedContent: any;
@@ -11,7 +11,7 @@ interface Phase2ButtonProps {
   onPhase2Complete: (result: any) => void;
 }
 
-export function Phase2Button({ scrapedContent, _url, industry, onPhase2Complete }: Phase2ButtonProps) {
+export function Phase2Button({ scrapedContent, url, industry, onPhase2Complete }: Phase2ButtonProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,7 +26,7 @@ export function Phase2Button({ scrapedContent, _url, industry, onPhase2Complete 
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          _url,
+          url,
           content: scrapedContent,
           industry: industry || 'general'
         }),
@@ -39,7 +39,7 @@ export function Phase2Button({ scrapedContent, _url, industry, onPhase2Complete 
       }
 
       console.log('Phase 2 Analysis Complete:', result);
-      
+
       // Create complete analysis result
       const completeAnalysis = {
         id: `analysis-${Date.now()}`,
@@ -58,7 +58,7 @@ export function Phase2Button({ scrapedContent, _url, industry, onPhase2Complete 
       };
 
       onPhase2Complete(completeAnalysis);
-      
+
     } catch (err) {
       console.error('Phase 2 analysis error:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
@@ -87,7 +87,7 @@ export function Phase2Button({ scrapedContent, _url, industry, onPhase2Complete 
           </>
         )}
       </Button>
-      
+
       {error && (
         <div className="text-red-600 text-sm">
           Error: {error}

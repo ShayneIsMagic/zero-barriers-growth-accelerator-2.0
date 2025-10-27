@@ -4,7 +4,6 @@
  */
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { ProductionExtractionResult } from './production-content-extractor';
 
 export interface AnalysisStep {
   id: string;
@@ -28,7 +27,7 @@ export interface AnalysisProgress {
 }
 
 export interface ControlledAnalysisConfig {
-  url: string;
+  _url: string;
   steps: AnalysisStep[];
   onProgressUpdate: (progress: AnalysisProgress) => void;
   timeoutPerStep: number; // milliseconds
@@ -49,8 +48,8 @@ export class ControlledAnalyzer {
    * Execute controlled analysis with precise timing and progress tracking
    */
   async execute(): Promise<any> {
-    console.log(`🚀 Starting controlled analysis for: ${this.config.url}`);
-    
+    console.log(`🚀 Starting controlled analysis for: ${this.config._url}`);
+
     const results: any = {};
     const startTime = Date.now();
 
@@ -66,12 +65,12 @@ export class ControlledAnalyzer {
           progress: 0,
           error: error instanceof Error ? error.message : 'Unknown error'
         });
-        
+
         // Decide whether to continue or abort
         if (this.isCriticalStep(step)) {
           throw new Error(`Critical step ${step.id} failed: ${error}`);
         }
-        
+
         // For non-critical steps, continue with null result
         results[step.id] = null;
       }
@@ -81,7 +80,7 @@ export class ControlledAnalyzer {
     console.log(`✅ Controlled analysis completed in ${totalDuration}ms`);
 
     return {
-      url: this.config.url,
+      url: this.config._url,
       timestamp: new Date().toISOString(),
       totalDuration,
       results,
@@ -94,7 +93,7 @@ export class ControlledAnalyzer {
    */
   private async executeStep(step: AnalysisStep, previousResults: any): Promise<void> {
     console.log(`📊 Executing step: ${step.name}`);
-    
+
     this.updateProgress({
       stepId: step.id,
       stepName: step.name,
@@ -112,13 +111,13 @@ export class ControlledAnalyzer {
 
     // Build prompt with previous results
     const prompt = this.buildPrompt(step, previousResults);
-    
+
     // Execute with timeout
     const result = await this.executeWithTimeout(prompt, step.expectedDuration);
-    
+
     // Parse result based on expected format
     const parsedResult = this.parseResult(result, step.outputFormat);
-    
+
     this.updateProgress({
       stepId: step.id,
       stepName: step.name,
@@ -169,10 +168,10 @@ export class ControlledAnalyzer {
    */
   private buildPrompt(step: AnalysisStep, previousResults: any): string {
     let prompt = step.promptTemplate;
-    
+
     // Replace placeholders with actual data
-    prompt = prompt.replace('{url}', this.config.url);
-    
+    prompt = prompt.replace('{url}', this.config._url);
+
     // Add scraped content if available
     if (previousResults.scraped_content) {
       const content = previousResults.scraped_content;
@@ -209,10 +208,10 @@ export class ControlledAnalyzer {
           jsonText = jsonText.replace(/^```\s*/, '').replace(/\s*```$/, '');
         }
         return JSON.parse(jsonText);
-      
+
       case 'text':
         return text.trim();
-      
+
       case 'structured':
         // For structured format, try to parse as JSON first, fallback to text
         try {
@@ -220,7 +219,7 @@ export class ControlledAnalyzer {
         } catch {
           return this.parseResult(text, 'text');
         }
-      
+
       default:
         return text;
     }
@@ -262,29 +261,29 @@ export class ControlledAnalyzer {
     if (results.elements_of_value_analysis?.overallScore) scores.push(results.elements_of_value_analysis.overallScore);
     if (results.b2b_elements_analysis?.overallScore) scores.push(results.b2b_elements_analysis.overallScore);
     if (results.clifton_strengths_analysis?.overallScore) scores.push(results.clifton_strengths_analysis.overallScore);
-    
+
     return scores.length > 0 ? Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length) : 0;
   }
 
   private extractKeyFindings(results: any): string[] {
     const findings = [];
-    
+
     // Extract from Golden Circle
     if (results.golden_circle_analysis?.keyFindings) {
       findings.push(...results.golden_circle_analysis.keyFindings);
     }
-    
+
     // Extract from other analyses
     if (results.comprehensive_analysis?.keyFindings) {
       findings.push(...results.comprehensive_analysis.keyFindings);
     }
-    
+
     return findings.slice(0, 10); // Top 10 findings
   }
 
   private extractPriorityRecommendations(results: any): string[] {
     const recommendations: string[] = [];
-    
+
     // Extract from all analyses
     Object.values(results).forEach((result: any) => {
       if (result?.priorityRecommendations) {
@@ -294,7 +293,7 @@ export class ControlledAnalyzer {
         recommendations.push(...result.recommendations);
       }
     });
-    
+
     return [...new Set(recommendations)].slice(0, 15); // Top 15 unique recommendations
   }
 

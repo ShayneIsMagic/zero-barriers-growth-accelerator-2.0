@@ -2,8 +2,8 @@
  * Reports API - List and manage analysis reports
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { reportStorage } from '@/lib/report-storage';
+import { NextRequest, NextResponse } from 'next/server';
 
 // GET /api/reports - List all reports with pagination
 export async function GET(request: NextRequest) {
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const url = searchParams.get('url');
 
     let result;
-    
+
     if (url) {
       // Get reports for specific URL
       const reports = await reportStorage.getReportsByUrl(url);
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { reportData, _url, reportType } = body;
+    const { reportData, url, reportType } = body;
 
     if (!reportData || !url) {
       return NextResponse.json({
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    const storedReport = await reportStorage.storeReport(reportData, _url, reportType);
+    const storedReport = await reportStorage.storeReport(reportData, url, reportType);
 
     return NextResponse.json({
       success: true,

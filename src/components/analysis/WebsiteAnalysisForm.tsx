@@ -1,15 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { AnalysisNotification, SiteIdentification } from '@/components/ui/analysis-notification';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { AnalysisNotification, SiteIdentification } from '@/components/ui/analysis-notification';
-import { Loader2, Globe, FileText, Share2, Settings, RefreshCw } from 'lucide-react';
 import { AnalysisClient } from '@/lib/analysis-client';
+import { FileText, Globe, Loader2, Share2 } from 'lucide-react';
+import { useState } from 'react';
 
 interface WebsiteAnalysisFormProps {
   onAnalysisComplete: (result: any) => void;
@@ -44,7 +44,7 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          _url,
+          url,
           industry: 'general'
         }),
       });
@@ -122,10 +122,10 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
           scrapedContent: result.data, // Store scraped content for Phase 2
           phase: 1
         };
-        
+
         AnalysisClient.saveAnalysis(analysisForStorage);
         console.log('✅ Phase 1 data saved to localStorage');
-        
+
         // Notify parent component
         onAnalysisComplete?.(analysisForStorage);
       } catch (saveError) {
@@ -236,9 +236,9 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
           </div>
 
 
-          <Button 
-            type="submit" 
-            className="w-full" 
+          <Button
+            type="submit"
+            className="w-full"
             disabled={isAnalyzing || !url}
           >
             {isAnalyzing ? (

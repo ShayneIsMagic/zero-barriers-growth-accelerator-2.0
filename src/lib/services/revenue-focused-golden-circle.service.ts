@@ -3,8 +3,8 @@
  * Focuses on identifying revenue opportunities and calculating potential ROI
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { scrapeWebsiteContent } from '@/lib/reliable-content-scraper';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export interface RevenueGoldenCircleResult {
   success: boolean;
@@ -113,7 +113,7 @@ export class RevenueFocusedGoldenCircleService {
 
       return {
         success: true,
-        _url,
+        url,
         data: analysisResult
       };
 
@@ -121,7 +121,7 @@ export class RevenueFocusedGoldenCircleService {
       console.error('Revenue-Focused Golden Circle analysis failed:', error);
       return {
         success: false,
-        _url,
+        url,
         data: {} as any,
         error: error instanceof Error ? error.message : 'Analysis failed'
       };

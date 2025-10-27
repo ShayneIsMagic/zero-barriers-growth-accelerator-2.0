@@ -283,17 +283,54 @@ export class UniversalPuppeteerScraper {
     try {
       console.log(`🔍 Scraping website: ${url}`);
 
-      // Set viewport and user agent
+      // Set viewport and user agent with better anti-detection
       await page.setViewport({ width: 1920, height: 1080 });
-      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+      await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
 
-      // Navigate to page
+      // Add extra headers to look more like a real browser
+      await page.setExtraHTTPHeaders({
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'DNT': '1',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+      });
+
+      // Add stealth measures
+      await page.evaluateOnNewDocument(() => {
+        // Remove webdriver property
+        Object.defineProperty(navigator, 'webdriver', {
+          get: () => undefined,
+        });
+
+        // Mock plugins
+        Object.defineProperty(navigator, 'plugins', {
+          get: () => [1, 2, 3, 4, 5],
+        });
+
+        // Mock languages
+        Object.defineProperty(navigator, 'languages', {
+          get: () => ['en-US', 'en'],
+        });
+      });
+
+      // Navigate to page with better options
       const startTime = Date.now();
       await page.goto(url, {
-        waitUntil: 'networkidle2',
+        waitUntil: 'domcontentloaded',
         timeout: 30000
       });
+
+      // Wait a bit for dynamic content
+      await new Promise(resolve => setTimeout(resolve, 2000));
       const loadTime = Date.now() - startTime;
+
+      // Check if we got blocked
+      const pageContent = await page.content();
+      if (pageContent.includes('Access Denied') || pageContent.includes('blocked') || pageContent.includes('403') || pageContent.includes('Forbidden')) {
+        throw new Error(`Website blocked the scraper: ${url}. Try a different website or contact support.`);
+      }
 
       // Extract comprehensive data
       const scrapedData = await page.evaluate(() => {
@@ -559,19 +596,19 @@ export class UniversalPuppeteerScraper {
         }));
 
         // Links analysis
-        const internalLinks = Array.from(document.querySelectorAll('a[href^="/"], a[href*="' + domain + '"]')).map(link => ({
+        const internalLinks = Array.from(document.querySelectorAll('a[href^="/"], a[href*="' + domain + '"]')).map((link: any) => ({
           url: link.href,
           text: link.textContent?.trim() || '',
           title: link.title || '',
-          isNofollow: link.rel.includes('nofollow')
+          isNofollow: link.rel?.includes('nofollow') || false
         }));
 
-        const externalLinks = Array.from(document.querySelectorAll('a[href^="http"]:not([href*="' + domain + '"])')).map(link => ({
+        const externalLinks = Array.from(document.querySelectorAll('a[href^="http"]:not([href*="' + domain + '"])')).map((link: any) => ({
           url: link.href,
           text: link.textContent?.trim() || '',
           title: link.title || '',
-          isNofollow: link.rel.includes('nofollow'),
-          isSponsored: link.rel.includes('sponsored')
+          isNofollow: link.rel?.includes('nofollow') || false,
+          isSponsored: link.rel?.includes('sponsored') || false
         }));
 
         // Forms analysis
@@ -597,7 +634,7 @@ export class UniversalPuppeteerScraper {
         // Structured data
         const jsonLd = extractSchema();
         const microdata = extractMicrodata();
-        const breadcrumbs = Array.from(document.querySelectorAll('[itemtype*="BreadcrumbList"] a, .breadcrumb a')).map(link => ({
+        const breadcrumbs = Array.from(document.querySelectorAll('[itemtype*="BreadcrumbList"] a, .breadcrumb a')).map((link: any) => ({
           name: link.textContent?.trim() || '',
           url: link.href
         }));
@@ -736,7 +773,7 @@ export class UniversalPuppeteerScraper {
       console.log(`📊 SEO: ${scrapedData.seo.extractedKeywords.length} keywords, ${scrapedData.seo.headings.h1.length} H1s, ${scrapedData.structuredData.schemaTypes.length} schema types`);
       console.log(`🏢 Business: ${scrapedData.contentTags.businessType} (${scrapedData.contentTags.businessTypeConfidence.toFixed(1)}%), ${scrapedData.contentTags.industry.join(', ')}`);
 
-      return scrapedData;
+      return scrapedData as UniversalScrapedData;
 
     } catch (error) {
       console.error('Scraping error:', error);

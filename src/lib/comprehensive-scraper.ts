@@ -3,10 +3,9 @@
  * Uses existing QA tools to scrape content, then walks through each analysis step
  */
 
-import { extractWithProduction, ProductionExtractionResult } from './production-content-extractor';
-import { performRealAnalysis } from './free-ai-analysis';
+import { WebsiteAnalysisResult } from '@/types/analysis';
 import { runLighthouseAnalysis } from './lighthouse-service';
-import { _WebsiteAnalysisResult } from '@/types/analysis';
+import { extractWithProduction, ProductionExtractionResult } from './production-content-extractor';
 
 export interface ComprehensiveAnalysisStep {
   id: string;
@@ -33,20 +32,20 @@ export interface ComprehensiveAnalysisPipelineData {
 export interface RawAnalysisReport {
   // Scraped Content
   scrapedContent: ProductionExtractionResult;
-  
+
   // AI Framework Analysis
   goldenCircleAnalysis: any;
   elementsOfValueAnalysis: any;
   b2bElementsAnalysis: any;
   cliftonStrengthsAnalysis: any;
-  
+
   // Technical Analysis
   lighthouseAnalysis: any;
   pageAuditAnalysis: any;
-  
+
   // Gemini Deep Analysis
   geminiInsights: any;
-  
+
   // Metadata
   analysisTimestamp: string;
   totalAnalysisTime: number;
@@ -67,7 +66,7 @@ export class ComprehensiveAnalysisPipeline {
     this.url = url;
     this.startTime = new Date().toISOString();
     this.onProgressUpdate = onProgressUpdate || (() => {});
-    
+
     this.steps = [
       // Phase 1: Data Collection Foundation
       {
@@ -147,12 +146,12 @@ export class ComprehensiveAnalysisPipeline {
   async execute(): Promise<RawAnalysisReport> {
     console.log(`🚀 Starting comprehensive analysis pipeline for: ${this.url}`);
     console.log(`📊 Total steps: ${this.steps.length}`);
-    
+
     let scrapedContent: ProductionExtractionResult | undefined;
     let aiAnalysis: WebsiteAnalysisResult | undefined;
     let lighthouseResults: any = undefined;
     let pageAuditResults: any = undefined;
-    
+
     // Step 1: Scrape Content & SEO
     await this.executeStep('scrape_content', async () => {
       console.log('🔍 Step 1: Scraping website content and SEO data...');
@@ -184,7 +183,7 @@ export class ComprehensiveAnalysisPipeline {
     // Step 4: AI Framework Analysis (using collected data from Phase 1)
     await this.executeStep('golden_circle', async () => {
       console.log('🧠 Step 4: Running AI framework analysis with complete dataset...');
-      
+
       // Create AI analysis using ALL the collected data from Phase 1
       if (!scrapedContent) {
         throw new Error('Scraped content not available');
@@ -217,7 +216,7 @@ export class ComprehensiveAnalysisPipeline {
     await this.executeStep('gemini_insights', async () => {
       console.log('🤖 Step 8: Generating Gemini deep insights using all collected data...');
       console.log(`📊 Data sources: Scraped content (${scrapedContent?.wordCount || 0} words), PageAudit (SEO: ${pageAuditResults?.seoScore || 'N/A'}/100), Lighthouse (Performance: ${lighthouseResults?.scores?.performance || 'N/A'}/100), AI Frameworks (${aiAnalysis?.overallScore || 'N/A'}/100)`);
-      
+
       if (!scrapedContent || !aiAnalysis) {
         throw new Error('Required data not available for Gemini insights');
       }
@@ -259,30 +258,30 @@ export class ComprehensiveAnalysisPipeline {
 
     step.status = 'running';
     step.startTime = new Date().toISOString();
-    
+
     this.updateProgress();
-    
+
     try {
       console.log(`\n🔄 Executing: ${step.name}`);
       console.log(`📝 ${step.description}`);
-      
+
       const result = await stepFunction();
-      
+
       step.status = 'completed';
       step.endTime = new Date().toISOString();
       step.duration = new Date(step.endTime).getTime() - new Date(step.startTime).getTime();
       step.result = result;
-      
+
       console.log(`✅ ${step.name} completed in ${step.duration}ms`);
-      
+
     } catch (error) {
       step.status = 'failed';
       step.endTime = new Date().toISOString();
       step.duration = new Date(step.endTime).getTime() - new Date(step.startTime).getTime();
       step.error = error instanceof Error ? error.message : 'Unknown error';
-      
+
       console.error(`❌ ${step.name} failed:`, step.error);
-      
+
       // NEVER use mock data - fail if real analysis is not available
       if (step.id === 'lighthouse' || step.id === 'pageaudit') {
         console.log(`❌ Step failed: ${step.name} - Real analysis required`);
@@ -290,10 +289,10 @@ export class ComprehensiveAnalysisPipeline {
         step.error = `Real analysis required for ${step.name} - no mock data allowed`;
         return;
       }
-      
+
       throw error;
     }
-    
+
     this.updateProgress();
   }
 
@@ -303,10 +302,10 @@ export class ComprehensiveAnalysisPipeline {
   private updateProgress(): void {
     const completedSteps = this.steps.filter(s => s.status === 'completed').length;
     const progress = (completedSteps / this.steps.length) * 100;
-    
+
     const currentStep = this.steps.find(s => s.status === 'running');
     const currentStepName = currentStep ? currentStep.name : 'Completed';
-    
+
     if (this.onProgressUpdate) {
       this.onProgressUpdate(progress, currentStepName);
     }
@@ -320,25 +319,25 @@ export class ComprehensiveAnalysisPipeline {
       // Import and use the existing PageAudit analysis function
       const { spawn } = require('child_process');
       const path = require('path');
-      
+
       return new Promise((resolve, reject) => {
         const scriptPath = path.join(process.cwd(), 'scripts', 'pageaudit-analysis.js');
-        const child = spawn('node', [scriptPath, this.url], { 
+        const child = spawn('node', [scriptPath, this.url], {
           cwd: process.cwd(),
           stdio: ['pipe', 'pipe', 'pipe']
         });
-        
+
         let output = '';
         let errorOutput = '';
-        
+
         child.stdout.on('data', (data: Buffer) => {
           output += data.toString();
         });
-        
+
         child.stderr.on('data', (data: Buffer) => {
           errorOutput += data.toString();
         });
-        
+
         child.on('close', (code: number) => {
           if (code === 0) {
             try {
@@ -382,10 +381,10 @@ export class ComprehensiveAnalysisPipeline {
     try {
       // Import the AI analysis function
       const { analyzeWithGemini, analyzeWithClaude } = await import('./free-ai-analysis');
-      
+
       // Prepare comprehensive content for AI analysis with enhanced Golden Circle extraction
       const contentForAI = this.prepareEnhancedGoldenCircleAnalysis(scrapedContent, pageAuditData, lighthouseData);
-      
+
       let analysisResult;
       try {
         console.log('🤖 Analyzing with Google Gemini using enhanced Golden Circle extraction...');
@@ -398,7 +397,7 @@ export class ComprehensiveAnalysisPipeline {
           throw new Error('Gemini analysis failed and Claude API key not configured');
         }
       }
-      
+
       // Create comprehensive result
       const result: any = {
         id: this.generateId(),
@@ -417,7 +416,7 @@ export class ComprehensiveAnalysisPipeline {
         lighthouseAnalysis: lighthouseData,
         createdAt: new Date().toISOString()
       };
-      
+
       return result;
     } catch (error) {
       console.error('AI analysis with collected data failed:', error);
@@ -548,14 +547,14 @@ Return your analysis in this EXACT JSON format:
   "summary": "Brief summary of the Golden Circle analysis findings with value-centric language insights"
 }
 
-IMPORTANT: 
+IMPORTANT:
 - Extract ONLY content that actually appears on the website
 - Use exact quotes and phrases from the website
 - Do not make assumptions or add generic content
 - If information is not found on the website, state "Not explicitly stated on website"
 - Base all analysis on the actual website content provided
     `.trim();
-    
+
     return content;
   }
 
@@ -611,7 +610,7 @@ LIGHTHOUSE ANALYSIS:
 CONTENT TO ANALYZE:
 ${scrapedContent.content || 'No content extracted'}
     `.trim();
-    
+
     return content;
   }
 
@@ -634,13 +633,13 @@ ${scrapedContent.content || 'No content extracted'}
     try {
       // Import Gemini analysis function
       const { analyzeWithGemini } = await import('./free-ai-analysis');
-      
+
       // Prepare comprehensive analysis prompt with all raw data
       const analysisPrompt = this.createPatternAnalysisPrompt(content, aiAnalysis, lighthouse, pageAudit);
-      
+
       console.log('🤖 Generating comprehensive pattern analysis with Gemini...');
       const geminiInsights = await analyzeWithGemini(analysisPrompt, 'pattern-analysis');
-      
+
       return geminiInsights;
     } catch (error) {
       console.warn('Gemini pattern analysis failed, using fallback insights:', error);
@@ -910,10 +909,10 @@ IMPORTANT: Base all analysis on the ACTUAL RAW DATA provided. Use specific score
   getProgress(): { progress: number; currentStep: string; steps: ComprehensiveAnalysisStep[] } {
     const completedSteps = this.steps.filter(s => s.status === 'completed').length;
     const progress = (completedSteps / this.steps.length) * 100;
-    
+
     const currentStep = this.steps.find(s => s.status === 'running');
     const currentStepName = currentStep ? currentStep.name : 'Completed';
-    
+
     return {
       progress,
       currentStep: currentStepName,

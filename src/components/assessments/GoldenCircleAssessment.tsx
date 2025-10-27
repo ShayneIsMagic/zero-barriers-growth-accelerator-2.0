@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Target, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2, Target } from 'lucide-react';
+import { useState } from 'react';
 
 interface GoldenCircleData {
   why: {
@@ -63,7 +63,7 @@ interface GoldenCircleAssessmentProps {
   onComplete?: (data: GoldenCircleData) => void;
 }
 
-export default function GoldenCircleAssessment({ _url, content, onComplete }: GoldenCircleAssessmentProps) {
+export default function GoldenCircleAssessment({ url, content, onComplete }: GoldenCircleAssessmentProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<GoldenCircleData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -78,7 +78,7 @@ export default function GoldenCircleAssessment({ _url, content, onComplete }: Go
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ _url, content }),
+        body: JSON.stringify({ url, content }),
       });
 
       const data = await response.json();
@@ -278,7 +278,7 @@ export default function GoldenCircleAssessment({ _url, content, onComplete }: Go
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm">{result.summary}</p>
-              
+
               {result.strengths.length > 0 && (
                 <div>
                   <h4 className="font-semibold text-sm text-green-600 mb-2">Strengths:</h4>
@@ -344,9 +344,9 @@ export default function GoldenCircleAssessment({ _url, content, onComplete }: Go
             <span className="text-sm text-red-700">{error}</span>
           </div>
         )}
-        
-        <Button 
-          onClick={runAnalysis} 
+
+        <Button
+          onClick={runAnalysis}
           disabled={isAnalyzing}
           className="w-full"
         >

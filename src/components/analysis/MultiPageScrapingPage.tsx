@@ -89,7 +89,7 @@ export function MultiPageScrapingPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ _url, options }),
+        body: JSON.stringify({ url, options }),
       });
 
       const data = await response.json();

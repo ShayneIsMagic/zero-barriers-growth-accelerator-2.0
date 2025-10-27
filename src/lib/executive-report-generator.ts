@@ -1,4 +1,4 @@
-import { _WebsiteAnalysisResult, ComprehensiveAnalysisResult } from '@/types/analysis';
+import { ComprehensiveAnalysisResult } from '@/types/analysis';
 
 export interface ExecutiveReportData {
   websiteUrl: string;
@@ -51,8 +51,8 @@ export class ExecutiveReportGenerator {
 
 ## 📊 Executive Summary
 
-**Website:** ${data.websiteUrl}  
-**Analysis Date:** ${data.analysisDate}  
+**Website:** ${data.websiteUrl}
+**Analysis Date:** ${data.analysisDate}
 **Overall Score:** ${data.overallScore}/100
 
 ### 🏆 Key Performance Indicators
@@ -101,7 +101,7 @@ ${data.keyFindings.map(finding => `- ${finding}`).join('\n')}`;
 - **Accessibility Score:** ${data.technicalPerformance.accessibilityScore}/100
 
 ### 📈 Core Web Vitals
-${Object.entries(data.technicalPerformance.coreWebVitals).map(([metric, value]) => 
+${Object.entries(data.technicalPerformance.coreWebVitals).map(([metric, value]) =>
   `- **${metric}:** ${value}`
 ).join('\n')}
 
@@ -259,7 +259,7 @@ This report is generated using a comprehensive analysis framework that evaluates
 
   public generateMarkdownReport(analysisData: ComprehensiveAnalysisResult): string {
     const reportData = this.transformAnalysisData(analysisData);
-    
+
     const sections = [
       this.generateExecutiveSummary(reportData),
       this.generateKeyFindings(reportData),
@@ -284,12 +284,12 @@ This report is generated using a comprehensive analysis framework that evaluates
       analysis.lighthouseAnalysis?.scores?.overall || 0,
       75 // Default SEO score if not available
     ];
-    
+
     const overallScore = Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
 
     // Extract key findings
     const keyFindings = [
-      analysis.goldenCircle?.why?.score && analysis.goldenCircle.why.score >= 8 
+      analysis.goldenCircle?.why?.score && analysis.goldenCircle.why.score >= 8
         ? 'Strong purpose-driven messaging identified' : 'Purpose messaging needs strengthening',
       analysis.elementsOfValue?.functional?.score && analysis.elementsOfValue.functional.score >= 8
         ? 'Excellent functional value proposition' : 'Functional value proposition needs improvement',
@@ -396,7 +396,7 @@ This report is generated using a comprehensive analysis framework that evaluates
   public generateHtmlReport(markdownContent: string): string {
     // Convert markdown to HTML with executive styling
     const htmlContent = this.markdownToHtml(markdownContent);
-    
+
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -416,7 +416,7 @@ This report is generated using a comprehensive analysis framework that evaluates
         function printReport() {
             window.print();
         }
-        
+
         // Add download functionality
         function downloadReport() {
             const element = document.createElement('a');
@@ -460,20 +460,20 @@ This report is generated using a comprehensive analysis framework that evaluates
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
             color: #333;
             background: #fff;
         }
-        
+
         .report-container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 40px 20px;
         }
-        
+
         h1 {
             color: #1e40af;
             font-size: 2.5rem;
@@ -481,7 +481,7 @@ This report is generated using a comprehensive analysis framework that evaluates
             border-bottom: 4px solid #3b82f6;
             padding-bottom: 15px;
         }
-        
+
         h2 {
             color: #1e3a8a;
             font-size: 1.8rem;
@@ -489,35 +489,35 @@ This report is generated using a comprehensive analysis framework that evaluates
             border-left: 4px solid #3b82f6;
             padding-left: 15px;
         }
-        
+
         h3 {
             color: #1e40af;
             font-size: 1.4rem;
             margin: 25px 0 15px 0;
         }
-        
+
         h4 {
             color: #374151;
             font-size: 1.2rem;
             margin: 20px 0 10px 0;
         }
-        
+
         p {
             margin-bottom: 15px;
             font-size: 1rem;
             line-height: 1.7;
         }
-        
+
         ul {
             margin: 15px 0;
             padding-left: 25px;
         }
-        
+
         li {
             margin-bottom: 8px;
             font-size: 1rem;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -527,7 +527,7 @@ This report is generated using a comprehensive analysis framework that evaluates
             border-radius: 8px;
             overflow: hidden;
         }
-        
+
         th {
             background: #1e40af;
             color: white;
@@ -535,35 +535,35 @@ This report is generated using a comprehensive analysis framework that evaluates
             text-align: left;
             font-weight: 600;
         }
-        
+
         td {
             padding: 12px 15px;
             border-bottom: 1px solid #e5e7eb;
         }
-        
+
         tr:nth-child(even) {
             background: #f8fafc;
         }
-        
+
         tr:hover {
             background: #e0f2fe;
         }
-        
+
         .score-excellent {
             color: #059669;
             font-weight: 600;
         }
-        
+
         .score-good {
             color: #d97706;
             font-weight: 600;
         }
-        
+
         .score-fair {
             color: #dc2626;
             font-weight: 600;
         }
-        
+
         .executive-summary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -571,7 +571,7 @@ This report is generated using a comprehensive analysis framework that evaluates
             border-radius: 12px;
             margin: 30px 0;
         }
-        
+
         .key-findings {
             background: #f0f9ff;
             padding: 25px;
@@ -579,7 +579,7 @@ This report is generated using a comprehensive analysis framework that evaluates
             border-left: 5px solid #3b82f6;
             margin: 20px 0;
         }
-        
+
         .recommendations {
             background: #f0fdf4;
             padding: 25px;
@@ -587,7 +587,7 @@ This report is generated using a comprehensive analysis framework that evaluates
             border-left: 5px solid #22c55e;
             margin: 20px 0;
         }
-        
+
         .technical-analysis {
             background: #fef3c7;
             padding: 25px;
@@ -595,7 +595,7 @@ This report is generated using a comprehensive analysis framework that evaluates
             border-left: 5px solid #f59e0b;
             margin: 20px 0;
         }
-        
+
         .competitive-intelligence {
             background: #fdf2f8;
             padding: 25px;
@@ -603,40 +603,40 @@ This report is generated using a comprehensive analysis framework that evaluates
             border-left: 5px solid #ec4899;
             margin: 20px 0;
         }
-        
+
         @media print {
             body {
                 font-size: 12pt;
                 line-height: 1.4;
             }
-            
+
             .report-container {
                 max-width: none;
                 padding: 20px;
             }
-            
+
             h1, h2, h3, h4 {
                 page-break-after: avoid;
             }
-            
+
             table {
                 page-break-inside: avoid;
             }
         }
-        
+
         @media (max-width: 768px) {
             .report-container {
                 padding: 20px 10px;
             }
-            
+
             h1 {
                 font-size: 2rem;
             }
-            
+
             h2 {
                 font-size: 1.5rem;
             }
-            
+
             table {
                 font-size: 0.9rem;
             }

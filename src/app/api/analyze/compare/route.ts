@@ -7,7 +7,7 @@
 import { UniversalPuppeteerScraper } from '@/lib/universal-puppeteer-scraper';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const maxDuration = 120; // 2 minutes for AI analysis
+export const maxDuration = 30;
 
 export async function POST(request: NextRequest) {
   try {
@@ -140,7 +140,7 @@ EXISTING CONTENT:
 - Word Count: ${existing.wordCount}
 - Title: ${existing.title}
 - Meta Description: ${existing.metaDescription}
-- Keywords: ${existing.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
+- Keywords: ${existing.extractedKeywords.slice(0, 10).join(', ')}
 - Content: ${existing.cleanText.substring(0, 2000)}
 
 ${proposed ? `
@@ -172,4 +172,3 @@ Return structured comparison with scores and specific improvements.`;
     };
   }
 }
-

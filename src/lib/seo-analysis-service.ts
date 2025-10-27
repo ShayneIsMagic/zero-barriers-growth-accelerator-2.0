@@ -23,26 +23,26 @@ export class SEOAnalysisService {
   /**
    * Perform comprehensive SEO analysis following the practical workflow:
    * 1. Search Console → Current keyword rankings
-   * 2. Keyword Planner → Search volume and opportunities  
+   * 2. Keyword Planner → Search volume and opportunities
    * 3. Google Trends → Trending validation
    * 4. Competitive Analysis → Compare against reference sites
    */
   async performSEOAnalysis(): Promise<SEOAnalysis> {
     console.log('🔍 Starting comprehensive SEO analysis...');
-    
+
     try {
       // Step 1: Analyze current rankings (simulate Search Console data)
       const searchConsoleData = await this.analyzeCurrentRankings();
-      
+
       // Step 2: Keyword research and search volume analysis
       const keywordResearch = await this.performKeywordResearch();
-      
+
       // Step 3: Google Trends validation
       const trendingAnalysis = await this.analyzeTrendingKeywords();
-      
+
       // Step 4: Competitive analysis against reference sites
       const competitiveAnalysis = await this.performCompetitiveAnalysis();
-      
+
       // Step 5: Generate recommendations
       const recommendations = this.generateSEORecommendations(
         searchConsoleData,
@@ -73,12 +73,12 @@ export class SEOAnalysisService {
    */
   private async analyzeCurrentRankings() {
     console.log('📊 Step 1: Analyzing current Search Console rankings...');
-    
+
     // Simulate Search Console data extraction
     // In production, this would integrate with Google Search Console API
     const currentRankings = await this.extractCurrentKeywords();
     const topPerformingPages = await this.analyzeTopPages();
-    
+
     return {
       currentRankings,
       topPerformingPages
@@ -91,10 +91,10 @@ export class SEOAnalysisService {
    */
   private async performKeywordResearch() {
     console.log('🔍 Step 2: Performing keyword research with search volume analysis...');
-    
+
     const targetKeywords = await this.analyzeTargetKeywords();
     const contentGaps = await this.identifyContentGaps();
-    
+
     return {
       targetKeywords,
       contentGaps
@@ -107,20 +107,20 @@ export class SEOAnalysisService {
    */
   private async analyzeTrendingKeywords() {
     console.log('📈 Step 3: Validating keyword trends with REAL Google Trends...');
-    
+
     try {
       // Import the real Google Trends service
       const { RealGoogleTrendsService } = await import('./real-google-trends-service');
-      
+
       // Initialize real Google Trends service
       const trendsService = new RealGoogleTrendsService(this.url, this.targetKeywords);
-      
+
       // Get real trends data for target keywords
       const trendsData = await trendsService.getMultipleKeywordsTrends(this.targetKeywords.slice(0, 5));
-      
+
       // Get trending keywords in relevant categories
       const trendingKeywords = await trendsService.getTrendingKeywords('business');
-      
+
       return {
         keywordTrends: trendsData,
         trendingKeywords: trendingKeywords,
@@ -130,7 +130,7 @@ export class SEOAnalysisService {
       };
     } catch (error) {
       console.error('Real Google Trends analysis failed:', error);
-      
+
       // Fallback to simulated data if real API fails
       console.log('⚠️ Falling back to simulated trends data');
       return await this.getTrendingKeywords();
@@ -143,12 +143,12 @@ export class SEOAnalysisService {
    */
   private async performCompetitiveAnalysis() {
     console.log('🏆 Step 4: Performing competitive analysis against reference sites...');
-    
+
     const _competitors = await this.analyzeCompetitors();
     const keywordComparison = await this.compareKeywordsWithCompetitors();
-    
+
     return {
-      competitors,
+      competitors: _competitors,
       keywordComparison
     };
   }
@@ -458,6 +458,6 @@ export async function performSEOAnalysis(request: SEOAnalysisRequest): Promise<S
     request.targetKeywords,
     request.competitorUrls
   );
-  
+
   return await service.performSEOAnalysis();
 }

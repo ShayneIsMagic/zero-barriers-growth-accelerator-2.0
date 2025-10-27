@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const _analysisId = searchParams.get('analysisId');
+    const analysisId = searchParams.get('analysisId');
 
     // Simple workflow status without ComingSoonService
     const workflowResponse = {

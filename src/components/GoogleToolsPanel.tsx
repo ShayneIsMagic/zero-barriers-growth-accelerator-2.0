@@ -23,7 +23,7 @@ interface GoogleToolsPanelProps {
   onToolSelect?: (tool: string) => void;
 }
 
-export default function GoogleToolsPanel({ _url, onToolSelect }: GoogleToolsPanelProps) {
+export default function GoogleToolsPanel({ url, onToolSelect }: GoogleToolsPanelProps) {
   const [selectedTool, setSelectedTool] = useState<string>('');
 
   const workingTools = [
