@@ -4,8 +4,9 @@
  * Serverless compatible using browserless.io
  */
 
-import puppeteer, { Browser } from 'puppeteer-core';
 import chromium from '@sparticuz/chromium';
+import puppeteer from 'puppeteer-core';
+import type { Browser } from 'puppeteer-core';
 
 export interface UniversalScrapedData {
   // Basic content
@@ -267,7 +268,7 @@ export class UniversalPuppeteerScraper {
 
       // Use @sparticuz/chromium for Vercel/serverless compatibility
       this.browser = await puppeteer.launch({
-        args: chromium.args,
+        args: [...chromium.args],
         executablePath: await chromium.executablePath(),
         headless: true,
       });
