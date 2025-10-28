@@ -5,8 +5,8 @@
  */
 
 import chromium from '@sparticuz/chromium';
-import puppeteer from 'puppeteer-core';
 import type { Browser } from 'puppeteer-core';
+import puppeteer from 'puppeteer-core';
 
 export interface UniversalScrapedData {
   // Basic content
