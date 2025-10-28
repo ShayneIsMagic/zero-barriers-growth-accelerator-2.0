@@ -265,8 +265,9 @@ export class UniversalPuppeteerScraper {
       }
 
       // Fallback to local launch for Vercel/serverless
-      // This works because Vercel now supports Puppeteer out of the box
+      // Vercel has Chrome available at /opt/bin/chromium
       this.browser = await puppeteer.launch({
+        executablePath: '/opt/bin/chromium',
         headless: true,
         args: [
           '--no-sandbox',
