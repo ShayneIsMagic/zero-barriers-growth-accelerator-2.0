@@ -4,9 +4,7 @@
  * Serverless compatible using browserless.io
  */
 
-import chromium from '@sparticuz/chromium';
-import type { Browser } from 'puppeteer-core';
-import puppeteer from 'puppeteer-core';
+import puppeteer, { Browser } from 'puppeteer';
 
 export interface UniversalScrapedData {
   // Basic content
@@ -266,12 +264,44 @@ export class UniversalPuppeteerScraper {
         }
       }
 
-      // Use @sparticuz/chromium for Vercel/serverless compatibility
-      this.browser = await puppeteer.launch({
-        args: [...chromium.args],
-        executablePath: await chromium.executablePath(),
-        headless: true,
-      });
+      // Fallback to local launch for Vercel/serverless
+      // Try multiple possible Chrome paths for Vercel
+      const possiblePaths = [
+        '/opt/bin/chromium',
+        '/usr/bin/chromium-browser',
+        '/usr/bin/chromium',
+        '/usr/bin/google-chrome',
+        '/usr/bin/google-chrome-stable'
+      ];
+      
+      let browserLaunched = false;
+      for (const executablePath of possiblePaths) {
+        try {
+          this.browser = await puppeteer.launch({
+            executablePath,
+            headless: true,
+            args: [
+              '--no-sandbox',
+              '--disable-setuid-sandbox',
+              '--disable-dev-shm-usage',
+              '--disable-accelerated-2d-canvas',
+              '--no-first-run',
+              '--no-zygote',
+              '--disable-gpu',
+            ],
+          });
+          browserLaunched = true;
+          console.log(`✅ Chrome launched successfully at: ${executablePath}`);
+          break;
+        } catch (error) {
+          console.warn(`❌ Failed to launch Chrome at ${executablePath}:`, error.message);
+          continue;
+        }
+      }
+      
+      if (!browserLaunched) {
+        throw new Error('Could not launch Chrome at any of the attempted paths');
+      }
     } else {
       // Local development
       this.browser = await puppeteer.launch({
