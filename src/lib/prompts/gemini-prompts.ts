@@ -458,6 +458,7 @@ export const CONTENT_COMPARISON_PROMPT_TEMPLATE = {
 
 /**
  * Helper function to build prompts consistently
+ * Now uses the standard AI prompt template for unified structure
  */
 export function buildFrameworkPrompt(
   framework: 'b2c' | 'b2b' | 'clifton' | 'golden-circle',
@@ -473,50 +474,193 @@ export function buildFrameworkPrompt(
   };
 
   const template = templates[framework];
+  
+  // Build structured content data matching standard template
+  const contentData = {
+    wordCount: existing.wordCount || 0,
+    title: existing.title || 'N/A',
+    metaDescription: existing.metaDescription || 'N/A',
+    extractedKeywords: existing.extractedKeywords || [],
+    cleanText: existing.cleanText || 'No content available',
+    headings: existing.headings || [],
+    images: existing.images || [],
+    links: existing.links || []
+  };
 
-  return `# Analysis Request: ${template.framework}
+  const proposedData = proposed ? {
+    wordCount: proposed.wordCount || 0,
+    title: proposed.title || 'N/A',
+    metaDescription: proposed.metaDescription || 'N/A',
+    extractedKeywords: proposed.extractedKeywords || [],
+    cleanText: proposed.cleanText || 'No content available',
+    headings: proposed.headings || [],
+    images: proposed.images || [],
+    links: proposed.links || []
+  } : null;
+
+  return `# Comprehensive Content Analysis Request
 
 ## Website URL
 ${url}
 
-## Existing Content to Analyze
-- **Word Count:** ${existing.wordCount || 0}
-- **Title:** ${existing.title || 'N/A'}
-- **Meta Description:** ${existing.metaDescription || 'N/A'}
-- **Keywords:** ${existing.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
-- **Content Preview:** ${existing.cleanText?.substring(0, 2000) || 'No content available'}
+## Content Data
+
+### Existing Content
+**Word Count:** ${contentData.wordCount.toLocaleString()}
+**Title:** ${contentData.title}
+**Meta Description:** ${contentData.metaDescription}
+**Keywords:** ${contentData.extractedKeywords.slice(0, 15).join(', ') || 'None detected'}
+
+**Content Preview (first 2500 characters):**
+${contentData.cleanText.substring(0, 2500)}
 
 ${
-  proposed
-    ? `
-## Proposed Content (Comparison)
-- **Word Count:** ${proposed.wordCount || 0}
-- **Title:** ${proposed.title || 'N/A'}
-- **Meta Description:** ${proposed.metaDescription || 'N/A'}
-- **Keywords:** ${proposed.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
-- **Content Preview:** ${proposed.cleanText?.substring(0, 2000) || 'No content available'}
+    contentData.headings?.length
+      ? `
+**Headings Structure:**
+${contentData.headings
+  .slice(0, 10)
+  .map((h, i) => `${i + 1}. ${h}`)
+  .join('\n')}
 `
-    : ''
-}
+      : ''
+  }
+
+${
+    contentData.images?.length
+      ? `
+**Images Found:** ${contentData.images.length} images
+${contentData.images
+  .slice(0, 5)
+  .map((img) => `- ${img.alt || 'No alt text'}`)
+  .join('\n')}
+`
+      : ''
+  }
+
+${
+    proposedData
+      ? `
+---
+
+### Proposed Content (Comparison)
+**Word Count:** ${proposedData.wordCount.toLocaleString()}
+**Title:** ${proposedData.title}
+**Meta Description:** ${proposedData.metaDescription}
+**Keywords:** ${proposedData.extractedKeywords.slice(0, 15).join(', ') || 'None detected'}
+
+**Content Preview (first 2500 characters):**
+${proposedData.cleanText.substring(0, 2500)}
+
+${
+        proposedData.headings?.length
+          ? `
+**Headings Structure:**
+${proposedData.headings
+  .slice(0, 10)
+  .map((h, i) => `${i + 1}. ${h}`)
+  .join('\n')}
+`
+          : ''
+      }
+
+${
+        proposedData.images?.length
+          ? `
+**Images Found:** ${proposedData.images.length} images
+${proposedData.images
+  .slice(0, 5)
+  .map((img) => `- ${img.alt || 'No alt text'}`)
+  .join('\n')}
+`
+          : ''
+      }
+`
+      : ''
+  }
 
 ---
 
 ## Framework Definition
+
+**${template.framework}**
+
 ${template.markdown || `Use the ${template.framework} framework for analysis.`}
 
 ---
 
 ## Analysis Requirements
-Provide a structured analysis including:
 
-1. **Overall Score** (${template.scoreRange})
-2. **Framework-specific breakdown** with category/domain scores
-3. **Present elements/themes** with specific evidence from the content
-4. **Missing elements/themes** with recommendations for improvement
-5. **Specific, actionable improvements** prioritized by impact
+**CRITICAL REQUIREMENTS - MUST COMPLETE:**
+1. **List ALL framework elements/themes** - Do not skip any
+2. **For each element/theme**, provide:
+   - **Present/Not Present** status
+   - **Evidence** (if present) or **Recommendation** (if missing)
+   - **Fractional score** (0.0-1.0)
+3. **Completeness check**: Total elements analyzed MUST equal total framework elements
+4. **Category breakdown**: Show scores for each category/subcategory
+5. **Priority actions**: List top 10 most impactful improvements
 
-## Output Format
-Return a structured JSON analysis with scores, evidence, and actionable insights.`;
+---
+
+## Fractional Scoring System
+
+Provide scores as **decimals between 0.0 and 1.0** for clear visual representation:
+
+- **0.8-1.0** (Green) = Excellent - Best practices met, minor tweaks only
+- **0.6-0.79** (Yellow) = Good - Solid foundation, some improvements needed
+- **0.4-0.59** (Orange) = Needs Work - Significant improvements required
+- **0.0-0.39** (Red) = Poor - Major issues, urgent attention needed
+
+---
+
+## Required Output Format
+
+Return a JSON object with this structure:
+
+\`\`\`json
+{
+  "url": "${url}",
+  "analysis_date": "ISO 8601 timestamp",
+  "framework": "${template.framework}",
+  "overall_score": 0.75,
+  "categories": [
+    {
+      "name": "Category Name",
+      "score": 0.80,
+      "present_elements": [
+        {
+          "name": "element_name",
+          "score": 0.90,
+          "evidence": "Specific quote or example from content"
+        }
+      ],
+      "missing_elements": [
+        {
+          "name": "element_name",
+          "recommendation": "Specific suggestion for how to include",
+          "priority": "high"
+        }
+      ]
+    }
+  ],
+  "priority_actions": [
+    {
+      "action": "Specific actionable task",
+      "category": "seo|metadata|content|framework",
+      "priority": "high|medium|low",
+      "impact": "Expected improvement description"
+    }
+  ],
+  "verification": {
+    "total_elements_in_framework": ${(template as any).totalElements || (template as any).totalThemes || 0},
+    "total_elements_analyzed": ${(template as any).totalElements || (template as any).totalThemes || 0},
+    "completeness_check": "pass"
+  }
+}
+\`\`\`
+
+**Begin analysis and return complete JSON response.**`;
 }
 
 /**
