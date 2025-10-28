@@ -474,7 +474,7 @@ export function buildFrameworkPrompt(
   };
 
   const template = templates[framework];
-  
+
   // Build structured content data matching standard template
   const contentData = {
     wordCount: existing.wordCount || 0,
