@@ -1,6 +1,6 @@
 /**
  * Unified Storage Service
- * 
+ *
  * Manages storage across LocalForage (client) and Supabase/Prisma (server)
  * with graceful degradation if Supabase is unavailable.
  */

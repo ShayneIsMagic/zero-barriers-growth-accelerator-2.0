@@ -7,11 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { Copy, Download, GitCompare, History, Loader2, Plus, Save } from 'lucide-react';
-import { useMemo, useState } from 'react';
 import { ClientStorage, ScrapeBundle, ScrapedContent, ScrapedMetadata } from '@/lib/shared/client-storage';
 import { buildComprehensiveReport } from '@/lib/shared/report-aggregator';
+import { Copy, Download, GitCompare, History, Loader2, Plus, Save } from 'lucide-react';
 import Link from 'next/link';
+import { useMemo, useState } from 'react';
 
 export function ContentComparisonPage() {
   const [url, setUrl] = useState('');

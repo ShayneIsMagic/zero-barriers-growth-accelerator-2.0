@@ -250,14 +250,30 @@ Return as valid JSON:
 
   /**
    * Store Elements of Value analysis in database
+   * Uses Prisma with graceful degradation if unavailable
    */
   private static async storeElementsAnalysis(
     analysisId: string,
     aiResponse: any,
     patterns: PatternMatch[]
   ): Promise<ElementsOfValueB2CAnalysis> {
-    // Create main EoV B2C record using Prisma client
-    const eov = await prisma.elements_of_value_b2c.create({
+    // Sync to LocalForage for client-side access (non-blocking)
+    if (typeof window !== 'undefined') {
+      try {
+        const { syncToLocalForage } = await import('@/lib/storage/prisma-safe-wrapper');
+        await syncToLocalForage(analysisId, 'b2c', aiResponse);
+      } catch (error) {
+        console.warn('LocalForage sync failed:', error);
+      }
+    }
+
+    // Try Prisma storage (server-side, graceful degradation)
+    let eov;
+    try {
+      const { isPrismaAvailable } = await import('@/lib/prisma');
+      if (isPrismaAvailable()) {
+        // Create main EoV B2C record using Prisma client
+        eov = await prisma.elements_of_value_b2c.create({
       data: {
         analysis_id: analysisId,
         overall_score: aiResponse.overall_score || 0,
