@@ -11,6 +11,7 @@ import { Copy, Download, GitCompare, History, Loader2, Plus, Save } from 'lucide
 import { useMemo, useState } from 'react';
 import { ClientStorage, ScrapeBundle, ScrapedContent, ScrapedMetadata } from '@/lib/shared/client-storage';
 import { buildComprehensiveReport } from '@/lib/shared/report-aggregator';
+import Link from 'next/link';
 
 export function ContentComparisonPage() {
   const [url, setUrl] = useState('');
@@ -429,6 +430,11 @@ New compelling description that highlights our unique value proposition.
                     <>Run Framework</>
                   )}
                 </Button>
+              </div>
+              <div className="pt-6">
+                <Link href="/dashboard/reports" className="inline-flex items-center h-10 px-4 border rounded">
+                  View Reports
+                </Link>
               </div>
             </div>
           )}

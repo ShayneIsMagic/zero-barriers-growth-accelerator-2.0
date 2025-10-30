@@ -1,5 +1,70 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { ClientStorage } from '@/lib/shared/client-storage';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+
+export default function ReportsPage() {
+  const [ids, setIds] = useState<string[]>([]);
+  const [ready, setReady] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const list = await ClientStorage.listIds();
+      if (!mounted) return;
+      setIds(list);
+      const readiness: Record<string, boolean> = {};
+      for (const id of list) {
+        const report = await ClientStorage.getComprehensiveReport(id);
+        readiness[id] = !!report;
+      }
+      if (!mounted) return;
+      setReady(readiness);
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  return (
+    <div className="max-w-5xl mx-auto p-6 space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Saved Analyses</CardTitle>
+          <CardDescription>Reports created from Content Comparison and framework runs</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {ids.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No saved analyses yet. Run a Content Comparison to generate one.</p>
+          ) : (
+            <div className="space-y-3">
+              {ids.map((id) => (
+                <div key={id} className="flex items-center justify-between p-3 border rounded">
+                  <div className="truncate">
+                    <div className="font-medium truncate">{id}</div>
+                    <div className="text-xs text-muted-foreground">Use the same browser to access client-saved reports</div>
+                  </div>
+                  <div>
+                    {ready[id] ? (
+                      <Badge variant="default">Report Ready</Badge>
+                    ) : (
+                      <Badge variant="secondary">Scrape Saved</Badge>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+'use client';
+
 import { useState, useEffect } from 'react';
 import {
   Card,

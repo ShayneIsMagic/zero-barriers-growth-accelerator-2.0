@@ -79,18 +79,50 @@ const KEYS = {
   scrapeBundle: (id: string) => `zbg:scrape:${id}`,
   frameworkResults: (id: string) => `zbg:framework:${id}`,
   comprehensiveReport: (id: string) => `zbg:report:${id}`,
+  index: 'zbg:index',
 };
 
 export const ClientStorage = {
+  async listIds(): Promise<string[]> {
+    if (!isBrowser) return [];
+    const lf = await getLocalforage();
+    if (lf) {
+      const list = (await lf.getItem(KEYS.index)) as string[] | null;
+      return Array.isArray(list) ? list : [];
+    }
+    const list = localStorageGet<string[]>(KEYS.index) || [];
+    return list;
+  },
+
+  async addToIndex(id: string): Promise<void> {
+    if (!isBrowser) return;
+    const lf = await getLocalforage();
+    if (lf) {
+      const list = ((await lf.getItem(KEYS.index)) as string[] | null) || [];
+      if (!list.includes(id)) {
+        list.push(id);
+        await lf.setItem(KEYS.index, list);
+      }
+      return;
+    }
+    const list = localStorageGet<string[]>(KEYS.index) || [];
+    if (!list.includes(id)) {
+      list.push(id);
+      localStorageSet(KEYS.index, list);
+    }
+  },
+
   async saveScrapeBundle(bundle: ScrapeBundle): Promise<void> {
     if (!isBrowser) return;
     const key = KEYS.scrapeBundle(bundle.id);
     const lf = await getLocalforage();
     if (lf) {
       await lf.setItem(key, bundle);
+      await this.addToIndex(bundle.id);
       return;
     }
     localStorageSet(key, bundle);
+    await this.addToIndex(bundle.id);
   },
 
   async getScrapeBundle(id: string): Promise<ScrapeBundle | null> {
@@ -136,9 +168,11 @@ export const ClientStorage = {
     const lf = await getLocalforage();
     if (lf) {
       await lf.setItem(key, report);
+      await this.addToIndex(id);
       return;
     }
     localStorageSet(key, report);
+    await this.addToIndex(id);
   },
 
   async getComprehensiveReport<T = unknown>(id: string): Promise<T | null> {
