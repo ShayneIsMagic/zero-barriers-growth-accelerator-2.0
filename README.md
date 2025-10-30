@@ -2,6 +2,28 @@
 
 AI-powered marketing optimization platform that systematically analyzes content to identify growth barriers and provide actionable recommendations.
 
+## 🔁 Build → Deploy → Feature Flow (Current Live)
+
+This maps the Vercel commit/build that produced the live Content Comparison page to the runtime flow.
+
+1. Commit pushed to main → Vercel build starts (Next.js 14 App Router)
+   - Install deps, type-check, lint, build
+   - Generate Prisma client (no dev-time migrations in build)
+   - Env vars provided via Vercel project settings
+2. Deploy succeeds → Live routes available on Vercel
+   - Dashboard (features overview): see [Dashboard (live)](https://zero-barriers-growth-accelerator-20-fgbn9enzi.vercel.app/dashboard)
+   - Content Comparison UI: see [Content Comparison (live)](https://zero-barriers-growth-accelerator-20-fgbn9enzi.vercel.app/dashboard/content-comparison)
+3. User action on Content Comparison page
+   - Enter URL (+ optional proposed content) → submit
+   - Serverless flow triggers scraping/extraction and comparison analysis
+4. Server-side analysis (serverless API routes)
+   - Scrape: robust extraction (universal/production extractors)
+   - Transform: normalize content for frameworks
+   - Analyze: Gemini prompts (JSON-validated), persist via Prisma
+   - Respond: structured JSON → rendered by page component
+
+Reference snapshot of the commit context and landing page: [Latest marketing page (preview)](https://zero-barriers-growth-accelerato-git-5426a1-shayne-roys-projects.vercel.app/)
+
 ## 🚀 **PRODUCTION READY FEATURES**
 
 ### **Core Analysis Frameworks**
@@ -77,12 +99,18 @@ GOOGLE_GEMINI_API_KEY=your-gemini-key
 
 ### **Content Analysis**
 
-- `POST /api/scrape-content` - Scrape website content
-- `POST /api/analyze/compare` - Content comparison analysis
-- `POST /api/analyze/elements-value-b2c-standalone` - B2C analysis
-- `POST /api/analyze/elements-value-b2b-standalone` - B2B analysis
-- `POST /api/analyze/golden-circle-standalone` - Golden Circle analysis
-- `POST /api/analyze/clifton-strengths-standalone` - CliftonStrengths analysis
+Top routes used by the Content Comparison flow (as deployed on Vercel):
+
+- `POST /api/analyze/compare` – Performs side-by-side analysis of existing vs proposed content (used by Dashboard → Content Comparison UI)
+- `POST /api/scrape-content` – Production-friendly content extraction for a given URL (invoked internally as part of analysis flows)
+- `POST /api/analyze/elements-value-b2c-standalone` – Runs B2C framework analysis (used in Unified Analysis and individual runs)
+- `POST /api/analyze/elements-value-b2b-standalone` – Runs B2B framework analysis
+- `POST /api/analyze/golden-circle-standalone` – Golden Circle analysis
+- `POST /api/analyze/clifton-strengths-standalone` – CliftonStrengths analysis
+
+Notes:
+- API routes are serverless functions (Vercel). Keep payloads bounded and validate input.
+- Analyses persist results via Prisma; clients can fetch by analysis id in follow-up views.
 
 ### **Version Control**
 
@@ -142,6 +170,12 @@ GOOGLE_GEMINI_API_KEY=your-gemini-key
 1. Connect GitHub repository to Vercel
 2. Set environment variables in Vercel dashboard
 3. Deploy automatically on push to main branch
+
+### **Live References**
+
+- Dashboard (features and statuses): [Vercel Dashboard](https://zero-barriers-growth-accelerator-20-fgbn9enzi.vercel.app/dashboard)
+- Content Comparison page: [Vercel Content Comparison](https://zero-barriers-growth-accelerator-20-fgbn9enzi.vercel.app/dashboard/content-comparison)
+- Latest marketing/landing preview for the referenced commit: [Vercel Preview](https://zero-barriers-growth-accelerato-git-5426a1-shayne-roys-projects.vercel.app/)
 
 ### **Database Setup**
 
