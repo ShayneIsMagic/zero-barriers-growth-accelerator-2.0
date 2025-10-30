@@ -2,6 +2,18 @@
 
 AI-powered marketing optimization platform that systematically analyzes content to identify growth barriers and provide actionable recommendations.
 
+## 🎯 Mission & Audience
+
+- Built for growth teams, marketers, product owners, and founders who need evidence‑based, revenue‑focused content optimization.
+- Primary outcome: increase conversion and revenue by systematically identifying growth barriers and prioritizing high‑impact improvements.
+
+## 🔑 Unique Value Proposition
+
+- Unified scrape → multi‑framework analysis (B2C, B2B, Golden Circle, CliftonStrengths) from a single content pass
+- Revenue‑focused scoring, ROI‑oriented recommendations, and impact/effort prioritization
+- Serverless‑safe scraping and Google Tools automation workarounds, with manual data paths when required
+- Strict TypeScript and governance standards; reproducible prompts with JSON‑validated outputs
+
 ## 🔁 Build → Deploy → Feature Flow (Current Live)
 
 This maps the Vercel commit/build that produced the live Content Comparison page to the runtime flow.
@@ -226,6 +238,19 @@ Notes:
 - API routes are serverless functions (Vercel). Keep payloads bounded and validate input.
 - Analyses persist results via Prisma; clients can fetch by analysis id in follow-up views.
 
+#### Endpoint → Handler Map
+
+| Route | Handler file | Purpose |
+| --- | --- | --- |
+| `POST /api/analyze/compare` | `src/app/api/analyze/compare/route.ts` | Existing vs proposed side‑by‑side analysis |
+| `POST /api/scrape-content` | `src/app/api/scrape/content/route.ts` | Production content extraction for a URL |
+| `POST /api/analyze/enhanced` | `src/app/api/analyze/enhanced/route.ts` | Reuse a scrape to run a chosen framework |
+| `POST /api/analyze/elements-value-b2c-standalone` | `src/app/api/analyze/elements-value-b2c-standalone/route.ts` | B2C elements scoring |
+| `POST /api/analyze/elements-value-b2b-standalone` | `src/app/api/analyze/elements-value-b2b-standalone/route.ts` | B2B elements scoring |
+| `POST /api/analyze/golden-circle-standalone` | `src/app/api/analyze/golden-circle-standalone/route.ts` | Golden Circle analysis |
+| `POST /api/analyze/clifton-strengths-standalone` | `src/app/api/analyze/clifton-strengths-standalone/route.ts` | CliftonStrengths analysis |
+| `POST /api/content/compare` | `src/app/api/content/compare/route.ts` | Persist a versioned comparison record |
+
 ### **Version Control**
 
 - `POST /api/content/snapshots` - Create content snapshot
@@ -268,6 +293,38 @@ Notes:
 - **FrameworkResult** - Structured analysis results
 - **FrameworkCategory** - Category-specific results
 - **FrameworkElement** - Individual element analysis
+
+#### Minimal Prisma model outline (indicative)
+
+```prisma
+model analysis {
+  id           String   @id @default(cuid())
+  url          String
+  created_at   DateTime @default(now())
+}
+
+model elements_of_value_b2c {
+  id                   String   @id @default(cuid())
+  analysis_id          String
+  overall_score        Int
+  functional_score     Int
+  emotional_score      Int
+  life_changing_score  Int
+  social_impact_score  Int
+}
+
+model b2c_element_scores {
+  id              String   @id @default(cuid())
+  eov_b2c_id      String
+  element_name    String
+  element_category String
+  pyramid_level   Int
+  score           Int
+  weight          Float
+  weighted_score  Float
+  evidence        Json
+}
+```
 
 ### **Key Components**
 
@@ -313,6 +370,17 @@ Notes:
 - Golden Circle: `3/4` (75% coverage)
 
 ## 🔒 **SECURITY**
+
+## 🔐 Privacy & Data Retention
+
+- Scraped content and AI analysis outputs are persisted via Prisma for reporting and re‑use.
+- Client‑side runs on Content Comparison store a local bundle (metadata vs content) and framework results for convenience; users can clear browser storage at any time.
+- No mock data in production. Secrets are only provided via environment variables.
+
+## 🖼️ Screenshots
+
+- Content Comparison: `docs/screenshots/content-comparison.png` (placeholder)
+- Analysis Dashboard: `docs/screenshots/dashboard.png` (placeholder)
 
 - **JWT Authentication** - Secure user sessions
 - **Row Level Security** - Database-level access control
