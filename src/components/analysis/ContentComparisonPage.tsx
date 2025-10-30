@@ -8,7 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Copy, Download, GitCompare, History, Loader2, Plus, Save } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { ClientStorage, ScrapeBundle, ScrapedContent, ScrapedMetadata } from '@/lib/shared/client-storage';
+import { buildComprehensiveReport } from '@/lib/shared/report-aggregator';
 
 export function ContentComparisonPage() {
   const [url, setUrl] = useState('');
@@ -22,6 +24,17 @@ export function ContentComparisonPage() {
   const [proposedContentId, setProposedContentId] = useState<string | null>(null);
   const [isSavingSnapshot, setIsSavingSnapshot] = useState(false);
   const [isCreatingProposed, setIsCreatingProposed] = useState(false);
+
+  // Framework selection and reuse of the same scrape
+  const [selectedFramework, setSelectedFramework] = useState<
+    'b2c' | 'b2b' | 'golden_circle' | 'clifton_strengths' | 'unified'
+  >('b2c');
+  const [isRunningFramework, setIsRunningFramework] = useState(false);
+
+  const scrapeId = useMemo(() => {
+    const safeUrl = url.trim();
+    return safeUrl ? `${safeUrl}::${new Date().toISOString()}` : '';
+  }, [url]);
 
   const runComparison = async () => {
     if (!url.trim()) {
@@ -48,6 +61,41 @@ export function ContentComparisonPage() {
 
       if (data.success) {
         setResult(data);
+        // Separate metadata from content and persist locally
+        const nowIso = new Date().toISOString();
+        const existingMeta: ScrapedMetadata = {
+          url: data.existing.url,
+          title: data.existing.title,
+          metaDescription: data.existing.metaDescription,
+          wordCount: data.existing.wordCount,
+          extractedKeywords: data.existing.extractedKeywords,
+          headings: data.existing.headings,
+          timestampIso: nowIso,
+        };
+        const existingContent: ScrapedContent = { cleanText: data.existing.cleanText };
+        const proposedMeta: ScrapedMetadata | null = data.proposed
+          ? {
+              url: data.existing.url,
+              title: data.proposed.title,
+              metaDescription: data.proposed.metaDescription,
+              wordCount: data.proposed.wordCount,
+              extractedKeywords: data.proposed.extractedKeywords,
+              headings: data.proposed.headings,
+              timestampIso: nowIso,
+            }
+          : null;
+        const proposedContent: ScrapedContent | null = data.proposed
+          ? { cleanText: data.proposed.cleanText }
+          : null;
+
+        const id = `${data.existing.url}::${nowIso}`;
+        const bundle: ScrapeBundle = {
+          id,
+          url: data.existing.url,
+          metadata: { existing: existingMeta, proposed: proposedMeta },
+          content: { existing: existingContent, proposed: proposedContent },
+        };
+        await ClientStorage.saveScrapeBundle(bundle);
       } else {
         setError(data.error || 'Comparison failed');
       }
@@ -55,6 +103,66 @@ export function ContentComparisonPage() {
       setError(err instanceof Error ? err.message : 'Failed to compare');
     } finally {
       setIsAnalyzing(false);
+    }
+  };
+
+  const runFramework = async () => {
+    if (!result) {
+      setError('Please run the comparison first');
+      return;
+    }
+    setIsRunningFramework(true);
+    setError(null);
+    try {
+      const nowIso = new Date().toISOString();
+      const assessmentType = selectedFramework;
+      const payload = {
+        _url: result.existing.url,
+        scrapedData: {
+          existing: {
+            cleanText: result.existing.cleanText,
+            title: result.existing.title,
+            metaDescription: result.existing.metaDescription,
+            headings: result.existing.headings,
+            extractedKeywords: result.existing.extractedKeywords,
+          },
+          proposed: result.proposed
+            ? {
+                cleanText: result.proposed.cleanText,
+                title: result.proposed.title,
+                metaDescription: result.proposed.metaDescription,
+                headings: result.proposed.headings,
+                extractedKeywords: result.proposed.extractedKeywords,
+              }
+            : null,
+        },
+        assessmentType,
+      };
+
+      const res = await fetch('/api/analyze/enhanced', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (data.success) {
+        const scrapeKey = `${result.existing.url}::${nowIso}`;
+        await ClientStorage.addFrameworkResult(scrapeKey, {
+          assessmentType,
+          createdAtIso: nowIso,
+          data: data,
+        });
+
+        const all = (await ClientStorage.getFrameworkResults(scrapeKey)) || [];
+        const report = buildComprehensiveReport(scrapeKey, result.existing.url, all);
+        await ClientStorage.saveComprehensiveReport(scrapeKey, report);
+      } else {
+        setError(data.error || 'Framework analysis failed');
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Framework analysis failed');
+    } finally {
+      setIsRunningFramework(false);
     }
   };
 
@@ -286,6 +394,44 @@ New compelling description that highlights our unique value proposition.
               </>
             )}
           </Button>
+
+          {/* Framework Dropdown and Run */}
+          {result && (
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
+                <label htmlFor="framework-select" className="text-sm font-medium mb-2 block">
+                  Analyze with Framework
+                </label>
+                <select
+                  id="framework-select"
+                  className="w-full border rounded h-10 px-3 bg-background"
+                  value={selectedFramework}
+                  onChange={(e) =>
+                    setSelectedFramework(
+                      e.target.value as 'b2c' | 'b2b' | 'golden_circle' | 'clifton_strengths' | 'unified'
+                    )
+                  }
+                >
+                  <option value="b2c">B2C Elements of Value</option>
+                  <option value="b2b">B2B Elements of Value</option>
+                  <option value="golden_circle">Golden Circle</option>
+                  <option value="clifton_strengths">CliftonStrengths</option>
+                  <option value="unified">Unified (All Frameworks)</option>
+                </select>
+              </div>
+              <div className="pt-6">
+                <Button onClick={runFramework} disabled={isRunningFramework} variant="secondary">
+                  {isRunningFramework ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Running...
+                    </>
+                  ) : (
+                    <>Run Framework</>
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
 
           {/* Version Control Buttons */}
           {result && (
