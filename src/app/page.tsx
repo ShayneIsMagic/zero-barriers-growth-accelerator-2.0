@@ -43,9 +43,9 @@ export default function HomePage() {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Link href="/dashboard/step-by-step-execution">
+            <Link href="/dashboard/content-comparison">
               <Button size="lg" variant="outline">
-                Step-by-Step Analysis
+                Content Comparison
               </Button>
             </Link>
           </div>

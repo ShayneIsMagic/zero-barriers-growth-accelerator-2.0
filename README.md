@@ -14,6 +14,19 @@ AI-powered marketing optimization platform that systematically analyzes content 
 - Serverless‑safe scraping and Google Tools automation workarounds, with manual data paths when required
 - Strict TypeScript and governance standards; reproducible prompts with JSON‑validated outputs
 
+## 🌐 Live Production Reference
+
+**Working Vercel Deployment:** https://zero-barriers-growth-accelerator-20-fgbn9enzi.vercel.app/
+
+All pages listed in the Dashboard (https://zero-barriers-growth-accelerator-20-fgbn9enzi.vercel.app/dashboard) are production-ready and working. These serve as reference implementations for framework integrations.
+
+### Recently Enhanced (New Features)
+
+- **Content Comparison** (`/dashboard/content-comparison`): Now includes competitor discovery analysis (no frameworks) and framework dropdown to reuse scrapes
+- **Reports Dashboard** (`/dashboard/reports`): New page for viewing locally-stored comprehensive reports with "Report Ready" indicators
+
+All other dashboard features remain unchanged and working as deployed on Vercel.
+
 ## 🔁 Build → Deploy → Feature Flow (Current Live)
 
 This maps the Vercel commit/build that produced the live Content Comparison page to the runtime flow.

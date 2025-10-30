@@ -273,7 +273,7 @@ export class UniversalPuppeteerScraper {
         '/usr/bin/google-chrome',
         '/usr/bin/google-chrome-stable'
       ];
-      
+
       let browserLaunched = false;
       for (const executablePath of possiblePaths) {
         try {
@@ -298,7 +298,7 @@ export class UniversalPuppeteerScraper {
           continue;
         }
       }
-      
+
       // Final fallback: try @sparticuz/chromium
       if (!browserLaunched) {
         try {

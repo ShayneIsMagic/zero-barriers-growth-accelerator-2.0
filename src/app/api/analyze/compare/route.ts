@@ -160,39 +160,57 @@ async function generateComparisonReport(
 ) {
   const { analyzeWithGemini } = await import('@/lib/free-ai-analysis');
 
-  const prompt = `Compare existing website content vs. proposed new content:
+  const prompt = `Competitor Discovery and Competitiveness Assessment (no frameworks):
+
+Goal: From the scraped content, identify likely competitors and assess how competitive the current page language is. If proposed content is provided, assess how competitive the proposed language would be versus the current live page.
 
 URL: ${url}
 
-EXISTING CONTENT:
+EXISTING CONTENT SNAPSHOT:
 - Word Count: ${existing.wordCount}
 - Title: ${existing.title}
 - Meta Description: ${existing.metaDescription}
-- Keywords: ${existing.extractedKeywords.slice(0, 10).join(', ')}
-- Content: ${existing.cleanText.substring(0, 2000)}
+- Top Keywords: ${existing.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
+- Excerpt: ${existing.cleanText.substring(0, 2000)}
 
 ${
   proposed
-    ? `
-PROPOSED CONTENT:
+    ? `PROPOSED CONTENT SNAPSHOT:
 - Word Count: ${proposed.wordCount}
 - Title: ${proposed.title}
 - Meta Description: ${proposed.metaDescription}
-- Keywords: ${proposed.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
-- Content: ${proposed.cleanText.substring(0, 2000)}
+- Top Keywords: ${proposed.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
+- Excerpt: ${proposed.cleanText.substring(0, 2000)}
 `
-    : 'No proposed content provided - analyze existing only'
+    : 'No proposed content provided — evaluate existing only.'
 }
 
-Provide side-by-side comparison:
-1. SEO Impact: How would proposed content affect search rankings?
-2. Value Proposition: Which version communicates value better?
-3. Keywords: Which targets better keywords?
-4. Readability: Which is clearer and more engaging?
-5. Call-to-Action: Which drives action better?
-6. Overall Recommendation: Keep existing, use proposed, or blend both?
+Tasks:
+1) Competitors: Infer 5–10 likely direct competitors based on the product/service domain, positioning, and keywords implied by the content. For each, include a short rationale (why they are competitive) and the primary angle they compete on (e.g., feature set, pricing, segment, performance, UX, brand).
+2) Competitive Positioning (Current): Evaluate how the current page’s language positions against those competitors. Consider clarity, differentiation, specificity, outcome orientation, and keyword competitiveness.
+3) Competitive Positioning (Proposed): ${proposed ? 'Evaluate the proposed content against the same competitors.' : 'Skip if no proposed content is provided.'}
+4) Recommendations: Concrete suggestions to improve competitive differentiation and language strength (avoid frameworks — focus on messaging, specificity, and competitor angles).
 
-Return structured comparison with scores and specific improvements.`;
+Output strict JSON with this shape:
+{
+  "competitors": [
+    { "name": "string", "rationale": "string", "primary_competitive_angle": "string" }
+  ],
+  "current": {
+    "language_competitiveness_score": 0-100,
+    "positioning_summary": "string",
+    "strengths": ["string"],
+    "gaps": ["string"]
+  },
+  "proposed": ${proposed ? `{
+    "language_competitiveness_score": 0-100,
+    "positioning_summary": "string",
+    "strengths": ["string"],
+    "gaps": ["string"]
+  }` : 'null'},
+  "recommendations": ["string"],
+  "notes": "short, non-marketing commentary"
+}`;
 
   try {
     const result = await analyzeWithGemini(prompt, 'comparison');

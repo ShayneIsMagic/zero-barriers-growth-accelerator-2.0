@@ -146,14 +146,15 @@ export default function DashboardPage() {
       name: 'Content Comparison Analysis',
       status: 'ready',
       description:
-        'Compare existing website content against proposed new content. Get AI-powered side-by-side analysis.',
+        'Competitor discovery from scraped content and language competitiveness assessment (current vs optional proposed). Reuse scrape for multiple framework analyses.',
       icon: Brain,
       route: '/dashboard/content-comparison',
       whatYouGet: [
-        'Side-by-side content analysis and comparison',
-        'AI-powered content optimization recommendations',
-        'Content gap identification and improvement suggestions',
-        'Performance impact analysis for content changes',
+        'Competitor identification from scraped content',
+        'Language competitiveness scoring (current vs proposed)',
+        'Framework dropdown to analyze same scrape (B2C, B2B, Golden Circle, CliftonStrengths)',
+        'Comprehensive reports saved locally with "Report Ready" indicators',
+        'View reports from dashboard or content-comparison page',
       ],
       estimatedTime: '2-3 minutes',
       complexity: 'Beginner',
@@ -509,6 +510,34 @@ export default function DashboardPage() {
             </Link>
           </div>
         </div>
+
+        {/* Reports Quick Access */}
+        <Card className="border-purple-200 bg-purple-50 dark:bg-purple-900/10">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center text-purple-900 dark:text-purple-100">
+                <CheckCircle className="mr-2 h-5 w-5" />
+                Saved Reports
+              </CardTitle>
+              <Link href="/dashboard/reports">
+                <Button variant="outline" className="border-purple-300 text-purple-700 hover:bg-purple-100 dark:text-purple-300">
+                  View All Reports
+                  <ExternalLink className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2 text-sm text-purple-800 dark:text-purple-200">
+              <p>
+                📊 Access comprehensive reports saved from Content Comparison and framework analyses.
+              </p>
+              <p>
+                ✅ Reports are stored locally and available with &quot;Report Ready&quot; indicators.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Development Info */}
         <Card className="border-blue-200 bg-blue-50 dark:bg-blue-900/10">
