@@ -79,18 +79,18 @@ All frameworks have comprehensive documentation in `docs/archived/`:
 3. Regulatory Compliance
 4. Ethical Standards
 
-**TIER 2: Functional (5 elements)**
+**TIER 2: Functional (7 elements)**
 - Economic (2): Improved Top Line, Cost Reduction
-- Performance (3): Product Quality, Scalability, Innovation
+- Performance (5): Product Quality, Scalability, Innovation, Flexibility, Component Quality
 
 **TIER 3: Ease of Doing Business (19 elements)**
 - Productivity (5): Time Savings, Reduced Effort, Decreased Hassles, Information, Transparency
 - Operational (4): Organization, Simplification, Connection, Integration
 - Access (3): Availability, Variety, Configurability
 - Relationship (5): Responsiveness, Expertise, Commitment, Stability, Cultural Fit
-- Strategic (2): Risk Reduction, Reach, Flexibility, Component Quality
+- Strategic (2): Risk Reduction, Reach
 
-**Note:** Risk Reduction, Reach, Flexibility, and Component Quality are in Ease of Doing Business (Strategic subcategory), not in Functional Performance. This gives Ease 19 unique elements.
+**Note:** Flexibility and Component Quality are part of Functional (Performance subcategory), not Ease of Doing Business. This gives Ease 19 unique elements.
 
 **TIER 4: Individual (7 elements)**
 - Career (3): Network Expansion, Marketability, Reputational Assurance
