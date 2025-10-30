@@ -78,6 +78,8 @@ Reference snapshot of the commit context and landing page: [Latest marketing pag
 
 ## 🧠 **FRAMEWORKS (Detailed)**
 
+**📋 Complete Framework Reference**: See [`docs/FRAMEWORK_COMPREHENSIVE_MAP.md`](./docs/FRAMEWORK_COMPREHENSIVE_MAP.md) for comprehensive framework maps including all elements, categories, subcategories, counts, and fractional scoring systems.
+
 ### B2C Elements of Value (30 elements)
 - Categories: Functional, Emotional, Life‑Changing, Social Impact
 - Outputs: per‑element scores (0–100), category averages, overall score, evidence with citations and detected patterns
@@ -85,6 +87,7 @@ Reference snapshot of the commit context and landing page: [Latest marketing pag
 
 ### B2B Elements of Value (40 elements)
 - Categories: Table Stakes, Functional, Ease of Doing Business, Individual, Inspirational
+- Subcategories: Economic, Performance, Productivity, Operational, Access, Relationship, Strategic, Career, Personal, Purpose
 - Outputs: per‑element scoring, evidence, enterprise‑focused recommendations (sales enablement, retention)
 
 ### Golden Circle (Revenue‑Focused)
@@ -427,6 +430,22 @@ MIT License - see LICENSE file for details
 3. Make your changes
 4. Add tests for new functionality
 5. Submit a pull request
+
+## 📚 **DOCUMENTATION**
+
+### Essential Documentation
+
+- **[Framework Comprehensive Map](./docs/FRAMEWORK_COMPREHENSIVE_MAP.md)** - Complete framework reference with all elements, categories, subcategories, counts, and fractional scoring systems
+- **[Storage Architecture](./docs/STORAGE_ARCHITECTURE.md)** - Hybrid storage strategy (LocalForage + Supabase/Prisma)
+- **[Supabase Cleanup Guide](./docs/SUPABASE_CLEANUP_GUIDE.md)** - Database integration and graceful degradation patterns
+
+### Additional Documentation
+
+All documentation files are located in the `docs/` directory, including:
+- Integration guides
+- AI prompt templates
+- API contracts
+- Architecture documentation
 
 ## 📞 **SUPPORT**
 
