@@ -168,17 +168,27 @@ Live references
 Use these categories/subcategories to structure inputs and guide AI prompts for consistent scoring and evidence collection.
 
 ### B2C Elements of Value (30)
-- Functional: saves_time, simplifies, makes_money, reduces_effort, reduces_cost, reduces_risk, organizes, integrates, connects, quality, variety, informs, avoids_hassles, sensory_appeal
-- Emotional: reduces_anxiety, rewards_me, nostalgia, design_aesthetics, badge_value, wellness, therapeutic, fun_entertainment, attractiveness, provides_access
-- Life‑Changing: provides_hope, self_actualization, motivation, heirloom, affiliation
-- Social Impact: self_transcendence
+- Functional (14): saves_time, simplifies, reduces_cost, reduces_risk, organizes, integrates, connects, reduces_effort, avoids_hassles, makes_money, reduces_anxiety, rewards_me, fun_entertainment, quality
+- Emotional (10): attractive_appearance, provides_access, variety, therapeutic_value, nostalgia, design_aesthetics, badge_value, wellness, reduces_anxiety_emotional, rewards_me_emotional
+- Life‑Changing (5): provides_hope, self_actualization, motivation, heirloom, affiliation_belonging
+- Social Impact (1): self_transcendence
 
-### B2B Elements of Value (by category)
-- Table Stakes: meeting_specifications, acceptable_price, regulatory_compliance, ethical_standards
-- Functional: improved_top_line, cost_reduction, product_quality, scalability, innovation, risk_reduction, reach, flexibility, component_quality
-- Ease of Doing Business: time_savings, reduced_effort, decreased_hassles, information, transparency, organization, simplification, connection, integration, access, availability, variety, configurability, responsiveness, expertise, commitment, stability, cultural_fit
-- Individual: network_expansion, marketability, reputational_assurance, design_aesthetics_b2b, growth_development, reduced_anxiety_b2b, fun_perks
-- Inspirational: vision, hope_b2b, social_responsibility
+### B2B Elements of Value (40 elements)
+- Table Stakes (4): meeting_specifications, acceptable_price, regulatory_compliance, ethical_standards
+- Functional (7):
+  - Economic (2): improved_top_line, cost_reduction
+  - Performance (5): product_quality, scalability, innovation, flexibility, component_quality
+- Ease of Doing Business (19):
+  - Productivity (5): time_savings, reduced_effort, decreased_hassles, information, transparency
+  - Operational (4): organization, simplification, connection, integration
+  - Access (3): availability, variety, configurability
+  - Relationship (5): responsiveness, expertise, commitment, stability, cultural_fit
+  - Strategic (2): risk_reduction, reach
+- Individual (7):
+  - Career (3): network_expansion, marketability, reputational_assurance
+  - Personal (4): design_aesthetics_b2b, growth_development, reduced_anxiety_b2b, fun_perks
+- Inspirational (3): vision, hope_b2b, social_responsibility
+- Note: Purpose is a subcategory (organizational structure), not counted as an element
 
 ### CliftonStrengths (domains → themes)
 - Executing: achiever, arranger, belief, consistency, deliberative, discipline, focus, responsibility, restorative
