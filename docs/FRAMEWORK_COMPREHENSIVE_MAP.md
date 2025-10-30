@@ -90,8 +90,6 @@ All frameworks have comprehensive documentation in `docs/archived/`:
 - Relationship (5): Responsiveness, Expertise, Commitment, Stability, Cultural Fit
 - Strategic (2): Risk Reduction, Reach
 
-**Note:** Flexibility and Component Quality are part of Functional (Performance subcategory), not Ease of Doing Business. This gives Ease 19 unique elements.
-
 **TIER 4: Individual (7 elements)**
 - Career (3): Network Expansion, Marketability, Reputational Assurance
 - Personal (4): Design & Aesthetics, Growth & Development, Reduced Anxiety, Fun and Perks
