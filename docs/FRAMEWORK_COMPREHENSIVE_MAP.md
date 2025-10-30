@@ -95,10 +95,12 @@ All frameworks have comprehensive documentation in `docs/archived/`:
 - Personal (4): Design & Aesthetics, Growth & Development, Reduced Anxiety, Fun and Perks
 
 **TIER 5: Inspirational (4 elements)**
-1. Purpose
-2. Vision
-3. Hope
-4. Social Responsibility
+- Purpose (element under Purpose subcategory)
+- Vision
+- Hope  
+- Social Responsibility
+
+**Note:** Purpose is a subcategory in B2B (as referenced in API routes), with Purpose being the element within that subcategory.
 
 **Total: 40 elements**
 
