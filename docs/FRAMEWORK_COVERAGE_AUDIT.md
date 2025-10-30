@@ -4,7 +4,7 @@
 
 **Expected:** 30 elements total
 - Functional: 14 elements
-- Emotional: 10 elements  
+- Emotional: 10 elements
 - Life-Changing: 5 elements
 - Social Impact: 1 element
 
