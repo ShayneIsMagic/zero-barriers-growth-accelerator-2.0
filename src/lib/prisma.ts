@@ -4,15 +4,28 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient();
+// Check if DATABASE_URL is available
+const isDatabaseConfigured = !!process.env.DATABASE_URL;
 
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma;
+// Create Prisma client only if database is configured
+export const prisma = isDatabaseConfigured
+  ? globalForPrisma.prisma ?? new PrismaClient()
+  : (null as unknown as PrismaClient);
+
+if (process.env.NODE_ENV !== 'production' && isDatabaseConfigured) {
+  globalForPrisma.prisma = prisma as PrismaClient;
 }
 
-// Graceful shutdown
-process.on('beforeExit', async () => {
-  await prisma.$disconnect();
-});
+// Graceful shutdown (only if configured)
+if (isDatabaseConfigured && prisma) {
+  process.on('beforeExit', async () => {
+    await prisma.$disconnect();
+  });
+}
+
+// Helper to check if Prisma is available
+export const isPrismaAvailable = (): boolean => {
+  return isDatabaseConfigured && prisma !== null;
+};
 
 export default prisma;

@@ -386,9 +386,24 @@ model b2c_element_scores {
 
 ## 🔐 Privacy & Data Retention
 
-- Scraped content and AI analysis outputs are persisted via Prisma for reporting and re‑use.
-- Client‑side runs on Content Comparison store a local bundle (metadata vs content) and framework results for convenience; users can clear browser storage at any time.
-- No mock data in production. Secrets are only provided via environment variables.
+### Storage Architecture
+
+**Hybrid Storage Strategy:**
+- **LocalForage** (Client-side): Immediate UX storage for scrape bundles, framework results, and comprehensive reports. Stored in browser IndexedDB/localStorage.
+- **Supabase/Prisma** (Server-side): Optional persistent storage for permanent analysis records. Requires `DATABASE_URL` environment variable.
+- **Graceful Degradation**: System works fully with LocalForage alone. Supabase sync is optional and fails gracefully if unavailable.
+
+### Data Flow
+
+1. **Content Comparison**: Saves scrape bundles → LocalForage (always) → Supabase (if configured)
+2. **Framework Analyses**: Client-side results → LocalForage → Background sync to Supabase (optional)
+3. **Reports Dashboard**: Reads from LocalForage first, falls back to Supabase if available
+
+### Privacy
+
+- Client‑side storage (LocalForage) is browser-local; users can clear at any time
+- Server-side storage (Supabase) requires `DATABASE_URL`; gracefully degrades if not configured
+- No mock data in production. Secrets only via environment variables
 
 ## 🖼️ Screenshots
 
