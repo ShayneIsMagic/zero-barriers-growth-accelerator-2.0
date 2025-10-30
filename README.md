@@ -9,7 +9,7 @@ AI-powered marketing optimization platform that systematically analyzes content 
 
 ## 🔑 Unique Value Proposition
 
-- Unified scrape → multi‑framework analysis (B2C, B2B, Golden Circle, CliftonStrengths) from a single content pass
+- Reuse a single content scrape from Content Comparison to run multiple frameworks via the enhanced analysis endpoint (B2C, B2B, Golden Circle, CliftonStrengths); standalone endpoints remain supported
 - Revenue‑focused scoring, ROI‑oriented recommendations, and impact/effort prioritization
 - Serverless‑safe scraping and Google Tools automation workarounds, with manual data paths when required
 - Strict TypeScript and governance standards; reproducible prompts with JSON‑validated outputs
@@ -40,7 +40,7 @@ Reference snapshot of the commit context and landing page: [Latest marketing pag
 
 ### **Core Analysis Frameworks**
 
-- **Content Comparison** - Side-by-side analysis of existing vs proposed content
+- **Content Comparison** - Identifies likely competitors from the scrape and assesses language competitiveness for current vs. optional proposed content (no frameworks)
 - **B2C Elements of Value** - 30-element consumer value pyramid analysis
 - **B2B Elements of Value** - 40-element business value analysis
 - **Golden Circle** - Simon Sinek's Why/How/What/Who framework
@@ -227,7 +227,7 @@ GOOGLE_GEMINI_API_KEY=your-gemini-key
 
 Top routes used by the Content Comparison flow (as deployed on Vercel):
 
-- `POST /api/analyze/compare` – Performs side-by-side analysis of existing vs proposed content (used by Dashboard → Content Comparison UI)
+- `POST /api/analyze/compare` – Competitor discovery from the scrape and language competitiveness assessment (current vs. optional proposed); used by Dashboard → Content Comparison UI; returns { competitors, current, proposed|null, recommendations, notes }
 - `POST /api/scrape-content` – Production-friendly content extraction for a given URL (invoked internally as part of analysis flows)
 - `POST /api/analyze/elements-value-b2c-standalone` – Runs B2C framework analysis (used in Unified Analysis and individual runs)
 - `POST /api/analyze/elements-value-b2b-standalone` – Runs B2B framework analysis
