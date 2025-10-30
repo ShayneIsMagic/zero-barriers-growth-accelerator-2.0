@@ -51,6 +51,120 @@ Reference snapshot of the commit context and landing page: [Latest marketing pag
 - **Deployment**: Vercel
 - **Authentication**: JWT with bcrypt
 
+## 🧠 **FRAMEWORKS (Detailed)**
+
+### B2C Elements of Value (30 elements)
+- Categories: Functional, Emotional, Life‑Changing, Social Impact
+- Outputs: per‑element scores (0–100), category averages, overall score, evidence with citations and detected patterns
+- Use cases: consumer value proposition optimization, pricing leverage, satisfaction drivers
+
+### B2B Elements of Value (40 elements)
+- Categories: Table Stakes, Functional, Ease of Doing Business, Individual, Inspirational
+- Outputs: per‑element scoring, evidence, enterprise‑focused recommendations (sales enablement, retention)
+
+### Golden Circle (Revenue‑Focused)
+- Why, How, What (+ Who/Target where applicable)
+- Outputs: revenue impact per layer, ROI calculations, recommendations prioritized by impact/effort
+
+### CliftonStrengths (34 themes)
+- Domains: Strategic Thinking, Executing, Influencing, Relationship Building
+- Outputs: top 5 themes, domain scoring, evidence of theme manifestations, actionable team/org recommendations
+
+All framework analyses support a unified flow (single scrape feeding multiple analyses) and can be run individually through dedicated endpoints.
+
+## 🤖 **AI & MODEL ORCHESTRATION (Detailed)**
+
+- Primary model: Google Gemini (1.5 family)
+- Prompting: structured, deterministic prompts per framework with explicit JSON return contracts
+- Validation:
+  - Extract fenced JSON blocks or first object match
+  - Parse with fallback regex; reject non‑JSON
+  - Required fields checked, defaults applied conservatively
+- Timeouts/retries: configured per request; fail fast with typed error messages
+- Evidence capture: include citations (content sections) and pattern hits to support traceability
+- Data persistence: Prisma writes for overall scores and per‑element details to enable re‑fetch and dashboards
+
+## 🔌 **API SURFACE & CONTRACTS (Detailed)**
+
+High‑use routes and purpose (serverless on Vercel):
+- `POST /api/analyze/compare` – Compare existing vs proposed content, return side‑by‑side diffs, gaps, and recommendations
+- `POST /api/scrape-content` – Production‑safe content extraction for a given URL; standardized payload for downstream analyses
+- `POST /api/analyze/elements-value-b2c-standalone` – B2C scoring with evidence and category rollups
+- `POST /api/analyze/elements-value-b2b-standalone` – B2B scoring with enterprise‑grade insights
+- `POST /api/analyze/golden-circle-standalone` – Golden Circle with revenue impact modeling
+- `POST /api/analyze/clifton-strengths-standalone` – CliftonStrengths top themes and domain scoring
+
+Standard response envelope:
+```json
+{
+  "success": true,
+  "data": { /* framework-specific result */ },
+  "message": "Analysis completed successfully"
+}
+```
+
+Error pattern (typed):
+```json
+{
+  "success": false,
+  "error": "Operation failed",
+  "details": "Human-readable explanation"
+}
+```
+
+Notes
+- Validate inputs (URL/proposedContent) and enforce size limits
+- Persist analysis ids; clients can retrieve results and render dashboards incrementally
+
+## 🧰 **SCRAPING, PUPPETEER & TOOLS (Detailed)**
+
+- Production Content Extraction
+  - Serverless‑compatible extractors for HTML/text normalization
+  - Defensive parsing, blocked‑site handling, and graceful fallbacks
+- Puppeteer Google Tools (workaround)
+  - Automated scraping for Trends, PageSpeed, Search Console where feasible
+  - Non‑interactive flows, conservative timeouts, rate limiting
+  - Fallback: manual data entry via dashboard when automation is blocked
+- Scripts (selected)
+  - QA/test runners for endpoints and feature flows
+  - Lighthouse/page audits
+  - Setup utilities for API keys and environment validation
+
+Live references
+- Dashboard: https://zero-barriers-growth-accelerator-20-fgbn9enzi.vercel.app/dashboard
+- Content Comparison: https://zero-barriers-growth-accelerator-20-fgbn9enzi.vercel.app/dashboard/content-comparison
+- Preview (referenced commit): https://zero-barriers-growth-accelerato-git-5426a1-shayne-roys-projects.vercel.app/
+
+## 🗂️ **Content Categories for Prompts (Taxonomy)**
+
+Use these categories/subcategories to structure inputs and guide AI prompts for consistent scoring and evidence collection.
+
+### B2C Elements of Value (30)
+- Functional: saves_time, simplifies, makes_money, reduces_effort, reduces_cost, reduces_risk, organizes, integrates, connects, quality, variety, informs, avoids_hassles, sensory_appeal
+- Emotional: reduces_anxiety, rewards_me, nostalgia, design_aesthetics, badge_value, wellness, therapeutic, fun_entertainment, attractiveness, provides_access
+- Life‑Changing: provides_hope, self_actualization, motivation, heirloom, affiliation
+- Social Impact: self_transcendence
+
+### B2B Elements of Value (by category)
+- Table Stakes: meeting_specifications, acceptable_price, regulatory_compliance, ethical_standards
+- Functional: improved_top_line, cost_reduction, product_quality, scalability, innovation, risk_reduction, reach, flexibility, component_quality
+- Ease of Doing Business: time_savings, reduced_effort, decreased_hassles, information, transparency, organization, simplification, connection, integration, access, availability, variety, configurability, responsiveness, expertise, commitment, stability, cultural_fit
+- Individual: network_expansion, marketability, reputational_assurance, design_aesthetics_b2b, growth_development, reduced_anxiety_b2b, fun_perks
+- Inspirational: vision, hope_b2b, social_responsibility
+
+### CliftonStrengths (domains → themes)
+- Executing: achiever, arranger, belief, consistency, deliberative, discipline, focus, responsibility, restorative
+- Influencing: activator, command, communication, competition, maximizer, self_assurance, significance, woo
+- Relationship Building: adaptability, connectedness, developer, empathy, harmony, includer, individualization, positivity, relator
+- Strategic Thinking: analytical, context, futuristic, ideation, input, intellection, learner, strategic
+
+### Golden Circle (revenue‑focused variants)
+- Why: why_purpose, why_belief, why_cause, why_inspiration
+- How: how_process, how_methodology, how_differentiation, how_values
+- What: what_product, what_service, what_features, what_benefits
+
+Prompt guidance: tag extracted content and evidence with category → subcategory keys above; enforce JSON fields using these identifiers for consistent parsing and aggregation.
+
 ## 🚀 **QUICK START**
 
 ### **Prerequisites**
