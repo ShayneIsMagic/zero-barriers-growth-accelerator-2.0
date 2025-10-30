@@ -79,28 +79,29 @@ All frameworks have comprehensive documentation in `docs/archived/`:
 3. Regulatory Compliance
 4. Ethical Standards
 
-**TIER 2: Functional (9 elements)**
-- Economic (3): Improved Top Line, Cost Reduction, Scalability
-- Performance (6): Product Quality, Innovation, Risk Reduction, Reach, Flexibility, Component Quality
+**TIER 2: Functional (5 elements)**
+- Economic (2): Improved Top Line, Cost Reduction
+- Performance (3): Product Quality, Scalability, Innovation
 
 **TIER 3: Ease of Doing Business (19 elements)**
 - Productivity (5): Time Savings, Reduced Effort, Decreased Hassles, Information, Transparency
 - Operational (4): Organization, Simplification, Connection, Integration
-- Access (3): Access, Availability, Variety
+- Access (3): Availability, Variety, Configurability
 - Relationship (5): Responsiveness, Expertise, Commitment, Stability, Cultural Fit
-- Strategic (2): Risk Reduction, Reach
+- Strategic (2): Risk Reduction, Reach, Flexibility, Component Quality
+
+**Note:** Risk Reduction, Reach, Flexibility, and Component Quality are in Ease of Doing Business (Strategic subcategory), not in Functional Performance. This gives Ease 19 unique elements.
 
 **TIER 4: Individual (7 elements)**
 - Career (3): Network Expansion, Marketability, Reputational Assurance
 - Personal (4): Design & Aesthetics, Growth & Development, Reduced Anxiety, Fun and Perks
 
-**TIER 5: Inspirational (4 elements)**
-- Purpose (element under Purpose subcategory)
+**TIER 5: Inspirational (3 elements)**
 - Vision
-- Hope  
+- Hope
 - Social Responsibility
 
-**Note:** Purpose is a subcategory in B2B (as referenced in API routes), with Purpose being the element within that subcategory.
+**Note:** Purpose is a subcategory in B2B (not counted as an element). The Inspirational tier has 3 elements, bringing total to 40.
 
 **Total: 40 elements**
 
