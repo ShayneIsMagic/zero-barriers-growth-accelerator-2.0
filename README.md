@@ -446,16 +446,25 @@ MIT License - see LICENSE file for details
 ### Essential Documentation
 
 - **[Framework Comprehensive Map](./docs/FRAMEWORK_COMPREHENSIVE_MAP.md)** - Complete framework reference with all elements, categories, subcategories, counts, and fractional scoring systems
+  - References complete framework definitions in `docs/archived/framework-reference/`
 - **[Storage Architecture](./docs/STORAGE_ARCHITECTURE.md)** - Hybrid storage strategy (LocalForage + Supabase/Prisma)
 - **[Supabase Cleanup Guide](./docs/SUPABASE_CLEANUP_GUIDE.md)** - Database integration and graceful degradation patterns
+- **[Content Comparison Flow](./docs/CONTENT_COMPARISON_FLOW.md)** - Complete flow diagram and essential code for Content Comparison feature
+- **[Puppeteer Usage](./docs/PUPPETEER_USAGE.md)** - Puppeteer scraping service documentation and troubleshooting
 
-### Additional Documentation
+### Archived Documentation
 
-All documentation files are located in the `docs/` directory, including:
-- Integration guides
-- AI prompt templates
-- API contracts
-- Architecture documentation
+**Framework Reference Docs** (in `docs/archived/framework-reference/`):
+- `B2C_ELEMENTS_OF_VALUE_COMPLETE.md` - Complete 30-element B2C reference (940 lines)
+- `B2B_ELEMENTS_OF_VALUE_COMPLETE.md` - Complete 40-element B2B reference (1,028 lines)
+- `CLIFTONSTRENGTHS_COMPLETE.md` - Complete 34-theme CliftonStrengths reference (958 lines)
+- `GOLDEN_CIRCLE_COMPLETE.md` - Complete Golden Circle reference (543 lines)
+
+**Cleanup Records** (in `docs/archived/cleanup-docs/`):
+- Historical cleanup planning and execution docs
+- One-time audit and elimination lists
+
+**Note:** Historical development docs (210+ files) have been removed to reduce repository size. Framework references and cleanup records are preserved for reference.
 
 ## 📞 **SUPPORT**
 
