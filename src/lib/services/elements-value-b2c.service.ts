@@ -288,9 +288,55 @@ Return as valid JSON:
     const elements: ElementScore[] = [];
 
     for (const elem of aiResponse.elements || []) {
-      const stored = await prisma.b2c_element_scores.create({
-        data: {
-          eov_b2c_id: eov.id,
+            data: {
+              eov_b2c_id: eov.id,
+              element_name: elem.element_name,
+              element_category: elem.element_category,
+              pyramid_level: elem.pyramid_level || 1,
+              score: elem.score || 0,
+              weight: 1.0,
+              weighted_score: elem.score || 0,
+              evidence: elem.evidence || {},
+            },
+          });
+
+          const evidence = stored.evidence as {
+            patterns?: unknown[];
+            citations?: unknown[];
+            confidence?: number;
+          } | null;
+
+          elements.push({
+            ...stored,
+            score: stored.score ? Number(stored.score) : 0,
+            weight: stored.weight ? Number(stored.weight) : 0,
+            weighted_score: stored.weighted_score
+              ? Number(stored.weighted_score)
+              : 0,
+            evidence: {
+              patterns: Array.isArray(evidence?.patterns)
+                ? (evidence.patterns as string[])
+                : [],
+              citations: Array.isArray(evidence?.citations)
+                ? (evidence.citations as string[])
+                : [],
+              confidence: evidence?.confidence || 0,
+            },
+          });
+        }
+      } else {
+        // Generate fallback structure if Prisma unavailable
+        eov = {
+          id: `local-${analysisId}-${Date.now()}`,
+          analysis_id: analysisId,
+          overall_score: aiResponse.overall_score || 0,
+          functional_score: aiResponse.functional_score || 0,
+          emotional_score: aiResponse.emotional_score || 0,
+          life_changing_score: aiResponse.life_changing_score || 0,
+          social_impact_score: aiResponse.social_impact_score || 0,
+        };
+        elements = (aiResponse.elements || []).map((elem: any) => ({
+          id: `local-${Date.now()}-${Math.random()}`,
           element_name: elem.element_name,
           element_category: elem.element_category,
           pyramid_level: elem.pyramid_level || 1,
@@ -298,32 +344,30 @@ Return as valid JSON:
           weight: 1.0,
           weighted_score: elem.score || 0,
           evidence: elem.evidence || {},
-        },
-      });
-
-      const evidence = stored.evidence as {
-        patterns?: unknown[];
-        citations?: unknown[];
-        confidence?: number;
-      } | null;
-
-      elements.push({
-        ...stored,
-        score: stored.score ? Number(stored.score) : 0,
-        weight: stored.weight ? Number(stored.weight) : 0,
-        weighted_score: stored.weighted_score
-          ? Number(stored.weighted_score)
-          : 0,
-        evidence: {
-          patterns: Array.isArray(evidence?.patterns)
-            ? (evidence.patterns as string[])
-            : [],
-          citations: Array.isArray(evidence?.citations)
-            ? (evidence.citations as string[])
-            : [],
-          confidence: evidence?.confidence || 0,
-        },
-      });
+        }));
+      }
+    } catch (error) {
+      console.warn('Supabase storage failed, using LocalForage only:', error);
+      // Generate fallback structure
+      eov = {
+        id: `local-${analysisId}-${Date.now()}`,
+        analysis_id: analysisId,
+        overall_score: aiResponse.overall_score || 0,
+        functional_score: aiResponse.functional_score || 0,
+        emotional_score: aiResponse.emotional_score || 0,
+        life_changing_score: aiResponse.life_changing_score || 0,
+        social_impact_score: aiResponse.social_impact_score || 0,
+      };
+      elements = (aiResponse.elements || []).map((elem: any) => ({
+        id: `local-${Date.now()}-${Math.random()}`,
+        element_name: elem.element_name,
+        element_category: elem.element_category,
+        pyramid_level: elem.pyramid_level || 1,
+        score: elem.score || 0,
+        weight: 1.0,
+        weighted_score: elem.score || 0,
+        evidence: elem.evidence || {},
+      }));
     }
 
     return {
