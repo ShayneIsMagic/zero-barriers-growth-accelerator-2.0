@@ -25,6 +25,70 @@ export interface PageData {
     h5: string[];
     h6: string[];
   };
+  // Enhanced SEO metadata
+  metaTags?: {
+    title: string;
+    description: string;
+    keywords: string;
+    author: string;
+    robots: string;
+    viewport: string;
+    charset: string;
+    language: string;
+    canonical: string;
+    ogTitle: string;
+    ogDescription: string;
+    ogImage: string;
+    ogUrl: string;
+    ogType: string;
+    ogSiteName: string;
+    ogLocale: string;
+    twitterCard: string;
+    twitterTitle: string;
+    twitterDescription: string;
+    twitterImage: string;
+    twitterSite: string;
+    twitterCreator: string;
+    geoRegion: string;
+    geoPlacename: string;
+    geoPosition: string;
+    revisitAfter: string;
+    rating: string;
+    distribution: string;
+    copyright: string;
+    generator: string;
+    applicationName: string;
+    themeColor: string;
+    colorScheme: string;
+    allMetaTags?: Array<{ name: string; content: string; httpEquiv: string }>;
+  };
+  // Analytics tracking data
+  analytics?: {
+    googleAnalytics4: {
+      measurementIds: string[];
+      config: any;
+      scriptsFound: number;
+    };
+    googleTagManager: {
+      containerIds: string[];
+      scriptsFound: number;
+    };
+    facebookPixel: {
+      pixelId: string | null;
+      found: boolean;
+    };
+    otherAnalytics: string[];
+    allAnalyticsScripts: string[];
+  };
+  // Comprehensive keywords
+  keywords?: {
+    metaKeywords: string[];
+    contentKeywords: string[];
+    headingKeywords: string[];
+    altTextKeywords: string[];
+    allKeywords: string[];
+    keywordFrequency: Record<string, number>;
+  };
   content: {
     text: string;
     wordCount: number;
@@ -743,23 +807,260 @@ export class PuppeteerComprehensiveCollector {
       };
 
       const getMetaTags = () => {
-        return {
+        // Standard meta tags
+        const standardMeta = {
           title: document.title,
           description: getMetaContent('description'),
           keywords: getMetaContent('keywords'),
           author: getMetaContent('author'),
           robots: getMetaContent('robots'),
+          viewport: getMetaContent('viewport'),
+          charset: document.characterSet || '',
+          language: document.documentElement.lang || '',
           canonical:
             document
               .querySelector('link[rel="canonical"]')
               ?.getAttribute('href') || '',
+        };
+
+        // Open Graph tags
+        const openGraph = {
           ogTitle: getMetaContent('og:title'),
           ogDescription: getMetaContent('og:description'),
           ogImage: getMetaContent('og:image'),
+          ogUrl: getMetaContent('og:url'),
+          ogType: getMetaContent('og:type'),
+          ogSiteName: getMetaContent('og:site_name'),
+          ogLocale: getMetaContent('og:locale'),
+        };
+
+        // Twitter Card tags
+        const twitter = {
           twitterCard: getMetaContent('twitter:card'),
           twitterTitle: getMetaContent('twitter:title'),
           twitterDescription: getMetaContent('twitter:description'),
           twitterImage: getMetaContent('twitter:image'),
+          twitterSite: getMetaContent('twitter:site'),
+          twitterCreator: getMetaContent('twitter:creator'),
+        };
+
+        // Additional SEO meta tags
+        const seoMeta = {
+          geoRegion: getMetaContent('geo.region'),
+          geoPlacename: getMetaContent('geo.placename'),
+          geoPosition: getMetaContent('geo.position'),
+          revisitAfter: getMetaContent('revisit-after'),
+          rating: getMetaContent('rating'),
+          distribution: getMetaContent('distribution'),
+          copyright: getMetaContent('copyright'),
+          generator: getMetaContent('generator'),
+          applicationName: getMetaContent('application-name'),
+          themeColor: getMetaContent('theme-color'),
+          colorScheme: getMetaContent('color-scheme'),
+        };
+
+        // Collect all meta tags
+        const allMetaTags = Array.from(document.querySelectorAll('meta')).map(
+          (meta) => ({
+            name: meta.getAttribute('name') || meta.getAttribute('property') || '',
+            content: meta.getAttribute('content') || '',
+            httpEquiv: meta.getAttribute('http-equiv') || '',
+          })
+        );
+
+        return {
+          ...standardMeta,
+          ...openGraph,
+          ...twitter,
+          ...seoMeta,
+          allMetaTags,
+        };
+      };
+
+      const getAnalyticsData = () => {
+        // Google Analytics 4 (gtag.js)
+        const ga4Scripts = Array.from(document.querySelectorAll('script')).filter(
+          (script) =>
+            script.textContent?.includes('gtag') ||
+            script.textContent?.includes('GA_MEASUREMENT_ID') ||
+            script.src.includes('googletagmanager.com')
+        );
+
+        const ga4Ids: string[] = [];
+        const ga4Config: any = {};
+
+        ga4Scripts.forEach((script) => {
+          const content = script.textContent || '';
+          // Extract GA4 Measurement ID (G-XXXXXXXXXX)
+          const ga4Match = content.match(/['"]G-[A-Z0-9]+['"]/g);
+          if (ga4Match) {
+            ga4Ids.push(...ga4Match.map((id) => id.replace(/['"]/g, '')));
+          }
+
+          // Extract gtag config
+          const configMatch = content.match(/gtag\(['"]config['"],\s*['"]([^'"]+)['"]/);
+          if (configMatch) {
+            ga4Config.measurementId = configMatch[1];
+          }
+        });
+
+        // Google Tag Manager
+        const gtmScripts = Array.from(document.querySelectorAll('script')).filter(
+          (script) =>
+            script.src.includes('googletagmanager.com/gtm.js') ||
+            script.textContent?.includes('GTM-')
+        );
+
+        const gtmIds: string[] = [];
+        gtmScripts.forEach((script) => {
+          const gtmMatch =
+            script.src.match(/GTM-[A-Z0-9]+/) ||
+            script.textContent?.match(/GTM-[A-Z0-9]+/);
+          if (gtmMatch) {
+            gtmIds.push(gtmMatch[0]);
+          }
+        });
+
+        // Facebook Pixel
+        const fbPixel = Array.from(document.querySelectorAll('script')).find(
+          (script) =>
+            script.textContent?.includes('fbq') ||
+            script.src.includes('facebook.net')
+        );
+        const fbPixelId = fbPixel?.textContent?.match(/['"](\d+)['"]/)?.[1] || null;
+
+        // Other analytics scripts
+        const analyticsScripts = Array.from(
+          document.querySelectorAll('script[src]')
+        )
+          .map((script) => (script as HTMLScriptElement).src)
+          .filter(
+            (src) =>
+              src.includes('analytics') ||
+              src.includes('google-analytics') ||
+              src.includes('mixpanel') ||
+              src.includes('segment') ||
+              src.includes('amplitude')
+          );
+
+        return {
+          googleAnalytics4: {
+            measurementIds: [...new Set(ga4Ids)],
+            config: ga4Config,
+            scriptsFound: ga4Scripts.length,
+          },
+          googleTagManager: {
+            containerIds: [...new Set(gtmIds)],
+            scriptsFound: gtmScripts.length,
+          },
+          facebookPixel: {
+            pixelId: fbPixelId,
+            found: !!fbPixel,
+          },
+          otherAnalytics: analyticsScripts,
+          allAnalyticsScripts: Array.from(document.querySelectorAll('script[src]'))
+            .map((s) => (s as HTMLScriptElement).src)
+            .filter((src) => src.includes('analytics') || src.includes('tracking')),
+        };
+      };
+
+      const extractKeywords = () => {
+        // Extract keywords from multiple sources
+        const metaKeywords = getMetaContent('keywords')
+          .split(',')
+          .map((k) => k.trim())
+          .filter((k) => k.length > 0);
+
+        // Extract from content (common words, excluding stop words)
+        const text = document.body.textContent || '';
+        const words = text
+          .toLowerCase()
+          .replace(/[^\w\s]/g, ' ')
+          .split(/\s+/)
+          .filter((word) => word.length > 4);
+
+        const stopWords = new Set([
+          'the',
+          'be',
+          'to',
+          'of',
+          'and',
+          'a',
+          'in',
+          'that',
+          'have',
+          'i',
+          'it',
+          'for',
+          'not',
+          'on',
+          'with',
+          'he',
+          'as',
+          'you',
+          'do',
+          'at',
+          'this',
+          'but',
+          'his',
+          'by',
+          'from',
+          'they',
+          'we',
+          'say',
+          'her',
+          'she',
+          'or',
+          'an',
+          'will',
+          'my',
+          'one',
+          'all',
+          'would',
+          'there',
+          'their',
+        ]);
+
+        const wordFreq: Record<string, number> = {};
+        words.forEach((word) => {
+          if (!stopWords.has(word) && word.length > 4) {
+            wordFreq[word] = (wordFreq[word] || 0) + 1;
+          }
+        });
+
+        const topKeywords = Object.entries(wordFreq)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 30)
+          .map(([word]) => word);
+
+        // Extract from headings
+        const headingKeywords = Array.from(
+          document.querySelectorAll('h1, h2, h3')
+        )
+          .map((h) => h.textContent?.toLowerCase().split(/\s+/))
+          .flat()
+          .filter((word) => word && word.length > 4 && !stopWords.has(word));
+
+        // Extract from alt text
+        const altKeywords = Array.from(document.querySelectorAll('img[alt]'))
+          .map((img) => img.getAttribute('alt')?.toLowerCase().split(/\s+/))
+          .flat()
+          .filter((word) => word && word.length > 4);
+
+        return {
+          metaKeywords,
+          contentKeywords: topKeywords,
+          headingKeywords: [...new Set(headingKeywords)],
+          altTextKeywords: [...new Set(altKeywords)],
+          allKeywords: [
+            ...new Set([
+              ...metaKeywords,
+              ...topKeywords.slice(0, 20),
+              ...headingKeywords.slice(0, 10),
+              ...altKeywords.slice(0, 10),
+            ]),
+          ],
+          keywordFrequency: wordFreq,
         };
       };
 
@@ -828,6 +1129,10 @@ export class PuppeteerComprehensiveCollector {
         title: document.title,
         metaDescription: getMetaContent('description'),
         headings: getHeadings(),
+        // Enhanced SEO/GA4 data
+        metaTags: getMetaTags(),
+        analytics: getAnalyticsData(),
+        keywords: extractKeywords(),
         content: {
           text,
           wordCount,
