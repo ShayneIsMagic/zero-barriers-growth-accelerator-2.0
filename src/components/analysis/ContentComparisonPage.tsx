@@ -7,8 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { Copy, Download, GitCompare, History, Loader2, Plus, Save } from 'lucide-react';
-import { useState } from 'react';
+import { ClientContentStorageService } from '@/lib/services/client-content-storage.service';
+import { Copy, Download, GitCompare, History, Loader2, Plus, Save, Database } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export function ContentComparisonPage() {
   const [url, setUrl] = useState('');
@@ -22,6 +23,19 @@ export function ContentComparisonPage() {
   const [proposedContentId, setProposedContentId] = useState<string | null>(null);
   const [isSavingSnapshot, setIsSavingSnapshot] = useState(false);
   const [isCreatingProposed, setIsCreatingProposed] = useState(false);
+  
+  // Cache state
+  const [isFromCache, setIsFromCache] = useState(false);
+  const [cacheInfo, setCacheInfo] = useState<{ urlCount: number; totalSize: number } | null>(null);
+
+  // Load cache info on mount
+  useEffect(() => {
+    const loadCacheInfo = async () => {
+      const info = await ClientContentStorageService.getCacheInfo();
+      setCacheInfo(info);
+    };
+    loadCacheInfo();
+  }, []);
 
   const runComparison = async () => {
     if (!url.trim()) {
@@ -32,24 +46,97 @@ export function ContentComparisonPage() {
     setIsAnalyzing(true);
     setError(null);
     setResult(null);
+    setIsFromCache(false);
 
     try {
-      const response = await fetch('/api/analyze/compare', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          url: url.trim(),
-          proposedContent: proposedContent.trim(),
-          analysisType: 'full'
-        })
-      });
+      // Step 1: Check Local Forage cache first
+      const cached = await ClientContentStorageService.getComprehensiveData(url.trim());
+      
+      if (cached) {
+        console.log('📦 Using cached data from Local Forage');
+        setIsFromCache(true);
+        
+        // Check if we have a cached analysis result too
+        const cachedAnalysis = await ClientContentStorageService.getAnalysisResult(url.trim());
+        
+        if (cachedAnalysis && proposedContent.trim() === '') {
+          // Use cached analysis if no proposed content
+          setResult(cachedAnalysis.result);
+          setIsAnalyzing(false);
+          return;
+        }
+        
+        // Use cached comprehensive data, but still run analysis if proposed content exists
+        const response = await fetch('/api/analyze/compare', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            url: url.trim(),
+            proposedContent: proposedContent.trim(),
+            analysisType: 'full',
+            useStored: false, // Don't check server cache, we already have local cache
+          })
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (data.success) {
-        setResult(data);
+        if (data.success) {
+          setResult(data);
+          
+          // Store in Local Forage
+          if (data.comprehensive) {
+            await ClientContentStorageService.storeComprehensiveData(
+              url.trim(),
+              data.comprehensive,
+              data.existing,
+              data.storedSnapshotId
+            );
+          }
+          
+          // Store analysis result
+          await ClientContentStorageService.storeAnalysisResult(url.trim(), data);
+        } else {
+          setError(data.error || 'Comparison failed');
+        }
       } else {
-        setError(data.error || 'Comparison failed');
+        // No cache, fetch from API
+        console.log('🔍 No cached data, fetching from API...');
+        setIsFromCache(false);
+        
+        const response = await fetch('/api/analyze/compare', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            url: url.trim(),
+            proposedContent: proposedContent.trim(),
+            analysisType: 'full'
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          setResult(data);
+          
+          // Store in Local Forage for future use
+          if (data.comprehensive) {
+            await ClientContentStorageService.storeComprehensiveData(
+              url.trim(),
+              data.comprehensive,
+              data.existing,
+              data.storedSnapshotId
+            );
+          }
+          
+          // Store analysis result
+          await ClientContentStorageService.storeAnalysisResult(url.trim(), data);
+          
+          // Update cache info
+          const info = await ClientContentStorageService.getCacheInfo();
+          setCacheInfo(info);
+        } else {
+          setError(data.error || 'Comparison failed');
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to compare');
@@ -191,17 +278,53 @@ export function ContentComparisonPage() {
     }
   };
 
+  const clearCache = async () => {
+    if (url.trim()) {
+      await ClientContentStorageService.clearCache(url.trim());
+      const info = await ClientContentStorageService.getCacheInfo();
+      setCacheInfo(info);
+    }
+  };
+
+  const clearAllCache = async () => {
+    if (confirm('Clear all cached content? This cannot be undone.')) {
+      await ClientContentStorageService.clearAllCache();
+      const info = await ClientContentStorageService.getCacheInfo();
+      setCacheInfo(info);
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl flex items-center gap-2">
-            <GitCompare className="h-6 w-6" />
-            Content Comparison Analysis
-          </CardTitle>
-          <CardDescription>
-            Compare existing website content against proposed new content. Get AI-powered side-by-side analysis.
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-2xl flex items-center gap-2">
+                <GitCompare className="h-6 w-6" />
+                Content Comparison Analysis
+              </CardTitle>
+              <CardDescription>
+                Compare existing website content against proposed new content. Get AI-powered side-by-side analysis.
+              </CardDescription>
+            </div>
+            {cacheInfo && (
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="flex items-center gap-1">
+                  <Database className="h-3 w-3" />
+                  {cacheInfo.urlCount} cached
+                </Badge>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearAllCache}
+                  title="Clear all cached content"
+                >
+                  Clear All
+                </Button>
+              </div>
+            )}
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* URL Input */}
@@ -268,24 +391,40 @@ New compelling description that highlights our unique value proposition.
           )}
 
           {/* Analyze Button */}
-          <Button
-            onClick={runComparison}
-            disabled={isAnalyzing || !url.trim()}
-            className="w-full"
-            size="lg"
-          >
-            {isAnalyzing ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Analyzing & Comparing...
-              </>
-            ) : (
-              <>
-                <GitCompare className="mr-2 h-4 w-4" />
-                {proposedContent ? 'Compare Existing vs. Proposed' : 'Analyze Existing Content'}
-              </>
+          <div className="space-y-2">
+            <Button
+              onClick={runComparison}
+              disabled={isAnalyzing || !url.trim()}
+              className="w-full"
+              size="lg"
+            >
+              {isAnalyzing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Analyzing & Comparing...
+                </>
+              ) : (
+                <>
+                  <GitCompare className="mr-2 h-4 w-4" />
+                  {proposedContent ? 'Compare Existing vs. Proposed' : 'Analyze Existing Content'}
+                </>
+              )}
+            </Button>
+            {isFromCache && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Database className="h-3 w-3" />
+                <span>Using cached data from Local Forage</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearCache}
+                  className="h-auto p-1 text-xs"
+                >
+                  Clear cache
+                </Button>
+              </div>
             )}
-          </Button>
+          </div>
 
           {/* Version Control Buttons */}
           {result && (
