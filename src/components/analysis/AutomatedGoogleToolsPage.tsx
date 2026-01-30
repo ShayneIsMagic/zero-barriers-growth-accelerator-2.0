@@ -108,14 +108,11 @@ export function AutomatedGoogleToolsPage() {
 
       if (result.success) {
         setScrapedData(result.data);
-        console.log('Scraped data:', result.data);
       } else {
-        console.error('Scraping failed:', result.error);
         // Still show the tool links even if scraping fails
         handleGenerateLinks();
       }
-    } catch (error) {
-      console.error('Scraping error:', error);
+    } catch (_error) {
       // Fallback to manual links
       handleGenerateLinks();
     } finally {
@@ -160,7 +157,7 @@ ${prompt.format}`;
       // For now, just display the prompt - in production, this would send to Gemini
       setAnalysisResult(fullPrompt);
     } catch (error) {
-      console.error('Analysis failed:', error);
+      // Analysis failed - error is handled by setError above
     }
   };
 

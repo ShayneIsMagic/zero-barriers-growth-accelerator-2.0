@@ -7,22 +7,24 @@ AI-powered marketing optimization platform that systematically analyzes content 
 ### **Core Analysis Frameworks**
 
 - **Content Comparison** - Side-by-side analysis of existing vs proposed content
-- **B2C Elements of Value** - 30-element consumer value pyramid analysis
-- **B2B Elements of Value** - 40-element business value analysis
-- **Golden Circle** - Simon Sinek's Why/How/What/Who framework
-- **CliftonStrengths** - Gallup's 34 strengths analysis
+- **B2C Elements of Value** - 30-element consumer value analysis (flat fractional scoring)
+- **B2B Elements of Value** - 40-element business value analysis (flat fractional scoring)
+- **Golden Circle** - Simon Sinek's Why/How/What/Who framework (flat fractional scoring)
+- **CliftonStrengths** - Gallup's 34 strengths analysis (flat fractional scoring)
+- **Brand Archetypes** - 12 archetypal brand identities for narrative analysis
 
 ### **Enterprise Features**
 
 - **Content Version Control** - Track content changes and versions
-- **Structured Data Storage** - Organized analysis results
-- **Fractional Scoring** - Transparent, count-based scoring system
-- **Universal Scraper** - Comprehensive website content extraction
+- **Structured Data Storage** - Organized analysis results with auto-save
+- **Flat Fractional Scoring** - Transparent 0.0-1.0 scoring system (all elements equal)
+- **Universal Scraper** - Comprehensive Puppeteer-based content extraction with SEO/GA4 data
+- **Client-Side Caching** - Local Forage (IndexedDB) for offline capability
 - **JWT Authentication** - Secure user management
 
 ## 🛠️ **TECH STACK**
 
-- **Frontend**: Next.js 14, TypeScript, Tailwind CSS
+- **Frontend**: Next.js 15.5.5, TypeScript, Tailwind CSS
 - **Backend**: Next.js API Routes, Prisma ORM
 - **Database**: PostgreSQL (Supabase)
 - **AI**: Google Gemini API
@@ -104,15 +106,29 @@ GOOGLE_GEMINI_API_KEY=your-gemini-key
 
 1. Go to `/dashboard/elements-value-b2c`
 2. Enter website URL
-3. Click "Analyze Golden Circle"
-4. View 30-element consumer value analysis
+3. Click "Analyze B2C Elements"
+4. View 30-element consumer value analysis with flat fractional scoring (0.0-1.0)
 
 ### **B2B Elements of Value Analysis**
 
 1. Go to `/dashboard/elements-value-b2b`
 2. Enter website URL
+3. Click "Analyze B2B Elements"
+4. View 40-element business value analysis with flat fractional scoring (0.0-1.0)
+
+### **Golden Circle Analysis**
+
+1. Go to `/dashboard/golden-circle`
+2. Enter website URL
 3. Click "Analyze Golden Circle"
-4. View 40-element business value analysis
+4. View WHY/HOW/WHAT/WHO analysis with flat fractional scoring (0.0-1.0)
+
+### **CliftonStrengths Analysis**
+
+1. Go to `/dashboard/clifton-strengths`
+2. Enter website URL
+3. Click "Analyze CliftonStrengths"
+4. View 34-theme strengths analysis with flat fractional scoring (0.0-1.0)
 
 ## 🏗️ **ARCHITECTURE**
 
@@ -120,7 +136,7 @@ GOOGLE_GEMINI_API_KEY=your-gemini-key
 
 - **User** - User authentication and profiles
 - **Analysis** - Analysis records and metadata
-- **ContentSnapshot** - Website content snapshots
+- **ContentSnapshot** - Website content snapshots with SEO/GA4 metadata
 - **ProposedContent** - Version-controlled proposed content
 - **ContentComparison** - Detailed content comparisons
 - **FrameworkResult** - Structured analysis results
@@ -129,11 +145,21 @@ GOOGLE_GEMINI_API_KEY=your-gemini-key
 
 ### **Key Components**
 
-- **ContentComparisonPage** - Main analysis interface
+- **ContentComparisonPage** - Main analysis interface with Local Forage caching
 - **UnifiedDataCollection** - Universal data input
 - **AssessmentResultsView** - Standardized result display
-- **UniversalPuppeteerScraper** - Website content extraction
+- **PuppeteerComprehensiveCollector** - Enhanced website content extraction (SEO, GA4, keywords)
+- **ContentStorageService** - Server-side content snapshot management
+- **ClientContentStorageService** - Client-side Local Forage caching
 - **UnifiedAIAnalysisService** - AI analysis orchestration
+
+### **Content Collection Features**
+
+- **SEO Metadata Extraction**: Meta tags, Open Graph, Twitter Cards, canonical URLs
+- **Analytics Detection**: Google Analytics 4 (GA4), Google Tag Manager (GTM), Facebook Pixel
+- **Keywords Analysis**: Meta keywords, content keywords, heading keywords, alt text keywords
+- **Performance Metrics**: Load time, FCP, LCP, CLS
+- **Accessibility Audit**: Alt texts, ARIA labels, heading hierarchy
 
 ## 🚀 **DEPLOYMENT**
 
@@ -151,18 +177,62 @@ GOOGLE_GEMINI_API_KEY=your-gemini-key
 
 ## 📈 **SCORING SYSTEM**
 
-### **Fractional Scoring**
+### **Flat Fractional Scoring (Version 2.0)**
 
-- **Format**: `18/30` (present elements / total elements)
-- **Transparent**: Based on actual element counts
-- **Contextual**: Category-specific breakdowns
-- **Actionable**: Clear improvement opportunities
+All frameworks use **flat fractional scoring** where every element counts equally. No weights, no arbitrary importance - just transparent, objective scoring.
+
+- **Format**: `0.0-1.0` fractional scores per element
+- **Philosophy**: Every element matters equally - simple averages throughout
+- **Transparent**: Easy to understand calculations (sum ÷ count)
+- **Fair**: No tier or category weights applied
+- **Actionable**: Clear priorities for improvement
+
+### **Scoring Scale**
+
+- **0.8-1.0** - **Excellent** - Industry-leading, exceptional value
+- **0.6-0.79** - **Good** - Above market average, solid delivery
+- **0.4-0.59** - **Needs Work** - Below expectations, requires improvement
+- **0.0-0.39** - **Poor** - Weak or non-existent, critical gap
+
+### **Framework Scoring Details**
+
+#### **B2C Elements of Value (30 elements)**
+- **Tier 1: Functional** (14 elements) - Average of 14 scores
+- **Tier 2: Emotional** (10 elements) - Average of 10 scores
+- **Tier 3: Life-Changing** (5 elements) - Average of 5 scores
+- **Tier 4: Social Impact** (1 element) - Single score
+- **Overall Score**: Sum of all 30 scores ÷ 30
+
+#### **B2B Elements of Value (40 elements)**
+- **Tier 1: Table Stakes** (4 elements) - Average of 4 scores
+- **Tier 2: Functional** (7 elements) - Average of 7 scores
+- **Tier 3: Ease of Doing Business** (19 elements) - Average of 19 scores
+- **Tier 4: Individual** (7 elements) - Average of 7 scores
+- **Tier 5: Inspirational** (3 elements) - Average of 3 scores
+- **Overall Score**: Sum of all 40 scores ÷ 40
+
+#### **Golden Circle (4 components)**
+Each component scored across 6 dimensions (0.0-1.0 each):
+- **WHY** (Purpose): Clarity, Authenticity, Inspiration, Consistency, Differentiation, Emotional Resonance
+- **HOW** (Differentiators): Uniqueness, Clarity, Consistency, Alignment, Proof Points, Competitive Moat
+- **WHAT** (Offerings): Clarity, Alignment, Quality, Proof, Evolution, Market Fit
+- **WHO** (Audience): Clarity, Alignment, Specificity, Understanding, Resonance, Loyalty
+- **Component Score**: Average of 6 dimensions
+- **Overall Score**: Average of 4 component scores
+
+#### **CliftonStrengths (34 themes)**
+- **Domain 1: Strategic Thinking** (8 themes) - Average of 8 scores
+- **Domain 2: Relationship Building** (9 themes) - Average of 9 scores
+- **Domain 3: Influencing** (8 themes) - Average of 8 scores
+- **Domain 4: Executing** (9 themes) - Average of 9 scores
+- **Overall Score**: Sum of all 34 theme scores ÷ 34
 
 ### **Example Scores**
 
-- B2C Elements: `18/30` (60% coverage)
-- B2B Elements: `25/40` (62.5% coverage)
-- Golden Circle: `3/4` (75% coverage)
+- B2C Elements: `0.68` overall (Good - 30 elements averaged)
+- B2B Elements: `0.74` overall (Good - 40 elements averaged)
+- Golden Circle: `0.82` overall (Excellent - 4 components averaged)
+- CliftonStrengths: `0.63` overall (Good - 34 themes averaged)
 
 ## 🔒 **SECURITY**
 
@@ -171,6 +241,31 @@ GOOGLE_GEMINI_API_KEY=your-gemini-key
 - **Password Hashing** - bcrypt encryption
 - **API Rate Limiting** - Prevent abuse
 - **Input Validation** - Sanitize user inputs
+
+## 🎭 **BRAND ARCHETYPES**
+
+The platform supports analysis using the 12 Brand Archetypes framework for narrative and storytelling analysis:
+
+1. **Sage** - Wisdom, knowledge, mentorship
+2. **Explorer** - Freedom, adventure, discovery
+3. **Hero** - Courage, strength, determination
+4. **Regular Guy/Girl** - Belonging, relatability, authenticity
+5. **Caregiver** - Compassion, nurturing, support
+6. **Jester** - Joy, humor, entertainment
+7. **Innocent** - Optimism, simplicity, purity
+8. **Outlaw** - Revolution, rebellion, change
+9. **Magician** - Transformation, vision, innovation
+10. **Creator** - Innovation, artistry, expression
+11. **Ruler** - Leadership, control, excellence
+12. **Lover** - Passion, intimacy, connection
+
+### **Narrative Archetypes**
+
+The platform can analyze content using storytelling frameworks:
+- **Happily Ever After** - Success stories and positive outcomes
+- **Rebirth** - Transformation and redemption narratives
+- **Overcoming the Monster** - Confronting and defeating challenges
+- **Rags to Riches** - Journey from struggle to success
 
 ## 📝 **LICENSE**
 

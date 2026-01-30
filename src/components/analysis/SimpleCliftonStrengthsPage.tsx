@@ -90,12 +90,10 @@ export function SimpleCliftonStrengthsPage() {
 
       if (data.success) {
         setScrapedContent(data.data);
-        console.log('✅ Content scraped successfully');
       } else {
         throw new Error(data.error || 'Failed to scrape content');
       }
     } catch (error) {
-      console.error('❌ Content scraping failed:', error);
       setError(
         error instanceof Error ? error.message : 'Failed to scrape content'
       );
@@ -132,12 +130,11 @@ export function SimpleCliftonStrengthsPage() {
 
       if (data.success) {
         setResult(data.data);
-        console.log('✅ CliftonStrengths analysis completed');
+        // CliftonStrengths analysis completed
       } else {
         throw new Error(data.error || 'Analysis failed');
       }
     } catch (error) {
-      console.error('❌ CliftonStrengths analysis failed:', error);
       setError(error instanceof Error ? error.message : 'Analysis failed');
     } finally {
       setIsAnalyzing(false);
@@ -183,7 +180,7 @@ export function SimpleCliftonStrengthsPage() {
             CliftonStrengths Analysis
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300">
-            Discover your organization's dominant strengths and cultural
+            Discover your organization&apos;s dominant strengths and cultural
             patterns
           </p>
         </div>
@@ -366,7 +363,7 @@ export function SimpleCliftonStrengthsPage() {
                   Top 5 CliftonStrengths Themes
                 </CardTitle>
                 <CardDescription>
-                  The organization's strongest themes based on content analysis
+                  The organization&apos;s strongest themes based on content analysis
                 </CardDescription>
               </CardHeader>
               <CardContent>

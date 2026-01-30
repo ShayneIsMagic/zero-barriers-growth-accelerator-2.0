@@ -201,7 +201,7 @@ export class StructuredStorageService {
    */
   private static extractOverallScore(
     results: any,
-    framework: string
+    _framework: string
   ): number | null {
     if (results.overall_score) {
       if (
@@ -339,7 +339,7 @@ export class StructuredStorageService {
   /**
    * Extract elements from category
    */
-  private static extractElements(categoryInfo: any, framework: string): any[] {
+  private static extractElements(categoryInfo: any, _framework: string): any[] {
     if (categoryInfo.elements) {
       return categoryInfo.elements.map((element: any) => ({
         name: element.element_name || element.name,

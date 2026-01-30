@@ -18,7 +18,7 @@ interface ComingSoonModuleProps {
 }
 
 export const ComingSoonModule: React.FC<ComingSoonModuleProps> = ({
-  id,
+  id: _id,
   name,
   description,
   status,
@@ -129,7 +129,7 @@ export const ComingSoonModule: React.FC<ComingSoonModuleProps> = ({
               <ol className="mt-1 list-inside list-decimal space-y-1">
                 <li>Copy the prompt above</li>
                 <li>Paste it into ChatGPT, Claude, or Gemini</li>
-                <li>Replace "your-website-url" with your actual URL</li>
+                <li>Replace &quot;your-website-url&quot; with your actual URL</li>
                 <li>Get immediate AI analysis results</li>
               </ol>
             </div>

@@ -70,8 +70,8 @@ export class ElementsOfValueB2CService {
    */
   private static async buildElementsPrompt(
     content: any,
-    industry?: string,
-    patterns?: PatternMatch[]
+    _industry?: string,
+    _patterns?: PatternMatch[]
   ): Promise<string> {
     const basePrompt = `
 Analyze this website using the Elements of Value (B2C) framework.
@@ -254,7 +254,7 @@ Return as valid JSON:
   private static async storeElementsAnalysis(
     analysisId: string,
     aiResponse: any,
-    patterns: PatternMatch[]
+    _patterns: PatternMatch[]
   ): Promise<ElementsOfValueB2CAnalysis> {
     // Create main EoV B2C record using Prisma client
     const eov = await prisma.elements_of_value_b2c.create({

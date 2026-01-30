@@ -52,7 +52,7 @@ export class ClaudeProjectIntegrationService {
 
     try {
       // Initialize Claude chat with project context
-      const claudeResponse = await this.initializeClaudeChat(
+      await this.initializeClaudeChat(
         sessionId,
         websiteUrl
       );
@@ -106,13 +106,13 @@ export class ClaudeProjectIntegrationService {
       );
 
       // Parse and validate response
-      const analysis = this.parseClaudeResponse(claudeResponse, assessmentType);
+      const parsedAnalysis = this.parseClaudeResponse(claudeResponse, assessmentType);
 
       const result: AssessmentResult = {
         clientId: session.clientId,
         assessmentType,
         success: true,
-        analysis,
+        analysis: parsedAnalysis,
         timestamp: new Date().toISOString(),
         claudeChatUrl: this.generateChatUrl(session.sessionId),
       };
@@ -154,7 +154,7 @@ export class ClaudeProjectIntegrationService {
     sessionId: string,
     websiteUrl: string
   ): Promise<any> {
-    const initPrompt = `You are working within the Zero Barriers Growth Accelerator project.
+    const _initPrompt = `You are working within the Zero Barriers Growth Accelerator project.
 
 PROJECT CONTEXT:
 - This is a business analysis platform that helps organizations identify revenue opportunities
@@ -304,7 +304,7 @@ Please provide a comprehensive analysis following the exact JSON format specifie
    * Get client session by ID
    */
   static async getClientSession(
-    clientId: string
+    _clientId: string
   ): Promise<ClientSession | null> {
     // In a real implementation, this would query a database
     // For now, return null

@@ -106,8 +106,7 @@ export class SimpleCliftonStrengthsService {
       return analysis;
     } catch (parseError) {
       console.error('Failed to parse AI response:', parseError);
-      // Return a fallback structure
-      return this.getFallbackAnalysis();
+      throw new Error(`CliftonStrengths analysis failed: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
     }
   }
 
@@ -177,69 +176,5 @@ Return your analysis as a valid JSON object with this exact structure:
 }`;
   }
 
-  /**
-   * Get fallback analysis structure
-   */
-  private static getFallbackAnalysis(): any {
-    return {
-      overall_score: 75,
-      strategic_thinking_score: 70,
-      executing_score: 80,
-      influencing_score: 65,
-      relationship_building_score: 75,
-      dominant_domain: 'Executing',
-      top_5_themes: [
-        {
-          theme_name: 'Achiever',
-          domain: 'Executing',
-          score: 85,
-          evidence: ['Focus on results and productivity'],
-          manifestation:
-            'Strong drive to accomplish goals and maintain high standards',
-        },
-        {
-          theme_name: 'Responsibility',
-          domain: 'Executing',
-          score: 80,
-          evidence: ['Commitment to follow through on commitments'],
-          manifestation:
-            'Takes psychological ownership of commitments and follows through',
-        },
-        {
-          theme_name: 'Learner',
-          domain: 'Strategic Thinking',
-          score: 75,
-          evidence: ['Emphasis on continuous improvement and growth'],
-          manifestation: 'Strong desire to learn and improve continuously',
-        },
-        {
-          theme_name: 'Communication',
-          domain: 'Influencing',
-          score: 70,
-          evidence: ['Clear messaging and value proposition'],
-          manifestation: 'Ability to put thoughts into words and engage others',
-        },
-        {
-          theme_name: 'Harmony',
-          domain: 'Relationship Building',
-          score: 65,
-          evidence: ['Focus on collaboration and team dynamics'],
-          manifestation: 'Seeks consensus and avoids conflict',
-        },
-      ],
-      all_themes: [],
-      recommendations: [
-        {
-          theme: 'Achiever',
-          action: 'Set clear, measurable goals and celebrate milestones',
-          impact: 'Maintain high performance and motivation',
-        },
-        {
-          theme: 'Responsibility',
-          action: 'Create accountability systems and clear ownership',
-          impact: 'Ensure reliable delivery and build trust',
-        },
-      ],
-    };
-  }
+  // Removed getFallbackAnalysis() - we only use real collected data
 }

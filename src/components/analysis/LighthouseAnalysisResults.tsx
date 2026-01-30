@@ -29,7 +29,7 @@ interface LighthouseAnalysisResultsProps {
 export function LighthouseAnalysisResults({
   analysis,
 }: LighthouseAnalysisResultsProps) {
-  const getScoreColor = (score: number) => {
+  const _getScoreColor = (score: number) => {
     if (score >= 90) return 'text-green-600';
     if (score >= 70) return 'text-yellow-600';
     if (score >= 50) return 'text-orange-600';

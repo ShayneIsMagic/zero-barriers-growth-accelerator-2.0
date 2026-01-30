@@ -73,8 +73,8 @@ export function ProgressiveAnalysisPage() {
             }
           }
         }
-      } catch (err) {
-        console.error('Failed to poll status:', err);
+      } catch (_err) {
+        // Failed to poll status - will retry on next interval
       }
     };
 
@@ -113,7 +113,7 @@ export function ProgressiveAnalysisPage() {
 
       if (data.success) {
         setAnalysisId(data.analysisId);
-        console.log(`✅ Analysis started: ${data.analysisId}`);
+        // Analysis started successfully
       } else {
         setError(data.error || 'Failed to start analysis');
       }

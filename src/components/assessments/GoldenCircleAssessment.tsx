@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { AlertCircle, Loader2, Target } from 'lucide-react';
+import { AlertCircle, Loader2, Target, Play as _Play } from 'lucide-react';
 import { useState } from 'react';
 
 interface GoldenCircleData {
@@ -134,7 +134,7 @@ export default function GoldenCircleAssessment({
             </Badge>
           </CardTitle>
           <CardDescription>
-            Simon Sinek's Golden Circle Framework Analysis
+            Simon Sinek&apos;s Golden Circle Framework Analysis
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -175,7 +175,7 @@ export default function GoldenCircleAssessment({
                     <h4 className="text-sm font-semibold text-gray-600">
                       Evidence:
                     </h4>
-                    <p className="text-sm italic">"{result.why.evidence}"</p>
+                    <p className="text-sm italic">&quot;{result.why.evidence}&quot;</p>
                   </div>
                 )}
                 {result.why.insights.length > 0 && (
@@ -225,7 +225,7 @@ export default function GoldenCircleAssessment({
                     <h4 className="text-sm font-semibold text-gray-600">
                       Evidence:
                     </h4>
-                    <p className="text-sm italic">"{result.how.evidence}"</p>
+                    <p className="text-sm italic">&quot;{result.how.evidence}&quot;</p>
                   </div>
                 )}
               </CardContent>
@@ -303,7 +303,7 @@ export default function GoldenCircleAssessment({
                           key={index}
                           className="rounded bg-gray-50 p-2 text-sm"
                         >
-                          <p className="italic">"{testimonial.quote}"</p>
+                          <p className="italic">&quot;{testimonial.quote}&quot;</p>
                           <p className="mt-1 text-xs text-gray-600">
                             - {testimonial.client}, {testimonial.title} at{' '}
                             {testimonial.company}
@@ -396,7 +396,7 @@ export default function GoldenCircleAssessment({
           Golden Circle Analysis
         </CardTitle>
         <CardDescription>
-          Analyze your WHY, HOW, WHAT, and WHO using Simon Sinek's framework
+          Analyze your WHY, HOW, WHAT, and WHO using Simon Sinek&apos;s framework
         </CardDescription>
       </CardHeader>
       <CardContent>

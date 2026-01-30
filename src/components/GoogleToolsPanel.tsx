@@ -182,7 +182,7 @@ export default function GoogleToolsPanel({
             Google Tools Integration
           </CardTitle>
           <CardDescription>
-            Access Google's suite of analysis tools for comprehensive website
+            Access Google&apos;s suite of analysis tools for comprehensive website
             insights
           </CardDescription>
         </CardHeader>
@@ -201,7 +201,7 @@ export default function GoogleToolsPanel({
               <Alert>
                 <CheckCircle className="h-4 w-4" />
                 <AlertDescription>
-                  These tools are fully integrated and working. They're
+                  These tools are fully integrated and working. They&apos;re
                   automatically used in your analyses.
                 </AlertDescription>
               </Alert>

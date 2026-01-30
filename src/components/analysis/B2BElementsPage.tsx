@@ -82,7 +82,7 @@ export function B2BElementsPage() {
       // Check if response is JSON
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
-        const text = await response.text();
+        await response.text(); // Read response to clear buffer
         setError(`Server error: ${response.status} - ${response.statusText}`);
         return;
       }
@@ -343,7 +343,7 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
               aria-describedby="scraped-help"
             />
             <p id="scraped-help" className="mt-2 text-xs text-muted-foreground">
-              💡 Paste the "Copy Scraped Data" JSON from Content-Comparison page
+              💡 Paste the &quot;Copy Scraped Data&quot; JSON from Content-Comparison page
               to reuse already-scraped content. This prevents re-scraping.
             </p>
           </div>

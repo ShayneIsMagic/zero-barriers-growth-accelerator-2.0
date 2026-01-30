@@ -96,7 +96,7 @@ export function useRobustState<T>(
             ? error.message
             : 'An unexpected error occurred';
         setError(errorMessage);
-        console.error('RobustState execution error:', error);
+        // RobustState execution error - handled by setError above
       }
     },
     [setLoading, setError, setData]

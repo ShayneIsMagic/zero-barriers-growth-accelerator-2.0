@@ -28,7 +28,7 @@ export function PhasedAnalysisPage() {
   const [phase3Reports, setPhase3Reports] = useState<any[]>([]);
 
   const [phase1Data, setPhase1Data] = useState<any>(null);
-  const [phase2Data, setPhase2Data] = useState<any>(null);
+  const [_phase2Data, setPhase2Data] = useState<any>(null);
   const [phase3Data, setPhase3Data] = useState<any>(null);
 
   const runPhase = async (phase: number) => {

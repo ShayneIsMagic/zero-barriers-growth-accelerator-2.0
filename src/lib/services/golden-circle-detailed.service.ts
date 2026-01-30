@@ -125,8 +125,8 @@ export class GoldenCircleDetailedService {
    */
   private static async buildGoldenCirclePrompt(
     content: any,
-    industry?: string,
-    patterns?: PatternMatch[]
+    _industry?: string,
+    _patterns?: PatternMatch[]
   ): Promise<string> {
     const basePrompt = `
 Analyze this website using the Golden Circle framework. Provide detailed analysis for all 4 dimensions:

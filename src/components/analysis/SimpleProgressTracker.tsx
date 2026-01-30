@@ -16,7 +16,7 @@ interface SimpleProgressTrackerProps {
 
 export default function SimpleProgressTracker({
   steps,
-  currentStep,
+  currentStep: _currentStep,
 }: SimpleProgressTrackerProps) {
   const [progress, setProgress] = useState(0);
 
@@ -76,7 +76,7 @@ export default function SimpleProgressTracker({
 
       {/* Steps List */}
       <div className="space-y-3">
-        {steps.map((step, index) => (
+        {steps.map((step, _index) => (
           <div key={step.id} className="flex items-center space-x-3">
             {getStepIcon(step)}
             <span className={`text-sm font-medium ${getStepTextColor(step)}`}>

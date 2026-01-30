@@ -21,7 +21,7 @@ interface IndividualReportsViewProps {
 
 export function IndividualReportsView({
   reports,
-  url,
+  url: _url,
 }: IndividualReportsViewProps) {
   const [selectedReport, setSelectedReport] = useState<IndividualReport | null>(
     null

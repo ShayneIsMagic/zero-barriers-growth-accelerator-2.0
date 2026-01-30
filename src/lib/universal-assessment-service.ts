@@ -262,8 +262,8 @@ export class UniversalAssessmentService {
 
       return result;
     } catch (error) {
-      console.warn('Gemini analysis failed, using fallback:', error);
-      return this.getFallbackAnalysis(scrapedData, promptType);
+      console.error('Gemini analysis failed:', error);
+      throw new Error(`Assessment analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -427,7 +427,7 @@ Provide a general analysis of this website including strengths, weaknesses, and 
   private static mapToDatabaseTables(
     scrapedData: UniversalScrapedData,
     analysis: any,
-    tables: string[]
+    _tables: string[]
   ): any {
     return {
       main_analysis: {
@@ -494,33 +494,7 @@ Provide a general analysis of this website including strengths, weaknesses, and 
     };
   }
 
-  /**
-   * Get fallback analysis when Gemini fails
-   */
-  private static getFallbackAnalysis(
-    scrapedData: UniversalScrapedData,
-    promptType: string
-  ): any {
-    return {
-      type: promptType,
-      status: 'fallback',
-      message: 'AI analysis unavailable, using basic analysis',
-      basic_analysis: {
-        word_count: scrapedData.wordCount,
-        business_type: scrapedData.contentTags.businessType,
-        industry: scrapedData.contentTags.industry,
-        keywords: scrapedData.seo.extractedKeywords.slice(0, 10),
-        seo_score: this.calculateBasicSEOScore(scrapedData),
-        performance_score: this.calculateBasicPerformanceScore(scrapedData),
-      },
-      recommendations: [
-        'Improve meta description',
-        'Add more internal links',
-        'Optimize images',
-        'Improve page load speed',
-      ],
-    };
-  }
+  // Removed getFallbackAnalysis() - we only use real collected data
 
   /**
    * Calculate basic SEO score

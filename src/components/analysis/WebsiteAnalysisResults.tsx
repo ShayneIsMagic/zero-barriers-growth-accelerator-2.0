@@ -57,7 +57,7 @@ export function WebsiteAnalysisResults({
     return 'text-red-600 bg-red-50';
   };
 
-  const getScoreIcon = (score: number) => {
+  const _getScoreIcon = (score: number) => {
     if (score >= 8) return <CheckCircle className="h-4 w-4" />;
     if (score >= 6) return <AlertCircle className="h-4 w-4" />;
     return <XCircle className="h-4 w-4" />;

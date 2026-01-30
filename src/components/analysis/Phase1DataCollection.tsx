@@ -204,7 +204,7 @@ const ASSESSMENT_TYPES = {
 export function Phase1DataCollection({
   onDataReceived,
   onContinue,
-  initialData,
+  initialData: _initialData,
 }: Phase1DataCollectionProps) {
   const [uploadMethod, setUploadMethod] = useState<'url' | 'paste' | 'upload'>(
     'url'
@@ -213,7 +213,7 @@ export function Phase1DataCollection({
     useState<string>('content-comparison');
   const [url, setUrl] = useState('');
   const [pastedData, setPastedData] = useState('');
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [_uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [collectedData, setCollectedData] = useState<any>(null);
@@ -563,7 +563,7 @@ export function Phase1DataCollection({
     }
   };
 
-  const extractFrameworkData = (data: any, framework: string) => {
+  const extractFrameworkData = (_data: any, _framework: string) => {
     // This would extract specific framework data from the content
     // For now, return placeholder data
     return {
@@ -573,12 +573,12 @@ export function Phase1DataCollection({
     };
   };
 
-  const extractElementsOfValue = (data: any, elementType: string) => {
+  const extractElementsOfValue = (_data: any, _elementType: string) => {
     // This would extract specific elements of value from the content
     return [];
   };
 
-  const extractCliftonStrengths = (data: any, strengthType: string) => {
+  const extractCliftonStrengths = (_data: any, _strengthType: string) => {
     // This would extract specific CliftonStrengths from the content
     return [];
   };
@@ -619,7 +619,7 @@ export function Phase1DataCollection({
       .map(([word]) => word);
   };
 
-  const copyToClipboard = (text: string) => {
+  const _copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success('Copied to clipboard');
   };

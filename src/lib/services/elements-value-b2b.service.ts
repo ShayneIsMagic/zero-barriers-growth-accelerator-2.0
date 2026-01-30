@@ -258,7 +258,7 @@ Return as JSON:
   private static async storeB2BElementsAnalysis(
     analysisId: string,
     aiResponse: any,
-    patterns: PatternMatch[]
+    _patterns: PatternMatch[]
   ): Promise<ElementsOfValueB2BAnalysis> {
     // Create main record using Prisma client
     const eov = await prisma.elements_of_value_b2b.create({

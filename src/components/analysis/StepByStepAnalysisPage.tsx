@@ -12,31 +12,22 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
-  Globe,
   Search,
-  Target,
-  TrendingUp,
   Zap,
-  Shield,
-  Users,
   Brain,
   BarChart3,
-  CheckCircle,
   XCircle,
-  AlertTriangle,
-  Lightbulb,
-  Calendar,
+  Lightbulb as _Lightbulb,
+  Calendar as _Calendar,
   Star,
-  ArrowRight,
-  ExternalLink,
-  Download,
+  ArrowRight as _ArrowRight,
+  ExternalLink as _ExternalLink,
+  Download as _Download,
   RefreshCw,
+  Pause as _Pause,
   Play,
-  Pause,
   RotateCcw,
   Settings,
   Eye,
@@ -328,7 +319,7 @@ export default function StepByStepAnalysisPage() {
     }));
   };
 
-  const getOverallProgress = () => {
+  const _getOverallProgress = () => {
     const completed = Object.values(steps).filter(
       (step) => step.status === 'completed'
     ).length;
@@ -489,7 +480,7 @@ export default function StepByStepAnalysisPage() {
 
       {/* Analysis Steps */}
       <div className="space-y-4">
-        {ANALYSIS_STEPS.map((step, index) => {
+        {ANALYSIS_STEPS.map((step, _index) => {
           const stepResult = steps[step.id];
           const isCurrentStep = currentStep === step.id;
           const canExecute = canExecuteStep(step.id);

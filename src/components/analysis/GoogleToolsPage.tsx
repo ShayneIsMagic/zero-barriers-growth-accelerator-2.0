@@ -105,8 +105,8 @@ ${prompt.format}`;
 
       // For now, just display the prompt - in production, this would send to Gemini
       setAnalysisResult(fullPrompt);
-    } catch (error) {
-      console.error('Analysis failed:', error);
+    } catch (_error) {
+      // Analysis failed - error handled by UI state
     }
   };
 

@@ -113,7 +113,7 @@ export function RevenueTrendsPage() {
               required
             />
             <p id="url-help" className="mt-1 text-xs text-muted-foreground">
-              We'll analyze your website to identify market gaps and revenue
+              We&apos;ll analyze your website to identify market gaps and revenue
               opportunities
             </p>
           </div>
