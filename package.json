@@ -70,7 +70,7 @@
     "@trpc/client": "^10.45.0",
     "@trpc/next": "^10.45.0",
     "@trpc/react-query": "^10.45.0",
-    "@trpc/server": "^10.45.0",
+    "@trpc/server": "^10.45.3",
     "@types/cheerio": "^0.22.35",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/uuid": "^10.0.0",
