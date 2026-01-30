@@ -14,7 +14,7 @@ import {
   CheckCircle,
   Clock,
   AlertCircle,
-  Play,
+  Play as _Play,
   Pause,
   Loader2,
 } from 'lucide-react';
@@ -85,7 +85,7 @@ export function ProgressTracker({
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const _getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
         return 'bg-green-500';

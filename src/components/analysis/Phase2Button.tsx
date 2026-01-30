@@ -43,7 +43,7 @@ export function Phase2Button({
         throw new Error(result.error || 'Phase 2 analysis failed');
       }
 
-      console.log('Phase 2 Analysis Complete:', result);
+      // Phase 2 analysis complete
 
       // Create complete analysis result
       const completeAnalysis = {
@@ -64,7 +64,6 @@ export function Phase2Button({
 
       onPhase2Complete(completeAnalysis);
     } catch (err) {
-      console.error('Phase 2 analysis error:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setIsAnalyzing(false);

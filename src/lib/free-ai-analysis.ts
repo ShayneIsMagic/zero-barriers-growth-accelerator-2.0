@@ -46,7 +46,7 @@ async function scrapeWebsiteContent(url: string): Promise<string> {
 /**
  * Extract title from HTML content
  */
-function extractTitleFromContent(html: string): string {
+function _extractTitleFromContent(html: string): string {
   const titleMatch = html.match(/<title[^>]*>(.*?)<\/title>/i);
   return titleMatch ? titleMatch[1].trim() : 'Untitled';
 }
@@ -111,10 +111,14 @@ export async function analyzeWithGemini(
 
     // Handle JSON wrapped in markdown code blocks
     let jsonText = text.trim();
-    if (jsonText.startsWith('```json')) {
-      jsonText = jsonText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-    } else if (jsonText.startsWith('```')) {
-      jsonText = jsonText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+    
+    // Remove markdown code blocks (json, javascript, or plain)
+    jsonText = jsonText.replace(/^```(?:json|javascript)?\s*/i, '').replace(/\s*```$/i, '');
+    
+    // Try to extract JSON from text if it contains JSON
+    const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      jsonText = jsonMatch[0];
     }
 
     // Check if response looks like an error message
@@ -122,8 +126,12 @@ export async function analyzeWithGemini(
       jsonText.toLowerCase().startsWith('an error') ||
       jsonText.toLowerCase().startsWith('error') ||
       jsonText.toLowerCase().startsWith('failed') ||
-      !jsonText.startsWith('{')
+      (!jsonText.startsWith('{') && !jsonText.startsWith('['))
     ) {
+      // For comparison analysis, return the raw text so it can be handled
+      if (analysisType === 'comparison') {
+        return { raw: text, error: 'AI returned text instead of JSON', originalText: text };
+      }
       throw new Error(`AI analysis failed: ${jsonText.substring(0, 100)}`);
     }
 
@@ -138,7 +146,46 @@ export async function analyzeWithGemini(
     }
   } catch (error) {
     console.error('Gemini analysis error:', error);
-    throw new Error('Gemini analysis failed');
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorString = JSON.stringify(error);
+    
+    // Check for suspended API key
+    if (
+      errorMessage.includes('CONSUMER_SUSPENDED') ||
+      errorMessage.includes('suspended') ||
+      errorString.includes('CONSUMER_SUSPENDED') ||
+      errorMessage.includes('Permission denied') && errorMessage.includes('suspended')
+    ) {
+      throw new Error(
+        'GEMINI_API_KEY_SUSPENDED: Your Gemini API key has been suspended by Google. ' +
+        'Please check your Google Cloud Console, resolve any billing or policy issues, ' +
+        'or generate a new API key. The existing content has been collected successfully, ' +
+        'but AI analysis is unavailable until the API key issue is resolved.'
+      );
+    }
+    
+    // Check for API key issues
+    if (errorMessage.includes('API_KEY') || errorMessage.includes('api key') || errorMessage.includes('API key not found')) {
+      throw new Error('GEMINI_API_KEY not configured or invalid. Please set GEMINI_API_KEY environment variable.');
+    }
+    
+    // Check for rate limiting
+    if (errorMessage.includes('429') || errorMessage.includes('rate limit') || errorMessage.includes('quota')) {
+      throw new Error('Gemini API rate limit exceeded. Please try again later.');
+    }
+    
+    // Check for 403 Forbidden (could be suspended or other permission issue)
+    if (errorMessage.includes('403') || errorMessage.includes('Forbidden')) {
+      if (errorString.includes('CONSUMER_SUSPENDED') || errorMessage.includes('suspended')) {
+        throw new Error(
+          'GEMINI_API_KEY_SUSPENDED: Your Gemini API key has been suspended. ' +
+          'Please check your Google Cloud Console or generate a new API key.'
+        );
+      }
+      throw new Error('Gemini API access forbidden. Please check your API key permissions.');
+    }
+    
+    throw new Error(`Gemini analysis failed: ${errorMessage}`);
   }
 }
 

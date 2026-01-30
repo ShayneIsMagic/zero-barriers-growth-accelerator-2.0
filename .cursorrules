@@ -1,10 +1,10 @@
 # Zero Barriers Growth Accelerator - Cursor Rules
 
 ## 🎯 Project Overview
-This is a Next.js 14 AI-powered content analysis platform that evaluates website content using proven business frameworks (B2C/B2B Elements of Value, CliftonStrengths, Golden Circle) to identify growth barriers and provide actionable recommendations.
+This is a Next.js 15 AI-powered content analysis platform that evaluates website content using proven business frameworks (B2C/B2B Elements of Value, CliftonStrengths, Golden Circle) to identify growth barriers and provide actionable recommendations.
 
 ## 🏗️ Tech Stack & Architecture
-- **Framework**: Next.js 14 with App Router
+- **Framework**: Next.js 15.5.5 with App Router
 - **Language**: TypeScript (strict mode enabled)
 - **Styling**: Tailwind CSS with custom design system
 - **UI Components**: Radix UI + Shadcn/ui

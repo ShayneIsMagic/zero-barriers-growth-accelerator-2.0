@@ -15,6 +15,8 @@ export interface ComprehensiveCollectionResult {
 
 export interface PageData {
   url: string;
+  pageLabel: string; // Page name from navbar/URL (e.g., "Home", "Services", "Results")
+  pageType: string; // Page type (e.g., "homepage", "services", "results", "contact")
   title: string;
   metaDescription: string;
   headings: {
@@ -129,6 +131,33 @@ export interface PageData {
     cssFiles: string[];
     jsFiles: string[];
     errors: string[];
+  };
+  // HTML semantic tags for structure analysis
+  tags?: {
+    semanticTags: {
+      article: number;
+      section: number;
+      nav: number;
+      header: number;
+      footer: number;
+      aside: number;
+      main: number;
+      figure: number;
+      figcaption: number;
+      time: number;
+      address: number;
+      blockquote: number;
+      details: number;
+      summary: number;
+    };
+    semanticTagDetails: Array<{
+      tag: string;
+      count: number;
+      hasId: boolean;
+      hasClass: boolean;
+      hasAriaLabel: boolean;
+    }>;
+    totalSemanticTags: number;
   };
 }
 
@@ -512,37 +541,157 @@ export class PuppeteerComprehensiveCollector {
     console.log(`🚀 Starting comprehensive data collection for: ${url}`);
 
     try {
-      this.browser = await puppeteer.launch({
-        headless: true,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-accelerated-2d-canvas',
-          '--no-first-run',
-          '--no-zygote',
-          '--disable-gpu',
-        ],
-      });
+      // Check if we're in serverless environment
+      const isServerless =
+        process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
+
+      // Try browserless.io first if configured (for serverless)
+      if (isServerless) {
+        const token = process.env.BROWSERLESS_TOKEN;
+        if (token) {
+          const browserWSEndpoint =
+            process.env.BROWSERLESS_WS_ENDPOINT || 'wss://chrome.browserless.io';
+          try {
+            this.browser = await puppeteer.connect({
+              browserWSEndpoint: `${browserWSEndpoint}?token=${token}`,
+            });
+            console.log('✅ Connected to browserless.io');
+          } catch (error) {
+            console.warn('⚠️ Browserless.io connection failed, using local launch:', error);
+          }
+        }
+      }
+
+      // Fallback to local launch (working approach from d0dfe75)
+      // This simple approach works on Vercel without @sparticuz/chromium complexity
+      if (!this.browser) {
+        this.browser = await puppeteer.launch({
+          headless: true,
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--disable-gpu',
+            '--disable-blink-features=AutomationControlled',
+            '--disable-features=IsolateOrigins,site-per-process',
+          ],
+        });
+        console.log('✅ Launched browser (simple approach - works on Vercel)');
+      }
 
       const page = await this.browser.newPage();
+      
+      // Set viewport to match real browser
       await page.setViewport({ width: 1920, height: 1080 });
+      
+      // Use current Chrome user agent
       await page.setUserAgent(
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
       );
+
+      // Add extra headers to look more like a real browser
+      await page.setExtraHTTPHeaders({
+        Accept:
+          'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
+        DNT: '1',
+        Connection: 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+      });
+
+      // Add stealth measures to avoid bot detection
+      await page.evaluateOnNewDocument(() => {
+        // Remove webdriver property
+        Object.defineProperty(navigator, 'webdriver', {
+          get: () => undefined,
+        });
+
+        // Mock plugins
+        Object.defineProperty(navigator, 'plugins', {
+          get: () => [1, 2, 3, 4, 5],
+        });
+
+        // Mock languages
+        Object.defineProperty(navigator, 'languages', {
+          get: () => ['en-US', 'en'],
+        });
+
+        // Override permissions
+        const originalQuery = window.navigator.permissions.query;
+        window.navigator.permissions.query = (parameters: any) =>
+          parameters.name === 'notifications'
+            ? Promise.resolve({ state: Notification.permission } as PermissionStatus)
+            : originalQuery(parameters);
+
+        // Mock chrome object
+        (window as any).chrome = {
+          runtime: {},
+        };
+      });
 
       // Enable performance monitoring
       await page.evaluateOnNewDocument(() => {
         window.performance.mark('page-start');
       });
 
+      // Navigate to homepage first to establish connection and verify it's accessible
+      console.log(`🌐 Navigating to homepage: ${url}`);
+      const homepageResponse = await page.goto(url, {
+        waitUntil: 'domcontentloaded',
+        timeout: this.timeout,
+      });
+
+      // Check homepage response
+      if (homepageResponse) {
+        const status = homepageResponse.status();
+        if (status === 403) {
+          throw new Error(`Website blocked the scraper: ${url} (HTTP 403)`);
+        }
+        // 429 is rate limiting - log but don't fail completely
+        if (status === 429) {
+          console.warn(`⚠️ Rate limited for ${url} (HTTP 429), continuing...`);
+        }
+      }
+
+      // Wait for page to fully load
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Verify homepage isn't blocked
+      const homepageBlocked = await this.isPageBlocked(page);
+      if (homepageBlocked) {
+        const contentLength = await page.evaluate(() => document.body?.textContent?.length || 0);
+        if (contentLength < 100) {
+          throw new Error(`Website blocked the scraper: ${url}`);
+        }
+      }
+
       // Collect site map and discover all pages
       const siteMap = await this.collectSiteMap(page, url);
 
-      // Collect data from each page
+      // Collect data from each page - use the same page but ensure stealth measures persist
       const pages: PageData[] = [];
       const visitedUrls = new Set<string>();
 
+      // Collect homepage first
+      try {
+        const homepageData = await this.collectPageData(page, url);
+        pages.push(homepageData);
+        visitedUrls.add(url);
+      } catch (error) {
+        console.error(`Failed to collect homepage data from ${url}:`, error);
+        // If homepage fails, we can't continue
+        throw error;
+      }
+
+      // Then collect other pages
       for (const pageUrl of siteMap.sitemap.slice(0, this.maxPages)) {
         if (visitedUrls.has(pageUrl.url)) continue;
         visitedUrls.add(pageUrl.url);
@@ -552,6 +701,7 @@ export class PuppeteerComprehensiveCollector {
           pages.push(pageData);
         } catch (error) {
           console.error(`Failed to collect data from ${pageUrl.url}:`, error);
+          // Continue with other pages instead of failing completely
         }
       }
 
@@ -622,7 +772,7 @@ export class PuppeteerComprehensiveCollector {
 
       try {
         const response = await page.goto(url, {
-          waitUntil: 'networkidle2',
+          waitUntil: 'domcontentloaded',
           timeout: this.timeout,
         });
 
@@ -632,6 +782,13 @@ export class PuppeteerComprehensiveCollector {
         }
 
         const status = response.status();
+        
+        // Check for blocking
+        if (status === 403 || status === 429) {
+          console.warn(`⚠️ Blocked by ${url} (HTTP ${status})`);
+          brokenLinks.push(url);
+          continue;
+        }
         if (status >= 300 && status < 400) {
           const location = response.headers().location;
           if (location) {
@@ -700,10 +857,109 @@ export class PuppeteerComprehensiveCollector {
     };
   }
 
+  /**
+   * Check if page appears to be blocked
+   */
+  private async isPageBlocked(page: Page): Promise<boolean> {
+    try {
+      const pageContent = await page.content();
+      const pageText = await page.evaluate(() => document.body?.textContent || '');
+      const pageTitle = await page.evaluate(() => document.title || '');
+
+      // Only check for CLEAR blocking indicators (not just mentions in content)
+      // These must be in specific contexts to avoid false positives
+      const blockingPatterns = [
+        /access\s+denied/i,
+        /access\s+forbidden/i,
+        /403\s+forbidden/i,
+        /you\s+have\s+been\s+blocked/i,
+        /your\s+access\s+has\s+been\s+blocked/i,
+        /bot\s+detected\s+and\s+blocked/i,
+        /cloudflare\s+ray\s+id/i, // Cloudflare error pages have this
+        /checking\s+your\s+browser\s+before\s+accessing/i,
+        /ddos\s+protection\s+active/i,
+        /rate\s+limit\s+exceeded/i,
+      ];
+
+      const contentToCheck = `${pageContent} ${pageText} ${pageTitle}`;
+
+      // Check if any blocking pattern matches
+      const hasBlockingIndicator = blockingPatterns.some((pattern) =>
+        pattern.test(contentToCheck)
+      );
+
+      // Only consider blocked if we have clear blocking indicators
+      // Don't use page size as blocking indicator (too many false positives)
+      return hasBlockingIndicator;
+    } catch {
+      return false;
+    }
+  }
+
   private async collectPageData(page: Page, url: string): Promise<PageData> {
     console.log(`📄 Collecting data from: ${url}`);
 
-    await page.goto(url, { waitUntil: 'networkidle2', timeout: this.timeout });
+    try {
+      // Navigate with retry logic
+      let response;
+      let retries = 0;
+      const maxRetries = 2;
+
+      while (retries <= maxRetries) {
+        try {
+          response = await page.goto(url, {
+            waitUntil: 'domcontentloaded',
+            timeout: this.timeout,
+          });
+          break; // Success, exit retry loop
+        } catch (navError) {
+          if (retries === maxRetries) {
+            throw navError;
+          }
+          retries++;
+          console.log(`⚠️ Navigation retry ${retries}/${maxRetries} for ${url}`);
+          await new Promise((resolve) => setTimeout(resolve, 1000 * retries)); // Exponential backoff
+        }
+      }
+
+      // Check HTTP status - only throw for clear blocking (403), not rate limiting (429)
+      if (response) {
+        const status = response.status();
+        if (status === 403) {
+          throw new Error(`Website blocked the scraper: ${url} (HTTP 403)`);
+        }
+        // 429 is rate limiting - log but don't fail completely
+        if (status === 429) {
+          console.warn(`⚠️ Rate limited for ${url} (HTTP 429), continuing...`);
+        }
+      }
+
+      // Wait for dynamic content to load
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Check if we got blocked - but be less aggressive
+      const isBlocked = await this.isPageBlocked(page);
+
+      if (isBlocked) {
+        // Double-check by looking at actual content length
+        const contentLength = await page.evaluate(() => document.body?.textContent?.length || 0);
+        // Only throw if we're very sure it's blocked (very small content + blocking indicators)
+        if (contentLength < 100) {
+          throw new Error(`Website blocked the scraper: ${url}`);
+        }
+        // Otherwise, log warning but continue
+        console.warn(`⚠️ Possible blocking detected for ${url}, but content length is ${contentLength}, continuing...`);
+      }
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('blocked')) {
+        throw error;
+      }
+      // Re-throw navigation errors
+      throw new Error(`Failed to load ${url}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+
+    // Identify page from navbar and URL before collecting data
+    const pageInfo = await this.identifyPage(page, url);
 
     // Collect basic page data
     const pageData = await page.evaluate(() => {
@@ -972,7 +1228,8 @@ export class PuppeteerComprehensiveCollector {
           .filter((k) => k.length > 0);
 
         // Extract from content (common words, excluding stop words)
-        const text = document.body.textContent || '';
+        // Use innerText to get only visible text (excludes script tags)
+        const text = document.body.innerText || document.body.textContent || '';
         const words = text
           .toLowerCase()
           .replace(/[^\w\s]/g, ' ')
@@ -1120,7 +1377,101 @@ export class PuppeteerComprehensiveCollector {
         };
       };
 
-      const text = document.body.textContent || '';
+      const getSemanticTags = () => {
+        // HTML5 semantic tags for structure analysis
+        const semanticTagNames = [
+          'article',
+          'section',
+          'nav',
+          'header',
+          'footer',
+          'aside',
+          'main',
+          'figure',
+          'figcaption',
+          'time',
+          'address',
+          'blockquote',
+          'details',
+          'summary',
+        ];
+
+        const semanticTags: Record<string, number> = {};
+        const semanticTagDetails: Array<{
+          tag: string;
+          count: number;
+          hasId: boolean;
+          hasClass: boolean;
+          hasAriaLabel: boolean;
+        }> = [];
+
+        semanticTagNames.forEach((tagName) => {
+          const elements = document.querySelectorAll(tagName);
+          const count = elements.length;
+          semanticTags[tagName] = count;
+
+          if (count > 0) {
+            // Sample first element to check attributes
+            const firstElement = elements[0] as HTMLElement;
+            semanticTagDetails.push({
+              tag: tagName,
+              count,
+              hasId: !!firstElement.id,
+              hasClass: !!firstElement.className,
+              hasAriaLabel: !!firstElement.getAttribute('aria-label'),
+            });
+          }
+        });
+
+        const totalSemanticTags = Object.values(semanticTags).reduce(
+          (sum, count) => sum + count,
+          0
+        );
+
+        return {
+          semanticTags: semanticTags as {
+            article: number;
+            section: number;
+            nav: number;
+            header: number;
+            footer: number;
+            aside: number;
+            main: number;
+            figure: number;
+            figcaption: number;
+            time: number;
+            address: number;
+            blockquote: number;
+            details: number;
+            summary: number;
+          },
+          semanticTagDetails,
+          totalSemanticTags,
+        };
+      };
+
+      // Get clean, visible text only (excludes script tags, style tags, and Next.js internal data)
+      const getCleanText = () => {
+        // Clone body to avoid modifying original
+        const clone = document.body.cloneNode(true) as HTMLElement;
+        
+        // Remove script, style, noscript, and iframe tags
+        clone.querySelectorAll('script, style, noscript, iframe').forEach((el) => el.remove());
+        
+        // Remove Next.js internal data attributes and elements
+        clone.querySelectorAll('[data-nextjs], [data-reactroot]').forEach((el) => el.remove());
+        
+        // Get text content (visible text only)
+        const cleanText = clone.innerText || clone.textContent || '';
+        
+        // Clean up: remove extra whitespace, Next.js internal strings
+        return cleanText
+          .replace(/self\.__next_f\.push\(\[.*?\]\)/g, '') // Remove Next.js RSC data
+          .replace(/\s+/g, ' ') // Normalize whitespace
+          .trim();
+      };
+
+      const text = getCleanText();
       const wordCount = text
         .split(/\s+/)
         .filter((word) => word.length > 0).length;
@@ -1159,6 +1510,7 @@ export class PuppeteerComprehensiveCollector {
         },
         accessibility: getAccessibilityData(),
         technical: getTechnicalData(),
+        tags: getSemanticTags(),
       };
     });
 
@@ -1184,9 +1536,140 @@ export class PuppeteerComprehensiveCollector {
 
     return {
       url,
+      pageLabel: pageInfo.label,
+      pageType: pageInfo.type,
       ...pageData,
       performance: performanceMetrics,
     };
+  }
+
+  /**
+   * Identify page name from navbar and URL structure
+   */
+  private async identifyPage(page: Page, url: string): Promise<{ label: string; type: string }> {
+    try {
+      const pageInfo = await page.evaluate((currentUrl) => {
+        // Extract navbar links to identify page names
+        const getNavbarLinks = () => {
+          // Try common navbar selectors
+          const navSelectors = [
+            'nav a',
+            'header nav a',
+            '.navbar a',
+            '.navigation a',
+            '[role="navigation"] a',
+            'nav[aria-label] a',
+          ];
+
+          const links: Array<{ text: string; href: string; isActive: boolean }> = [];
+
+          for (const selector of navSelectors) {
+            const navLinks = document.querySelectorAll(selector);
+            if (navLinks.length > 0) {
+              navLinks.forEach((link) => {
+                const href = link.getAttribute('href');
+                const text = link.textContent?.trim() || '';
+                if (href && text) {
+                  try {
+                    const linkUrl = new URL(href, window.location.origin);
+                    const currentUrlObj = new URL(currentUrl);
+                    links.push({
+                      text,
+                      href: linkUrl.pathname,
+                      isActive: linkUrl.pathname === currentUrlObj.pathname,
+                    });
+                  } catch {
+                    // Invalid URL, skip
+                  }
+                }
+              });
+              break; // Use first matching selector
+            }
+          }
+
+          return links;
+        };
+
+        const navbarLinks = getNavbarLinks();
+        const currentPath = new URL(currentUrl).pathname.toLowerCase();
+
+        // Find active link in navbar
+        const activeLink = navbarLinks.find((link) => {
+          const linkPath = link.href.toLowerCase();
+          return linkPath === currentPath || currentPath.startsWith(linkPath + '/');
+        });
+
+        // If found in navbar, use that label
+        if (activeLink && activeLink.text) {
+          return {
+            label: activeLink.text,
+            type: activeLink.text.toLowerCase().replace(/\s+/g, '-'),
+          };
+        }
+
+        // Fallback: Identify from URL path
+        const pathParts = currentPath.split('/').filter(Boolean);
+        
+        // Common page patterns
+        if (currentPath === '/' || currentPath === '') {
+          return { label: 'Home', type: 'homepage' };
+        }
+
+        // Check if path matches any navbar link
+        for (const link of navbarLinks) {
+          const linkPath = link.href.toLowerCase();
+          if (currentPath === linkPath || currentPath.startsWith(linkPath + '/')) {
+            return {
+              label: link.text || pathParts[0] || 'Page',
+              type: link.text.toLowerCase().replace(/\s+/g, '-') || pathParts[0] || 'page',
+            };
+          }
+        }
+
+        // Extract from path
+        if (pathParts.length > 0) {
+          const pageName = pathParts[pathParts.length - 1];
+          // Capitalize and format
+          const formattedName = pageName
+            .split('-')
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+          
+          return {
+            label: formattedName,
+            type: pageName,
+          };
+        }
+
+        // Final fallback
+        return {
+          label: 'Page',
+          type: 'page',
+        };
+      }, url);
+
+      return pageInfo;
+    } catch (error) {
+      console.warn(`Failed to identify page for ${url}:`, error);
+      // Fallback to URL-based identification
+      const urlObj = new URL(url);
+      const pathParts = urlObj.pathname.split('/').filter(Boolean);
+      
+      if (pathParts.length === 0 || urlObj.pathname === '/') {
+        return { label: 'Home', type: 'homepage' };
+      }
+
+      const pageName = pathParts[pathParts.length - 1];
+      const formattedName = pageName
+        .split('-')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+
+      return {
+        label: formattedName,
+        type: pageName,
+      };
+    }
   }
 
   private async collectPerformanceData(
@@ -1198,7 +1681,7 @@ export class PuppeteerComprehensiveCollector {
     await page.goto(url, { waitUntil: 'networkidle2', timeout: this.timeout });
 
     const performanceData = await page.evaluate(() => {
-      const navigation = performance.getEntriesByType(
+      const _navigation = performance.getEntriesByType(
         'navigation'
       )[0] as PerformanceNavigationTiming;
       const paint = performance.getEntriesByType('paint');
@@ -1281,7 +1764,7 @@ export class PuppeteerComprehensiveCollector {
       technicalSEO: {
         robotsTxt: false,
         sitemap: false,
-        https: location.protocol === 'https:',
+        https: new URL(url).protocol === 'https:',
         wwwRedirect: false,
         trailingSlash: false,
         duplicateContent: false,
@@ -1364,7 +1847,7 @@ export class PuppeteerComprehensiveCollector {
     };
   }
 
-  private collectUserExperienceData(pages: PageData[]): UserExperienceData {
+  private collectUserExperienceData(_pages: PageData[]): UserExperienceData {
     console.log('👤 Analyzing user experience data...');
 
     return {
@@ -1429,8 +1912,8 @@ export class PuppeteerComprehensiveCollector {
     performance: PerformanceData,
     seo: SEOData,
     content: ContentData,
-    technical: TechnicalData,
-    userExperience: UserExperienceData
+    _technical: TechnicalData,
+    _userExperience: UserExperienceData
   ): CollectionSummary {
     return {
       totalPages: pages.length,

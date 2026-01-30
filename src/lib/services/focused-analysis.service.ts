@@ -6,7 +6,7 @@
 import { prisma } from '../prisma';
 import {
   SimpleSynonymDetectionService,
-  PatternMatch,
+  // PatternMatch, // Unused import
 } from './simple-synonym-detection.service';
 
 export interface FocusedAnalysisResult {
@@ -25,7 +25,7 @@ export class FocusedAnalysisService {
     industry?: string
   ): Promise<FocusedAnalysisResult> {
     try {
-      const patterns = await SimpleSynonymDetectionService.findValuePatterns(
+      const _patterns = await SimpleSynonymDetectionService.findValuePatterns(
         content.text || content.content,
         industry
       );
@@ -81,7 +81,7 @@ Return as JSON:
     industry?: string
   ): Promise<FocusedAnalysisResult> {
     try {
-      const patterns = await SimpleSynonymDetectionService.findValuePatterns(
+      const _patterns = await SimpleSynonymDetectionService.findValuePatterns(
         content.text || content.content,
         industry
       );
@@ -150,7 +150,7 @@ Return as JSON:
   ): Promise<FocusedAnalysisResult> {
     try {
       const themes = await this.getStrategicThinkingThemes();
-      const patterns = await SimpleSynonymDetectionService.findValuePatterns(
+      const _patterns = await SimpleSynonymDetectionService.findValuePatterns(
         content.text || content.content,
         industry
       );
@@ -207,7 +207,7 @@ Return as JSON:
     industry?: string
   ): Promise<FocusedAnalysisResult> {
     try {
-      const patterns = await SimpleSynonymDetectionService.findValuePatterns(
+      const _patterns = await SimpleSynonymDetectionService.findValuePatterns(
         content.text || content.content,
         industry
       );

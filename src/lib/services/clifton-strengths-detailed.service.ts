@@ -247,7 +247,7 @@ Return as JSON:
   private static async storeCliftonAnalysis(
     analysisId: string,
     aiResponse: any,
-    patterns: PatternMatch[]
+    _patterns: PatternMatch[]
   ): Promise<CliftonStrengthsAnalysis> {
     // Create main record using Prisma client
     const cs = await prisma.clifton_strengths_analyses.create({

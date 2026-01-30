@@ -75,7 +75,7 @@ export function GoldenCirclePage() {
       // Check if response is JSON
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
-        const text = await response.text();
+        await response.text(); // Read response to clear buffer
         setError(`Server error: ${response.status} - ${response.statusText}`);
         return;
       }
@@ -98,7 +98,7 @@ export function GoldenCirclePage() {
     navigator.clipboard.writeText(text);
   };
 
-  const copyAnalysis = () => {
+  const _copyAnalysis = () => {
     if (!result) return;
     const analysisText =
       typeof result.analysis === 'string'
@@ -245,7 +245,7 @@ export function GoldenCirclePage() {
             Golden Circle Analysis
           </CardTitle>
           <CardDescription>
-            Analyze your website using Simon Sinek's Golden Circle framework -
+            Analyze your website using Simon Sinek&apos;s Golden Circle framework -
             discover your WHY, HOW, and WHAT
           </CardDescription>
         </CardHeader>
@@ -339,7 +339,7 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
               aria-describedby="scraped-help"
             />
             <p id="scraped-help" className="mt-2 text-xs text-muted-foreground">
-              💡 Paste the "Copy Scraped Data" JSON from Content-Comparison page
+              💡 Paste the &quot;Copy Scraped Data&quot; JSON from Content-Comparison page
               to reuse already-scraped content. This prevents re-scraping.
             </p>
           </div>
@@ -484,7 +484,7 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                   <div>
                     <CardTitle>Golden Circle Analysis</CardTitle>
                     <CardDescription>
-                      Simon Sinek's Golden Circle framework analysis
+                      Simon Sinek&apos;s Golden Circle framework analysis
                     </CardDescription>
                   </div>
                   <Button onClick={downloadMarkdown} variant="outline">
@@ -530,7 +530,7 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                     <CardHeader>
                       <CardTitle>Golden Circle Framework Analysis</CardTitle>
                       <CardDescription>
-                        Simon Sinek's Why/How/What framework breakdown
+                        Simon Sinek&apos;s Why/How/What framework breakdown
                       </CardDescription>
                     </CardHeader>
                     <CardContent>

@@ -57,39 +57,42 @@ export class ContentStorageService {
     title?: string
   ): Promise<string | null> {
     try {
+      // Ensure allKeywords is properly typed as string array
+      const allKeywordsArray: string[] = Array.from(
+        new Set(
+          comprehensiveData.pages?.flatMap(
+            (p: any) => p.keywords?.allKeywords || []
+          ) || []
+        )
+      ) as string[];
+
+      const metadata = {
+        pagesScraped: comprehensiveData.pages?.length || 0,
+        totalWords: comprehensiveData.content?.totalWords || 0,
+        seoScore: comprehensiveData.seo?.overallScore || 0,
+        performanceScore: comprehensiveData.performance?.overallScore || 0,
+        ga4Ids: (comprehensiveData.pages
+          ?.flatMap(
+            (p: any) => p.analytics?.googleAnalytics4?.measurementIds || []
+          )
+          .filter(Boolean) || []) as string[],
+        gtmIds: (comprehensiveData.pages
+          ?.flatMap(
+            (p: any) =>
+              p.analytics?.googleTagManager?.containerIds || []
+          )
+          .filter(Boolean) || []) as string[],
+        allKeywords: allKeywordsArray,
+        scrapedAt: new Date().toISOString(),
+        collector: 'PuppeteerComprehensiveCollector',
+      };
+
       const snapshot = await prisma.contentSnapshot.create({
         data: {
           url,
           title: title || comprehensiveData.pages?.[0]?.title || url,
           content: JSON.stringify(comprehensiveData),
-          metadata: {
-            pagesScraped: comprehensiveData.pages?.length || 0,
-            totalWords: comprehensiveData.content?.totalWords || 0,
-            seoScore: comprehensiveData.seo?.overallScore || 0,
-            performanceScore: comprehensiveData.performance?.overallScore || 0,
-            ga4Ids:
-              comprehensiveData.pages
-                ?.flatMap(
-                  (p: any) => p.analytics?.googleAnalytics4?.measurementIds || []
-                )
-                .filter(Boolean) || [],
-            gtmIds:
-              comprehensiveData.pages
-                ?.flatMap(
-                  (p: any) =>
-                    p.analytics?.googleTagManager?.containerIds || []
-                )
-                .filter(Boolean) || [],
-            allKeywords: [
-              ...new Set(
-                comprehensiveData.pages?.flatMap(
-                  (p: any) => p.keywords?.allKeywords || []
-                ) || []
-              ),
-            ],
-            scrapedAt: new Date().toISOString(),
-            collector: 'PuppeteerComprehensiveCollector',
-          },
+          metadata: metadata as any, // Prisma Json type - properly typed object
           userId,
         },
       });

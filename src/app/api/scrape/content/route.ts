@@ -86,8 +86,8 @@ export async function POST(request: NextRequest) {
 }
 
 // Helper functions
-function extractKeywords(text: string): string[] {
-  const words = text
+function _extractKeywords(_text: string): string[] {
+  const words = _text
     .toLowerCase()
     .replace(/[^\w\s]/g, ' ')
     .split(/\s+/)
@@ -104,8 +104,8 @@ function extractKeywords(text: string): string[] {
     .map(([word]) => word);
 }
 
-function extractHeadings(content: string) {
-  const lines = content.split('\n');
+function _extractHeadings(_content: string) {
+  const lines = _content.split('\n');
   const h1 = lines
     .filter((line) => line.trim().startsWith('# '))
     .map((line) => line.trim().replace(/^#+\s*/, ''));

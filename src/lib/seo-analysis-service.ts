@@ -69,7 +69,7 @@ export class SEOAnalysisService {
       };
     } catch (error) {
       console.error('SEO analysis failed:', error);
-      return this.getFallbackSEOAnalysis();
+      throw new Error(`SEO analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -414,10 +414,10 @@ export class SEOAnalysisService {
   }
 
   private generateSEORecommendations(
-    searchConsoleData: any,
-    keywordResearch: any,
-    trendingAnalysis: any,
-    competitiveAnalysis: any
+    _searchConsoleData: any,
+    _keywordResearch: any,
+    _trendingAnalysis: any,
+    _competitiveAnalysis: any
   ) {
     return {
       immediateActions: [
@@ -447,29 +447,7 @@ export class SEOAnalysisService {
     };
   }
 
-  private getFallbackSEOAnalysis(): SEOAnalysis {
-    return {
-      searchConsole: {
-        currentRankings: [],
-        topPerformingPages: [],
-      },
-      keywordResearch: {
-        targetKeywords: [],
-        contentGaps: [],
-        trendingKeywords: [],
-      },
-      competitiveAnalysis: {
-        competitors: [],
-        keywordComparison: [],
-      },
-      recommendations: {
-        immediateActions: ['SEO analysis temporarily unavailable'],
-        contentOpportunities: [],
-        technicalImprovements: [],
-        competitiveAdvantages: [],
-      },
-    };
-  }
+  // Removed getFallbackSEOAnalysis() - we only use real collected data
 }
 
 export async function performSEOAnalysis(

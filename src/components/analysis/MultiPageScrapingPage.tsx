@@ -102,7 +102,7 @@ export function MultiPageScrapingPage() {
 
       if (data.success) {
         setResult(data.data);
-        console.log('Multi-page scraping completed:', data.summary);
+        // Multi-page scraping completed
       } else {
         setError(data.error || 'Multi-page scraping failed');
       }

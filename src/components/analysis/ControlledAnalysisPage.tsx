@@ -77,8 +77,8 @@ export function ControlledAnalysisPage({
           data.data.availableSteps.map((step: AnalysisStep) => step.id)
         );
       }
-    } catch (error) {
-      console.error('Failed to load available steps:', error);
+    } catch {
+      // Failed to load available steps - error handled silently
     }
   };
 
@@ -145,9 +145,8 @@ export function ControlledAnalysisPage({
       } else {
         throw new Error(data.error || 'Analysis failed');
       }
-    } catch (error) {
-      console.error('Analysis error:', error);
-      setError(error instanceof Error ? error.message : 'Analysis failed');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Analysis failed');
 
       // Mark current step as failed
       setProgress((prev) =>
@@ -156,7 +155,7 @@ export function ControlledAnalysisPage({
             ? {
                 ...p,
                 status: 'failed' as const,
-                error: error instanceof Error ? error.message : 'Unknown error',
+                error: err instanceof Error ? err.message : 'Unknown error',
               }
             : p
         )

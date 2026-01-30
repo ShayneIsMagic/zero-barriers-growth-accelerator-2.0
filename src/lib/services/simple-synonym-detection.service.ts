@@ -16,7 +16,7 @@ export class SimpleSynonymDetectionService {
    */
   static async findValuePatterns(
     content: string,
-    industry?: string
+    _industry?: string
   ): Promise<PatternMatch[]> {
     try {
       // Simple pattern matching without database calls

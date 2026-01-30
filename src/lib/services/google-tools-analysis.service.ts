@@ -132,55 +132,19 @@ export class GoogleToolsAnalysisService {
   /**
    * Get Google Analytics data (placeholder - would use actual API)
    */
-  private static async getGoogleAnalyticsData(domain: string): Promise<any> {
-    // Placeholder - would use Google Analytics API
-    return {
-      sessions: 1250,
-      bounce_rate: 0.45,
-      revenue_per_session: 125.5,
-      conversion_rate: 0.08,
-      top_pages: [
-        { page: '/', sessions: 450, bounce_rate: 0.42, revenue: 12500 },
-        { page: '/services', sessions: 320, bounce_rate: 0.38, revenue: 8500 },
-        { page: '/projects', sessions: 280, bounce_rate: 0.52, revenue: 6200 },
-      ],
-    };
+  private static async getGoogleAnalyticsData(_domain: string): Promise<any> {
+    // TODO: Implement actual Google Analytics API integration
+    throw new Error('Google Analytics API integration required. No mock data returned.');
   }
 
   /**
-   * Get Google Search Console data (placeholder - would use actual API)
+   * Get Google Search Console data - requires actual API integration
    */
   private static async getGoogleSearchConsoleData(
     domain: string
   ): Promise<any> {
-    // Placeholder - would use Google Search Console API
-    return {
-      queries: [
-        {
-          query: 'custom homes utah',
-          impressions: 1250,
-          clicks: 85,
-          position: 12.5,
-        },
-        {
-          query: 'home builders sanpete county',
-          impressions: 890,
-          clicks: 45,
-          position: 15.2,
-        },
-        {
-          query: 'custom home construction',
-          impressions: 2100,
-          clicks: 120,
-          position: 8.7,
-        },
-      ],
-      pages: [
-        { page: '/', impressions: 2100, clicks: 180, position: 8.5 },
-        { page: '/services', impressions: 1500, clicks: 95, position: 12.1 },
-        { page: '/projects', impressions: 1200, clicks: 78, position: 14.3 },
-      ],
-    };
+    // TODO: Implement actual Google Search Console API integration
+    throw new Error('Google Search Console API integration required. No mock data returned.');
   }
 
   /**

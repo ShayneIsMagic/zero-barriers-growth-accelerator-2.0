@@ -105,7 +105,6 @@ export function PageAnalysisForm({
       setAnalysis(result);
       onAnalysisComplete?.(result);
     } catch (err) {
-      console.error('Analysis error:', err);
       setError(err instanceof Error ? err.message : 'Analysis failed');
     } finally {
       setIsAnalyzing(false);
@@ -138,8 +137,7 @@ export function PageAnalysisForm({
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-    } catch (err) {
-      console.error('PDF download error:', err);
+    } catch (_err) {
       setError('Failed to generate PDF');
     }
   };

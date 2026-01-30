@@ -139,7 +139,7 @@ export class StandardizedDataCollector {
    */
   private static transformToStandardizedFormat(
     scrapedData: any,
-    url: string
+    _url: string
   ): StandardizedWebsiteData {
     const standardizedData: StandardizedWebsiteData = {
       url: scrapedData.url,

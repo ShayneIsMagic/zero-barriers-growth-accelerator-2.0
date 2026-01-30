@@ -91,8 +91,6 @@ export function StepByStepExecutionPage() {
     setError(null);
 
     try {
-      console.log(`🚀 Starting step-by-step execution for: ${url}`);
-
       const response = await fetch('/api/analyze/step-by-step-execution', {
         method: 'POST',
         headers: {
@@ -117,12 +115,11 @@ export function StepByStepExecutionPage() {
           prevSteps.map((step) => ({ ...step, status: 'completed' as const }))
         );
 
-        console.log('✅ Step-by-step analysis completed successfully');
+        // Step-by-step analysis completed successfully
       } else {
         throw new Error(data.error || 'Analysis failed');
       }
     } catch (err) {
-      console.error('Analysis error:', err);
       setError(err instanceof Error ? err.message : 'Analysis failed');
       setCurrentStep('Failed');
 

@@ -92,12 +92,10 @@ export function SimpleGoogleToolsPage() {
 
       if (result.success) {
         setScrapedData(result.data);
-        console.log('✅ Google Tools data scraped successfully:', result.data);
       } else {
         throw new Error(result.error || 'Failed to scrape Google Tools data');
       }
     } catch (error) {
-      console.error('❌ Google Tools scraping failed:', error);
       setError(
         error instanceof Error
           ? error.message
@@ -139,12 +137,11 @@ export function SimpleGoogleToolsPage() {
         setScrapedData((prev) =>
           prev ? { ...prev, analysis: result.analysis } : null
         );
-        console.log('✅ Google Tools analysis completed');
+        // Google Tools analysis completed
       } else {
         throw new Error(result.error || 'Analysis failed');
       }
     } catch (error) {
-      console.error('❌ Google Tools analysis failed:', error);
       setError(error instanceof Error ? error.message : 'Analysis failed');
     } finally {
       setIsAnalyzing(false);

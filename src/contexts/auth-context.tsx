@@ -42,8 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           localStorage.removeItem('auth_token');
         }
       }
-    } catch (error) {
-      console.error('Auth check failed:', error);
+    } catch (_error) {
       localStorage.removeItem('auth_token');
     } finally {
       setLoading(false);
@@ -69,8 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return true;
       }
       return false;
-    } catch (error) {
-      console.error('Signin error:', error);
+    } catch (_error) {
       return false;
     }
   };
@@ -98,8 +96,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return true;
       }
       return false;
-    } catch (error) {
-      console.error('Signup error:', error);
+    } catch (_error) {
       return false;
     }
   };
@@ -109,8 +106,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Clear token and user
       localStorage.removeItem('auth_token');
       setUser(null);
-    } catch (error) {
-      console.error('Signout error:', error);
+    } catch (_error) {
+      // Signout error - handled silently
     }
   };
 

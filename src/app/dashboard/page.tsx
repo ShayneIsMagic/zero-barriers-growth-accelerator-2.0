@@ -24,11 +24,38 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
+
+// Dynamically import ReportsViewer to prevent SSR hydration issues
+const ReportsViewer = dynamic(
+  () => import('@/components/shared/ReportsViewer').then((mod) => mod.default || mod.ReportsViewer),
+  { ssr: false }
+);
 
 export default function DashboardPage() {
   const [_url, _setUrl] = useState('');
 
   const workingAssessments = [
+    {
+      id: 'content-comparison',
+      name: 'Content Comparison Analysis',
+      status: 'ready',
+      description:
+        'Compare existing website content against proposed new content. Get AI-powered side-by-side analysis with SEO, meta tags, and keyword analysis.',
+      icon: Brain,
+      route: '/dashboard/content-comparison',
+      whatYouGet: [
+        'Side-by-side content analysis and comparison',
+        'AI-powered content optimization recommendations',
+        'SEO metadata, tags, and keywords analysis',
+        'Keyword stuffing detection and protection',
+        'Performance impact analysis for content changes',
+        'Upload JSON/Markdown/text files for analysis',
+      ],
+      estimatedTime: '2-3 minutes',
+      complexity: 'Beginner',
+      prerequisites: 'None - just enter your website URL or upload a file',
+    },
     {
       id: 'value-centric-b2c',
       name: 'Value-Centric Analysis (B2C)',
@@ -42,10 +69,11 @@ export default function DashboardPage() {
         'Revenue opportunity identification',
         'Premium pricing strategy recommendations',
         'Customer satisfaction optimization insights',
+        'Upload JSON/Markdown/text files for analysis',
       ],
       estimatedTime: '2-3 minutes',
       complexity: 'Beginner',
-      prerequisites: 'None - just enter your website URL',
+      prerequisites: 'None - just enter your website URL or upload a file',
     },
     {
       id: 'value-centric-b2b',
@@ -142,24 +170,6 @@ export default function DashboardPage() {
       prerequisites: 'None - just enter your website URL and keywords',
     },
     {
-      id: 'content-comparison',
-      name: 'Content Comparison Analysis',
-      status: 'ready',
-      description:
-        'Compare existing website content against proposed new content. Get AI-powered side-by-side analysis.',
-      icon: Brain,
-      route: '/dashboard/content-comparison',
-      whatYouGet: [
-        'Side-by-side content analysis and comparison',
-        'AI-powered content optimization recommendations',
-        'Content gap identification and improvement suggestions',
-        'Performance impact analysis for content changes',
-      ],
-      estimatedTime: '2-3 minutes',
-      complexity: 'Beginner',
-      prerequisites: 'None - just enter your website URL',
-    },
-    {
       id: 'clifton-strengths-simple',
       name: 'CliftonStrengths Analysis',
       status: 'ready',
@@ -234,25 +244,6 @@ export default function DashboardPage() {
       estimatedTime: '2-3 minutes',
       complexity: 'Advanced',
       prerequisites: 'None - just enter your website URL',
-    },
-    {
-      id: 'google-tools',
-      name: 'Google Tools Analysis',
-      status: 'ready',
-      description:
-        'Access Google Tools directly and analyze data using AI-powered insights - no APIs needed',
-      icon: BarChart3,
-      route: '/dashboard/google-tools',
-      whatYouGet: [
-        'Direct links to Google Trends, Analytics, Search Console, PageSpeed',
-        'PTCF framework prompts for each tool',
-        'Manual data input and AI analysis',
-        'Revenue-focused insights and recommendations',
-        'No API setup required - just paste data',
-      ],
-      estimatedTime: '5-10 minutes',
-      complexity: 'Beginner',
-      prerequisites: 'None - just enter your website URL and paste data',
     },
     {
       id: 'golden-circle',
@@ -358,9 +349,12 @@ export default function DashboardPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-12 text-center">
-          <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-white">
-            Analysis Dashboard
-          </h1>
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
+              Analysis Dashboard
+            </h1>
+            <ReportsViewer />
+          </div>
           <p className="mx-auto max-w-3xl text-xl text-gray-600 dark:text-gray-300">
             AI-powered business framework analysis. Only working, tested
             features shown.
@@ -375,11 +369,11 @@ export default function DashboardPage() {
           </h2>
 
           <div className="grid gap-6">
-            {workingAssessments.map((assessment) => {
+            {workingAssessments.map((assessment, idx) => {
               const IconComponent = assessment.icon;
               return (
                 <Card
-                  key={assessment.id}
+                  key={`${assessment.id}-${idx}`}
                   className="border-green-200 bg-green-50 dark:bg-green-900/10"
                 >
                   <CardHeader>
@@ -456,11 +450,11 @@ export default function DashboardPage() {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {comingSoonAssessments.slice(0, 3).map((assessment) => {
+            {comingSoonAssessments.slice(0, 3).map((assessment, idx) => {
               const IconComponent = assessment.icon;
               return (
                 <Card
-                  key={assessment.id}
+                  key={`coming-soon-${assessment.id}-${idx}`}
                   className="border-yellow-200 bg-yellow-50 dark:bg-yellow-900/10"
                 >
                   <CardHeader>

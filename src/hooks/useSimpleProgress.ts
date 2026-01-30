@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-interface SimpleStep {
+interface _SimpleStep {
   id: string;
   name: string;
   status: 'pending' | 'running' | 'completed' | 'failed';
@@ -33,8 +33,8 @@ export function useSimpleProgress() {
       if (saved) {
         setAnalyses(JSON.parse(saved));
       }
-    } catch (error) {
-      console.warn('Failed to load analyses:', error);
+    } catch {
+      // Failed to load analyses - error handled silently
     }
   }, []);
 
@@ -42,8 +42,8 @@ export function useSimpleProgress() {
     setAnalyses(newAnalyses);
     try {
       localStorage.setItem('simple-analyses', JSON.stringify(newAnalyses));
-    } catch (error) {
-      console.warn('Failed to save analyses:', error);
+    } catch {
+      // Failed to save analyses - error handled silently
     }
   };
 

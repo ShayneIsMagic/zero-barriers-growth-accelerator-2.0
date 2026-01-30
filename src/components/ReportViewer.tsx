@@ -24,7 +24,7 @@ import {
   Users,
   XCircle,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 interface ReportViewerProps {
   analysisId: string;
@@ -50,13 +50,7 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
 
-  useEffect(() => {
-    if (analysisId) {
-      fetchReport();
-    }
-  }, [analysisId]);
-
-  const fetchReport = async () => {
+  const fetchReport = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -105,7 +99,13 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [analysisId, url]);
+
+  useEffect(() => {
+    if (analysisId) {
+      fetchReport();
+    }
+  }, [analysisId, fetchReport]);
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-600';

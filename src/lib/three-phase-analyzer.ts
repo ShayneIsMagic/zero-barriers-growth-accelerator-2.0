@@ -570,7 +570,7 @@ export class ThreePhaseAnalyzer {
 
   private async runScript(scriptPath: string, args: string[]): Promise<any> {
     const { spawn } = require('child_process');
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _reject) => {
       const child = spawn('node', [scriptPath, ...args], { stdio: 'pipe' });
 
       let output = '';
@@ -834,7 +834,7 @@ Return JSON format with specific, actionable recommendations.
   // Helper methods for calculations and extractions
   private extractContentIssues(
     scrapedContent: ProductionExtractionResult,
-    pageAuditData: any
+    _pageAuditData: any
   ): string[] {
     const issues = [];
     if (!scrapedContent.metaDescription)

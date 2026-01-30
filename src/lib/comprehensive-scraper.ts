@@ -747,16 +747,8 @@ ${scrapedContent.content || 'No content extracted'}
 
       return geminiInsights;
     } catch (error) {
-      console.warn(
-        'Gemini pattern analysis failed, using fallback insights:',
-        error
-      );
-      return this.getFallbackInsights(
-        content,
-        aiAnalysis,
-        lighthouse,
-        pageAudit
-      );
+      console.error('Gemini pattern analysis failed:', error);
+      throw new Error(`Pattern analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -920,75 +912,7 @@ IMPORTANT: Base all analysis on the ACTUAL RAW DATA provided. Use specific score
     `.trim();
   }
 
-  /**
-   * Fallback insights when Gemini analysis fails
-   */
-  private getFallbackInsights(
-    content: ProductionExtractionResult,
-    aiAnalysis: WebsiteAnalysisResult,
-    lighthouse: any,
-    pageAudit: any
-  ): any {
-    return {
-      patternAnalysis: {
-        crossToolCorrelations: [
-          'Limited data available for correlation analysis',
-        ],
-        consistentStrengths: ['Content structure appears solid'],
-        consistentWeaknesses: ['Technical performance needs improvement'],
-        performanceGaps: ['SEO and performance optimization required'],
-      },
-      whatIsWorking: {
-        technicalStrengths: ['Basic content structure in place'],
-        contentStrengths: [`${content.wordCount} words of content available`],
-        strategicStrengths: ['Website has clear purpose'],
-        competitiveAdvantages: ['Unique positioning potential'],
-      },
-      whatIsNotWorking: {
-        technicalIssues: ['Performance optimization needed'],
-        contentIssues: ['SEO optimization required'],
-        strategicGaps: ['Brand messaging could be stronger'],
-        criticalFailures: ['No critical failures identified'],
-      },
-      dataDrivenRecommendations: {
-        immediateActions: [
-          {
-            priority: 'high',
-            action: 'Optimize page performance based on Lighthouse scores',
-            expectedImpact: 'Improved user experience and SEO rankings',
-            dataSource: 'Lighthouse analysis',
-          },
-        ],
-        quickWins: [
-          {
-            effort: 'low',
-            impact: 'medium',
-            action: 'Add meta descriptions and optimize images',
-            metric: 'SEO score improvement',
-          },
-        ],
-        longTermImprovements: [
-          {
-            timeline: '3-6 months',
-            action: 'Implement comprehensive content strategy',
-            investment: 'medium',
-            roi: 'improved user engagement and conversions',
-          },
-        ],
-      },
-      competitiveOpportunities: {
-        uniqueStrengths: ['Content depth and structure'],
-        differentiationStrategies: ['Focus on technical excellence'],
-        innovationAreas: ['Performance optimization and user experience'],
-      },
-      successMetrics: {
-        currentBaseline: `${pageAudit?.seoScore || 'N/A'}/100 SEO, ${lighthouse?.scores?.performance || 'N/A'}/100 Performance`,
-        targetImprovements: ['SEO score >80', 'Performance score >90'],
-        trackingStrategy: 'Monthly analysis with same tools',
-        successCriteria: '20% improvement in overall scores within 3 months',
-      },
-    };
-  }
+  // Removed getFallbackInsights() - we only use real collected data
 
   /**
    * Generate comprehensive raw report

@@ -107,9 +107,8 @@ export default function SEOAnalysisForm() {
         };
 
         AnalysisClient.saveAnalysis(analysisForStorage);
-        console.log('✅ SEO analysis saved to localStorage');
-      } catch (saveError) {
-        console.error('Failed to save SEO analysis:', saveError);
+      } catch (_saveError) {
+        // Failed to save SEO analysis - handled silently
       }
 
       setAnalysis(data.data);
@@ -172,9 +171,8 @@ export default function SEOAnalysisForm() {
         };
 
         AnalysisClient.saveAnalysis(analysisForStorage);
-        console.log('✅ Quick SEO analysis saved to localStorage');
-      } catch (saveError) {
-        console.error('Failed to save quick SEO analysis:', saveError);
+      } catch (_saveError) {
+        // Failed to save quick SEO analysis - handled silently
       }
 
       setAnalysis(data.data);

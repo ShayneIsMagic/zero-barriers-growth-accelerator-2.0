@@ -30,7 +30,7 @@ import { WebsiteAnalysisResults } from './WebsiteAnalysisResults';
 export function WebsiteAnalysisPage() {
   const [analysisResult, setAnalysisResult] =
     useState<WebsiteAnalysisResult | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [_isAnalyzing, setIsAnalyzing] = useState(false);
 
   const handleAnalysisComplete = (result: WebsiteAnalysisResult) => {
     setAnalysisResult(result);

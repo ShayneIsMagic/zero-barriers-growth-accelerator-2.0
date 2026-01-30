@@ -7,7 +7,7 @@ export interface TestUser {
 }
 
 export class TestAuthService {
-  static async signIn(email: string, password: string): Promise<TestUser | null> {
+  static async signIn(email: string, _password: string): Promise<TestUser | null> {
     // Accept any email/password combination for testing
     console.log('Test Auth: Sign in attempt with', email);
     

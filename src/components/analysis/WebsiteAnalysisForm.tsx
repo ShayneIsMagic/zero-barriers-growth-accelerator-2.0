@@ -148,12 +148,11 @@ export function WebsiteAnalysisForm({
         };
 
         AnalysisClient.saveAnalysis(analysisForStorage);
-        console.log('✅ Phase 1 data saved to localStorage');
 
         // Notify parent component
         onAnalysisComplete?.(analysisForStorage);
-      } catch (saveError) {
-        console.error('Failed to save Phase 1 data:', saveError);
+      } catch (_saveError) {
+        // Failed to save Phase 1 data - handled silently
       }
     } catch (err) {
       setError({
