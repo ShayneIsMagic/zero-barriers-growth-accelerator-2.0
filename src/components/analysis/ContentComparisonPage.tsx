@@ -17,6 +17,7 @@ import { ContentExporter } from '@/components/shared/ContentExporter';
 import { PageMetadataDisplay } from '@/components/analysis/PageMetadataDisplay';
 import { DataSaveSelector } from '@/components/shared/DataSaveSelector';
 import { DataLoader } from '@/components/shared/DataLoader';
+import { FrameworkAnalysisRunner } from '@/components/analysis/FrameworkAnalysisRunner';
 import dynamic from 'next/dynamic';
 import { Copy, Download, GitCompare, History, Loader2, Plus, Save, Database } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -74,8 +75,8 @@ export function ContentComparisonPage() {
     if (fileType === 'json') {
       try {
         // const parsed = JSON.parse(content); // Could use parsed content if needed
-        // Use parsed content for analysis
-        setUrl(fileName); // Use filename as identifier
+        // Don't set filename as URL - files should be used as content, not URLs
+        // setUrl(fileName); // REMOVED: This was causing filenames to be treated as URLs
       } catch {
         // Not valid JSON, treat as text
       }
@@ -85,16 +86,46 @@ export function ContentComparisonPage() {
     }
   };
 
+  // Helper function to validate URL
+  const isValidUrl = (urlString: string): boolean => {
+    try {
+      const url = new URL(urlString);
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  };
+
   const runComparison = async () => {
-    if (inputMethod === 'url' && !url.trim()) {
-      return;
+    if (inputMethod === 'url') {
+      if (!url.trim()) {
+        setError('Please enter a URL');
+        return;
+      }
+      
+      // Validate URL format
+      if (!isValidUrl(url.trim())) {
+        setError('Please enter a valid URL (must start with http:// or https://)');
+        return;
+      }
     }
     
     if (inputMethod === 'file' && !uploadedContent.trim()) {
+      setError('Please upload a file or enter content');
       return;
     }
 
-    // Use the unified hook for analysis
+    // Clear previous errors
+    setError(null);
+
+    // For file uploads, don't pass URL to runAnalysis
+    if (inputMethod === 'file') {
+      // File uploads should be handled differently - they don't need scraping
+      setError('File uploads are not yet supported for full analysis. Please use URL input method.');
+      return;
+    }
+
+    // Use the unified hook for analysis (only for URL-based analysis)
     const analysisResult = await runAnalysis(url.trim(), {
       proposedContent: proposedContent.trim() || uploadedContent.trim(),
       analysisType: 'full',
@@ -503,11 +534,45 @@ New compelling description that highlights our unique value proposition.
       {/* Results */}
       {displayResult && (
         <Tabs defaultValue="comparison" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="comparison">Side-by-Side Comparison</TabsTrigger>
+            <TabsTrigger value="framework-analysis">Framework Analysis</TabsTrigger>
             <TabsTrigger value="existing">Existing Content</TabsTrigger>
             {displayResult.proposed && <TabsTrigger value="proposed">Proposed Content</TabsTrigger>}
           </TabsList>
+
+          {/* Framework Analysis Tab */}
+          <TabsContent value="framework-analysis">
+            <Card>
+              <CardHeader>
+                <CardTitle>Enhanced Framework Analysis Runner</CardTitle>
+                <CardDescription>
+                  Select pages and assessments to evaluate with Google Analytics/GA4 best practices and conversion flow optimization.
+                  {displayResult?.comprehensive && (
+                    <span className="block mt-2 text-sm text-green-600 dark:text-green-400">
+                      ✅ Content collected! Pages are automatically loaded below.
+                    </span>
+                  )}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FrameworkAnalysisRunner
+                  url={url.trim()}
+                  initialCollectedData={
+                    displayResult?.comprehensive 
+                      ? { pages: displayResult.comprehensive.pages || [], ...displayResult.comprehensive }
+                      : displayResult?.existingData
+                        ? { pages: [displayResult.existingData], url: url.trim() }
+                        : undefined
+                  }
+                  onReportsGenerated={(reports) => {
+                    console.log('Reports generated:', reports);
+                    // Could store reports or update UI
+                  }}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           {/* Comparison Tab */}
           <TabsContent value="comparison">

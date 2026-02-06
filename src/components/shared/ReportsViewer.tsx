@@ -238,8 +238,7 @@ export function ReportsViewer({
                                 <span className="truncate font-semibold">{domain}</span>
                               </CardTitle>
                               <CardDescription>
-                                {domainReports.length} report
-                                {domainReports.length !== 1 ? 's' : ''} • {domainReports[0]?.url}
+                                {domainReports.length} report{domainReports.length !== 1 ? 's' : ''} • {domainReports[0]?.url}
                               </CardDescription>
                             </div>
                           </div>

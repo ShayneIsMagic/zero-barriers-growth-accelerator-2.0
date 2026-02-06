@@ -24,24 +24,37 @@ export interface EnhancedAnalysisResult {
 export class EnhancedAnalysisService {
   /**
    * Run analysis with actual framework knowledge
+   * Now supports Google Analytics/GA4 best practices and conversion flow optimization
    */
   static async analyzeWithFramework(
     assessmentType: string,
     scrapedData: any,
-    url: string
+    url: string,
+    options?: {
+      selectedPages?: string[];
+      includeGoogleAnalytics?: boolean;
+      includeConversionFlow?: boolean;
+      siteGoals?: string[];
+      selectedArchetype?: string;
+      selectedAudience?: string;
+    }
   ): Promise<EnhancedAnalysisResult> {
     try {
       console.log(
         `🧠 Starting enhanced analysis with framework knowledge for: ${url}`
       );
       console.log(`📊 Assessment type: ${assessmentType}`);
+      if (options) {
+        console.log(`⚙️ Options:`, JSON.stringify(options, null, 2));
+      }
 
-      // Build enhanced prompt with framework knowledge
+      // Build enhanced prompt with framework knowledge and options
       const enhancedPrompt =
         await FrameworkIntegrationService.buildEnhancedPrompt(
           assessmentType,
           scrapedData,
-          url
+          url,
+          options
         );
 
       console.log(`📝 Enhanced prompt built with framework knowledge`);

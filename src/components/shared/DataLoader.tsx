@@ -65,6 +65,19 @@ export function DataLoader({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [savedUrls, setSavedUrls] = useState<string[]>([]);
+  const [collectedContent, setCollectedContent] = useState<Array<{
+    siteUrl: string;
+    domain: string;
+    timestamp: string;
+    pageCount: number;
+    pages: Array<{
+      url: string;
+      pageLabel: string;
+      pageType: string;
+      title?: string;
+      metaDescription?: string;
+    }>;
+  }>>([]);
   const [selectedUrl, setSelectedUrl] = useState<string | null>(null);
   const [selectedPageUrl, setSelectedPageUrl] = useState<string | null>(null);
   const [availablePages, setAvailablePages] = useState<Array<{ url: string; pageLabel: string; pageType: string }>>([]);
@@ -90,12 +103,26 @@ export function DataLoader({
   const loadSavedUrls = async () => {
     setLoading(true);
     try {
-      const urls = await UnifiedLocalForageStorage.getAllStoredUrls();
+      // Use getAllCollectedContent which validates data and groups by site
+      const content = await UnifiedLocalForageStorage.getAllCollectedContent();
+      setCollectedContent(content);
+      
+      // Extract site URLs for backward compatibility
+      const urls = content.map(c => c.siteUrl);
       setSavedUrls(urls);
       
-      // Auto-select current URL if it exists
-      if (currentUrl && urls.includes(currentUrl)) {
-        setSelectedUrl(currentUrl);
+      // Auto-select current URL if it exists (try multiple URL variations)
+      if (currentUrl) {
+        const matchingContent = content.find(c => {
+          const siteUrl = c.siteUrl.toLowerCase().replace(/\/$/, '');
+          const current = currentUrl.toLowerCase().replace(/\/$/, '');
+          return siteUrl === current || siteUrl.startsWith(current) || current.startsWith(siteUrl);
+        });
+        if (matchingContent) {
+          setSelectedUrl(matchingContent.siteUrl);
+        } else if (urls.length > 0) {
+          setSelectedUrl(urls[0]);
+        }
       } else if (urls.length > 0) {
         setSelectedUrl(urls[0]);
       }
@@ -279,11 +306,11 @@ export function DataLoader({
         </DialogHeader>
 
         <div className="space-y-4">
-          {loading && savedUrls.length === 0 ? (
+          {loading && collectedContent.length === 0 ? (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
-          ) : savedUrls.length === 0 ? (
+          ) : collectedContent.length === 0 ? (
             <Card>
               <CardContent className="py-8 text-center text-muted-foreground">
                 <Database className="h-12 w-12 mx-auto mb-4 opacity-50" />
@@ -300,11 +327,13 @@ export function DataLoader({
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm">Saved URLs</CardTitle>
                   <CardDescription>
-                    {savedUrls.length} URL{savedUrls.length !== 1 ? 's' : ''} with saved data
+                    {collectedContent.length} site{collectedContent.length !== 1 ? 's' : ''} with saved data
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  {savedUrls.map((url) => (
+                  {collectedContent.map((content) => {
+                    const url = content.siteUrl;
+                    return (
                     <div
                       key={url}
                       className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
@@ -315,18 +344,17 @@ export function DataLoader({
                       onClick={() => setSelectedUrl(url)}
                     >
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{url}</p>
-                        {dataInfo && selectedUrl === url && dataInfo.timestamp && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Saved: {formatDate(dataInfo.timestamp)}
-                          </p>
-                        )}
+                        <p className="text-sm font-medium truncate">{content.domain || url}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {content.pageCount} page{content.pageCount !== 1 ? 's' : ''} • {formatDate(content.timestamp)}
+                        </p>
                       </div>
                       {selectedUrl === url && (
                         <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 ml-2" />
                       )}
                     </div>
-                  ))}
+                    );
+                  })}
                 </CardContent>
               </Card>
 

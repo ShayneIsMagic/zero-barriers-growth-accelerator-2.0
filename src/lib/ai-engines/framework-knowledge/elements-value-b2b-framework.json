@@ -4,431 +4,548 @@
   "description": "A framework for understanding the 40 fundamental elements that drive enterprise value and business success",
   "core_concept": "Enterprise value is driven by business outcomes, efficiency, and competitive advantage",
   "structure": {
-    "functional_elements": {
-      "description": "Practical benefits that help businesses operate more efficiently",
+    "table_stakes_elements": {
+      "description": "Basic requirements that must be met to compete in the market",
       "elements": [
         {
-          "name": "Saves Time",
-          "definition": "Increases operational efficiency and speed",
+          "name": "Meeting Specifications",
+          "definition": "Meets required specifications and standards",
           "indicators": [
-            "efficiency",
-            "productivity",
-            "automation",
-            "streamlined",
-            "quick deployment"
+            "meets requirements",
+            "specifications",
+            "standards",
+            "compliance",
+            "certified"
           ],
-          "revenue_impact": "Very High - time savings directly impact bottom line",
-          "pricing_potential": "ROI-based pricing for time savings"
+          "revenue_impact": "Critical - table stakes requirement",
+          "pricing_potential": "Base pricing requirement"
         },
         {
-          "name": "Simplifies",
-          "definition": "Reduces complexity in business processes or systems",
+          "name": "Acceptable Price",
+          "definition": "Fair price that provides value for money and ROI",
           "indicators": [
-            "easy integration",
-            "user-friendly",
-            "intuitive",
-            "simple setup",
-            "one-click"
-          ],
-          "revenue_impact": "High - reduces implementation costs and training",
-          "pricing_potential": "Implementation efficiency premium"
-        },
-        {
-          "name": "Reduces Cost",
-          "definition": "Lowers operational expenses or capital expenditures",
-          "indicators": [
-            "cost-effective",
+            "fair price",
+            "value for money",
             "ROI",
-            "savings",
-            "budget-friendly",
-            "reduce expenses"
+            "affordable",
+            "competitive pricing"
           ],
-          "revenue_impact": "Very High - direct cost savings are measurable",
+          "revenue_impact": "Critical - price must be acceptable",
+          "pricing_potential": "Competitive pricing models"
+        },
+        {
+          "name": "Regulatory Compliance",
+          "definition": "Meets legal and regulatory requirements",
+          "indicators": [
+            "compliant",
+            "legal",
+            "regulatory",
+            "certified",
+            "approved"
+          ],
+          "revenue_impact": "Critical - compliance is mandatory",
+          "pricing_potential": "Compliance premium pricing"
+        },
+        {
+          "name": "Ethical Standards",
+          "definition": "Demonstrates integrity, ethics, and corporate responsibility",
+          "indicators": [
+            "ethical",
+            "integrity",
+            "corporate responsibility",
+            "trustworthy",
+            "responsible"
+          ],
+          "revenue_impact": "High - ethics build trust and partnerships",
+          "pricing_potential": "Ethical business premium"
+        }
+      ]
+    },
+    "functional_elements": {
+      "description": "Practical benefits that drive business performance and results",
+      "elements": [
+        {
+          "name": "Improved Top Line",
+          "definition": "Drives revenue growth, sales increase, and market share",
+          "indicators": [
+            "revenue growth",
+            "sales increase",
+            "market share",
+            "top line",
+            "revenue"
+          ],
+          "revenue_impact": "Very High - direct revenue impact",
+          "pricing_potential": "Revenue growth sharing models"
+        },
+        {
+          "name": "Cost Reduction",
+          "definition": "Lowers expenses and operational costs",
+          "indicators": [
+            "cost savings",
+            "lower costs",
+            "reduce expenses",
+            "efficiency",
+            "savings"
+          ],
+          "revenue_impact": "Very High - cost savings directly impact bottom line",
           "pricing_potential": "Cost savings sharing models"
         },
         {
-          "name": "Reduces Risk",
-          "definition": "Mitigates business, financial, or operational risks",
+          "name": "Product Quality",
+          "definition": "Delivers excellence, reliability, and superior performance",
           "indicators": [
-            "secure",
-            "compliance",
-            "guaranteed",
-            "reliable",
-            "enterprise-grade"
+            "excellence",
+            "reliability",
+            "performance",
+            "quality",
+            "superior"
           ],
-          "revenue_impact": "Very High - risk mitigation is critical for enterprises",
-          "pricing_potential": "Risk mitigation premium pricing"
+          "revenue_impact": "Very High - quality drives competitive advantage",
+          "pricing_potential": "Quality premium pricing"
         },
         {
-          "name": "Organizes",
-          "definition": "Improves structure and management of business resources",
+          "name": "Scalability",
+          "definition": "Grows and expands with business needs",
           "indicators": [
-            "organized",
-            "structured",
-            "systematic",
-            "workflow",
-            "process management"
+            "scalable",
+            "grows",
+            "expandable",
+            "flexible capacity",
+            "scales"
           ],
-          "revenue_impact": "High - organization improves efficiency",
-          "pricing_potential": "Process optimization pricing"
+          "revenue_impact": "Very High - scalability enables growth",
+          "pricing_potential": "Scalability and growth pricing"
         },
         {
-          "name": "Integrates",
-          "definition": "Ensures seamless compatibility and data flow between systems",
+          "name": "Innovation",
+          "definition": "Brings cutting-edge, advanced, and novel capabilities",
           "indicators": [
-            "API",
-            "integration",
-            "compatible",
-            "seamless",
-            "connects with"
+            "innovative",
+            "cutting-edge",
+            "advanced",
+            "novel",
+            "breakthrough"
           ],
-          "revenue_impact": "Very High - integration creates switching costs",
-          "pricing_potential": "Integration platform pricing"
+          "revenue_impact": "Very High - innovation drives competitive advantage",
+          "pricing_potential": "Innovation premium pricing"
         },
         {
-          "name": "Connects",
-          "definition": "Facilitates collaboration and communication within the organization or with partners",
+          "name": "Flexibility",
+          "definition": "Adaptable, customizable, and versatile solutions",
           "indicators": [
-            "collaboration",
-            "team",
-            "network",
-            "partnership",
-            "ecosystem"
-          ],
-          "revenue_impact": "High - collaboration drives innovation and efficiency",
-          "pricing_potential": "Collaboration platform pricing"
-        },
-        {
-          "name": "Reduces Effort",
-          "definition": "Automates tasks and minimizes manual intervention",
-          "indicators": [
-            "automated",
-            "hands-free",
-            "effortless",
-            "minimal setup"
-          ],
-          "revenue_impact": "Very High - automation reduces labor costs",
-          "pricing_potential": "Automation ROI pricing"
-        },
-        {
-          "name": "Avoids Hassles",
-          "definition": "Eliminates operational friction and administrative burdens",
-          "indicators": [
-            "hassle-free",
-            "convenient",
-            "smooth",
-            "easy implementation"
-          ],
-          "revenue_impact": "Medium - reduces operational overhead",
-          "pricing_potential": "Convenience premium pricing"
-        },
-        {
-          "name": "Makes Money",
-          "definition": "Drives revenue growth or new income streams",
-          "indicators": [
-            "revenue",
-            "profit",
-            "monetize",
-            "earn",
-            "increase sales"
-          ],
-          "revenue_impact": "Very High - direct revenue impact",
-          "pricing_potential": "Revenue sharing models"
-        },
-        {
-          "name": "Reduces Anxiety",
-          "definition": "Provides assurance and stability in business operations",
-          "indicators": [
-            "peace of mind",
-            "confidence",
-            "assured",
-            "worry-free"
-          ],
-          "revenue_impact": "High - business continuity is critical",
-          "pricing_potential": "Business continuity premium"
-        },
-        {
-          "name": "Rewards Me",
-          "definition": "Offers tangible benefits or recognition for business achievements",
-          "indicators": [
-            "incentives",
-            "bonuses",
-            "rewards",
-            "recognition",
-            "benefits"
-          ],
-          "revenue_impact": "Medium - improves partner relationships",
-          "pricing_potential": "Partner incentive programs"
-        },
-        {
-          "name": "Provides Access",
-          "definition": "Grants entry to critical resources, markets, or expertise",
-          "indicators": ["exclusive", "VIP", "premium", "enterprise access"],
-          "revenue_impact": "Very High - access to resources drives competitive advantage",
-          "pricing_potential": "Access tier pricing"
-        },
-        {
-          "name": "Variety",
-          "definition": "Offers flexible solutions or diverse product lines",
-          "indicators": [
-            "options",
             "flexible",
+            "adaptable",
             "customizable",
-            "multiple solutions"
+            "versatile",
+            "configurable"
           ],
-          "revenue_impact": "Medium - flexibility increases adoption",
+          "revenue_impact": "High - flexibility increases adoption",
           "pricing_potential": "Customization and flexibility pricing"
         },
         {
-          "name": "Therapeutic Value",
-          "definition": "Contributes to employee well-being or stress reduction",
-          "indicators": ["wellness", "stress-free", "relaxing", "therapeutic"],
-          "revenue_impact": "Medium - employee wellness impacts productivity",
-          "pricing_potential": "Employee wellness programs"
-        },
-        {
-          "name": "Nostalgia",
-          "definition": "Leverages established reputation or traditional methods",
+          "name": "Component Quality",
+          "definition": "High-quality parts, materials, and inputs",
           "indicators": [
-            "established",
-            "proven",
-            "traditional",
-            "heritage",
-            "legacy"
+            "component quality",
+            "parts quality",
+            "materials",
+            "inputs",
+            "components"
           ],
-          "revenue_impact": "Low - trust and reliability factor",
-          "pricing_potential": "Heritage brand premium"
-        },
-        {
-          "name": "Design/Aesthetics",
-          "definition": "Enhances professional image or user experience",
-          "indicators": [
-            "professional",
-            "sleek",
-            "modern",
-            "aesthetic",
-            "design"
-          ],
-          "revenue_impact": "Medium - professional image matters",
-          "pricing_potential": "Design and UX premium"
-        },
-        {
-          "name": "Badge Value",
-          "definition": "Confers industry leadership or prestige",
-          "indicators": [
-            "premium",
-            "luxury",
-            "exclusive",
-            "status",
-            "prestigious"
-          ],
-          "revenue_impact": "High - industry status drives partnerships",
-          "pricing_potential": "Industry leadership premium"
-        },
-        {
-          "name": "Wellness",
-          "definition": "Supports employee health and productivity programs",
-          "indicators": [
-            "employee wellness",
-            "workplace health",
-            "wellbeing",
-            "fitness"
-          ],
-          "revenue_impact": "Medium - employee health impacts performance",
-          "pricing_potential": "Corporate wellness programs"
+          "revenue_impact": "High - component quality ensures reliability",
+          "pricing_potential": "Quality component premium"
         }
       ]
     },
-    "emotional_elements": {
-      "description": "Elements that create emotional connections and satisfaction in business contexts",
+    "ease_of_doing_business_elements": {
+      "description": "Elements that make it easier and more efficient to work with the vendor",
       "elements": [
         {
-          "name": "Fun/Entertainment",
-          "definition": "Engages employees or clients through enjoyable experiences",
+          "name": "Time Savings",
+          "definition": "Increases efficiency, speed, and quick deployment",
           "indicators": [
-            "engaging",
-            "interactive",
-            "gamification",
-            "enjoyable"
+            "time savings",
+            "efficiency",
+            "speed",
+            "quick",
+            "fast"
           ],
-          "revenue_impact": "Medium - engagement improves adoption",
-          "pricing_potential": "Engagement and gamification pricing"
+          "revenue_impact": "Very High - time savings directly impact productivity",
+          "pricing_potential": "Time savings ROI pricing"
         },
         {
-          "name": "Attractive Appearance",
-          "definition": "Enhances the visual appeal of products or presentations",
+          "name": "Reduced Effort",
+          "definition": "Makes processes easy, simple, and low-touch",
           "indicators": [
-            "beautiful",
-            "stunning",
-            "elegant",
-            "professional design"
+            "reduced effort",
+            "easy",
+            "simple",
+            "low touch",
+            "effortless"
           ],
-          "revenue_impact": "Medium - visual appeal influences decisions",
-          "pricing_potential": "Design and presentation premium"
+          "revenue_impact": "High - reduced effort improves adoption",
+          "pricing_potential": "Ease of use premium"
         },
         {
-          "name": "Provides Access",
-          "definition": "Offers exclusive insights, tools, or networks",
+          "name": "Decreased Hassles",
+          "definition": "Eliminates friction and makes processes smooth and painless",
           "indicators": [
-            "exclusive access",
-            "VIP treatment",
-            "premium features"
+            "decreased hassles",
+            "smooth",
+            "friction-free",
+            "painless",
+            "hassle-free"
           ],
-          "revenue_impact": "High - exclusivity drives premium pricing",
-          "pricing_potential": "Exclusive access tier pricing"
+          "revenue_impact": "High - reduced friction improves satisfaction",
+          "pricing_potential": "Convenience premium"
+        },
+        {
+          "name": "Information",
+          "definition": "Provides valuable data, insights, and knowledge",
+          "indicators": [
+            "information",
+            "data",
+            "insights",
+            "knowledge",
+            "intelligence"
+          ],
+          "revenue_impact": "High - information drives better decisions",
+          "pricing_potential": "Data and insights premium"
+        },
+        {
+          "name": "Transparency",
+          "definition": "Provides clear, open, and visible processes",
+          "indicators": [
+            "transparent",
+            "clear",
+            "open",
+            "visible",
+            "honest"
+          ],
+          "revenue_impact": "High - transparency builds trust",
+          "pricing_potential": "Transparency and trust premium"
+        },
+        {
+          "name": "Organization",
+          "definition": "Improves structure, order, and systematic processes",
+          "indicators": [
+            "organized",
+            "structure",
+            "order",
+            "systematic",
+            "structured"
+          ],
+          "revenue_impact": "High - organization improves efficiency",
+          "pricing_potential": "Process organization premium"
+        },
+        {
+          "name": "Simplification",
+          "definition": "Streamlines, simplifies, and makes processes straightforward",
+          "indicators": [
+            "simplification",
+            "streamlined",
+            "uncomplicated",
+            "straightforward",
+            "simple"
+          ],
+          "revenue_impact": "High - simplification reduces complexity",
+          "pricing_potential": "Simplicity premium"
+        },
+        {
+          "name": "Connection",
+          "definition": "Integrates, links, and connects systems and processes",
+          "indicators": [
+            "connection",
+            "integration",
+            "links",
+            "network",
+            "connects"
+          ],
+          "revenue_impact": "Very High - connection creates switching costs",
+          "pricing_potential": "Integration platform pricing"
+        },
+        {
+          "name": "Integration",
+          "definition": "Unifies, seamlessly connects, and integrates systems",
+          "indicators": [
+            "integration",
+            "unified",
+            "seamless",
+            "connected",
+            "integrated"
+          ],
+          "revenue_impact": "Very High - integration creates lock-in",
+          "pricing_potential": "Integration ecosystem pricing"
+        },
+        {
+          "name": "Availability",
+          "definition": "Accessible, on-demand, and ready when needed",
+          "indicators": [
+            "available",
+            "accessible",
+            "on-demand",
+            "ready",
+            "accessible"
+          ],
+          "revenue_impact": "High - availability ensures reliability",
+          "pricing_potential": "Availability and uptime premium"
         },
         {
           "name": "Variety",
-          "definition": "Provides diverse options for customization or deployment",
+          "definition": "Offers options, choices, and selection",
           "indicators": [
-            "diverse",
-            "multiple options",
+            "variety",
+            "options",
+            "choices",
+            "selection",
+            "diverse"
+          ],
+          "revenue_impact": "Medium - variety increases satisfaction",
+          "pricing_potential": "Variety and choice pricing"
+        },
+        {
+          "name": "Configurability",
+          "definition": "Customizable, flexible, and tailored solutions",
+          "indicators": [
+            "configurable",
+            "customizable",
             "flexible",
-            "customizable"
+            "tailored",
+            "custom"
           ],
-          "revenue_impact": "Medium - choice increases satisfaction",
-          "pricing_potential": "Customization and variety pricing"
+          "revenue_impact": "High - configurability increases fit",
+          "pricing_potential": "Customization pricing"
         },
         {
-          "name": "Therapeutic Value",
-          "definition": "Helps manage workplace stress or improve mental well-being",
+          "name": "Responsiveness",
+          "definition": "Quick response, attentive, and reactive support",
           "indicators": [
-            "stress relief",
-            "wellness",
-            "therapeutic",
-            "relaxing"
+            "responsive",
+            "quick response",
+            "attentive",
+            "reactive",
+            "fast support"
           ],
-          "revenue_impact": "Medium - stress reduction improves productivity",
-          "pricing_potential": "Workplace wellness programs"
+          "revenue_impact": "High - responsiveness improves satisfaction",
+          "pricing_potential": "Responsive support premium"
         },
         {
-          "name": "Nostalgia",
-          "definition": "Connects with a company's history or established practices",
-          "indicators": ["memories", "traditional", "classic", "established"],
-          "revenue_impact": "Low - trust and familiarity factor",
-          "pricing_potential": "Heritage and tradition premium"
+          "name": "Expertise",
+          "definition": "Demonstrates knowledge, skill, and competence",
+          "indicators": [
+            "expertise",
+            "knowledge",
+            "skill",
+            "competence",
+            "expert"
+          ],
+          "revenue_impact": "Very High - expertise drives trust and results",
+          "pricing_potential": "Expertise and consulting premium"
         },
         {
-          "name": "Design/Aesthetics",
-          "definition": "Focuses on elegant and intuitive design for business tools",
-          "indicators": ["aesthetic", "beautiful", "professional", "design"],
-          "revenue_impact": "Medium - design influences user adoption",
-          "pricing_potential": "Design excellence premium"
+          "name": "Commitment",
+          "definition": "Shows dedication, partnership, and long-term focus",
+          "indicators": [
+            "commitment",
+            "dedication",
+            "partnership",
+            "long-term",
+            "committed"
+          ],
+          "revenue_impact": "High - commitment builds relationships",
+          "pricing_potential": "Partnership and commitment premium"
         },
         {
-          "name": "Badge Value",
-          "definition": "Signals market leadership or innovative status",
-          "indicators": ["premium", "luxury", "exclusive", "status symbol"],
-          "revenue_impact": "High - industry status drives partnerships",
-          "pricing_potential": "Market leadership premium"
+          "name": "Stability",
+          "definition": "Reliable, consistent, and dependable operations",
+          "indicators": [
+            "stable",
+            "reliable",
+            "consistent",
+            "dependable",
+            "steady"
+          ],
+          "revenue_impact": "Very High - stability is critical for enterprises",
+          "pricing_potential": "Stability and reliability premium"
         },
         {
-          "name": "Wellness",
-          "definition": "Promotes a healthy and supportive work environment",
-          "indicators": ["employee wellness", "workplace health", "wellbeing"],
-          "revenue_impact": "Medium - employee health impacts retention",
-          "pricing_potential": "Corporate wellness initiatives"
+          "name": "Cultural Fit",
+          "definition": "Aligns with company values, matches culture, and is compatible",
+          "indicators": [
+            "cultural fit",
+            "alignment",
+            "values match",
+            "compatible",
+            "fits culture"
+          ],
+          "revenue_impact": "High - cultural fit improves adoption",
+          "pricing_potential": "Cultural alignment premium"
+        },
+        {
+          "name": "Risk Reduction",
+          "definition": "Provides safety, security, and protection",
+          "indicators": [
+            "risk reduction",
+            "safety",
+            "security",
+            "protection",
+            "secure"
+          ],
+          "revenue_impact": "Very High - risk reduction is critical",
+          "pricing_potential": "Risk mitigation premium"
+        },
+        {
+          "name": "Reach",
+          "definition": "Expands market access, distribution, and coverage",
+          "indicators": [
+            "reach",
+            "market access",
+            "distribution",
+            "coverage",
+            "expansion"
+          ],
+          "revenue_impact": "Very High - reach drives growth",
+          "pricing_potential": "Market expansion pricing"
         }
       ]
     },
-    "life_changing_elements": {
-      "description": "Elements that create profound organizational transformation",
+    "individual_elements": {
+      "description": "Elements that benefit individual employees or decision-makers",
       "elements": [
         {
-          "name": "Self-Actualization",
-          "definition": "Empowers employees or clients to achieve their full professional potential",
+          "name": "Network Expansion",
+          "definition": "Builds connections, relationships, and professional contacts",
           "indicators": [
-            "growth",
-            "development",
-            "potential",
-            "achievement",
-            "success"
+            "network expansion",
+            "connections",
+            "relationships",
+            "contacts",
+            "networking"
           ],
-          "revenue_impact": "Very High - professional development drives performance",
+          "revenue_impact": "High - networking drives opportunities",
+          "pricing_potential": "Networking and community premium"
+        },
+        {
+          "name": "Marketability",
+          "definition": "Enhances career growth, skills, and resume value",
+          "indicators": [
+            "marketability",
+            "career growth",
+            "skills",
+            "resume value",
+            "professional development"
+          ],
+          "revenue_impact": "High - marketability drives career advancement",
           "pricing_potential": "Professional development premium"
         },
         {
-          "name": "Motivation",
-          "definition": "Inspires teams to reach higher performance goals",
+          "name": "Reputational Assurance",
+          "definition": "Builds credibility, trust, and recognition",
           "indicators": [
-            "motivate",
-            "inspire",
-            "empower",
-            "drive",
-            "encourage"
+            "reputational assurance",
+            "credibility",
+            "trust",
+            "recognition",
+            "reputation"
           ],
-          "revenue_impact": "High - motivation drives team performance",
-          "pricing_potential": "Team motivation and leadership pricing"
+          "revenue_impact": "High - reputation drives opportunities",
+          "pricing_potential": "Reputation and credibility premium"
         },
         {
-          "name": "Heirloom",
-          "definition": "Builds long-term, sustainable business assets or capabilities",
+          "name": "Design & Aesthetics",
+          "definition": "Enhances beauty, style, and professional appearance",
           "indicators": [
-            "lasting",
-            "durable",
-            "investment",
-            "legacy",
-            "long-term"
+            "design",
+            "aesthetics",
+            "beauty",
+            "style",
+            "appearance"
           ],
-          "revenue_impact": "High - long-term value creation",
-          "pricing_potential": "Long-term investment pricing"
+          "revenue_impact": "Medium - design influences perception",
+          "pricing_potential": "Design and aesthetics premium"
         },
         {
-          "name": "Affiliation/Belonging",
-          "definition": "Fosters a strong company culture or industry community",
+          "name": "Growth & Development",
+          "definition": "Enables learning, skills development, and advancement",
           "indicators": [
-            "community",
-            "team",
-            "partnership",
-            "belonging",
-            "culture"
+            "growth",
+            "development",
+            "learning",
+            "skills",
+            "advancement"
           ],
-          "revenue_impact": "High - culture drives retention and performance",
-          "pricing_potential": "Culture and community building pricing"
+          "revenue_impact": "High - development drives performance",
+          "pricing_potential": "Learning and development premium"
+        },
+        {
+          "name": "Reduced Anxiety",
+          "definition": "Provides peace of mind, confidence, and assurance",
+          "indicators": [
+            "reduced anxiety",
+            "peace of mind",
+            "confidence",
+            "assurance",
+            "worry-free"
+          ],
+          "revenue_impact": "High - reduced anxiety improves performance",
+          "pricing_potential": "Peace of mind premium"
+        },
+        {
+          "name": "Fun and Perks",
+          "definition": "Provides enjoyment, benefits, and rewards",
+          "indicators": [
+            "fun",
+            "perks",
+            "enjoyment",
+            "benefits",
+            "rewards"
+          ],
+          "revenue_impact": "Medium - fun improves engagement",
+          "pricing_potential": "Engagement and perks premium"
         }
       ]
     },
-    "social_impact_elements": {
-      "description": "Elements that create positive social and environmental impact",
+    "inspirational_elements": {
+      "description": "Elements that inspire and create vision for the future",
       "elements": [
         {
-          "name": "Self-Transcendence",
-          "definition": "Enables the business to contribute positively to society or the environment",
+          "name": "Vision",
+          "definition": "Helps anticipate direction of markets and future strategy",
           "indicators": [
-            "sustainability",
-            "social impact",
-            "environmental",
-            "contribution",
-            "purpose"
+            "vision",
+            "future",
+            "strategy",
+            "direction",
+            "roadmap"
           ],
-          "revenue_impact": "High - social responsibility drives brand value",
-          "pricing_potential": "Social impact premium pricing"
+          "revenue_impact": "Very High - vision drives strategic advantage",
+          "pricing_potential": "Strategic vision premium"
         },
         {
           "name": "Hope",
-          "definition": "Provides solutions that inspire optimism for future business challenges",
+          "definition": "Gives buyers hope for the future of their organization",
           "indicators": [
             "hope",
             "optimism",
-            "future",
             "possibility",
-            "potential"
+            "aspiration",
+            "future potential"
           ],
-          "revenue_impact": "Medium - hope drives engagement and loyalty",
-          "pricing_potential": "Future-focused solution pricing"
+          "revenue_impact": "High - hope drives engagement and loyalty",
+          "pricing_potential": "Future-focused premium"
         },
         {
-          "name": "Vision",
-          "definition": "Helps shape a clear, forward-looking direction for the company",
+          "name": "Social Responsibility",
+          "definition": "Helps customer be more socially responsible and sustainable",
           "indicators": [
-            "vision",
-            "strategy",
-            "direction",
-            "future",
-            "roadmap"
+            "social responsibility",
+            "sustainability",
+            "CSR",
+            "environmental",
+            "social impact"
           ],
-          "revenue_impact": "High - strategic vision drives growth",
-          "pricing_potential": "Strategic consulting premium"
+          "revenue_impact": "High - social responsibility drives brand value",
+          "pricing_potential": "Social impact premium"
         }
       ]
     }
@@ -460,29 +577,28 @@
   },
   "revenue_opportunities": {
     "enterprise_sales": [
-      "Saves Time",
-      "Reduces Cost",
-      "Makes Money",
-      "Reduces Risk",
-      "Integrates"
+      "Improved Top Line",
+      "Cost Reduction",
+      "Risk Reduction",
+      "Integration"
     ],
     "customer_retention": [
-      "Connects",
-      "Provides Access",
-      "Self-Actualization",
-      "Affiliation/Belonging"
+      "Connection",
+      "Stability",
+      "Expertise",
+      "Commitment"
     ],
     "deal_size_increase": [
-      "Badge Value",
-      "Self-Transcendence",
       "Vision",
-      "Heirloom"
+      "Social Responsibility",
+      "Innovation",
+      "Scalability"
     ],
     "premium_pricing": [
-      "Reduces Risk",
-      "Provides Access",
-      "Self-Actualization",
-      "Badge Value"
+      "Risk Reduction",
+      "Expertise",
+      "Innovation",
+      "Vision"
     ]
   },
   "analysis_methodology": {

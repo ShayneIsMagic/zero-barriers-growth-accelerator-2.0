@@ -11,7 +11,7 @@ export const maxDuration = 120; // 2 minutes for enhanced analysis
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { _url, scrapedData, assessmentType } = body;
+    const { _url, scrapedData, assessmentType, options } = body;
 
     if (!_url) {
       return NextResponse.json(
@@ -45,12 +45,16 @@ export async function POST(request: NextRequest) {
 
     console.log(`🧠 Starting enhanced analysis for: ${_url}`);
     console.log(`📊 Assessment type: ${assessmentType}`);
+    if (options) {
+      console.log(`⚙️ Options:`, JSON.stringify(options, null, 2));
+    }
 
-    // Run enhanced analysis with framework knowledge
+    // Run enhanced analysis with framework knowledge and options
     const result = await EnhancedAnalysisService.analyzeWithFramework(
       assessmentType,
       scrapedData,
-      _url
+      _url,
+      options
     );
 
     if (result.success) {

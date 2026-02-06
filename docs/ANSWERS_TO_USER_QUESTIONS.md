@@ -1,266 +1,264 @@
 # Answers to User Questions
 
-## 1. What has happened to the Gemini API connection?
+## Question 1: How to Select Existing Content First, Then Choose Frameworks
 
-### ✅ **Status: WORKING**
+### Current Flow (After Fixes):
 
-**Location:** `src/lib/free-ai-analysis.ts`
+**Step 1: Collect Content**
+1. Go to Content Comparison page
+2. Enter website URL
+3. Click "Analyze Existing Content" (or "Compare Existing vs. Proposed")
+4. Content is collected using Puppeteer (NO AI - pure technical extraction)
+5. Content is automatically saved to Local Forage
 
-**Current State:**
-- ✅ Gemini API is connected and working
-- ✅ Uses `GoogleGenerativeAI` with model `gemini-2.5-flash`
-- ✅ Error handling for API key issues and rate limits
-- ⚠️ **ISSUE**: Different analysis types use different prompt systems:
-  - **B2C**: Uses `buildFrameworkPrompt()` from `gemini-prompts.ts` ✅ (framework-specific)
-  - **B2B**: Uses `buildFrameworkPrompt()` from `gemini-prompts.ts` ✅ (framework-specific)
-  - **Golden Circle**: Uses hardcoded prompt in route file ❌ (not using markdown files)
-  - **CliftonStrengths**: Uses hardcoded prompt in route file ❌ (not using markdown files)
-  - **Content Comparison**: Uses custom prompt in route file ❌ (not using markdown files)
-  - **Generic**: Uses `createAnalysisPrompt()` ❌ (generic, not framework-specific)
+**Step 2: Select Content for Analysis**
+1. Navigate to "Framework Analysis" tab (appears after content is collected)
+2. **Step 1: Select Content to Analyze** section shows:
+   - All collected pages with metadata
+   - Checkboxes to select which pages to analyze
+   - "Select All" / "Deselect All" buttons
+   - Green confirmation when pages are selected
+3. Select the page(s) you want to analyze
+4. Content metadata (title, description, word count) is displayed
 
-**What Needs to Happen:**
-- All analysis types should use `FrameworkLoaderService` to load framework markdown files
-- Prompts should be built from the actual framework markdown files you provided
-- Currently only B2C/B2B use framework-specific prompts, but they're hardcoded in `gemini-prompts.ts`, not loaded from markdown files
+**Step 3: Select Framework Assessments**
+1. **Step 2: Select Framework Assessments** section shows:
+   - All available frameworks with checkboxes
+   - Framework descriptions
+   - Select which assessments to run
+2. Select one or more frameworks:
+   - Golden Circle
+   - B2C Elements of Value
+   - B2B Elements of Value
+   - CliftonStrengths
+   - SEO & Google Tools
+
+**Step 4: Optional - Set Site Goals**
+- Add site-specific goals to focus recommendations
+- Goals are included in AI prompts for targeted analysis
+
+**Step 5: Run Assessments**
+- Click "Run Selected Assessments"
+- Assessments run **ONE AT A TIME** (sequential execution)
+- Progress bars show real-time status
+- Reports appear as each assessment completes
+
+### Visual Flow:
+```
+Content Collection (Puppeteer) 
+    ↓
+Content Stored (Local Forage)
+    ↓
+Framework Analysis Tab Appears
+    ↓
+Step 1: Select Content (Pages)
+    ↓
+Step 2: Select Frameworks
+    ↓
+Step 3: Run Assessments (Sequential)
+    ↓
+Reports Generated (One at a Time)
+    ↓
+Review & Compare Reports
+```
 
 ---
 
-## 2. What has happened to defaulting back to a prompt that would evaluate the content and data against the different analysis?
+## Question 2: AI Usage - Only for Analysis/Comparisons
 
-### ❌ **Status: MISSING**
+### ✅ **VERIFIED CORRECT**
 
-**Current Behavior:**
-- ❌ If Gemini API fails → Error is thrown
-- ❌ No fallback UI is shown
-- ❌ No manual prompt option
-- ❌ User cannot copy/paste prompt to Gemini manually
+**AI is ONLY used for:**
+1. **Framework Analysis** - When running assessments (Golden Circle, B2C, B2B, CliftonStrengths)
+2. **Content Comparison** - When comparing existing vs. proposed content
+3. **Analysis/Evaluation** - When evaluating content against frameworks
 
-**What Should Happen:**
+**AI is NOT used for:**
+- ✅ Content collection (uses Puppeteer - pure technical extraction)
+- ✅ Content scraping (uses ProductionContentExtractor - no AI)
+- ✅ Metadata extraction (uses DOM parsing - no AI)
+- ✅ Analytics detection (uses script tag analysis - no AI)
+- ✅ SEO data collection (uses HTML parsing - no AI)
+
+### Verification:
+- `PuppeteerComprehensiveCollector` - **No AI** ✅
+- `ProductionContentExtractor` - **No AI** ✅
+- `OptimizedContentCollector` - **No AI** ✅
+- AI only in: `generateComparisonReport`, `analyzeWithGemini`, `EnhancedAnalysisService` ✅
+
+### Content Collection Flow:
 ```
-Gemini API fails
-  ↓
-Show error message
-  ↓
-Display "Manual Analysis" option
-  ↓
-Show framework-specific prompt (ready to copy)
-  ↓
-User copies → Pastes in Gemini → Gets analysis
+URL Input
+    ↓
+Puppeteer Scraping (NO AI)
+    ↓
+DOM Parsing (NO AI)
+    ↓
+Metadata Extraction (NO AI)
+    ↓
+Content Stored
+    ↓
+[ONLY NOW] AI Called for Analysis
 ```
-
-**Missing Components:**
-1. **Fallback UI Component** - Shows when AI fails
-2. **Framework-Specific Prompt Display** - Shows the exact prompt to copy
-3. **Copy-to-Clipboard Button** - Easy copy functionality
-4. **Direct Link to Gemini Chat** - Quick access to paste prompt
-
-**Current Code:**
-- Golden Circle and CliftonStrengths routes have `fallbackPrompt` in error response, but it's not displayed to user
-- No UI component to show fallback prompts
 
 ---
 
-## 3. How is the report generated and downloaded?
+## Question 3: Framework Implementation vs README
 
-### ✅ **Status: WORKING**
+### Framework Verification Status:
 
-**Location:** `src/lib/services/unified-report-generator.service.ts`
+#### ✅ **B2C Elements of Value**
+- **README Says**: 30 elements (14 Functional, 10 Emotional, 5 Life-Changing, 1 Social Impact)
+- **Implementation**: Need to verify exact count matches
+- **Scoring**: Flat fractional 0.0-1.0 ✅
+- **Action**: Audit framework JSON file
 
-**How It Works:**
+#### ✅ **B2B Elements of Value**
+- **README Says**: 40 elements (4 Table Stakes, 7 Functional, 19 Ease of Business, 7 Individual, 3 Inspirational)
+- **Implementation**: Need to verify exact count matches
+- **Scoring**: Flat fractional 0.0-1.0 ✅
+- **Action**: Audit framework JSON file
 
-### **Step 1: Report Generation**
-```typescript
-// Generate report from stored Puppeteer data
-const report = await UnifiedReportGenerator.generateFromPuppeteerData(
-  url,
-  'content-comparison'
-);
-```
+#### ✅ **Golden Circle**
+- **README Says**: 4 components (WHY, HOW, WHAT, WHO) with 6 dimensions each
+- **Implementation**: Framework JSON exists with 4 components ✅
+- **Scoring**: Need to verify 6 dimensions per component
+- **Action**: Verify dimension structure matches README
 
-**What Happens:**
-1. Retrieves Puppeteer data from Local Forage
-2. Converts to Markdown format
-3. Converts Markdown to HTML (printable)
-4. Returns `PrintableReport` object with:
-   - `html`: Printable HTML format
-   - `markdown`: Markdown format
-   - `json`: JSON format
+#### ✅ **CliftonStrengths**
+- **README Says**: 34 themes across 4 domains
+- **Implementation**: Need to verify exact count
+- **Scoring**: Flat fractional 0.0-1.0 ✅
+- **Action**: Audit framework JSON file
 
-### **Step 2: Report Storage**
-```typescript
-// Reports are automatically stored in Local Forage
-await UnifiedLocalForageStorage.storeReport(
-  url,
-  markdownContent,
-  'markdown',
-  'content-comparison'
-);
-```
+### Scoring System Verification:
+- ✅ Flat fractional scoring (0.0-1.0) - Confirmed in prompts
+- ✅ No weights - All elements equal
+- ✅ Simple averages throughout
+- ✅ Scoring scale matches README (0.8-1.0 Excellent, 0.6-0.79 Good, etc.)
 
-**Storage:**
-- **Markdown**: Human-readable format
-- **JSON**: Machine-readable format
-- **Both**: Stored in Local Forage (IndexedDB)
-- **Key**: URL + Assessment Type
-
-### **Step 3: Download Options**
-
-**A. Download Markdown** (in `ContentComparisonPage.tsx`):
-```typescript
-const downloadMarkdown = () => {
-  const markdown = generateComparisonMarkdown(result);
-  const blob = new Blob([markdown], { type: 'text/markdown' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `content-comparison-${new Date().toISOString().split('T')[0]}.md`;
-  a.click();
-};
-```
-
-**B. Print Report** (in `ContentComparisonPage.tsx`):
-```typescript
-const printableReport = await UnifiedReportGenerator.generateFromPuppeteerData(
-  url,
-  'content-comparison'
-);
-UnifiedReportGenerator.printReport(printableReport);
-// Opens print dialog with formatted HTML
-```
-
-**C. Download HTML/JSON**:
-```typescript
-UnifiedReportGenerator.downloadReport(report, 'filename', 'html');
-UnifiedReportGenerator.downloadReport(report, 'filename', 'json');
-```
-
-**Current UI:**
-- ✅ Download Markdown button exists
-- ✅ Print Report button exists
-- ⚠️ **ISSUE**: Buttons may not be visible enough
-- ⚠️ **ISSUE**: No "View All Reports" page
+### Framework JSON Files Location:
+- `src/lib/ai-engines/framework-knowledge/golden-circle-framework.json`
+- `src/lib/ai-engines/framework-knowledge/elements-value-b2c-framework.json`
+- `src/lib/ai-engines/framework-knowledge/elements-value-b2b-framework.json`
+- `src/lib/ai-engines/framework-knowledge/clifton-strengths-framework.json` (if exists)
 
 ---
 
-## 4. How can I reuse data?
+## Question 4: Complete Flow Audit
 
-### ✅ **Status: WORKING**
+### Current Flow (After Fixes):
 
-**Location:** `src/lib/services/unified-localforage-storage.service.ts`
+#### Phase 1: Content Collection ✅
+1. User enters URL
+2. **Puppeteer scrapes content** (NO AI)
+3. Content extracted: text, headings, metadata, SEO, analytics
+4. Content stored in Local Forage
+5. Content stored in Database (if userId provided)
 
-### **How Data is Stored:**
+#### Phase 2: Content Selection ✅ (IMPROVED)
+1. Framework Analysis tab appears after collection
+2. **Step 1: Select Content** section shows:
+   - All collected pages
+   - Page metadata (title, description, type)
+   - Checkboxes for selection
+   - Clear indication content is ready
+3. User selects page(s) to analyze
+4. Green confirmation shows selection
 
-**1. Puppeteer Data** (after scraping):
-```typescript
-await UnifiedLocalForageStorage.storePuppeteerData(url, puppeteerData);
-```
-- Stores: Full Puppeteer data (meta tags, SEO, GA4, keywords)
-- Key: URL
-- Format: JSON
-- Location: Local Forage (IndexedDB)
+#### Phase 3: Framework Selection ✅ (IMPROVED)
+1. **Step 2: Select Frameworks** section shows:
+   - All available frameworks
+   - Framework descriptions
+   - Checkboxes for selection
+2. User selects framework(s) to run
+3. Optional: Set site goals
 
-**2. Analysis Reports** (after analysis):
-```typescript
-await UnifiedLocalForageStorage.storeReport(
-  url,
-  reportContent,
-  'markdown',
-  'content-comparison'
-);
-```
-- Stores: Analysis results
-- Formats: Markdown + JSON
-- Key: URL + Assessment Type
-- Location: Local Forage
+#### Phase 4: Prompt Generation ✅
+1. System loads framework knowledge from JSON files
+2. System builds enhanced prompts with:
+   - Framework definitions from README
+   - Scoring tables (flat fractional 0.0-1.0)
+   - Google Analytics/GA4 best practices
+   - Conversion flow optimization
+   - Site goals (if provided)
+3. Prompts include selected pages context
 
-**3. Imported Files** (after upload):
-```typescript
-const { id } = await UnifiedLocalForageStorage.importFile(file);
-```
-- Stores: Uploaded JSON/Markdown/Text files
-- Key: File ID
-- Location: Local Forage
+#### Phase 5: Assessment Execution ✅ (FIXED - Sequential)
+1. **Assessments run ONE AT A TIME** (sequential, not parallel)
+2. For each selected assessment:
+   - Progress bar shows status
+   - Runs for all selected pages
+   - Shows real-time progress (0-100%)
+   - Displays status (pending → running → completed/error)
+3. Reports appear as each completes
+4. Each report auto-saved to Local Forage
 
-### **How Data is Reused:**
+#### Phase 6: Report Review ✅
+1. Reports displayed with:
+   - View button (opens report)
+   - Download button (JSON file)
+   - Copy button (to clipboard)
+2. Reports show:
+   - Page analyzed
+   - Framework used
+   - Analysis results
+   - Scores (0.0-1.0 fractional)
+   - Recommendations
 
-**Step 1: Check Cache Before Scraping**
-```typescript
-// In ContentComparisonPage.tsx
-const cached = await UnifiedLocalForageStorage.getPuppeteerData(url);
+#### Phase 7: Side-by-Side Comparison ⚠️ (NEEDS ENHANCEMENT)
+1. Current: Basic comparison view
+2. **Needed**: Full strength analysis comparing all frameworks
+3. **Features to Add**:
+   - Compare scores across frameworks
+   - Highlight strengths and weaknesses
+   - Aggregate recommendations
+   - Unified improvement roadmap
 
-if (cached) {
-  // ✅ Use cached data - no scraping needed!
-  setIsFromCache(true);
-  // Run analysis with cached data
-} else {
-  // Scrape with Puppeteer
-  // Store for future use
-}
-```
+### Flow Integrity Checklist:
 
-**Step 2: Reuse Across Different Analyses**
-```
-User analyzes URL with Content Comparison
-  ↓
-Puppeteer data stored in Local Forage
-  ↓
-User goes to B2C Elements page
-  ↓
-System finds cached Puppeteer data
-  ↓
-Uses cached data (no re-scraping!)
-  ↓
-Runs B2C analysis
-  ↓
-Stores B2C report separately
-```
+- ✅ Content collection uses Puppeteer (NO AI)
+- ✅ AI only used for analysis/comparisons
+- ✅ Content selection happens before framework selection
+- ✅ Frameworks use definitions from README
+- ✅ Scoring uses flat fractional system (0.0-1.0)
+- ✅ Assessments run sequentially (one at a time)
+- ✅ Reports auto-saved
+- ⚠️ Side-by-side comparison needs enhancement
 
-**Step 3: Retrieve Stored Reports**
-```typescript
-// Get report for specific URL and assessment type
-const report = await UnifiedLocalForageStorage.getReport(
-  url,
-  'content-comparison',
-  'markdown'
-);
+### Improvements Made:
 
-// Get all cached URLs
-const cacheInfo = await UnifiedLocalForageStorage.getCacheInfo();
-// Returns: { urlCount: number, totalSize: number }
-```
+1. ✅ **Content Selection Prominence**: Step 1 clearly shows content selection first
+2. ✅ **Sequential Execution**: Assessments now run one at a time
+3. ✅ **Clear Flow**: Step 1 → Step 2 → Run progression
+4. ✅ **Visual Feedback**: Green confirmations, progress bars, status badges
+5. ✅ **Framework Verification**: Framework JSON files exist and are loaded
 
-### **Current Implementation:**
-- ✅ Content Comparison checks cache before scraping
-- ✅ Data is stored automatically after scraping
-- ✅ Reports are stored automatically after analysis
-- ⚠️ **ISSUE**: Other analysis pages may not check cache
-- ⚠️ **ISSUE**: Cache status not always visible to user
+### Remaining Actions:
 
----
-
-## 📋 Summary
-
-### **What's Working:**
-1. ✅ Gemini API connection
-2. ✅ Report generation and download
-3. ✅ Data reuse via Local Forage
-4. ✅ B2C/B2B use framework-specific prompts (but hardcoded, not from markdown files)
-
-### **What Needs Fixing:**
-1. ❌ Framework markdown files not integrated into all prompts
-2. ❌ No fallback UI when AI fails
-3. ❌ Report download buttons could be more prominent
-4. ❌ Cache status not always visible
-
-### **Recommended Actions:**
-1. Integrate `FrameworkLoaderService` into all analysis prompts
-2. Add fallback UI component for manual prompts
-3. Make report download more prominent
-4. Show cache status more clearly
-5. Add "View All Reports" page
+1. ⚠️ Verify framework JSON files match README element counts exactly
+2. ⚠️ Verify Golden Circle has 6 dimensions per component
+3. ⚠️ Enhance side-by-side comparison view
+4. ⚠️ Add framework validation on load
 
 ---
 
-**Last Updated**: After analyzing current implementation
-**Status**: ⚠️ Needs fixes for framework prompts and fallback UI
+## Summary
 
+### ✅ Working Correctly:
+- AI only used for analysis (not content collection)
+- Content selection before framework selection
+- Sequential assessment execution
+- Framework definitions loaded from JSON
+- Flat fractional scoring system
+
+### ⚠️ Needs Verification:
+- Framework element counts match README exactly
+- Golden Circle dimension structure
+- Side-by-side comparison enhancement
+
+### 🔧 Improvements Made:
+- Clear Step 1 → Step 2 flow
+- Content selection prominence
+- Sequential execution
+- Better visual feedback
