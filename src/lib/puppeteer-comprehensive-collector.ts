@@ -1281,7 +1281,7 @@ export class PuppeteerComprehensiveCollector {
       technicalSEO: {
         robotsTxt: false,
         sitemap: false,
-        https: location.protocol === 'https:',
+        https: url.startsWith('https://'),
         wwwRedirect: false,
         trailingSlash: false,
         duplicateContent: false,
