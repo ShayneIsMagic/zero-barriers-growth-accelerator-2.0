@@ -1,0 +1,548 @@
+{
+  "framework_name": "Jambojon Brand Archetypes Framework",
+  "creator": "Jambojon",
+  "description": "A framework for understanding the 12 fundamental brand archetypes that drive narrative identity and customer connection",
+  "core_concept": "Every brand embodies archetypal patterns that resonate with specific customer values and desires",
+  "structure": {
+    "archetypes": [
+      {
+        "name": "The Sage",
+        "definition": "Represents wisdom, knowledge, and a deep desire to understand the world and its mysteries. Sages seek truth, always pursuing learning and enlightenment.",
+        "characteristics": [
+          "Shares wisdom and insights to help others navigate challenges",
+          "Found in academia, as scholars, researchers, and educators",
+          "Pushes boundaries of human knowledge",
+          "Encourages intellectual curiosity and continuous learning"
+        ],
+        "as_the_guide": [
+          "Provides expertise and knowledge",
+          "Encourages learning and growth",
+          "Offers thoughtful solutions",
+          "Builds trust through wisdom",
+          "Inspires informed decision making",
+          "Fosters understanding",
+          "Promotes critical thinking"
+        ],
+        "keyword_signals": [
+          "wisdom",
+          "knowledge",
+          "truth",
+          "learning",
+          "enlightenment",
+          "critical thinking",
+          "logic",
+          "analysis",
+          "mentor",
+          "guide",
+          "academia",
+          "scholar",
+          "researcher",
+          "educator",
+          "expertise",
+          "credible",
+          "informed",
+          "understanding",
+          "intellectual curiosity"
+        ],
+        "revenue_impact": "High - expertise and credibility drive premium pricing",
+        "pricing_potential": "Premium pricing for knowledge and expertise"
+      },
+      {
+        "name": "The Explorer",
+        "definition": "Represents freedom, adventure, and discovery. Embodies the spirit of curiosity, independence, and a desire for self-discovery.",
+        "characteristics": [
+          "Seeks new experiences and challenges limits",
+          "Finds joy in travel, outdoor activities, and creative endeavors",
+          "Shows leadership through freedom, adventure, and discovery",
+          "Connects deeply with the world through exploration"
+        ],
+        "as_the_guide": [
+          "Inspires adventure and new experiences",
+          "Cultivates independence and self-sufficiency",
+          "Fosters innovation and adaptability",
+          "Builds trust through authenticity",
+          "Encourages exploration in problem-solving",
+          "Enhances engagement with the world",
+          "Promotes resilience and perseverance"
+        ],
+        "keyword_signals": [
+          "freedom",
+          "adventure",
+          "discovery",
+          "curiosity",
+          "independence",
+          "self-discovery",
+          "new experiences",
+          "challenge limits",
+          "unexplored",
+          "nature",
+          "outdoor",
+          "ruggedness",
+          "travel",
+          "growth",
+          "meaningful experiences",
+          "authentic",
+          "resilience",
+          "perseverance"
+        ],
+        "revenue_impact": "High - adventure and discovery drive premium experiences",
+        "pricing_potential": "Premium pricing for unique experiences"
+      },
+      {
+        "name": "The Hero",
+        "definition": "Represents courage, strength, and the determination to overcome adversity for a noble cause. Heroes inspire hope and serve as role models.",
+        "characteristics": [
+          "Embody bravery, self-sacrifice, and moral integrity",
+          "Teach valuable life lessons",
+          "Motivate individuals to take action",
+          "Emphasize empowering narratives and triumph"
+        ],
+        "as_the_guide": [
+          "Inspires courage and determination",
+          "Cultivates strength and resilience",
+          "Fosters mastery and competence",
+          "Builds trust through reliability",
+          "Encourages tenacity in problem-solving",
+          "Enhances empowerment and leadership",
+          "Promotes ethical action and justice"
+        ],
+        "keyword_signals": [
+          "courage",
+          "strength",
+          "determination",
+          "overcome adversity",
+          "noble cause",
+          "hope",
+          "role model",
+          "bravery",
+          "self-sacrifice",
+          "moral integrity",
+          "resilience",
+          "triumph",
+          "perseverance",
+          "personal growth",
+          "empowering",
+          "take action",
+          "stand up",
+          "excellence",
+          "mastery",
+          "competence",
+          "leadership",
+          "justice"
+        ],
+        "revenue_impact": "Very High - hero narratives drive strong emotional connection",
+        "pricing_potential": "Premium pricing for empowerment and transformation"
+      },
+      {
+        "name": "The Outlaw",
+        "definition": "Represents an independent spirit that challenges societal norms, rules, and authority. Advocates for change and freedom.",
+        "characteristics": [
+          "Represents individualism, defiance, and willingness to pursue values",
+          "Pushes boundaries and inspires questioning",
+          "Rises up in rebellion, independence, and nonconformity",
+          "Positions as edgy, bold, and unconventional"
+        ],
+        "as_the_guide": [
+          "Inspires rebellion and disruption",
+          "Cultivates freedom and liberation",
+          "Fosters innovation and nonconformity",
+          "Builds trust through boldness",
+          "Encourages unconventional problem-solving",
+          "Enhances empowerment through autonomy",
+          "Promotes change and revolution"
+        ],
+        "keyword_signals": [
+          "rebel",
+          "independent spirit",
+          "challenge norms",
+          "rules",
+          "authority",
+          "change",
+          "freedom",
+          "individualism",
+          "defiance",
+          "values",
+          "ideals",
+          "pushing boundaries",
+          "question",
+          "rebellion",
+          "nonconformity",
+          "edgy",
+          "bold",
+          "unconventional",
+          "uniqueness",
+          "traditional thinking",
+          "carve their path",
+          "disruption",
+          "liberation",
+          "revolution"
+        ],
+        "revenue_impact": "High - rebellion and disruption attract premium customers",
+        "pricing_potential": "Premium pricing for bold, unconventional solutions"
+      },
+      {
+        "name": "The Magician",
+        "definition": "Represents transformation, change, and miracles. Represents the ability to turn dreams into reality.",
+        "characteristics": [
+          "Seen as visionaries, alchemists, and innovators",
+          "Harness power of imagination and creativity",
+          "Create change and make the seemingly impossible happen",
+          "Clients believe in infinite possibilities"
+        ],
+        "as_the_guide": [
+          "Inspires transformation and change",
+          "Cultivates vision and possibility",
+          "Fosters innovation and creativity",
+          "Builds trust through results",
+          "Encourages magical thinking in solutions",
+          "Enhances belief in possibilities",
+          "Promotes visionary leadership"
+        ],
+        "keyword_signals": [
+          "transformation",
+          "change",
+          "miracles",
+          "dreams into reality",
+          "visionary",
+          "alchemist",
+          "innovator",
+          "imagination",
+          "creativity",
+          "impossible",
+          "infinite possibilities",
+          "magic",
+          "wonder",
+          "mystery",
+          "power",
+          "manifestation"
+        ],
+        "revenue_impact": "Very High - transformation commands premium pricing",
+        "pricing_potential": "Premium pricing for transformational outcomes"
+      },
+      {
+        "name": "The Regular Guy/Girl",
+        "definition": "Represents the everyday person which is relatable to everyone. Embodies qualities of being down-to-earth, practical, and approachable.",
+        "characteristics": [
+          "Seeks belonging and connection",
+          "Values authenticity, common sense, and being down-to-earth",
+          "Appeals to everyday people who want to feel understood",
+          "Promotes relatability and acceptance"
+        ],
+        "as_the_guide": [
+          "Inspires belonging and connection",
+          "Cultivates relatability and authenticity",
+          "Fosters practical solutions",
+          "Builds trust through approachability",
+          "Encourages common-sense problem-solving",
+          "Enhances inclusion and acceptance",
+          "Promotes everyday excellence"
+        ],
+        "keyword_signals": [
+          "everyday",
+          "relatable",
+          "down-to-earth",
+          "practical",
+          "approachable",
+          "belonging",
+          "connection",
+          "authenticity",
+          "common sense",
+          "normal",
+          "regular",
+          "ordinary",
+          "familiar",
+          "accessible",
+          "friendly",
+          "welcoming"
+        ],
+        "revenue_impact": "Medium - relatability drives volume",
+        "pricing_potential": "Volume pricing for accessible solutions"
+      },
+      {
+        "name": "The Jester",
+        "definition": "Represents joy, humor, and entertainment. Brings lightness and fun to experiences.",
+        "characteristics": [
+          "Seeks to bring joy and laughter",
+          "Uses humor to connect and engage",
+          "Makes experiences enjoyable and memorable",
+          "Brings lightness to serious topics"
+        ],
+        "as_the_guide": [
+          "Inspires joy and laughter",
+          "Cultivates fun and engagement",
+          "Fosters positive experiences",
+          "Builds trust through enjoyment",
+          "Encourages lighthearted problem-solving",
+          "Enhances memorability",
+          "Promotes positive energy"
+        ],
+        "keyword_signals": [
+          "joy",
+          "humor",
+          "entertainment",
+          "fun",
+          "laughter",
+          "lightness",
+          "playful",
+          "amusing",
+          "enjoyable",
+          "memorable",
+          "positive",
+          "energy",
+          "cheerful",
+          "upbeat"
+        ],
+        "revenue_impact": "High - joy and engagement drive loyalty",
+        "pricing_potential": "Premium pricing for memorable experiences"
+      },
+      {
+        "name": "The Caregiver",
+        "definition": "Represents compassion, empathy, and a strong desire to help and care for others.",
+        "characteristics": [
+          "Driven by compassion and empathy",
+          "Seeks to help and support others",
+          "Values nurturing and care",
+          "Builds trust through genuine concern"
+        ],
+        "as_the_guide": [
+          "Inspires compassion and care",
+          "Cultivates empathy and understanding",
+          "Fosters support and nurturing",
+          "Builds trust through genuine concern",
+          "Encourages caring problem-solving",
+          "Enhances emotional connection",
+          "Promotes service to others"
+        ],
+        "keyword_signals": [
+          "compassion",
+          "empathy",
+          "help",
+          "care",
+          "nurturing",
+          "support",
+          "service",
+          "kindness",
+          "generosity",
+          "giving",
+          "protect",
+          "shelter",
+          "comfort",
+          "healing"
+        ],
+        "revenue_impact": "High - care and compassion drive loyalty",
+        "pricing_potential": "Value-based pricing for care and support"
+      },
+      {
+        "name": "The Creator",
+        "definition": "Represents innovation, artistry, and expression. Values creativity and bringing visions to life.",
+        "characteristics": [
+          "Seeks to create and innovate",
+          "Values artistry and expression",
+          "Brings visions to life",
+          "Promotes creativity and originality"
+        ],
+        "as_the_guide": [
+          "Inspires creativity and innovation",
+          "Cultivates artistry and expression",
+          "Fosters vision and imagination",
+          "Builds trust through originality",
+          "Encourages creative problem-solving",
+          "Enhances self-expression",
+          "Promotes artistic excellence"
+        ],
+        "keyword_signals": [
+          "create",
+          "innovation",
+          "artistry",
+          "expression",
+          "vision",
+          "imagination",
+          "creativity",
+          "originality",
+          "artistic",
+          "design",
+          "craft",
+          "build",
+          "make",
+          "construct"
+        ],
+        "revenue_impact": "Very High - creativity and innovation command premium",
+        "pricing_potential": "Premium pricing for creative and innovative solutions"
+      },
+      {
+        "name": "The Innocent",
+        "definition": "Embodies qualities of optimism, simplicity, and purity. Represents a desire for honesty and wholesomeness.",
+        "characteristics": [
+          "Seeks simplicity and purity",
+          "Values honesty and wholesomeness",
+          "Promotes optimism and hope",
+          "Brings clarity to complexity"
+        ],
+        "as_the_guide": [
+          "Inspires optimism and hope",
+          "Cultivates simplicity and clarity",
+          "Fosters honesty and trust",
+          "Builds trust through purity",
+          "Encourages simple problem-solving",
+          "Enhances clarity and understanding",
+          "Promotes positive outlook"
+        ],
+        "keyword_signals": [
+          "optimism",
+          "simplicity",
+          "purity",
+          "honesty",
+          "wholesomeness",
+          "hope",
+          "clarity",
+          "trust",
+          "innocent",
+          "pure",
+          "clean",
+          "simple",
+          "clear",
+          "bright"
+        ],
+        "revenue_impact": "Medium - simplicity and trust drive adoption",
+        "pricing_potential": "Value pricing for simple, honest solutions"
+      },
+      {
+        "name": "The Lover",
+        "definition": "Represents passion, sensuality, and connection, appealing to the desires for intimacy and relationships.",
+        "characteristics": [
+          "Seeks passion and connection",
+          "Values intimacy and relationships",
+          "Promotes sensuality and desire",
+          "Builds deep emotional bonds"
+        ],
+        "as_the_guide": [
+          "Inspires passion and desire",
+          "Cultivates intimacy and connection",
+          "Fosters emotional bonds",
+          "Builds trust through passion",
+          "Encourages relationship-building",
+          "Enhances emotional connection",
+          "Promotes sensuality and appeal"
+        ],
+        "keyword_signals": [
+          "passion",
+          "sensuality",
+          "connection",
+          "intimacy",
+          "relationships",
+          "desire",
+          "love",
+          "romance",
+          "attraction",
+          "appeal",
+          "bond",
+          "emotional",
+          "heart",
+          "devotion"
+        ],
+        "revenue_impact": "High - passion and connection drive premium",
+        "pricing_potential": "Premium pricing for passionate experiences"
+      },
+      {
+        "name": "The Ruler",
+        "definition": "Represents authority, control, and leadership, appealing to the desire for stability and order.",
+        "characteristics": [
+          "Seeks authority and control",
+          "Values leadership and excellence",
+          "Promotes stability and order",
+          "Builds trust through competence"
+        ],
+        "as_the_guide": [
+          "Inspires leadership and authority",
+          "Cultivates control and order",
+          "Fosters excellence and quality",
+          "Builds trust through competence",
+          "Encourages strategic problem-solving",
+          "Enhances status and prestige",
+          "Promotes stability and reliability"
+        ],
+        "keyword_signals": [
+          "authority",
+          "control",
+          "leadership",
+          "stability",
+          "order",
+          "excellence",
+          "quality",
+          "competence",
+          "status",
+          "prestige",
+          "power",
+          "command",
+          "dominance",
+          "supremacy"
+        ],
+        "revenue_impact": "Very High - authority and leadership command premium",
+        "pricing_potential": "Premium pricing for leadership and excellence"
+      }
+    ]
+  },
+  "analysis_criteria": {
+    "identification_keywords": [
+      "archetype",
+      "brand identity",
+      "narrative",
+      "storytelling",
+      "tone",
+      "voice",
+      "personality"
+    ],
+    "scoring_factors": [
+      "keyword_presence",
+      "thematic_alignment",
+      "value_delivery_patterns",
+      "evidence_strength"
+    ],
+    "revenue_indicators": [
+      "brand alignment",
+      "customer connection",
+      "narrative strength",
+      "archetype consistency"
+    ]
+  },
+  "revenue_opportunities": {
+    "archetype_alignment": [
+      "Strengthen dominant archetype messaging",
+      "Develop secondary archetype support",
+      "Create archetype-consistent content"
+    ],
+    "narrative_consistency": [
+      "Align all content with primary archetype",
+      "Ensure consistent tone and voice",
+      "Build archetype-driven customer journey"
+    ],
+    "premium_positioning": [
+      "Leverage archetype for premium pricing",
+      "Create archetype-specific offerings",
+      "Build archetype-driven brand community"
+    ]
+  },
+  "analysis_methodology": {
+    "identification_process": [
+      "Scan content for archetype keyword signals",
+      "Identify thematic alignment with archetype characteristics",
+      "Assess value delivery patterns (as the guide)",
+      "Score each archetype based on evidence strength",
+      "Identify dominant and secondary archetypes"
+    ],
+    "scoring_criteria": {
+      "dominant_archetype": 40,
+      "strong_archetype": 30,
+      "moderate_archetype": 20,
+      "weak_archetype": 10
+    },
+    "revenue_potential_assessment": {
+      "very_high": "Strong archetype alignment with clear value delivery",
+      "high": "Good archetype presence with consistent messaging",
+      "medium": "Moderate archetype presence with some alignment",
+      "low": "Weak or inconsistent archetype presence"
+    }
+  }
+}
+
+

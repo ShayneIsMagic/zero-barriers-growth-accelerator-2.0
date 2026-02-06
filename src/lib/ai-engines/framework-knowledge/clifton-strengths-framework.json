@@ -1,0 +1,637 @@
+{
+  "framework_name": "CliftonStrengths Framework",
+  "creator": "Gallup (Don Clifton)",
+  "description": "A framework for understanding the 34 talent themes that drive individual and organizational performance",
+  "core_concept": "Focus on what's right with people - develop strengths rather than fix weaknesses",
+  "structure": {
+    "strategic_thinking_domain": {
+      "description": "People with Strategic Thinking strengths absorb and analyze information that informs better decisions",
+      "themes": [
+        {
+          "name": "Analytical",
+          "definition": "Seeks data and logical reasoning to understand situations",
+          "indicators": [
+            "data",
+            "analysis",
+            "research",
+            "evidence",
+            "metrics",
+            "insights",
+            "logical",
+            "reasoning"
+          ],
+          "revenue_impact": "High - data-driven decisions improve outcomes",
+          "pricing_potential": "Analytical expertise premium"
+        },
+        {
+          "name": "Context",
+          "definition": "Understands the past to plan the future",
+          "indicators": [
+            "history",
+            "background",
+            "story",
+            "journey",
+            "evolution",
+            "past",
+            "heritage",
+            "legacy"
+          ],
+          "revenue_impact": "Medium - historical perspective informs strategy",
+          "pricing_potential": "Historical insight premium"
+        },
+        {
+          "name": "Futuristic",
+          "definition": "Inspired by what could be",
+          "indicators": [
+            "future",
+            "vision",
+            "ahead",
+            "tomorrow",
+            "next",
+            "forward",
+            "innovation",
+            "breakthrough"
+          ],
+          "revenue_impact": "High - vision drives innovation and growth",
+          "pricing_potential": "Vision and innovation premium"
+        },
+        {
+          "name": "Ideation",
+          "definition": "Fascinated by ideas",
+          "indicators": [
+            "ideas",
+            "creative",
+            "innovative",
+            "unique",
+            "different",
+            "imagination",
+            "brainstorm",
+            "concept"
+          ],
+          "revenue_impact": "High - ideation drives innovation",
+          "pricing_potential": "Creative ideation premium"
+        },
+        {
+          "name": "Input",
+          "definition": "Collects information and resources",
+          "indicators": [
+            "collect",
+            "gather",
+            "research",
+            "learn",
+            "discover",
+            "explore",
+            "investigate",
+            "study"
+          ],
+          "revenue_impact": "Medium - information gathering improves decisions",
+          "pricing_potential": "Research and intelligence premium"
+        },
+        {
+          "name": "Intellection",
+          "definition": "Enjoys thinking and mental activity",
+          "indicators": [
+            "think",
+            "reflect",
+            "consider",
+            "ponder",
+            "philosophy",
+            "intellectual",
+            "deep",
+            "complex"
+          ],
+          "revenue_impact": "High - deep thinking drives strategy",
+          "pricing_potential": "Strategic thinking premium"
+        },
+        {
+          "name": "Learner",
+          "definition": "Has a strong desire to learn",
+          "indicators": [
+            "learn",
+            "grow",
+            "develop",
+            "improve",
+            "master",
+            "study",
+            "education",
+            "knowledge"
+          ],
+          "revenue_impact": "High - continuous learning drives adaptation",
+          "pricing_potential": "Learning and development premium"
+        },
+        {
+          "name": "Strategic",
+          "definition": "Creates alternative ways to proceed",
+          "indicators": [
+            "strategy",
+            "plan",
+            "approach",
+            "methodology",
+            "framework",
+            "systematic",
+            "organized",
+            "structured"
+          ],
+          "revenue_impact": "Very High - strategic thinking drives competitive advantage",
+          "pricing_potential": "Strategic planning premium"
+        }
+      ]
+    },
+    "executing_domain": {
+      "description": "People with Executing strengths make things happen",
+      "themes": [
+        {
+          "name": "Achiever",
+          "definition": "Works hard and takes satisfaction from being busy",
+          "indicators": [
+            "achieve",
+            "accomplish",
+            "success",
+            "results",
+            "goals",
+            "targets",
+            "deliver",
+            "complete"
+          ],
+          "revenue_impact": "Very High - achievement drives results",
+          "pricing_potential": "Results-driven premium"
+        },
+        {
+          "name": "Arranger",
+          "definition": "Can organize and figure out complex situations",
+          "indicators": [
+            "organize",
+            "coordinate",
+            "manage",
+            "arrange",
+            "structure",
+            "system",
+            "process",
+            "workflow"
+          ],
+          "revenue_impact": "High - organization improves efficiency",
+          "pricing_potential": "Organization and coordination premium"
+        },
+        {
+          "name": "Belief",
+          "definition": "Has core values that are unchanging",
+          "indicators": [
+            "values",
+            "principles",
+            "ethics",
+            "mission",
+            "purpose",
+            "beliefs",
+            "standards",
+            "integrity"
+          ],
+          "revenue_impact": "High - values drive trust and loyalty",
+          "pricing_potential": "Values-based premium"
+        },
+        {
+          "name": "Consistency",
+          "definition": "Treats all people equally",
+          "indicators": [
+            "consistent",
+            "reliable",
+            "stable",
+            "predictable",
+            "uniform",
+            "standard",
+            "regular",
+            "steady"
+          ],
+          "revenue_impact": "High - consistency builds trust",
+          "pricing_potential": "Reliability premium"
+        },
+        {
+          "name": "Deliberative",
+          "definition": "Takes serious care in making decisions",
+          "indicators": [
+            "careful",
+            "thoughtful",
+            "cautious",
+            "thorough",
+            "precise",
+            "meticulous",
+            "detailed",
+            "considered"
+          ],
+          "revenue_impact": "High - careful decisions reduce risk",
+          "pricing_potential": "Risk management premium"
+        },
+        {
+          "name": "Discipline",
+          "definition": "Enjoys routine and structure",
+          "indicators": [
+            "disciplined",
+            "focused",
+            "structured",
+            "routine",
+            "systematic",
+            "methodical",
+            "organized",
+            "controlled"
+          ],
+          "revenue_impact": "High - discipline ensures execution",
+          "pricing_potential": "Process excellence premium"
+        },
+        {
+          "name": "Focus",
+          "definition": "Takes direction and follows through",
+          "indicators": [
+            "focus",
+            "concentrate",
+            "prioritize",
+            "target",
+            "direct",
+            "specific",
+            "clear",
+            "sharp"
+          ],
+          "revenue_impact": "Very High - focus drives completion",
+          "pricing_potential": "Execution excellence premium"
+        },
+        {
+          "name": "Responsibility",
+          "definition": "Takes psychological ownership",
+          "indicators": [
+            "responsible",
+            "accountable",
+            "commitment",
+            "dependable",
+            "reliable",
+            "ownership",
+            "duty",
+            "obligation"
+          ],
+          "revenue_impact": "Very High - responsibility ensures delivery",
+          "pricing_potential": "Accountability premium"
+        },
+        {
+          "name": "Restorative",
+          "definition": "Enjoys solving problems",
+          "indicators": [
+            "solve",
+            "fix",
+            "repair",
+            "restore",
+            "heal",
+            "improve",
+            "correct",
+            "resolve"
+          ],
+          "revenue_impact": "High - problem-solving drives improvement",
+          "pricing_potential": "Problem-solving premium"
+        }
+      ]
+    },
+    "influencing_domain": {
+      "description": "People with Influencing strengths help reach a broader audience",
+      "themes": [
+        {
+          "name": "Activator",
+          "definition": "Impatient for action",
+          "indicators": [
+            "action",
+            "start",
+            "begin",
+            "launch",
+            "initiate",
+            "move",
+            "execute",
+            "implement"
+          ],
+          "revenue_impact": "High - activation drives momentum",
+          "pricing_potential": "Action-oriented premium"
+        },
+        {
+          "name": "Command",
+          "definition": "Has presence and can take control",
+          "indicators": [
+            "lead",
+            "direct",
+            "control",
+            "authority",
+            "decisive",
+            "confident",
+            "bold",
+            "assertive"
+          ],
+          "revenue_impact": "High - command drives leadership",
+          "pricing_potential": "Leadership premium"
+        },
+        {
+          "name": "Communication",
+          "definition": "Enjoys explaining and describing",
+          "indicators": [
+            "communicate",
+            "explain",
+            "present",
+            "speak",
+            "write",
+            "express",
+            "articulate",
+            "convey"
+          ],
+          "revenue_impact": "Very High - communication drives engagement",
+          "pricing_potential": "Communication excellence premium"
+        },
+        {
+          "name": "Competition",
+          "definition": "Measures progress against others",
+          "indicators": [
+            "compete",
+            "win",
+            "beat",
+            "challenge",
+            "rival",
+            "opponent",
+            "victory",
+            "success"
+          ],
+          "revenue_impact": "High - competition drives performance",
+          "pricing_potential": "Competitive advantage premium"
+        },
+        {
+          "name": "Maximizer",
+          "definition": "Focuses on strengths to stimulate excellence",
+          "indicators": [
+            "maximize",
+            "optimize",
+            "excel",
+            "best",
+            "superior",
+            "excellence",
+            "perfect",
+            "outstanding"
+          ],
+          "revenue_impact": "Very High - maximization drives excellence",
+          "pricing_potential": "Excellence premium"
+        },
+        {
+          "name": "Self-Assurance",
+          "definition": "Confident in abilities",
+          "indicators": [
+            "confident",
+            "certain",
+            "sure",
+            "belief",
+            "trust",
+            "faith",
+            "conviction",
+            "assurance"
+          ],
+          "revenue_impact": "High - confidence drives action",
+          "pricing_potential": "Confidence and assurance premium"
+        },
+        {
+          "name": "Significance",
+          "definition": "Wants to be recognized and heard",
+          "indicators": [
+            "important",
+            "matter",
+            "impact",
+            "influence",
+            "difference",
+            "meaningful",
+            "valuable",
+            "essential"
+          ],
+          "revenue_impact": "High - significance drives impact",
+          "pricing_potential": "Impact and recognition premium"
+        },
+        {
+          "name": "Woo",
+          "definition": "Enjoys meeting new people",
+          "indicators": [
+            "connect",
+            "relate",
+            "charm",
+            "persuade",
+            "influence",
+            "engage",
+            "attract",
+            "win over"
+          ],
+          "revenue_impact": "High - woo drives relationships",
+          "pricing_potential": "Relationship building premium"
+        }
+      ]
+    },
+    "relationship_building_domain": {
+      "description": "People with Relationship Building strengths build strong relationships that hold a team together",
+      "themes": [
+        {
+          "name": "Adaptability",
+          "definition": "Prefers to go with the flow",
+          "indicators": [
+            "adapt",
+            "flexible",
+            "adjust",
+            "change",
+            "versatile",
+            "responsive",
+            "accommodating",
+            "open"
+          ],
+          "revenue_impact": "High - adaptability enables change",
+          "pricing_potential": "Flexibility premium"
+        },
+        {
+          "name": "Connectedness",
+          "definition": "Believes all things happen for a reason",
+          "indicators": [
+            "connect",
+            "link",
+            "relate",
+            "unite",
+            "together",
+            "bond",
+            "relationship",
+            "network"
+          ],
+          "revenue_impact": "Medium - connectedness builds relationships",
+          "pricing_potential": "Connection and network premium"
+        },
+        {
+          "name": "Developer",
+          "definition": "Recognizes and cultivates potential in others",
+          "indicators": [
+            "develop",
+            "grow",
+            "improve",
+            "mentor",
+            "coach",
+            "nurture",
+            "cultivate",
+            "enhance"
+          ],
+          "revenue_impact": "Very High - development drives team performance",
+          "pricing_potential": "Development and coaching premium"
+        },
+        {
+          "name": "Empathy",
+          "definition": "Senses the feelings of others",
+          "indicators": [
+            "understand",
+            "feel",
+            "care",
+            "compassion",
+            "sensitive",
+            "supportive",
+            "kind",
+            "gentle"
+          ],
+          "revenue_impact": "High - empathy drives customer understanding",
+          "pricing_potential": "Customer understanding premium"
+        },
+        {
+          "name": "Harmony",
+          "definition": "Looks for consensus",
+          "indicators": [
+            "harmony",
+            "balance",
+            "peace",
+            "calm",
+            "smooth",
+            "cooperative",
+            "collaborative",
+            "unified"
+          ],
+          "revenue_impact": "Medium - harmony improves collaboration",
+          "pricing_potential": "Collaboration premium"
+        },
+        {
+          "name": "Includer",
+          "definition": "Accepting of others",
+          "indicators": [
+            "include",
+            "welcome",
+            "embrace",
+            "accept",
+            "open",
+            "diverse",
+            "inclusive",
+            "belong"
+          ],
+          "revenue_impact": "High - inclusion drives diversity and innovation",
+          "pricing_potential": "Inclusion and diversity premium"
+        },
+        {
+          "name": "Individualization",
+          "definition": "Intrigued by unique qualities",
+          "indicators": [
+            "unique",
+            "individual",
+            "personal",
+            "custom",
+            "specific",
+            "tailored",
+            "personalized",
+            "distinct"
+          ],
+          "revenue_impact": "High - individualization drives personalization",
+          "pricing_potential": "Personalization premium"
+        },
+        {
+          "name": "Positivity",
+          "definition": "Upbeat and can get others excited",
+          "indicators": [
+            "positive",
+            "optimistic",
+            "cheerful",
+            "enthusiastic",
+            "upbeat",
+            "bright",
+            "hopeful",
+            "energetic"
+          ],
+          "revenue_impact": "High - positivity drives engagement",
+          "pricing_potential": "Engagement and energy premium"
+        },
+        {
+          "name": "Relator",
+          "definition": "Enjoys close relationships",
+          "indicators": [
+            "relate",
+            "connect",
+            "bond",
+            "relationship",
+            "trust",
+            "intimacy",
+            "close",
+            "personal"
+          ],
+          "revenue_impact": "High - relationships drive loyalty",
+          "pricing_potential": "Relationship depth premium"
+        }
+      ]
+    }
+  },
+  "analysis_criteria": {
+    "identification_keywords": [
+      "strength",
+      "talent",
+      "theme",
+      "behavior",
+      "pattern",
+      "preference",
+      "energy",
+      "natural"
+    ],
+    "scoring_factors": [
+      "frequency_of_use",
+      "natural_ability",
+      "energy_level",
+      "evidence_strength"
+    ],
+    "revenue_indicators": [
+      "performance",
+      "results",
+      "productivity",
+      "engagement",
+      "satisfaction"
+    ]
+  },
+  "revenue_opportunities": {
+    "top_strengths": [
+      "Focus on top 10 themes for maximum impact",
+      "Develop signature strengths",
+      "Leverage strength combinations"
+    ],
+    "team_composition": [
+      "Balance domains across team",
+      "Partner strengths and weaknesses",
+      "Create complementary teams"
+    ],
+    "organizational_culture": [
+      "Build culture around strengths",
+      "Develop strengths-based leadership",
+      "Create strengths-based processes"
+    ]
+  },
+  "analysis_methodology": {
+    "identification_process": [
+      "Observe behavioral patterns and preferences",
+      "Look for what energizes vs. drains",
+      "Identify natural talents and abilities",
+      "Score each theme based on evidence",
+      "Assess domain balance and distribution"
+    ],
+    "scoring_criteria": {
+      "dominant_strength": 40,
+      "supporting_strength": 30,
+      "moderate_theme": 20,
+      "lesser_theme": 10
+    },
+    "revenue_potential_assessment": {
+      "very_high": "Dominant strength used frequently and naturally",
+      "high": "Supporting strength present and useful",
+      "medium": "Moderate theme used occasionally",
+      "low": "Lesser theme rarely used or less natural"
+    }
+  }
+}
+
+

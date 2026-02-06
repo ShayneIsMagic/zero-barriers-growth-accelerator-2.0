@@ -152,12 +152,7 @@
           "indicators": ["rewards", "points", "cashback", "bonus", "incentive"],
           "revenue_impact": "Medium - increases engagement and retention",
           "pricing_potential": "Loyalty program monetization"
-        }
-      ]
-    },
-    "emotional_elements": {
-      "description": "Elements that create emotional connections and satisfaction",
-      "elements": [
+        },
         {
           "name": "Fun/Entertainment",
           "definition": "Provides enjoyment or amusement",
@@ -171,6 +166,25 @@
           "revenue_impact": "High - entertainment value drives engagement",
           "pricing_potential": "Subscription or pay-per-use entertainment"
         },
+        {
+          "name": "Quality",
+          "definition": "Delivers excellence, superiority, or premium standards",
+          "indicators": [
+            "excellence",
+            "superior",
+            "premium",
+            "high-quality",
+            "best-in-class",
+            "top-tier"
+          ],
+          "revenue_impact": "Very High - quality justifies premium pricing",
+          "pricing_potential": "Premium pricing for quality excellence"
+        }
+      ]
+    },
+    "emotional_elements": {
+      "description": "Elements that create emotional connections and satisfaction",
+      "elements": [
         {
           "name": "Attractive Appearance",
           "definition": "Enhances visual appeal",
@@ -262,6 +276,20 @@
           ],
           "revenue_impact": "High - health is a top consumer priority",
           "pricing_potential": "Health and wellness premium pricing"
+        },
+        {
+          "name": "Reduces Anxiety (Emotional)",
+          "definition": "Provides emotional comfort and reassurance",
+          "indicators": ["calming", "soothing", "comfort", "peaceful", "reassuring"],
+          "revenue_impact": "High - emotional security drives loyalty",
+          "pricing_potential": "Emotional wellness premium"
+        },
+        {
+          "name": "Rewards Me (Emotional)",
+          "definition": "Provides treats, indulgence, or self-care benefits",
+          "indicators": ["treats", "indulgence", "self-care", "pampering", "luxury experience"],
+          "revenue_impact": "Medium - emotional rewards increase satisfaction",
+          "pricing_potential": "Luxury and indulgence pricing"
         }
       ]
     },
@@ -313,6 +341,40 @@
           "indicators": ["community", "belong", "family", "group", "team"],
           "revenue_impact": "High - belonging drives loyalty and advocacy",
           "pricing_potential": "Community membership and social pricing"
+        },
+        {
+          "name": "Provides Hope",
+          "definition": "Inspires optimism, possibility, and future potential",
+          "indicators": [
+            "hope",
+            "optimism",
+            "future",
+            "possibility",
+            "potential",
+            "aspiration"
+          ],
+          "revenue_impact": "Very High - hope drives long-term engagement",
+          "pricing_potential": "Future-focused premium pricing"
+        }
+      ]
+    },
+    "social_impact_elements": {
+      "description": "Elements that create positive social and environmental impact",
+      "elements": [
+        {
+          "name": "Self-Transcendence",
+          "definition": "Enables contribution to a greater good or purpose beyond self",
+          "indicators": [
+            "purpose",
+            "greater good",
+            "making a difference",
+            "social impact",
+            "environmental",
+            "sustainability",
+            "contribution"
+          ],
+          "revenue_impact": "High - purpose-driven brands command premium",
+          "pricing_potential": "Purpose-driven premium pricing"
         }
       ]
     }

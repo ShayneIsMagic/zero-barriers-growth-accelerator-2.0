@@ -11,6 +11,16 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 30;
 
+// Helper function to validate URL
+function isValidUrl(urlString: string): boolean {
+  try {
+    const url = new URL(urlString);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { url } = await request.json();
@@ -20,6 +30,17 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: 'URL is required',
+        },
+        { status: 400 }
+      );
+    }
+
+    // Validate URL format
+    if (!isValidUrl(url)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Invalid URL: "${url}". URLs must start with http:// or https://`,
         },
         { status: 400 }
       );

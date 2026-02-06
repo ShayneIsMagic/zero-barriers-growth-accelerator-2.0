@@ -279,7 +279,7 @@ export class UniversalPuppeteerScraper {
         try {
           this.browser = await puppeteer.launch({
             executablePath,
-            headless: chromium.default.headless,
+            headless: true,
             args: [
               '--no-sandbox',
               '--disable-setuid-sandbox',
@@ -302,13 +302,13 @@ export class UniversalPuppeteerScraper {
       // Final fallback: try @sparticuz/chromium
       if (!browserLaunched) {
         try {
-          const chromium = await import('@sparticuz/chromium-min');
+          const chromium = await import('@sparticuz/chromium');
           this.browser = await puppeteer.launch({
-            args: chromium.default.args,
+            args: [...chromium.default.args],
             executablePath: await chromium.default.executablePath(),
-            headless: chromium.default.headless,
+            headless: true,
           });
-          console.log('✅ Chrome launched using @sparticuz/chromium-min');
+          console.log('✅ Chrome launched using @sparticuz/chromium');
         } catch (error) {
           console.error('❌ All Chrome launch methods failed:', error.message);
           throw new Error('Could not launch Chrome - all methods failed');
@@ -317,7 +317,7 @@ export class UniversalPuppeteerScraper {
     } else {
       // Local development
       this.browser = await puppeteer.launch({
-        headless: chromium.default.headless,
+        headless: true,
         args: [
           '--no-sandbox',
           '--disable-setuid-sandbox',

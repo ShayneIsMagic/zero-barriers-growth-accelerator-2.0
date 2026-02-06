@@ -136,11 +136,14 @@ export function setupPerformanceMonitoring() {
     try {
       const observer = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
-          if (entry.duration > 50) {
+          // Only warn for tasks longer than 100ms (more significant performance issues)
+          // 50ms threshold was too sensitive and created noise during development
+          if (entry.duration > 100) {
             console.warn('⚠️ Long Task Detected:', {
               duration: `${entry.duration.toFixed(2)}ms`,
               name: entry.name,
               startTime: entry.startTime,
+              note: 'Tasks over 100ms can cause UI jank. Consider optimizing.',
             });
           }
         }

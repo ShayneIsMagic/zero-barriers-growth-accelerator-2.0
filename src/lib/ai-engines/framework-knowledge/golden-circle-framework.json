@@ -22,6 +22,38 @@
         "Apple: 'Think Different' - challenging the status quo",
         "Tesla: 'Accelerate the world's transition to sustainable transport'",
         "Patagonia: 'We're in business to save our home planet'"
+      ],
+      "scoring_dimensions": [
+        {
+          "name": "Clarity",
+          "definition": "How clear and well-articulated is the WHY?",
+          "indicators": ["clear", "articulated", "well-defined", "explicit"]
+        },
+        {
+          "name": "Authenticity",
+          "definition": "Does it reflect true beliefs and values?",
+          "indicators": ["authentic", "genuine", "true", "sincere"]
+        },
+        {
+          "name": "Inspiration",
+          "definition": "Does it inspire and motivate people?",
+          "indicators": ["inspiring", "motivating", "uplifting", "energizing"]
+        },
+        {
+          "name": "Consistency",
+          "definition": "Is it consistent across all communications?",
+          "indicators": ["consistent", "aligned", "coherent", "unified"]
+        },
+        {
+          "name": "Differentiation",
+          "definition": "Is it unique and meaningful?",
+          "indicators": ["unique", "distinctive", "different", "meaningful"]
+        },
+        {
+          "name": "Emotional Resonance",
+          "definition": "Does it connect emotionally?",
+          "indicators": ["emotional", "resonant", "connecting", "moving"]
+        }
       ]
     },
     "how": {
@@ -42,6 +74,38 @@
         "Apple: Beautiful, intuitive design and user experience",
         "Tesla: Direct-to-consumer sales and over-the-air updates",
         "Patagonia: Sustainable materials and environmental activism"
+      ],
+      "scoring_dimensions": [
+        {
+          "name": "Uniqueness",
+          "definition": "What makes your HOW distinctive?",
+          "indicators": ["unique", "distinctive", "different", "proprietary"]
+        },
+        {
+          "name": "Clarity",
+          "definition": "How clearly defined are your methods?",
+          "indicators": ["clear", "defined", "articulated", "specific"]
+        },
+        {
+          "name": "Consistency",
+          "definition": "Do you consistently follow your HOW?",
+          "indicators": ["consistent", "reliable", "systematic", "repeatable"]
+        },
+        {
+          "name": "Alignment",
+          "definition": "Does your HOW support your WHY?",
+          "indicators": ["aligned", "supports", "reinforces", "connected"]
+        },
+        {
+          "name": "Proof Points",
+          "definition": "Can you demonstrate your HOW with evidence?",
+          "indicators": ["evidence", "proof", "demonstrated", "validated"]
+        },
+        {
+          "name": "Competitive Moat",
+          "definition": "Does your HOW create barriers to competition?",
+          "indicators": ["competitive advantage", "moat", "barrier", "differentiation"]
+        }
       ]
     },
     "what": {
@@ -62,6 +126,38 @@
         "Apple: iPhones, Macs, iPads, services",
         "Tesla: Electric vehicles, energy products, software",
         "Patagonia: Outdoor clothing and gear"
+      ],
+      "scoring_dimensions": [
+        {
+          "name": "Clarity",
+          "definition": "How clear are your offerings?",
+          "indicators": ["clear", "well-defined", "explicit", "obvious"]
+        },
+        {
+          "name": "Alignment",
+          "definition": "Do your products/services align with WHY and HOW?",
+          "indicators": ["aligned", "consistent", "coherent", "connected"]
+        },
+        {
+          "name": "Quality",
+          "definition": "Is the quality consistent and excellent?",
+          "indicators": ["quality", "excellence", "superior", "premium"]
+        },
+        {
+          "name": "Proof",
+          "definition": "Do your offerings prove your WHY and HOW?",
+          "indicators": ["proves", "demonstrates", "validates", "supports"]
+        },
+        {
+          "name": "Evolution",
+          "definition": "Do you innovate while staying true to WHY?",
+          "indicators": ["innovative", "evolving", "advancing", "growing"]
+        },
+        {
+          "name": "Market Fit",
+          "definition": "Do your offerings meet market needs?",
+          "indicators": ["market fit", "needs", "demand", "relevant"]
+        }
       ]
     },
     "who": {
@@ -82,6 +178,38 @@
         "Apple: Creative professionals, early adopters, design enthusiasts",
         "Tesla: Environmentally conscious, tech-savvy, luxury buyers",
         "Patagonia: Outdoor enthusiasts, environmental activists, quality seekers"
+      ],
+      "scoring_dimensions": [
+        {
+          "name": "Clarity",
+          "definition": "How clearly defined is your audience?",
+          "indicators": ["clear", "defined", "specific", "articulated"]
+        },
+        {
+          "name": "Alignment",
+          "definition": "Does your audience share your WHY?",
+          "indicators": ["aligned", "shares", "believes", "connects"]
+        },
+        {
+          "name": "Specificity",
+          "definition": "Are you specific or too broad?",
+          "indicators": ["specific", "focused", "targeted", "narrow"]
+        },
+        {
+          "name": "Understanding",
+          "definition": "Do you deeply understand their needs?",
+          "indicators": ["understanding", "insight", "knowledge", "awareness"]
+        },
+        {
+          "name": "Resonance",
+          "definition": "Does your message resonate with them?",
+          "indicators": ["resonates", "connects", "relates", "appeals"]
+        },
+        {
+          "name": "Loyalty",
+          "definition": "Does your WHO create loyal advocates?",
+          "indicators": ["loyal", "advocates", "champions", "fans"]
+        }
       ]
     }
   },

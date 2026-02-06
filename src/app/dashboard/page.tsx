@@ -396,7 +396,7 @@ export default function DashboardPage() {
                           </div>
                         </div>
                       </div>
-                      <Link href={assessment.route}>
+                      <Link href={assessment.route} prefetch={false}>
                         <Button className="bg-green-600 hover:bg-green-700">
                           Start Analysis
                           <ExternalLink className="ml-2 h-4 w-4" />

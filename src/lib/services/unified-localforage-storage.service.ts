@@ -143,6 +143,27 @@ export class UnifiedLocalForageStorage {
   }
 
   /**
+   * Find stored data containing a specific page URL
+   * Searches all stored data to find which site data contains the page
+   */
+  static async findDataByPageUrl(pageUrl: string): Promise<StoredPuppeteerData | null> {
+    const allKeys = await puppeteerStore.keys();
+    
+    for (const key of allKeys) {
+      const stored = await puppeteerStore.getItem<StoredPuppeteerData>(key);
+      if (stored && stored.data?.pages) {
+        // Check if any page in this stored data matches the page URL
+        const matchingPage = stored.data.pages.find((p: any) => p.url === pageUrl);
+        if (matchingPage) {
+          return stored;
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /**
    * Get all pages for a site URL
    */
   static async getPagesForSite(siteUrl: string): Promise<Array<{ url: string; pageLabel: string; pageType: string }>> {
@@ -166,6 +187,79 @@ export class UnifiedLocalForageStorage {
     }
 
     return pages;
+  }
+
+  /**
+   * Get all collected content with metadata
+   * Returns all stored puppeteer data grouped by site URL
+   */
+  static async getAllCollectedContent(): Promise<Array<{
+    siteUrl: string;
+    domain: string;
+    timestamp: string;
+    pageCount: number;
+    pages: Array<{
+      url: string;
+      pageLabel: string;
+      pageType: string;
+      title?: string;
+      metaDescription?: string;
+    }>;
+  }>> {
+    const allKeys = await puppeteerStore.keys();
+    const contentMap = new Map<string, {
+      siteUrl: string;
+      domain: string;
+      timestamp: string;
+      pages: Array<{
+        url: string;
+        pageLabel: string;
+        pageType: string;
+        title?: string;
+        metaDescription?: string;
+      }>;
+    }>();
+
+    for (const key of allKeys) {
+      const stored = await puppeteerStore.getItem<StoredPuppeteerData>(key);
+      if (stored && stored.data?.pages) {
+        const siteUrl = stored.data.url || stored.url;
+        const domain = this.extractDomain(siteUrl);
+
+        if (!contentMap.has(siteUrl)) {
+          contentMap.set(siteUrl, {
+            siteUrl,
+            domain,
+            timestamp: stored.timestamp,
+            pages: [],
+          });
+        }
+
+        const entry = contentMap.get(siteUrl)!;
+        for (const page of stored.data.pages) {
+          // Avoid duplicates
+          if (!entry.pages.find((p) => p.url === page.url)) {
+            entry.pages.push({
+              url: page.url,
+              pageLabel: page.pageLabel || 'Page',
+              pageType: page.pageType || 'page',
+              title: page.title,
+              metaDescription: page.metaDescription,
+            });
+          }
+        }
+
+        // Update timestamp if this is newer
+        if (new Date(stored.timestamp) > new Date(entry.timestamp)) {
+          entry.timestamp = stored.timestamp;
+        }
+      }
+    }
+
+    return Array.from(contentMap.values()).map((entry) => ({
+      ...entry,
+      pageCount: entry.pages.length,
+    }));
   }
 
   // ============================================

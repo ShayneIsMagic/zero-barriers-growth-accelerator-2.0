@@ -1,0 +1,998 @@
+[
+  {
+    "timestamp": "2026-01-30T18:58:07.983Z",
+    "environment": "production",
+    "url": "https://zerobarriers.io",
+    "tests": {
+      "appLoad": {
+        "passed": true,
+        "duration": 2200,
+        "details": {
+          "title": "Zero Barriers Growth Accelerator"
+        }
+      },
+      "contentCollection": {
+        "passed": false,
+        "duration": 4116,
+        "error": "SyntaxError: Failed to execute 'querySelector' on 'Document': 'button:has-text(\"Analyze\"), button:has-text(\"Run\")' is not a valid selector."
+      },
+      "frameworkAssessments": {
+        "b2b": {
+          "passed": true,
+          "duration": 3673,
+          "details": {
+            "pageLoaded": true,
+            "hasInput": true
+          }
+        },
+        "b2c": {
+          "passed": true,
+          "duration": 3540,
+          "details": {
+            "pageLoaded": true,
+            "hasInput": true
+          }
+        },
+        "goldenCircle": {
+          "passed": false,
+          "duration": 0
+        },
+        "cliftonStrengths": {
+          "passed": false,
+          "duration": 0
+        },
+        "archetypes": {
+          "passed": false,
+          "duration": 3207,
+          "details": {
+            "pageLoaded": true,
+            "hasInput": false
+          }
+        },
+        "golden-circle": {
+          "passed": false,
+          "duration": 3277,
+          "details": {
+            "pageLoaded": true,
+            "hasInput": false
+          }
+        },
+        "clifton-strengths": {
+          "passed": true,
+          "duration": 3630,
+          "details": {
+            "pageLoaded": true,
+            "hasInput": true
+          }
+        }
+      },
+      "errors": [
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        },
+        {
+          "type": "runtime",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "severity": "high"
+        }
+      ],
+      "warnings": [],
+      "links": [
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/auth/signin",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/auth/signup",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/dashboard/elements-value-b2c",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/dashboard/elements-value-b2b",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/dashboard/unified-analysis",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/dashboard/multi-page-scraping",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/dashboard/google-tools",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/dashboard/automated-google-tools",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/dashboard/content-comparison",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/dashboard/clifton-strengths-simple",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/dashboard/golden-circle-standalone",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/dashboard/elements-value-standalone",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/dashboard/revenue-trends",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/dashboard/google-tools",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/dashboard/golden-circle-standalone",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/dashboard/elements-value-b2c",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/dashboard/elements-value-b2b",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/dashboard/clifton-strengths",
+          "status": 200,
+          "working": true
+        },
+        {
+          "url": "https://zero-barriers-growth-accelerator-20-ewwo8k9pp.vercel.app/dashboard/coming-soon",
+          "status": 200,
+          "working": true
+        }
+      ],
+      "versions": [
+        {
+          "package": "next",
+          "current": "^15.5.5",
+          "latest": "16.1.6",
+          "outdated": true
+        },
+        {
+          "package": "react",
+          "current": "^18",
+          "latest": "19.2.4",
+          "outdated": true
+        },
+        {
+          "package": "react-dom",
+          "current": "^18",
+          "latest": "19.2.4",
+          "outdated": true
+        },
+        {
+          "package": "@prisma/client",
+          "current": "^6.17.1",
+          "latest": "7.3.0",
+          "outdated": true
+        },
+        {
+          "package": "prisma",
+          "current": "^6.17.1",
+          "latest": "7.3.0",
+          "outdated": true
+        },
+        {
+          "package": "@google/generative-ai",
+          "current": "^0.24.1",
+          "latest": "0.24.1",
+          "outdated": false
+        },
+        {
+          "package": "puppeteer",
+          "current": "^24.25.0",
+          "latest": "24.36.1",
+          "outdated": true
+        },
+        {
+          "package": "typescript",
+          "current": "^5.9.3",
+          "latest": "5.9.3",
+          "outdated": false
+        }
+      ]
+    },
+    "summary": {
+      "totalTests": 9,
+      "passed": 4,
+      "failed": 5,
+      "errors": 153,
+      "warnings": 0
+    }
+  }
+]

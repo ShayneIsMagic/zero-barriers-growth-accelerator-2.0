@@ -33,6 +33,16 @@ export function useAnalysisData(
   const [isFromCache, setIsFromCache] = useState(false);
   const [cacheInfo, setCacheInfo] = useState<any>(null);
 
+  // Helper function to validate URL
+  const isValidUrl = (urlString: string): boolean => {
+    try {
+      const url = new URL(urlString);
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  };
+
   const runAnalysis = async (
     url: string,
     options: UseAnalysisDataOptions = {}
@@ -42,13 +52,21 @@ export function useAnalysisData(
       return null;
     }
 
+    const trimmedUrl = url.trim();
+    
+    // Validate URL format before proceeding
+    if (!isValidUrl(trimmedUrl)) {
+      setError(`Invalid URL: "${trimmedUrl}". URLs must start with http:// or https://`);
+      setIsLoading(false);
+      return null;
+    }
+
     setIsLoading(true);
     setError(null);
     setData(null);
     setIsFromCache(false);
 
     try {
-      const trimmedUrl = url.trim();
 
       // Step 1: Check Local Forage cache FIRST
       const cached = await UnifiedLocalForageStorage.getPuppeteerData(trimmedUrl);
