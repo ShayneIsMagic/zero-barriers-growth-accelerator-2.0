@@ -279,7 +279,7 @@ export class UniversalPuppeteerScraper {
         try {
           this.browser = await puppeteer.launch({
             executablePath,
-            headless: chromium.default.headless,
+            headless: true,
             args: [
               '--no-sandbox',
               '--disable-setuid-sandbox',
@@ -306,7 +306,7 @@ export class UniversalPuppeteerScraper {
           this.browser = await puppeteer.launch({
             args: chromium.default.args,
             executablePath: await chromium.default.executablePath(),
-            headless: chromium.default.headless,
+            headless: true,
           });
           console.log('✅ Chrome launched using @sparticuz/chromium-min');
         } catch (error) {
@@ -317,7 +317,7 @@ export class UniversalPuppeteerScraper {
     } else {
       // Local development
       this.browser = await puppeteer.launch({
-        headless: chromium.default.headless,
+        headless: true,
         args: [
           '--no-sandbox',
           '--disable-setuid-sandbox',
