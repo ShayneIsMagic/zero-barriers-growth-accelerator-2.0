@@ -32,6 +32,8 @@ export async function POST(request: NextRequest) {
     const {
       url: requestUrl,
       proposedContent,
+      comprehensiveData: clientData, // Data from LocalForage (sent by useAnalysisData hook)
+      existingContent: clientExistingContent, // Pre-scraped content from client
       analysisType: _analysisType,
       maxPages = 10,
       maxDepth = 2,
@@ -51,63 +53,102 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`🔄 Starting enhanced comparison analysis for: ${url}`);
-    console.log(`📊 Max pages: ${maxPages}, Max depth: ${maxDepth}`);
+    const isServerless =
+      process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
 
-    // Step 1: Check for stored content first (if enabled and userId provided)
+    // Step 1: Use client-provided data from LocalForage (highest priority)
     let existingData: any = null;
     let storedSnapshotId: string | null = null;
     let comprehensiveData: any = null;
 
-    if (useStored && userId) {
-      console.log('📦 Checking for stored content snapshot...');
+    if (clientData) {
+      // Client sent pre-scraped data from LocalForage — use it directly
+      comprehensiveData = clientData;
+      existingData = transformComprehensiveData(comprehensiveData);
+    }
+
+    // Step 2: Use client-provided existing content
+    if (!existingData && clientExistingContent) {
+      existingData = clientExistingContent;
+    }
+
+    // Step 3: Check database for stored content (if userId provided)
+    if (!existingData && useStored && userId) {
       const stored = await ContentStorageService.getLatestSnapshot(url, userId);
       if (stored) {
-        console.log('✅ Using stored content snapshot');
         comprehensiveData = stored.content;
         existingData = transformComprehensiveData(comprehensiveData);
         storedSnapshotId = stored.id;
       }
     }
 
-    // Step 2: Scrape if no stored content found
+    // Step 4: Scrape if no content found from any source
     if (!existingData) {
-      console.log(
-        '🔍 No stored content found, scraping with enhanced collector...'
-      );
-      const collector = new PuppeteerComprehensiveCollector({
-        maxPages,
-        maxDepth,
-        timeout: 30000,
-      });
+      if (isServerless) {
+        // VERCEL: Use ProductionContentExtractor (fetch-based, no Puppeteer)
+        const { ProductionContentExtractor } = await import(
+          '@/lib/production-content-extractor'
+        );
+        const extractor = new ProductionContentExtractor();
 
-      try {
-        comprehensiveData = await collector.collectComprehensiveData(url);
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        
-        // Check if it's a blocking error
-        if (errorMessage.includes('blocked') || errorMessage.includes('Blocked')) {
+        try {
+          const extractedData = await extractor.extractContent(url);
+          existingData = {
+            wordCount: extractedData.wordCount || 0,
+            title: extractedData.title || 'Untitled',
+            metaDescription: extractedData.metaDescription || '',
+            cleanText: extractedData.content || '',
+            extractedKeywords: [],
+            headings: { h1: [], h2: [], h3: [] },
+          };
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : 'Unknown error';
           return NextResponse.json(
             {
               success: false,
-              error: `Website blocked the scraper: ${url}. Try a different website or contact support.`,
+              error: `Failed to scrape ${url}: ${errorMessage}`,
               details: errorMessage,
             },
-            { status: 403 }
+            { status: 500 }
           );
         }
-        
-        // Re-throw other errors
-        throw error;
+      } else {
+        // LOCAL: Use PuppeteerComprehensiveCollector (full browser)
+        const collector = new PuppeteerComprehensiveCollector({
+          maxPages,
+          maxDepth,
+          timeout: 30000,
+        });
+
+        try {
+          comprehensiveData = await collector.collectComprehensiveData(url);
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : 'Unknown error';
+
+          if (
+            errorMessage.includes('blocked') ||
+            errorMessage.includes('Blocked')
+          ) {
+            return NextResponse.json(
+              {
+                success: false,
+                error: `Website blocked the scraper: ${url}. Try a different website or contact support.`,
+                details: errorMessage,
+              },
+              { status: 403 }
+            );
+          }
+
+          throw error;
+        }
+
+        existingData = transformComprehensiveData(comprehensiveData);
       }
 
-      // Transform to existing format for compatibility
-      existingData = transformComprehensiveData(comprehensiveData);
-
       // Auto-save to database (if userId provided)
-      if (userId) {
-        console.log('💾 Auto-saving scraped content to database...');
+      if (userId && comprehensiveData) {
         storedSnapshotId = await ContentStorageService.storeComprehensiveData(
           url,
           comprehensiveData,

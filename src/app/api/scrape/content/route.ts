@@ -1,15 +1,25 @@
 /**
  * Content Scraping API
- * Uses the same scraping approach as Content-Comparison page
+ * Uses Puppeteer locally, falls back to ProductionContentExtractor on Vercel
  * Standalone service for scraping website content
  * Used by all assessment APIs to fetch content
+ *
+ * ARCHITECTURE:
+ * 1. Client checks LocalForage first (useAnalysisData hook)
+ * 2. If no cached content, this API is called
+ * 3. Locally: Puppeteer scrapes with full browser
+ * 4. On Vercel: ProductionContentExtractor uses fetch (no Puppeteer needed)
+ * 5. Result stored in LocalForage by the client for future use
  */
 
 import { ContentCacheService } from '@/lib/services/content-cache.service';
-import { UniversalPuppeteerScraper } from '@/lib/universal-puppeteer-scraper';
+import { ProductionContentExtractor } from '@/lib/production-content-extractor';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const maxDuration = 30;
+export const maxDuration = 60;
+
+const isServerless =
+  process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
 
 // Helper function to validate URL
 function isValidUrl(urlString: string): boolean {
@@ -46,13 +56,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`🔍 Content scraping requested for: ${url}`);
-
-    // Try to get from cache first
+    // Try to get from server-side cache first
     if (ContentCacheService.hasContent(url)) {
       const cached = ContentCacheService.getCachedContent(url);
       if (cached) {
-        console.log('📦 Returning cached content');
         return NextResponse.json({
           success: true,
           cached: true,
@@ -61,28 +68,55 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Scrape fresh content using UniversalPuppeteerScraper (same as content-comparison)
-    console.log('🔍 Scraping fresh content...');
-    const scrapedData = await UniversalPuppeteerScraper.scrapeWebsite(url);
+    let content;
 
-    // Transform to match content-comparison format
-    const content = {
-      url,
-      title: scrapedData.title || 'Untitled',
-      metaDescription: scrapedData.metaDescription || '',
-      wordCount: scrapedData.wordCount || 0,
-      cleanText: scrapedData.cleanText || '',
-      extractedKeywords: scrapedData.seo?.extractedKeywords || [],
-      headings: scrapedData.seo?.headings || { h1: [], h2: [], h3: [] },
-      seo: {
-        metaTitle: scrapedData.title || '',
-        metaDescription: scrapedData.seo?.metaDescription || '',
+    if (isServerless) {
+      // VERCEL/PRODUCTION: Use ProductionContentExtractor (fetch-based, no Puppeteer)
+      const extractor = new ProductionContentExtractor();
+      const extractedData = await extractor.extractContent(url);
+
+      content = {
+        url,
+        title: extractedData.title || 'Untitled',
+        metaDescription: extractedData.metaDescription || '',
+        wordCount: extractedData.wordCount || 0,
+        cleanText: extractedData.content || '',
+        extractedKeywords: [],
+        headings: { h1: [], h2: [], h3: [] },
+        seo: {
+          metaTitle: extractedData.title || '',
+          metaDescription: extractedData.metaDescription || '',
+          extractedKeywords: [],
+          headings: { h1: [], h2: [], h3: [] },
+        },
+        method: extractedData.method,
+      };
+    } else {
+      // LOCAL DEVELOPMENT: Use Puppeteer (full browser, better scraping)
+      const { UniversalPuppeteerScraper } = await import(
+        '@/lib/universal-puppeteer-scraper'
+      );
+      const scrapedData = await UniversalPuppeteerScraper.scrapeWebsite(url);
+
+      content = {
+        url,
+        title: scrapedData.title || 'Untitled',
+        metaDescription: scrapedData.metaDescription || '',
+        wordCount: scrapedData.wordCount || 0,
+        cleanText: scrapedData.cleanText || '',
         extractedKeywords: scrapedData.seo?.extractedKeywords || [],
         headings: scrapedData.seo?.headings || { h1: [], h2: [], h3: [] },
-      },
-    };
+        seo: {
+          metaTitle: scrapedData.title || '',
+          metaDescription: scrapedData.seo?.metaDescription || '',
+          extractedKeywords: scrapedData.seo?.extractedKeywords || [],
+          headings: scrapedData.seo?.headings || { h1: [], h2: [], h3: [] },
+        },
+        method: 'puppeteer',
+      };
+    }
 
-    // Cache the content
+    // Cache the content server-side
     const cached = await ContentCacheService.getContent(
       url,
       async () => content
@@ -104,42 +138,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
-
-// Helper functions
-function _extractKeywords(_text: string): string[] {
-  const words = _text
-    .toLowerCase()
-    .replace(/[^\w\s]/g, ' ')
-    .split(/\s+/)
-    .filter((word) => word.length > 4);
-
-  const wordCount: { [key: string]: number } = {};
-  words.forEach((word) => {
-    wordCount[word] = (wordCount[word] || 0) + 1;
-  });
-
-  return Object.entries(wordCount)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 10)
-    .map(([word]) => word);
-}
-
-function _extractHeadings(_content: string) {
-  const lines = _content.split('\n');
-  const h1 = lines
-    .filter((line) => line.trim().startsWith('# '))
-    .map((line) => line.trim().replace(/^#+\s*/, ''));
-  const h2 = lines
-    .filter((line) => line.trim().startsWith('## '))
-    .map((line) => line.trim().replace(/^#+\s*/, ''));
-  const h3 = lines
-    .filter((line) => line.trim().startsWith('### '))
-    .map((line) => line.trim().replace(/^#+\s*/, ''));
-
-  return {
-    h1: h1.slice(0, 10),
-    h2: h2.slice(0, 10),
-    h3: h3.slice(0, 10),
-  };
 }
