@@ -299,20 +299,8 @@ export class UniversalPuppeteerScraper {
         }
       }
       
-      // Final fallback: try @sparticuz/chromium
       if (!browserLaunched) {
-        try {
-          const chromium = await import('@sparticuz/chromium-min');
-          this.browser = await puppeteer.launch({
-            args: chromium.default.args,
-            executablePath: await chromium.default.executablePath(),
-            headless: true,
-          });
-          console.log('✅ Chrome launched using @sparticuz/chromium-min');
-        } catch (error) {
-          console.error('❌ All Chrome launch methods failed:', error.message);
-          throw new Error('Could not launch Chrome - all methods failed');
-        }
+        throw new Error('Could not launch Chrome at any of the attempted paths');
       }
     } else {
       // Local development
