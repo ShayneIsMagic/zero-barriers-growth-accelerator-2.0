@@ -154,7 +154,7 @@ export class AnalysisClient {
   // Analyze content with REAL AI ONLY
   private static async analyzeWithAI(
     url: string,
-    content: string
+    _content: string
   ): Promise<AnalysisResult> {
     try {
       // Use real AI analysis only - no demo data allowed

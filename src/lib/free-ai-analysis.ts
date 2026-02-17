@@ -54,7 +54,7 @@ function _extractTitleFromContent(html: string): string {
 /**
  * Extract meta description from HTML content
  */
-function extractMetaDescriptionFromContent(html: string): string {
+function _extractMetaDescriptionFromContent(html: string): string {
   const metaMatch = html.match(
     /<meta[^>]*name=["']description["'][^>]*content=["']([^"']*)["']/i
   );
@@ -64,7 +64,7 @@ function extractMetaDescriptionFromContent(html: string): string {
 /**
  * Extract headings from HTML content
  */
-function extractHeadingsFromContent(html: string): string[] {
+function _extractHeadingsFromContent(html: string): string[] {
   const headingMatches = html.match(/<h[1-6][^>]*>(.*?)<\/h[1-6]>/gi) || [];
   return headingMatches
     .map((heading) => heading.replace(/<[^>]*>/g, '').trim())
@@ -74,7 +74,7 @@ function extractHeadingsFromContent(html: string): string[] {
 /**
  * Extract keywords from content
  */
-function extractKeywordsFromContent(content: string): string[] {
+function _extractKeywordsFromContent(content: string): string[] {
   const words = content
     .toLowerCase()
     .replace(/[^\w\s]/g, ' ')
@@ -225,7 +225,7 @@ export async function analyzeWithClaude(
 /**
  * Create analysis prompt for AI models
  */
-function createAnalysisPrompt(content: string, analysisType: string): string {
+function createAnalysisPrompt(content: string, _analysisType: string): string {
   return `
 Analyze the following website content using proven marketing frameworks. Provide specific scores (1-10) and actionable insights.
 

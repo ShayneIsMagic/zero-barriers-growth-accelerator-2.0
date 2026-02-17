@@ -3,7 +3,7 @@
  * A/B tests prompts between Gemini and Claude to determine which performs better
  */
 
-import { analyzeWithGemini, analyzeWithClaude } from '@/lib/free-ai-analysis';
+import { analyzeWithGemini } from '@/lib/free-ai-analysis';
 
 export interface PromptTestResult {
   engine: 'gemini' | 'claude';

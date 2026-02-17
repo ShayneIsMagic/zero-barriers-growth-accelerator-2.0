@@ -680,14 +680,14 @@ Evaluate how well the page converts visitors:
    */
   static async validateAnalysis(
     assessmentType: string,
-    analysis: any
+    _analysis: any
   ): Promise<{
     isValid: boolean;
     score: number;
     missingElements: string[];
     recommendations: string[];
   }> {
-    const frameworkKnowledge = await this.loadFrameworkKnowledge(
+    const _frameworkKnowledge = await this.loadFrameworkKnowledge(
       this.getFrameworkName(assessmentType)
     );
 

@@ -75,11 +75,11 @@ export function useAnalysisData(
       let usedCache = false;
 
       if (cached) {
-        console.log('✅ Using cached Puppeteer data');
+        // Using cached Puppeteer data
         setIsFromCache(true);
         usedCache = true;
       } else {
-        console.log('🔍 No cache found, scraping with Puppeteer...');
+        // No cache found, scraping with Puppeteer
         setIsFromCache(false);
 
         // Step 2: Scrape if no cache
@@ -121,7 +121,7 @@ export function useAnalysisData(
             trimmedUrl,
             puppeteerData
           );
-          console.log('💾 Stored Puppeteer data in Local Forage');
+          // Stored Puppeteer data in Local Forage
         }
       }
 
@@ -180,7 +180,7 @@ export function useAnalysisData(
           'json',
           analysisType
         );
-        console.log(`💾 Stored ${analysisType} analysis result`);
+        // Stored analysis result
       }
 
       // Update cache info
@@ -194,7 +194,6 @@ export function useAnalysisData(
       const errorMessage =
         err instanceof Error ? err.message : 'Analysis failed';
       setError(errorMessage);
-      console.error('Analysis error:', err);
       return null;
     } finally {
       setIsLoading(false);
@@ -223,7 +222,7 @@ export function useAnalysisData(
       }
       setCacheInfo(await UnifiedLocalForageStorage.getStorageInfo());
     } catch (err) {
-      console.error('Failed to clear cache:', err);
+      void err; // Failed to clear cache
     }
   };
 

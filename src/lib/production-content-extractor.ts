@@ -288,9 +288,9 @@ export class ProductionContentExtractor {
       .filter((word) => word.length > 0).length;
 
     // Check technical info
-    const hasSSL = url.startsWith('https:');
-    const hasSchema = html.includes('application/ld+json');
-    const mobileFriendly = html.includes('width=device-width');
+    const _hasSSL = url.startsWith('https:');
+    const _hasSchema = html.includes('application/ld+json');
+    const _mobileFriendly = html.includes('width=device-width');
 
     return {
       content: textContent,

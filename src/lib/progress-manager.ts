@@ -114,7 +114,7 @@ export class ProgressManager {
   /**
    * Fail a specific phase
    */
-  failPhase(phaseId: string, error: string) {
+  failPhase(phaseId: string, _error: string) {
     const phase = this.progress.phases.find((p) => p.id === phaseId);
     if (phase) {
       phase.status = 'failed';

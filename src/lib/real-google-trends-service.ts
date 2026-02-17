@@ -90,7 +90,7 @@ export class RealGoogleTrendsService {
    */
   private async getInterestOverTime(
     keyword: string,
-    timeframe: string
+    _timeframe: string
   ): Promise<any[]> {
     try {
       const response = await googleTrends.interestOverTime({

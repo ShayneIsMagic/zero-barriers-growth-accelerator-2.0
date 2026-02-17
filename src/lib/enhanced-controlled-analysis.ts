@@ -894,8 +894,8 @@ export class EnhancedControlledAnalyzer {
   }
 
   private generateImmediateActions(
-    goldenCircle: any,
-    contentQuality: any
+    _goldenCircle: any,
+    _contentQuality: any
   ): any[] {
     return [
       {
@@ -914,8 +914,8 @@ export class EnhancedControlledAnalyzer {
   }
 
   private generateQuickWins(
-    elementsOfValue: any,
-    technicalPerformance: any
+    _elementsOfValue: any,
+    _technicalPerformance: any
   ): any[] {
     return [
       {
@@ -934,8 +934,8 @@ export class EnhancedControlledAnalyzer {
   }
 
   private generateStrategicInitiatives(
-    b2bElements: any,
-    cliftonStrengths: any
+    _b2bElements: any,
+    _cliftonStrengths: any
   ): any[] {
     return [
       {
@@ -953,7 +953,7 @@ export class EnhancedControlledAnalyzer {
     ];
   }
 
-  private generatePhase1Roadmap(priorityActions: string[]): any[] {
+  private generatePhase1Roadmap(_priorityActions: string[]): any[] {
     return [
       {
         timeframe: 'Weeks 1-2',
@@ -971,7 +971,7 @@ export class EnhancedControlledAnalyzer {
     ];
   }
 
-  private generatePhase2Roadmap(priorityActions: string[]): any[] {
+  private generatePhase2Roadmap(_priorityActions: string[]): any[] {
     return [
       {
         timeframe: 'Weeks 3-6',
@@ -989,7 +989,7 @@ export class EnhancedControlledAnalyzer {
     ];
   }
 
-  private generatePhase3Roadmap(priorityActions: string[]): any[] {
+  private generatePhase3Roadmap(_priorityActions: string[]): any[] {
     return [
       {
         timeframe: 'Months 2-3',

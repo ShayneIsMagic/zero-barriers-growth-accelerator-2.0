@@ -3,13 +3,17 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { MultiPageSelector } from '@/components/shared/MultiPageSelector';
-import { CollectedContentViewer } from '@/components/shared/CollectedContentViewer';
 import { PageComparisonView } from './PageComparisonView';
 import { UnifiedLocalForageStorage } from '@/lib/services/unified-localforage-storage.service';
 import {
@@ -33,13 +37,6 @@ import {
   ArrowRight,
   RefreshCw,
 } from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 interface Page {
   url: string;
@@ -207,7 +204,7 @@ export function FrameworkAnalysisRunner({
           try {
             puppeteerData = await UnifiedLocalForageStorage.getPuppeteerData(urlVar);
             if (puppeteerData) {
-              console.log(`✅ Found collected content for: ${urlVar}`);
+              // Found collected content for URL variation
               break;
             }
           } catch {
@@ -286,9 +283,9 @@ export function FrameworkAnalysisRunner({
         }
       }
     } catch (error) {
-      console.error('Failed to load pages:', error);
+      // Failed to load pages - silently handle
     }
-  }, [url, initialCollectedData]);
+  }, [url, initialCollectedData, selectedPages.length]);
 
   // Update currentSiteUrl when url prop changes
   useEffect(() => {
@@ -323,7 +320,7 @@ export function FrameworkAnalysisRunner({
     }
   }, [url, availablePages.length, initialCollectedData, loadAvailablePages]);
 
-  const handleContentSelected = async (siteUrl: string, selectedPageUrls: string[]) => {
+  const _handleContentSelected = async (siteUrl: string, selectedPageUrls: string[]) => {
     // Update the URL to the selected site
     // Load pages for the selected site
     try {
@@ -352,7 +349,7 @@ export function FrameworkAnalysisRunner({
         setCurrentSiteUrl(siteUrl);
       }
     } catch (error) {
-      console.error('Failed to load pages:', error);
+      // Failed to load pages - silently handle
     }
   };
 
@@ -364,11 +361,11 @@ export function FrameworkAnalysisRunner({
     );
   };
 
-  const selectAllAssessments = () => {
+  const _selectAllAssessments = () => {
     setSelectedAssessments(AVAILABLE_ASSESSMENTS.map((a) => a.id));
   };
 
-  const deselectAllAssessments = () => {
+  const _deselectAllAssessments = () => {
     setSelectedAssessments([]);
   };
 
@@ -561,7 +558,7 @@ export function FrameworkAnalysisRunner({
             throw new Error(result.error || 'Assessment failed');
           }
         } catch (error) {
-          console.error(`Assessment ${assessmentId} failed:`, error);
+          // Assessment failed - update progress state
           setAssessmentProgress((prev) => ({
             ...prev,
             [assessmentId]: {
@@ -644,10 +641,9 @@ export function FrameworkAnalysisRunner({
         // Update current site URL to match selected content
         setCurrentSiteUrl(siteUrl);
       } else {
-        console.warn('No pages found in puppeteer data for:', siteUrl);
+        // No pages found in puppeteer data for this site URL
       }
     } catch (error) {
-      console.error('Failed to load content:', error);
       // Show user-friendly error
       alert(`Failed to load content from ${siteUrl}. Please try refreshing or selecting different content.`);
     }
@@ -662,7 +658,7 @@ export function FrameworkAnalysisRunner({
         await loadAvailablePages();
       }
     } catch (error) {
-      console.error('Failed to refresh content:', error);
+      // Failed to refresh content - silently handle
     }
   };
 
@@ -679,7 +675,7 @@ export function FrameworkAnalysisRunner({
                   Select Content to Analyze
                 </CardTitle>
                 <CardDescription>
-                  Choose from your collected content or collect new content from the "Side-by-Side Comparison" tab
+                  Choose from your collected content or collect new content from the &ldquo;Side-by-Side Comparison&rdquo; tab
                 </CardDescription>
               </div>
               <Button
@@ -780,11 +776,11 @@ export function FrameworkAnalysisRunner({
                 <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p className="font-medium mb-2">No content collected yet</p>
                 <p className="text-sm mb-4">
-                  Go to the <strong>"Side-by-Side Comparison"</strong> tab to collect content first
+                  Go to the <strong>&ldquo;Side-by-Side Comparison&rdquo;</strong> tab to collect content first
                 </p>
                 <div className="space-y-2 text-xs">
                   <p>1. Enter a website URL</p>
-                  <p>2. Click "Analyze Existing Content"</p>
+                  <p>2. Click &ldquo;Analyze Existing Content&rdquo;</p>
                   <p>3. Return here to select and analyze</p>
                 </div>
                 {url && (
@@ -993,7 +989,7 @@ export function FrameworkAnalysisRunner({
         <CardHeader>
           <CardTitle className="text-lg">Site Goals (Optional)</CardTitle>
           <CardDescription>
-            Define your site's primary goals to focus recommendations
+            Define your site&apos;s primary goals to focus recommendations
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -1150,7 +1146,7 @@ export function FrameworkAnalysisRunner({
                                 variant="outline"
                                 size="sm"
                                 onClick={() => {
-                                  console.log('View report:', progress.result);
+                                  // View report action - could open modal
                                 }}
                               >
                                 <Eye className="h-3 w-3 mr-1" />

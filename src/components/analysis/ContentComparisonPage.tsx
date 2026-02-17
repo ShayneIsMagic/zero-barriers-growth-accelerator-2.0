@@ -20,7 +20,7 @@ import { DataLoader } from '@/components/shared/DataLoader';
 import { FrameworkAnalysisRunner } from '@/components/analysis/FrameworkAnalysisRunner';
 import dynamic from 'next/dynamic';
 import { Copy, Download, GitCompare, History, Loader2, Plus, Save, Database } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 // Dynamically import ReportsViewer to prevent SSR hydration issues
 const ReportsViewer = dynamic(
@@ -274,14 +274,14 @@ export function ContentComparisonPage() {
     }
   };
 
-  const clearCache = async () => {
+  const _clearCache = async () => {
     if (url.trim()) {
       await clearHookCache(url.trim());
       await ClientContentStorageService.clearCache(url.trim());
     }
   };
 
-  const clearAllCache = async () => {
+  const _clearAllCache = async () => {
     if (confirm('Clear all cached content? This cannot be undone.')) {
       await clearHookCache();
       await ClientContentStorageService.clearAllCache();
@@ -565,9 +565,8 @@ New compelling description that highlights our unique value proposition.
                         ? { pages: [displayResult.existingData], url: url.trim() }
                         : undefined
                   }
-                  onReportsGenerated={(reports) => {
-                    console.log('Reports generated:', reports);
-                    // Could store reports or update UI
+                  onReportsGenerated={(_reports) => {
+                    // Reports generated - could store or update UI
                   }}
                 />
               </CardContent>

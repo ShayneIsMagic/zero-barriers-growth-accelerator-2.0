@@ -59,7 +59,7 @@ async function performLighthouseAudit(url: string): Promise<LighthouseResult> {
   try {
     // Simulate a basic performance check
     const startTime = Date.now();
-    const response = await fetch(url, {
+    const _response = await fetch(url, {
       method: 'HEAD',
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; LighthouseBot)' },
     });

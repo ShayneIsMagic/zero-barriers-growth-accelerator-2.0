@@ -103,7 +103,7 @@ export class ContentAnalyzer {
     const whoText = this.extractWho(content, pageType);
 
     // Generate insights
-    const insights = this.generateGoldenCircleInsights(
+    const _insights = this.generateGoldenCircleInsights(
       whyText,
       howText,
       whatText,
@@ -212,7 +212,7 @@ export class ContentAnalyzer {
     };
   }
 
-  private extractWhy(content: string, pageType: string): string {
+  private extractWhy(content: string, _pageType: string): string {
     // Look for mission statements and purpose in hero sections
     const whyPatterns = [
       /(?:we|our|the|this).{0,50}(?:mission|purpose|believe|vision|values|why).{0,100}/gi,
@@ -248,7 +248,7 @@ export class ContentAnalyzer {
     return why || 'Purpose and mission not clearly defined in content';
   }
 
-  private extractHow(content: string, pageType: string): string {
+  private extractHow(content: string, _pageType: string): string {
     // Look for methodologies, processes, and approaches
     const howPatterns = [
       /(?:methodology|approach|process|framework|system|method).{0,100}/gi,
@@ -281,7 +281,7 @@ export class ContentAnalyzer {
     return how || 'Methodology and approach not clearly defined in content';
   }
 
-  private extractWhat(content: string, pageType: string): string {
+  private extractWhat(content: string, _pageType: string): string {
     // Look for products, services, and solutions
     const whatPatterns = [
       /(?:products|services|solutions|offer|provide|deliver).{0,100}/gi,
@@ -322,7 +322,7 @@ export class ContentAnalyzer {
     return what || 'Products and services not clearly defined in content';
   }
 
-  private extractWho(content: string, pageType: string): string {
+  private extractWho(content: string, _pageType: string): string {
     let who = '';
 
     // Look for testimonials and client names (limit to first 3)

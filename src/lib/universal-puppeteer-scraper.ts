@@ -1,10 +1,10 @@
 /**
  * Universal Puppeteer Scraper
  * Single service for all assessment types
- * Serverless compatible using browserless.io
+ * Serverless compatible using @sparticuz/chromium + puppeteer-core
  */
 
-import puppeteer, { Browser } from 'puppeteer';
+import type { Browser } from 'puppeteer-core';
 
 export interface UniversalScrapedData {
   // Basic content
@@ -241,92 +241,91 @@ export class UniversalPuppeteerScraper {
 
   /**
    * Get browser instance (serverless compatible)
+   * Uses @sparticuz/chromium + puppeteer-core on Vercel
+   * Uses regular puppeteer locally
    */
   private static async getBrowser(): Promise<Browser> {
     if (this.browser) {
       return this.browser;
     }
 
+    const LAUNCH_ARGS = [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--no-first-run',
+      '--no-zygote',
+      '--single-process',
+      '--disable-gpu',
+    ];
+
     if (this.isServerless) {
-      // Try browserless.io first if configured
+      // SERVERLESS: Use @sparticuz/chromium with puppeteer-core
+      const puppeteerCore = await import('puppeteer-core');
+
+      // Option 1: Try browserless.io if configured
       const token = process.env.BROWSERLESS_TOKEN;
       if (token) {
         const browserWSEndpoint =
           process.env.BROWSERLESS_WS_ENDPOINT || 'wss://chrome.browserless.io';
 
         try {
-          this.browser = await puppeteer.connect({
+          this.browser = await puppeteerCore.default.connect({
             browserWSEndpoint: `${browserWSEndpoint}?token=${token}`,
           });
           return this.browser;
-        } catch (error) {
-          console.warn('Browserless.io connection failed, falling back to local launch:', error);
+        } catch (_error) {
+          // Browserless.io connection failed, falling back to @sparticuz/chromium
         }
       }
 
-      // Fallback to local launch for Vercel/serverless
-      // Try multiple possible Chrome paths for Vercel
+      // Option 2: Use @sparticuz/chromium (provides Chromium binary for serverless)
+      try {
+        const chromium = await import('@sparticuz/chromium');
+        const executablePath = await chromium.default.executablePath();
+
+        this.browser = await puppeteerCore.default.launch({
+          args: [...chromium.default.args, ...LAUNCH_ARGS],
+          defaultViewport: { width: 1920, height: 1080 },
+          executablePath,
+          headless: true,
+        });
+        return this.browser;
+      } catch (_chromiumError) {
+        // @sparticuz/chromium failed
+      }
+
+      // Option 3: Try known Linux Chrome paths as last resort
       const possiblePaths = [
-        '/opt/bin/chromium',
         '/usr/bin/chromium-browser',
         '/usr/bin/chromium',
         '/usr/bin/google-chrome',
-        '/usr/bin/google-chrome-stable'
+        '/usr/bin/google-chrome-stable',
       ];
-      
-      let browserLaunched = false;
+
       for (const executablePath of possiblePaths) {
         try {
-          this.browser = await puppeteer.launch({
+          this.browser = await puppeteerCore.default.launch({
             executablePath,
             headless: true,
-            args: [
-              '--no-sandbox',
-              '--disable-setuid-sandbox',
-              '--disable-dev-shm-usage',
-              '--disable-accelerated-2d-canvas',
-              '--no-first-run',
-              '--no-zygote',
-              '--disable-gpu',
-            ],
+            args: LAUNCH_ARGS,
           });
-          browserLaunched = true;
-          console.log(`✅ Chrome launched successfully at: ${executablePath}`);
-          break;
-        } catch (error) {
-          console.warn(`❌ Failed to launch Chrome at ${executablePath}:`, error.message);
+          return this.browser;
+        } catch (_pathError) {
           continue;
         }
       }
-      
-      // Final fallback: try @sparticuz/chromium
-      if (!browserLaunched) {
-        try {
-          const chromium = await import('@sparticuz/chromium-min');
-          this.browser = await puppeteer.launch({
-            args: chromium.default.args,
-            executablePath: await chromium.default.executablePath(),
-            headless: true,
-          });
-          console.log('✅ Chrome launched using @sparticuz/chromium-min');
-        } catch (error) {
-          console.error('❌ All Chrome launch methods failed:', error.message);
-          throw new Error('Could not launch Chrome - all methods failed');
-        }
-      }
+
+      throw new Error(
+        'Could not launch Chrome on serverless. Ensure @sparticuz/chromium is installed or BROWSERLESS_TOKEN is set.'
+      );
     } else {
-      // Local development
-      this.browser = await puppeteer.launch({
+      // LOCAL DEVELOPMENT: Use regular puppeteer (has its own Chrome)
+      const puppeteerFull = await import('puppeteer');
+      this.browser = await puppeteerFull.default.launch({
         headless: true,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-accelerated-2d-canvas',
-          '--no-first-run',
-          '--no-zygote',
-          '--disable-gpu',
-        ],
+        args: LAUNCH_ARGS,
       });
     }
 

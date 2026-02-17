@@ -3,7 +3,7 @@
  * Actually scrapes real data from Google Tools using Puppeteer
  */
 
-import puppeteer, { Browser } from 'puppeteer';
+import type { Browser } from 'puppeteer-core';
 
 export interface RealGoogleTrendsData {
   relatedQueries: Array<{
@@ -68,18 +68,36 @@ export class RealGoogleToolsScraperService {
    */
   private static async getBrowser(): Promise<Browser> {
     if (!this.browser) {
-      this.browser = await puppeteer.launch({
-        headless: true,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-accelerated-2d-canvas',
-          '--no-first-run',
-          '--no-zygote',
-          '--disable-gpu',
-        ],
-      });
+      const isServerless =
+        process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
+      const LAUNCH_ARGS = [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--no-zygote',
+        '--single-process',
+        '--disable-gpu',
+      ];
+
+      if (isServerless) {
+        const puppeteerCore = await import('puppeteer-core');
+        const chromium = await import('@sparticuz/chromium');
+        const executablePath = await chromium.default.executablePath();
+        this.browser = await puppeteerCore.default.launch({
+          args: [...chromium.default.args, ...LAUNCH_ARGS],
+          defaultViewport: { width: 1920, height: 1080 },
+          executablePath,
+          headless: true,
+        });
+      } else {
+        const puppeteerFull = await import('puppeteer');
+        this.browser = await puppeteerFull.default.launch({
+          headless: true,
+          args: LAUNCH_ARGS,
+        });
+      }
     }
     return this.browser;
   }

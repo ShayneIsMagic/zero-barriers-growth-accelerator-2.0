@@ -15,7 +15,6 @@ import {
   Search,
   BarChart3,
   Code,
-  Database,
   ExternalLink,
 } from 'lucide-react';
 

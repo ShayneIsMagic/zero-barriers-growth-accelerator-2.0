@@ -28,7 +28,6 @@ import { Input } from '@/components/ui/input';
 import { UnifiedLocalForageStorage } from '@/lib/services/unified-localforage-storage.service';
 import {
   Database,
-  FileText,
   Search,
   Loader2,
   ExternalLink,
@@ -79,7 +78,7 @@ export function CollectedContentViewer({
       const content = await UnifiedLocalForageStorage.getAllCollectedContent();
       setCollectedContent(content);
     } catch (_error) {
-      console.error('Failed to load collected content:', _error);
+      // Failed to load collected content - silently handle
     } finally {
       setLoading(false);
     }

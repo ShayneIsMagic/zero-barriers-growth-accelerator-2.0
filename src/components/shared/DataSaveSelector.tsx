@@ -140,13 +140,12 @@ export function DataSaveSelector({
         .map(([key]) => key)
         .join(', ');
 
-      console.log(`✅ Saved to Local Forage: ${savedItems}`);
+      // Data saved successfully
       setOpen(false);
       onSaved?.();
       // Show success message (you can integrate with your toast system)
       alert(`Saved to Local Forage: ${savedItems}`);
     } catch (error) {
-      console.error('Failed to save data:', error);
       const errorMsg = `Failed to save: ${error instanceof Error ? error.message : 'Unknown error'}`;
       alert(errorMsg);
     } finally {

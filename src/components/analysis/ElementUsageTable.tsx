@@ -92,7 +92,7 @@ export function ElementUsageTable({
     return 'secondary';
   };
 
-  const getStatusLabel = (score: number): string => {
+  const _getStatusLabel = (score: number): string => {
     if (score >= 0.8) return 'Dominant';
     if (score >= 0.6) return 'Supporting';
     if (score >= 0.4) return 'Moderate';

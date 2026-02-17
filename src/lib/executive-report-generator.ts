@@ -170,7 +170,7 @@ ${data.competitiveAnalysis.opportunities.map((opp) => `- **${opp}**`).join('\n')
 - **Competitive Advantage:** ${data.strategicInsights.competitiveAdvantage}`;
   }
 
-  private generateImplementationRoadmap(data: ExecutiveReportData): string {
+  private generateImplementationRoadmap(_data: ExecutiveReportData): string {
     return `
 ## 🗺️ Implementation Roadmap
 

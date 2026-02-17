@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { UnifiedLocalForageStorage } from '@/lib/services/unified-localforage-storage.service';
-import { AlertCircle, FileText, Upload, X } from 'lucide-react';
+import { AlertCircle, FileText, X } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 

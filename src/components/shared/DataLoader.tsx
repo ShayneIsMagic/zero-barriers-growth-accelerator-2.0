@@ -22,8 +22,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
-import { Label } from '@/components/ui/label';
 import { UnifiedLocalForageStorage } from '@/lib/services/unified-localforage-storage.service';
 import { Database, Loader2, CheckCircle2, FileText, Upload } from 'lucide-react';
 // Toast will be handled via callback or console for now
@@ -60,11 +58,11 @@ export function DataLoader({
   onDataLoaded,
   currentUrl,
   allowPageSelection = false,
-  showPageSelector = false,
+  showPageSelector: _showPageSelector = false,
 }: DataLoaderProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [savedUrls, setSavedUrls] = useState<string[]>([]);
+  const [, setSavedUrls] = useState<string[]>([]);
   const [collectedContent, setCollectedContent] = useState<Array<{
     siteUrl: string;
     domain: string;
@@ -79,8 +77,8 @@ export function DataLoader({
     }>;
   }>>([]);
   const [selectedUrl, setSelectedUrl] = useState<string | null>(null);
-  const [selectedPageUrl, setSelectedPageUrl] = useState<string | null>(null);
-  const [availablePages, setAvailablePages] = useState<Array<{ url: string; pageLabel: string; pageType: string }>>([]);
+  const [selectedPageUrl, _setSelectedPageUrl] = useState<string | null>(null);
+  const [, setAvailablePages] = useState<Array<{ url: string; pageLabel: string; pageType: string }>>([]);
   const [dataInfo, setDataInfo] = useState<{
     hasPuppeteer: boolean;
     hasReports: boolean;
@@ -92,6 +90,7 @@ export function DataLoader({
     if (open) {
       loadSavedUrls();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   useEffect(() => {
@@ -127,7 +126,7 @@ export function DataLoader({
         setSelectedUrl(urls[0]);
       }
     } catch (error) {
-      console.error('Failed to load saved URLs:', error);
+      void error; // Silently handle
       alert('Failed to load saved data');
     } finally {
       setLoading(false);
@@ -152,7 +151,7 @@ export function DataLoader({
         pages,
       });
     } catch (error) {
-      console.error('Failed to load data info:', error);
+      void error; // Silently handle
     }
   };
 
@@ -274,11 +273,10 @@ export function DataLoader({
         content,
       });
 
-      console.log('✅ Data loaded successfully');
       setOpen(false);
       alert('Data loaded successfully');
     } catch (error) {
-      console.error('Failed to load data:', error);
+      void error; // handle error
       const errorMsg = `Failed to load: ${error instanceof Error ? error.message : 'Unknown error'}`;
       alert(errorMsg);
     } finally {

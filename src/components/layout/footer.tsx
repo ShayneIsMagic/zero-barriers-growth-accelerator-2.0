@@ -21,28 +21,28 @@ export function Footer() {
       { name: 'How It Works', href: '#how-it-works' },
       { name: 'Frameworks', href: '#frameworks' },
       { name: 'Pricing', href: '#pricing' },
-      { name: 'API', href: '/api' },
+      { name: 'Dashboard', href: '/dashboard' },
     ],
     company: [
       { name: 'About', href: '#about' },
-      { name: 'Blog', href: '/blog' },
-      { name: 'Careers', href: '/careers' },
-      { name: 'Press', href: '/press' },
-      { name: 'Partners', href: '/partners' },
+      { name: 'Blog', href: '#' },
+      { name: 'Careers', href: '#' },
+      { name: 'Press', href: '#' },
+      { name: 'Partners', href: '#' },
     ],
     support: [
-      { name: 'Help Center', href: '/help' },
-      { name: 'Documentation', href: '/docs' },
-      { name: 'Contact', href: '/contact' },
-      { name: 'Status', href: '/status' },
-      { name: 'Community', href: '/community' },
+      { name: 'Help Center', href: '#' },
+      { name: 'Documentation', href: '#' },
+      { name: 'Contact', href: '#' },
+      { name: 'Status', href: '#' },
+      { name: 'Community', href: '#' },
     ],
     legal: [
-      { name: 'Privacy Policy', href: '/privacy' },
-      { name: 'Terms of Service', href: '/terms' },
-      { name: 'Cookie Policy', href: '/cookies' },
-      { name: 'GDPR', href: '/gdpr' },
-      { name: 'Accessibility', href: '/accessibility' },
+      { name: 'Privacy Policy', href: '#' },
+      { name: 'Terms of Service', href: '#' },
+      { name: 'Cookie Policy', href: '#' },
+      { name: 'GDPR', href: '#' },
+      { name: 'Accessibility', href: '#' },
     ],
   };
 
@@ -223,13 +223,13 @@ export function Footer() {
               reserved.
             </p>
             <div className="flex items-center space-x-6 text-sm text-muted-foreground">
-              <Link href="/privacy" className="hover:text-foreground">
+              <Link href="#" className="hover:text-foreground">
                 Privacy
               </Link>
-              <Link href="/terms" className="hover:text-foreground">
+              <Link href="#" className="hover:text-foreground">
                 Terms
               </Link>
-              <Link href="/cookies" className="hover:text-foreground">
+              <Link href="#" className="hover:text-foreground">
                 Cookies
               </Link>
             </div>

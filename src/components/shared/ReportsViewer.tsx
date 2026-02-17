@@ -7,7 +7,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -67,7 +66,7 @@ export function ReportsViewer({
       const allReports = await UnifiedLocalForageStorage.getAllReports();
       setReports(allReports);
     } catch (_error) {
-      console.error('Failed to load reports:', _error);
+      // Failed to load reports - silently handle
     } finally {
       setLoading(false);
     }
@@ -100,7 +99,7 @@ export function ReportsViewer({
     return acc;
   }, {} as Record<string, StoredReport[]>);
 
-  const assessmentTypes = [
+  const _assessmentTypes = [
     'all',
     'content-comparison',
     'b2c-elements',

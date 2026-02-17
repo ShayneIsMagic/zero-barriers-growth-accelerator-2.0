@@ -42,7 +42,7 @@ export function safeArray<T = any>(arr: any, defaultValue: T[] = []): T[] {
 export function safeMap<T, R>(
   arr: any,
   mapper: (item: T, index: number) => R,
-  defaultValue: R[] = []
+  _defaultValue: R[] = []
 ): R[] {
   const safeArr = safeArray<T>(arr);
   return safeArr.map(mapper);

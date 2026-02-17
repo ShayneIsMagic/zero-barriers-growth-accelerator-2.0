@@ -1,4 +1,4 @@
-import puppeteer, { Browser, Page } from 'puppeteer';
+import type { Browser, Page } from 'puppeteer-core';
 
 export interface ComprehensiveCollectionResult {
   url: string;
@@ -545,41 +545,61 @@ export class PuppeteerComprehensiveCollector {
       const isServerless =
         process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
 
-      // Try browserless.io first if configured (for serverless)
+      const LAUNCH_ARGS = [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--no-zygote',
+        '--single-process',
+        '--disable-gpu',
+        '--disable-blink-features=AutomationControlled',
+        '--disable-features=IsolateOrigins,site-per-process',
+      ];
+
       if (isServerless) {
+        const puppeteerCore = await import('puppeteer-core');
+
+        // Try browserless.io first if configured
         const token = process.env.BROWSERLESS_TOKEN;
         if (token) {
           const browserWSEndpoint =
             process.env.BROWSERLESS_WS_ENDPOINT || 'wss://chrome.browserless.io';
           try {
-            this.browser = await puppeteer.connect({
+            this.browser = await puppeteerCore.default.connect({
               browserWSEndpoint: `${browserWSEndpoint}?token=${token}`,
             });
-            console.log('✅ Connected to browserless.io');
-          } catch (error) {
-            console.warn('⚠️ Browserless.io connection failed, using local launch:', error);
+          } catch (_error) {
+            // Browserless.io connection failed, falling back to @sparticuz/chromium
           }
         }
-      }
 
-      // Fallback to local launch (working approach from d0dfe75)
-      // This simple approach works on Vercel without @sparticuz/chromium complexity
-      if (!this.browser) {
-        this.browser = await puppeteer.launch({
+        // Use @sparticuz/chromium for Vercel serverless
+        if (!this.browser) {
+          try {
+            const chromium = await import('@sparticuz/chromium');
+            const executablePath = await chromium.default.executablePath();
+
+            this.browser = await puppeteerCore.default.launch({
+              args: [...chromium.default.args, ...LAUNCH_ARGS],
+              defaultViewport: { width: 1920, height: 1080 },
+              executablePath,
+              headless: true,
+            });
+          } catch (_chromiumError) {
+            throw new Error(
+              'Could not launch Chrome on serverless. Ensure @sparticuz/chromium is installed or BROWSERLESS_TOKEN is set.'
+            );
+          }
+        }
+      } else {
+        // LOCAL DEVELOPMENT: Use regular puppeteer (has its own Chrome)
+        const puppeteerFull = await import('puppeteer');
+        this.browser = await puppeteerFull.default.launch({
           headless: true,
-          args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
-            '--no-zygote',
-            '--disable-gpu',
-            '--disable-blink-features=AutomationControlled',
-            '--disable-features=IsolateOrigins,site-per-process',
-          ],
+          args: LAUNCH_ARGS,
         });
-        console.log('✅ Launched browser (simple approach - works on Vercel)');
       }
 
       const page = await this.browser.newPage();

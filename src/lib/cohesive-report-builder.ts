@@ -493,29 +493,29 @@ export class CohesiveReportBuilder {
   }
 
   private categorizeActions(
-    recommendations: any[],
-    category: string
+    _recommendations: any[],
+    _category: string
   ): ActionItem[] {
     // Categorize recommendations into immediate, short-term, long-term
     return [];
   }
 
-  private extractInsights(deliverable: MiniDeliverable): string[] {
+  private extractInsights(_deliverable: MiniDeliverable): string[] {
     // Extract insights from deliverable results
     return ['Key insight 1', 'Key insight 2'];
   }
 
-  private extractRecommendations(deliverable: MiniDeliverable): string[] {
+  private extractRecommendations(_deliverable: MiniDeliverable): string[] {
     // Extract recommendations from deliverable results
     return ['Recommendation 1', 'Recommendation 2'];
   }
 
-  private extractEvidence(deliverable: MiniDeliverable): string[] {
+  private extractEvidence(_deliverable: MiniDeliverable): string[] {
     // Extract evidence from deliverable results
     return ['Evidence 1', 'Evidence 2'];
   }
 
-  private generatePhaseSummary(deliverables: DeliverableReport[]): any {
+  private generatePhaseSummary(_deliverables: DeliverableReport[]): any {
     // Generate summary for a phase
     return {
       score: 75,

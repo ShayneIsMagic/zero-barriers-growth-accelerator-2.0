@@ -547,7 +547,7 @@ ${i + 1}. **${t.theme_name}** (${t.domain}) - ${t.score}/100
   /**
    * Generate action roadmap
    */
-  private static generateRoadmap(data: any): string {
+  private static generateRoadmap(_data: any): string {
     return `
 ### Phase 1: Foundation (Weeks 1-4)
 - Implement quick wins from Performance and SEO

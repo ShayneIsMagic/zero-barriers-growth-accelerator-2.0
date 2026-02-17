@@ -141,7 +141,7 @@ export class GoogleToolsAnalysisService {
    * Get Google Search Console data - requires actual API integration
    */
   private static async getGoogleSearchConsoleData(
-    domain: string
+    _domain: string
   ): Promise<any> {
     // TODO: Implement actual Google Search Console API integration
     throw new Error('Google Search Console API integration required. No mock data returned.');
@@ -150,7 +150,7 @@ export class GoogleToolsAnalysisService {
   /**
    * Get PageSpeed Insights data (placeholder - would use actual API)
    */
-  private static async getPageSpeedInsightsData(url: string): Promise<any> {
+  private static async getPageSpeedInsightsData(_url: string): Promise<any> {
     // Placeholder - would use PageSpeed Insights API
     return {
       lcp: 2.8,

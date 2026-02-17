@@ -333,7 +333,7 @@ export class ControlledAnalyzer {
     return [...new Set(recommendations)].slice(0, 15); // Top 15 unique recommendations
   }
 
-  private generateNextSteps(results: any): string[] {
+  private generateNextSteps(_results: any): string[] {
     return [
       'Review detailed analysis results in each section',
       'Prioritize recommendations based on impact and effort',

@@ -383,7 +383,7 @@ This analysis is based on Simon Sinek's Golden Circle framework:
     websiteUrl: string,
     goldenCircle?: GoldenCircleData,
     b2cElements?: B2CAnalysisData,
-    additionalData?: any
+    _additionalData?: any
   ): string {
     const timestamp = new Date().toISOString();
     const domain = new URL(websiteUrl).hostname;
