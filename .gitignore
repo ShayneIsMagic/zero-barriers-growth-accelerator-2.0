@@ -74,6 +74,10 @@ lint-results.txt
 !*secret*.example
 !*secret*.md
 .env*.local
+.env*.backup*
+.env.backup*
+*.env.bak
+.env.local.backup*
 
 # Temporary development files (should not be committed)
 *-test*.sql
