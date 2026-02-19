@@ -27,6 +27,7 @@ import {
   Users,
 } from 'lucide-react';
 import { useState } from 'react';
+import { MarkdownFallbackViewer } from '@/components/analysis/MarkdownFallbackViewer';
 
 export function B2CElementsPage() {
   const [url, setUrl] = useState('');
@@ -591,7 +592,17 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
 
                 {/* Overview Tab */}
                 <TabsContent value="overview" className="space-y-4">
-                  {result.comparison && (
+                  {/* Fallback: Show Markdown prompt when AI is unavailable */}
+                  {result.comparison?._isFallback && result.comparison?.fallbackMarkdown && (
+                    <MarkdownFallbackViewer
+                      markdownContent={result.comparison.fallbackMarkdown}
+                      frameworkName="B2C Elements of Value"
+                      errorMessage={result.comparison.error || 'AI analysis unavailable'}
+                    />
+                  )}
+
+                  {/* Normal AI results */}
+                  {result.comparison && !result.comparison._isFallback && (
                     <div className="rounded-lg border bg-gradient-to-r from-blue-50 to-indigo-50 p-6 dark:from-blue-950 dark:to-indigo-950">
                       <div className="text-center">
                         <h3 className="mb-2 text-2xl font-bold text-blue-900 dark:text-blue-100">
@@ -605,7 +616,7 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                   )}
 
                   {/* AI Analysis Results */}
-                  {result.comparison && (
+                  {result.comparison && !result.comparison._isFallback && (
                     <div className="mt-6 space-y-4">
                       <h3 className="text-xl font-semibold">
                         AI Analysis Results

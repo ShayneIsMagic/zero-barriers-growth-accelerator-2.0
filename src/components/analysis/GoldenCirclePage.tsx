@@ -22,6 +22,7 @@ import {
   Target,
 } from 'lucide-react';
 import { useState } from 'react';
+import { MarkdownFallbackViewer } from '@/components/analysis/MarkdownFallbackViewer';
 
 export function GoldenCirclePage() {
   const [url, setUrl] = useState('');
@@ -494,8 +495,17 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
+                {/* Fallback: Show Markdown prompt when AI is unavailable */}
+                {result.analysis?._isFallback && result.analysis?.fallbackMarkdown && (
+                  <MarkdownFallbackViewer
+                    markdownContent={result.analysis.fallbackMarkdown}
+                    frameworkName="Golden Circle"
+                    errorMessage={result.analysis.error || 'AI analysis unavailable'}
+                  />
+                )}
+
                 {/* AI Analysis Results */}
-                {result.analysis && (
+                {result.analysis && !result.analysis._isFallback && (
                   <div className="mt-6 space-y-4">
                     <h3 className="text-xl font-semibold">
                       AI Analysis Results

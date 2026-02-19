@@ -22,6 +22,7 @@ import {
   Save,
 } from 'lucide-react';
 import { useState } from 'react';
+import { MarkdownFallbackViewer } from '@/components/analysis/MarkdownFallbackViewer';
 
 export function CliftonStrengthsPage() {
   const [url, setUrl] = useState('');
@@ -494,8 +495,17 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
+                {/* Fallback: Show Markdown prompt when AI is unavailable */}
+                {result.analysis?._isFallback && result.analysis?.fallbackMarkdown && (
+                  <MarkdownFallbackViewer
+                    markdownContent={result.analysis.fallbackMarkdown}
+                    frameworkName="CliftonStrengths"
+                    errorMessage={result.analysis.error || 'AI analysis unavailable'}
+                  />
+                )}
+
                 {/* Overall Score */}
-                {result.analysis && (
+                {result.analysis && !result.analysis._isFallback && (
                   <div className="rounded-lg border bg-gradient-to-r from-purple-50 to-violet-50 p-6 dark:from-purple-950 dark:to-violet-950">
                     <div className="text-center">
                       <h3 className="mb-2 text-2xl font-bold text-purple-900 dark:text-purple-100">
@@ -509,7 +519,7 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                 )}
 
                 {/* AI Analysis Results */}
-                {result.analysis && (
+                {result.analysis && !result.analysis._isFallback && (
                   <div className="mt-6 space-y-4">
                     <h3 className="text-xl font-semibold">
                       AI Analysis Results
