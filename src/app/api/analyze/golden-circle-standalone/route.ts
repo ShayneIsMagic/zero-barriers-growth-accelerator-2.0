@@ -184,86 +184,73 @@ function extractHeadings(content: string): string[] {
     .slice(0, 10);
 }
 
-// Golden Circle Analysis Function
+// Golden Circle Analysis — chunked by component so each gets thorough evaluation
 async function generateGoldenCircleAnalysis(
   existing: any,
   proposed: any,
   url: string,
   _analysisType: string
 ) {
-  const { analyzeWithAI } = await import('@/lib/free-ai-analysis');
+  const { analyzeFrameworkInChunks } = await import(
+    '@/lib/chunked-framework-analysis'
+  );
   const { generateFrameworkFallbackMarkdown } = await import(
     '@/lib/framework-fallback-generator'
   );
 
-  const prompt = `Analyze this website using Simon Sinek's Golden Circle framework (Why, How, What, Who):
-
-URL: ${url}
-
-EXISTING CONTENT:
-- Word Count: ${existing.wordCount}
-- Title: ${existing.title}
-- Meta Description: ${existing.metaDescription || existing.seo?.metaDescription || ''}
-- Keywords: ${(existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', ')}
-- Content: ${existing.cleanText?.substring(0, 2000) || ''}
-
-${
-  proposed
-    ? `
-PROPOSED CONTENT:
-- Word Count: ${proposed.wordCount}
-- Title: ${proposed.title}
-- Meta Description: ${proposed.metaDescription}
-- Keywords: ${proposed.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
-- Content: ${proposed.cleanText?.substring(0, 2000) || ''}
-`
-    : 'No proposed content provided - analyze existing only'
-}
-
-GOLDEN CIRCLE FRAMEWORK (Simon Sinek - Complete with WHO):
-
-WHY (Purpose, Cause, Belief):
-- What is the organization's purpose?
-- What cause does it serve?
-- Why does it exist beyond making money?
-
-HOW (Process, Methodology, Differentiation):
-- How does the organization fulfill its purpose?
-- What unique process or methodology does it use?
-- How is it different from competitors?
-
-WHAT (Products, Services, Features):
-- What products or services does it offer?
-- What specific features or benefits?
-- What does the organization actually do?
-
-WHO (Target Audience, People, Relationships):
-- Who is their ideal customer?
-- Who are they serving?
-- Who believes what they believe?
-
-Provide analysis with:
-1. Overall Golden Circle Score (0-40)
-2. WHY analysis with score and evidence
-3. HOW analysis with score and evidence
-4. WHAT analysis with score and evidence
-5. WHO analysis with score and evidence
-6. Alignment assessment between all four elements
-7. Specific improvements for better Golden Circle alignment
-
-Return structured analysis with scores and actionable insights in JSON format.`;
-
   try {
-    return await analyzeWithAI(prompt, 'golden-circle');
-  } catch (aiError) {
-    const errorMessage = aiError instanceof Error ? aiError.message : 'AI analysis failed';
+    return await analyzeFrameworkInChunks({
+      frameworkName: 'Golden Circle (Simon Sinek)',
+      url,
+      contentTitle: existing.title || '',
+      contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
+      contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
+      contentText: existing.cleanText || '',
+      scoringInstructions: `Score each dimension 0.0-1.0 (flat fractional scoring):
+- 0.8-1.0: Excellent — clearly articulated with strong evidence
+- 0.6-0.79: Good — present but could be more compelling
+- 0.4-0.59: Needs Work — vague or inconsistent
+- 0.0-0.39: Poor — absent or contradictory`,
+      chunks: [
+        {
+          categoryName: 'WHY (Purpose, Cause, Belief)',
+          categoryKey: 'why',
+          elements: [
+            'clarity', 'authenticity', 'inspiration',
+            'consistency', 'differentiation', 'emotional_resonance',
+          ],
+        },
+        {
+          categoryName: 'HOW (Process, Methodology, Differentiation)',
+          categoryKey: 'how',
+          elements: [
+            'uniqueness', 'clarity', 'consistency',
+            'alignment', 'proof_points', 'competitive_moat',
+          ],
+        },
+        {
+          categoryName: 'WHAT (Products, Services, Features)',
+          categoryKey: 'what',
+          elements: [
+            'clarity', 'alignment', 'quality',
+            'proof', 'evolution', 'market_fit',
+          ],
+        },
+        {
+          categoryName: 'WHO (Target Audience, People, Relationships)',
+          categoryKey: 'who',
+          elements: [
+            'clarity', 'alignment', 'specificity',
+            'understanding', 'resonance', 'loyalty',
+          ],
+        },
+      ],
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'AI analysis failed';
     console.log(`📄 [GC] AI failed, generating Markdown fallback: ${errorMessage}`);
     const fallbackMarkdown = generateFrameworkFallbackMarkdown({
-      framework: 'golden-circle',
-      url,
-      existing,
-      proposed,
-      errorMessage,
+      framework: 'golden-circle', url, existing, proposed, errorMessage,
     });
     return { _isFallback: true, fallbackMarkdown, error: errorMessage };
   }

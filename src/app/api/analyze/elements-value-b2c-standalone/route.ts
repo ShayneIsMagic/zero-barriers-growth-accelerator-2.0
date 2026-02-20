@@ -195,80 +195,68 @@ function extractHeadings(content: string): string[] {
     .slice(0, 10);
 }
 
-// B2C Elements Analysis Function
+// B2C Elements Analysis — chunked by category so every element is evaluated
 async function generateB2CAnalysis(
   existing: any,
   proposed: any,
   url: string,
   _analysisType: string
 ) {
-  const { analyzeWithAI } = await import('@/lib/free-ai-analysis');
+  const { analyzeFrameworkInChunks } = await import(
+    '@/lib/chunked-framework-analysis'
+  );
   const { generateFrameworkFallbackMarkdown } = await import(
     '@/lib/framework-fallback-generator'
   );
 
-  const prompt = `Analyze this website using the B2C Elements of Value framework (30 consumer value elements):
-
-URL: ${url}
-
-EXISTING CONTENT:
-- Word Count: ${existing.wordCount}
-- Title: ${existing.title}
-- Meta Description: ${existing.metaDescription || existing.seo?.metaDescription || ''}
-- Keywords: ${(existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', ')}
-- Content: ${existing.cleanText?.substring(0, 2000) || ''}
-
-${
-  proposed
-    ? `
-PROPOSED CONTENT:
-- Word Count: ${proposed.wordCount}
-- Title: ${proposed.title}
-- Meta Description: ${proposed.metaDescription}
-- Keywords: ${proposed.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
-- Content: ${proposed.cleanText?.substring(0, 2000) || ''}
-`
-    : 'No proposed content provided - analyze existing only'
-}
-
-B2C ELEMENTS OF VALUE FRAMEWORK (30 Elements - Bain & Company):
-
-FUNCTIONAL (14 elements):
-1. saves_time, 2. simplifies, 3. makes_money, 4. reduces_effort, 5. reduces_cost,
-6. reduces_risk, 7. organizes, 8. integrates, 9. connects, 10. quality,
-11. variety, 12. informs, 13. avoids_hassles, 14. sensory_appeal
-
-EMOTIONAL (10 elements):
-15. reduces_anxiety, 16. rewards_me, 17. nostalgia, 18. design_aesthetics,
-19. badge_value, 20. wellness, 21. therapeutic, 22. fun_entertainment,
-23. attractiveness, 24. provides_access
-
-LIFE-CHANGING (5 elements):
-25. provides_hope, 26. self_actualization, 27. motivation, 28. heirloom, 29. affiliation_belonging
-
-SOCIAL IMPACT (1 element):
-30. self_transcendence
-
-Provide analysis with:
-1. Overall B2C Value Score (0-30)
-2. Category breakdowns (Functional, Emotional, Life-Changing, Social Impact)
-3. Present elements with evidence
-4. Missing elements with recommendations
-5. Specific improvements for better consumer value
-
-Return structured analysis with scores and actionable insights in JSON format.`;
-
   try {
-    return await analyzeWithAI(prompt, 'b2c-elements');
-  } catch (aiError) {
-    const errorMessage = aiError instanceof Error ? aiError.message : 'AI analysis failed';
+    return await analyzeFrameworkInChunks({
+      frameworkName: 'B2C Elements of Value',
+      url,
+      contentTitle: existing.title || '',
+      contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
+      contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
+      contentText: existing.cleanText || '',
+      chunks: [
+        {
+          categoryName: 'Functional',
+          categoryKey: 'functional',
+          elements: [
+            'saves_time', 'simplifies', 'makes_money', 'reduces_effort',
+            'reduces_cost', 'reduces_risk', 'organizes', 'integrates',
+            'connects', 'quality', 'variety', 'informs',
+            'avoids_hassles', 'sensory_appeal',
+          ],
+        },
+        {
+          categoryName: 'Emotional',
+          categoryKey: 'emotional',
+          elements: [
+            'reduces_anxiety', 'rewards_me', 'nostalgia', 'design_aesthetics',
+            'badge_value', 'wellness', 'therapeutic', 'fun_entertainment',
+            'attractiveness', 'provides_access',
+          ],
+        },
+        {
+          categoryName: 'Life-Changing',
+          categoryKey: 'life_changing',
+          elements: [
+            'provides_hope', 'self_actualization', 'motivation',
+            'heirloom', 'affiliation_belonging',
+          ],
+        },
+        {
+          categoryName: 'Social Impact',
+          categoryKey: 'social_impact',
+          elements: ['self_transcendence'],
+        },
+      ],
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'AI analysis failed';
     console.log(`📄 [B2C] AI failed, generating Markdown fallback: ${errorMessage}`);
     const fallbackMarkdown = generateFrameworkFallbackMarkdown({
-      framework: 'b2c-elements',
-      url,
-      existing,
-      proposed,
-      errorMessage,
+      framework: 'b2c-elements', url, existing, proposed, errorMessage,
     });
     return { _isFallback: true, fallbackMarkdown, error: errorMessage };
   }

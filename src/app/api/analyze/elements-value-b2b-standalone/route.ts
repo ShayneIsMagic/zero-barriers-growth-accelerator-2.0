@@ -184,84 +184,78 @@ function extractHeadings(content: string): string[] {
     .slice(0, 10);
 }
 
-// B2B Elements Analysis Function
+// B2B Elements Analysis — chunked by category so every element is evaluated
 async function generateB2BAnalysis(
   existing: any,
   proposed: any,
   url: string,
   _analysisType: string
 ) {
-  const { analyzeWithAI } = await import('@/lib/free-ai-analysis');
+  const { analyzeFrameworkInChunks } = await import(
+    '@/lib/chunked-framework-analysis'
+  );
   const { generateFrameworkFallbackMarkdown } = await import(
     '@/lib/framework-fallback-generator'
   );
 
-  const prompt = `Analyze this website using the B2B Elements of Value framework (42 business value elements):
-
-URL: ${url}
-
-EXISTING CONTENT:
-- Word Count: ${existing.wordCount}
-- Title: ${existing.title}
-- Meta Description: ${existing.metaDescription || existing.seo?.metaDescription || ''}
-- Keywords: ${(existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', ')}
-- Content: ${existing.cleanText?.substring(0, 2000) || ''}
-
-${
-  proposed
-    ? `
-PROPOSED CONTENT:
-- Word Count: ${proposed.wordCount}
-- Title: ${proposed.title}
-- Meta Description: ${proposed.metaDescription}
-- Keywords: ${proposed.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
-- Content: ${proposed.cleanText?.substring(0, 2000) || ''}
-`
-    : 'No proposed content provided - analyze existing only'
-}
-
-B2B ELEMENTS OF VALUE FRAMEWORK (42 Elements - Bain & Company):
-
-TABLE STAKES (4 elements - Must-haves):
-1. meeting_specifications, 2. acceptable_price, 3. regulatory_compliance, 4. ethical_standards
-
-FUNCTIONAL VALUE (9 elements):
-5. improved_top_line, 6. cost_reduction, 7. product_quality, 8. scalability,
-9. innovation, 10. risk_reduction, 11. reach, 12. flexibility, 13. component_quality
-
-EASE OF DOING BUSINESS VALUE (18 elements):
-14. time_savings, 15. reduced_effort, 16. decreased_hassles, 17. information,
-18. transparency, 19. organization, 20. simplification, 21. connection,
-22. integration, 23. access, 24. availability, 25. variety, 26. configurability,
-27. responsiveness, 28. expertise, 29. commitment, 30. stability, 31. cultural_fit
-
-INDIVIDUAL VALUE (7 elements):
-32. network_expansion, 33. marketability, 34. reputational_assurance,
-35. design_aesthetics_b2b, 36. growth_development, 37. reduced_anxiety_b2b, 38. fun_perks
-
-INSPIRATIONAL VALUE (4 elements):
-39. purpose, 40. vision, 41. hope_b2b, 42. social_responsibility
-
-Provide analysis with:
-1. Overall B2B Value Score (0-42)
-2. Category breakdowns with subcategories
-3. Present elements with evidence
-4. Missing elements with recommendations
-5. Specific improvements for better B2B value
-
-Return structured analysis with scores and actionable insights in JSON format.`;
-
   try {
-    return await analyzeWithAI(prompt, 'b2b-elements');
-  } catch (aiError) {
-    const errorMessage = aiError instanceof Error ? aiError.message : 'AI analysis failed';
+    return await analyzeFrameworkInChunks({
+      frameworkName: 'B2B Elements of Value',
+      url,
+      contentTitle: existing.title || '',
+      contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
+      contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
+      contentText: existing.cleanText || '',
+      chunks: [
+        {
+          categoryName: 'Table Stakes',
+          categoryKey: 'table_stakes',
+          elements: [
+            'meeting_specifications', 'acceptable_price',
+            'regulatory_compliance', 'ethical_standards',
+          ],
+        },
+        {
+          categoryName: 'Functional Value',
+          categoryKey: 'functional',
+          elements: [
+            'improved_top_line', 'cost_reduction', 'product_quality',
+            'scalability', 'innovation', 'risk_reduction', 'reach',
+            'flexibility', 'component_quality',
+          ],
+        },
+        {
+          categoryName: 'Ease of Doing Business',
+          categoryKey: 'ease_of_business',
+          elements: [
+            'time_savings', 'reduced_effort', 'decreased_hassles',
+            'information', 'transparency', 'organization', 'simplification',
+            'connection', 'integration', 'access', 'availability',
+            'variety', 'configurability', 'responsiveness', 'expertise',
+            'commitment', 'stability', 'cultural_fit',
+          ],
+        },
+        {
+          categoryName: 'Individual Value',
+          categoryKey: 'individual',
+          elements: [
+            'network_expansion', 'marketability', 'reputational_assurance',
+            'design_aesthetics_b2b', 'growth_development',
+            'reduced_anxiety_b2b', 'fun_perks',
+          ],
+        },
+        {
+          categoryName: 'Inspirational Value',
+          categoryKey: 'inspirational',
+          elements: ['purpose', 'vision', 'hope_b2b', 'social_responsibility'],
+        },
+      ],
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'AI analysis failed';
     console.log(`📄 [B2B] AI failed, generating Markdown fallback: ${errorMessage}`);
     const fallbackMarkdown = generateFrameworkFallbackMarkdown({
-      framework: 'b2b-elements',
-      url,
-      existing,
-      proposed,
-      errorMessage,
+      framework: 'b2b-elements', url, existing, proposed, errorMessage,
     });
     return { _isFallback: true, fallbackMarkdown, error: errorMessage };
   }

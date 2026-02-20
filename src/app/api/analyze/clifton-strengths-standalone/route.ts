@@ -184,73 +184,70 @@ function extractHeadings(content: string): string[] {
     .slice(0, 10);
 }
 
-// CliftonStrengths Analysis Function
+// CliftonStrengths Analysis — chunked by domain so every theme is evaluated
 async function generateCliftonStrengthsAnalysis(
   existing: any,
   proposed: any,
   url: string,
   _analysisType: string
 ) {
-  const { analyzeWithAI } = await import('@/lib/free-ai-analysis');
+  const { analyzeFrameworkInChunks } = await import(
+    '@/lib/chunked-framework-analysis'
+  );
   const { generateFrameworkFallbackMarkdown } = await import(
     '@/lib/framework-fallback-generator'
   );
 
-  const prompt = `Analyze this website using the CliftonStrengths framework (34 themes across 4 domains):
-
-URL: ${url}
-
-EXISTING CONTENT:
-- Word Count: ${existing.wordCount}
-- Title: ${existing.title}
-- Meta Description: ${existing.metaDescription || existing.seo?.metaDescription || ''}
-- Keywords: ${(existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', ')}
-- Content: ${existing.cleanText?.substring(0, 2000) || ''}
-
-${
-  proposed
-    ? `
-PROPOSED CONTENT:
-- Word Count: ${proposed.wordCount}
-- Title: ${proposed.title}
-- Meta Description: ${proposed.metaDescription}
-- Keywords: ${proposed.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
-- Content: ${proposed.cleanText?.substring(0, 2000) || ''}
-`
-    : 'No proposed content provided - analyze existing only'
-}
-
-CLIFTONSTRENGTHS FRAMEWORK (34 Themes - Gallup):
-
-STRATEGIC THINKING (8): analytical, context, futuristic, ideation, input, intellection, learner, strategic
-
-EXECUTING (9): achiever, arranger, belief, consistency, deliberative, discipline, focus, responsibility, restorative
-
-INFLUENCING (8): activator, command, communication, competition, maximizer, self_assurance, significance, woo
-
-RELATIONSHIP BUILDING (9): adaptability, connectedness, developer, empathy, harmony, includer, individualization, positivity, relator
-
-Provide analysis with:
-1. Overall CliftonStrengths Score (0-34)
-2. Domain breakdowns (Strategic Thinking, Executing, Influencing, Relationship Building)
-3. Top 5 dominant strengths with evidence
-4. Present themes with evidence
-5. Missing themes with recommendations
-6. Specific improvements for better strength alignment
-
-Return structured analysis with scores and actionable insights in JSON format.`;
-
   try {
-    return await analyzeWithAI(prompt, 'clifton-strengths');
-  } catch (aiError) {
-    const errorMessage = aiError instanceof Error ? aiError.message : 'AI analysis failed';
+    return await analyzeFrameworkInChunks({
+      frameworkName: 'CliftonStrengths',
+      url,
+      contentTitle: existing.title || '',
+      contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
+      contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
+      contentText: existing.cleanText || '',
+      chunks: [
+        {
+          categoryName: 'Strategic Thinking',
+          categoryKey: 'strategic_thinking',
+          elements: [
+            'analytical', 'context', 'futuristic', 'ideation',
+            'input', 'intellection', 'learner', 'strategic',
+          ],
+        },
+        {
+          categoryName: 'Executing',
+          categoryKey: 'executing',
+          elements: [
+            'achiever', 'arranger', 'belief', 'consistency',
+            'deliberative', 'discipline', 'focus', 'responsibility',
+            'restorative',
+          ],
+        },
+        {
+          categoryName: 'Influencing',
+          categoryKey: 'influencing',
+          elements: [
+            'activator', 'command', 'communication', 'competition',
+            'maximizer', 'self_assurance', 'significance', 'woo',
+          ],
+        },
+        {
+          categoryName: 'Relationship Building',
+          categoryKey: 'relationship_building',
+          elements: [
+            'adaptability', 'connectedness', 'developer', 'empathy',
+            'harmony', 'includer', 'individualization', 'positivity',
+            'relator',
+          ],
+        },
+      ],
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'AI analysis failed';
     console.log(`📄 [CS] AI failed, generating Markdown fallback: ${errorMessage}`);
     const fallbackMarkdown = generateFrameworkFallbackMarkdown({
-      framework: 'clifton-strengths',
-      url,
-      existing,
-      proposed,
-      errorMessage,
+      framework: 'clifton-strengths', url, existing, proposed, errorMessage,
     });
     return { _isFallback: true, fallbackMarkdown, error: errorMessage };
   }
