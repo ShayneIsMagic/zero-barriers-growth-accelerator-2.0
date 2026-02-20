@@ -8,6 +8,14 @@ import { PuppeteerComprehensiveCollector } from '@/lib/puppeteer-comprehensive-c
 import { ContentStorageService } from '@/lib/services/content-storage.service';
 import { NextRequest, NextResponse } from 'next/server';
 
+function sanitizeError(msg: string): string {
+  return msg
+    .replace(/AIza[A-Za-z0-9_-]{30,}/g, '[REDACTED_KEY]')
+    .replace(/sk-[A-Za-z0-9_-]{20,}/g, '[REDACTED_KEY]')
+    .replace(/api_key:[A-Za-z0-9_-]{20,}/g, 'api_key:[REDACTED_KEY]')
+    .replace(/key=[A-Za-z0-9_-]{20,}/g, 'key=[REDACTED_KEY]');
+}
+
 export const maxDuration = 120; // Increased for multi-page scraping
 
 export async function POST(request: NextRequest) {
@@ -102,8 +110,9 @@ export async function POST(request: NextRequest) {
             headings: { h1: [], h2: [], h3: [] },
           };
         } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : 'Unknown error';
+          const errorMessage = sanitizeError(
+            error instanceof Error ? error.message : 'Unknown error'
+          );
           return NextResponse.json(
             {
               success: false,
@@ -124,8 +133,9 @@ export async function POST(request: NextRequest) {
         try {
           comprehensiveData = await collector.collectComprehensiveData(url);
         } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : 'Unknown error';
+          const errorMessage = sanitizeError(
+            error instanceof Error ? error.message : 'Unknown error'
+          );
 
           if (
             errorMessage.includes('blocked') ||
@@ -268,8 +278,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Comparison analysis error:', error);
     
-    // Ensure we always return JSON, even for errors
-    const errorMessage = error instanceof Error ? error.message : 'Comparison failed';
+    const errorMessage = sanitizeError(error instanceof Error ? error.message : 'Comparison failed');
     
     // Check if error message suggests a blocking or API issue
     if (errorMessage.includes('blocked') || errorMessage.includes('Blocked')) {
@@ -317,7 +326,7 @@ export async function POST(request: NextRequest) {
       {
         success: false,
         error: errorMessage,
-        details: error instanceof Error ? error.stack : undefined,
+        details: error instanceof Error ? sanitizeError(error.stack || '') : undefined,
       },
       { status: 500 }
     );

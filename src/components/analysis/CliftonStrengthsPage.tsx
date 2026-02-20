@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Brain,
+  CheckCircle2,
   Copy,
   Download,
   History,
@@ -23,14 +24,26 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { MarkdownFallbackViewer } from '@/components/analysis/MarkdownFallbackViewer';
+import { Progress } from '@/components/ui/progress';
+import { useChunkedAnalysis } from '@/hooks/useChunkedAnalysis';
 
 export function CliftonStrengthsPage() {
   const [url, setUrl] = useState('');
   const [proposedContent, setProposedContent] = useState('');
   const [scrapedContent, setScrapedContent] = useState('');
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [result, setResult] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
+
+  const {
+    isAnalyzing,
+    percent,
+    currentCategory,
+    completedCategories,
+    result,
+    error: streamError,
+    runAnalysis: runStreamingAnalysis,
+  } = useChunkedAnalysis('/api/analyze/clifton-strengths-standalone');
+
+  const [localError, setLocalError] = useState<string | null>(null);
+  const error = streamError || localError;
 
   // Version control state
   const [snapshotId, setSnapshotId] = useState<string | null>(null);
@@ -41,61 +54,24 @@ export function CliftonStrengthsPage() {
   const [isCreatingProposed, setIsCreatingProposed] = useState(false);
 
   const runAnalysis = async () => {
-    if (!url.trim()) {
-      setError('Please enter a URL');
-      return;
-    }
+    if (!url.trim()) return;
 
-    setIsAnalyzing(true);
-    setError(null);
-    setResult(null);
-
-    try {
-      // Parse scraped content if provided
-      let existingContent = null;
-      if (scrapedContent.trim()) {
-        try {
-          existingContent = JSON.parse(scrapedContent.trim());
-        } catch (e) {
-          setError('Invalid JSON in scraped content field');
-          return;
-        }
-      }
-
-      const response = await fetch(
-        '/api/analyze/clifton-strengths-standalone',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            url: url.trim(),
-            proposedContent: proposedContent.trim(),
-            existingContent: existingContent, // Pass scraped content from content-comparison
-            analysisType: 'full',
-          }),
-        }
-      );
-
-      // Check if response is JSON
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        await response.text(); // Read response to clear buffer
-        setError(`Server error: ${response.status} - ${response.statusText}`);
+    let existingContent = null;
+    if (scrapedContent.trim()) {
+      try {
+        existingContent = JSON.parse(scrapedContent.trim());
+      } catch {
         return;
       }
-
-      const data = await response.json();
-
-      if (data.success) {
-        setResult(data);
-      } else {
-        setError(data.error || 'CliftonStrengths analysis failed');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to analyze');
-    } finally {
-      setIsAnalyzing(false);
     }
+
+    await runStreamingAnalysis({
+      url: url.trim(),
+      proposedContent: proposedContent.trim(),
+      existingContent,
+      analysisType: 'full',
+      stream: true,
+    });
   };
 
   const copyToClipboard = (text: string) => {
@@ -129,12 +105,12 @@ export function CliftonStrengthsPage() {
   // Version control functions
   const saveSnapshot = async () => {
     if (!url.trim() || !result?.existingData) {
-      setError('Please run analysis first to save snapshot');
+      setLocalError('Please run analysis first to save snapshot');
       return;
     }
 
     setIsSavingSnapshot(true);
-    setError(null);
+    setLocalError(null);
 
     try {
       const response = await fetch('/api/content/snapshots', {
@@ -157,12 +133,12 @@ export function CliftonStrengthsPage() {
 
       if (data.success) {
         setSnapshotId(data.snapshot.id);
-        setError(null);
+        setLocalError(null);
       } else {
-        setError(data.error || 'Failed to save snapshot');
+        setLocalError(data.error || 'Failed to save snapshot');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save snapshot');
+      setLocalError(err instanceof Error ? err.message : 'Failed to save snapshot');
     } finally {
       setIsSavingSnapshot(false);
     }
@@ -170,12 +146,12 @@ export function CliftonStrengthsPage() {
 
   const createProposedVersion = async () => {
     if (!snapshotId || !proposedContent.trim()) {
-      setError('Please save a snapshot first and enter proposed content');
+      setLocalError('Please save a snapshot first and enter proposed content');
       return;
     }
 
     setIsCreatingProposed(true);
-    setError(null);
+    setLocalError(null);
 
     try {
       const response = await fetch('/api/content/proposed', {
@@ -193,12 +169,12 @@ export function CliftonStrengthsPage() {
 
       if (data.success) {
         setProposedContentId(data.proposedContent.id);
-        setError(null);
+        setLocalError(null);
       } else {
-        setError(data.error || 'Failed to create proposed version');
+        setLocalError(data.error || 'Failed to create proposed version');
       }
     } catch (err) {
-      setError(
+      setLocalError(
         err instanceof Error ? err.message : 'Failed to create proposed version'
       );
     } finally {
@@ -208,7 +184,7 @@ export function CliftonStrengthsPage() {
 
   const createVersionComparison = async () => {
     if (!snapshotId || !proposedContentId) {
-      setError('Please save snapshot and create proposed version first');
+      setLocalError('Please save snapshot and create proposed version first');
       return;
     }
 
@@ -227,12 +203,12 @@ export function CliftonStrengthsPage() {
       const data = await response.json();
 
       if (data.success) {
-        setError(null);
+        setLocalError(null);
       } else {
-        setError(data.error || 'Failed to create version comparison');
+        setLocalError(data.error || 'Failed to create version comparison');
       }
     } catch (err) {
-      setError(
+      setLocalError(
         err instanceof Error
           ? err.message
           : 'Failed to create version comparison'
@@ -403,6 +379,30 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
               </>
             )}
           </Button>
+
+          {/* Chunk Progress Bar */}
+          {isAnalyzing && (
+            <div className="space-y-2">
+              <Progress value={percent} className="h-3" />
+              <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  {currentCategory ? `Evaluating ${currentCategory}...` : 'Starting analysis...'}
+                </span>
+                <span>{percent}%</span>
+              </div>
+              {completedCategories.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {completedCategories.map((cat) => (
+                    <span key={cat} className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                      <CheckCircle2 className="h-3 w-3" />
+                      {cat}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Version Control Buttons */}
           {result && (

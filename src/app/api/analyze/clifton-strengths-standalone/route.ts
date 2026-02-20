@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
       proposedContent,
       analysisType: _analysisType,
       existingContent,
+      stream: useStreaming,
     } = await request.json();
 
     if (!url) {
@@ -104,14 +105,8 @@ export async function POST(request: NextRequest) {
 
     // Step 3: Run CliftonStrengths analysis
     console.log('🤖 Step 3: Running CliftonStrengths analysis...');
-    const analysis = await generateCliftonStrengthsAnalysis(
-      existingData,
-      proposedData,
-      url,
-      _analysisType || 'full'
-    );
 
-    return NextResponse.json({
+    const buildResponsePayload = (analysis: Record<string, unknown>) => ({
       success: true,
       existing: {
         title: existingData.title,
@@ -123,9 +118,21 @@ export async function POST(request: NextRequest) {
         url: existingData.url,
       },
       proposed: proposedData,
-      analysis: analysis,
+      analysis,
       message: 'CliftonStrengths analysis completed',
     });
+
+    if (useStreaming) {
+      const { streamChunkedAnalysis } = await import('@/lib/streaming-analysis');
+      return streamChunkedAnalysis({
+        analysisOptions: buildCSOptions(existingData, url),
+        buildResponse: buildResponsePayload,
+        frameworkLabel: 'CliftonStrengths',
+      });
+    }
+
+    const analysis = await generateCliftonStrengthsAnalysis(existingData, proposedData, url, _analysisType || 'full');
+    return NextResponse.json(buildResponsePayload(analysis as Record<string, unknown>));
   } catch (error) {
     console.error('CliftonStrengths analysis error:', error);
     return NextResponse.json(
@@ -184,65 +191,59 @@ function extractHeadings(content: string): string[] {
     .slice(0, 10);
 }
 
-// CliftonStrengths Analysis — chunked by domain so every theme is evaluated
-async function generateCliftonStrengthsAnalysis(
-  existing: any,
-  proposed: any,
-  url: string,
-  _analysisType: string
-) {
-  const { analyzeFrameworkInChunks } = await import(
-    '@/lib/chunked-framework-analysis'
-  );
-  const { generateFrameworkFallbackMarkdown } = await import(
-    '@/lib/framework-fallback-generator'
-  );
+function buildCSOptions(existing: any, url: string) {
+  return {
+    frameworkName: 'CliftonStrengths',
+    url,
+    contentTitle: existing.title || '',
+    contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
+    contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
+    contentText: existing.cleanText || '',
+    chunks: [
+      {
+        categoryName: 'Strategic Thinking',
+        categoryKey: 'strategic_thinking',
+        elements: [
+          'analytical', 'context', 'futuristic', 'ideation',
+          'input', 'intellection', 'learner', 'strategic',
+        ],
+      },
+      {
+        categoryName: 'Executing',
+        categoryKey: 'executing',
+        elements: [
+          'achiever', 'arranger', 'belief', 'consistency',
+          'deliberative', 'discipline', 'focus', 'responsibility',
+          'restorative',
+        ],
+      },
+      {
+        categoryName: 'Influencing',
+        categoryKey: 'influencing',
+        elements: [
+          'activator', 'command', 'communication', 'competition',
+          'maximizer', 'self_assurance', 'significance', 'woo',
+        ],
+      },
+      {
+        categoryName: 'Relationship Building',
+        categoryKey: 'relationship_building',
+        elements: [
+          'adaptability', 'connectedness', 'developer', 'empathy',
+          'harmony', 'includer', 'individualization', 'positivity',
+          'relator',
+        ],
+      },
+    ],
+  };
+}
+
+async function generateCliftonStrengthsAnalysis(existing: any, proposed: any, url: string, _analysisType: string) {
+  const { analyzeFrameworkInChunks } = await import('@/lib/chunked-framework-analysis');
+  const { generateFrameworkFallbackMarkdown } = await import('@/lib/framework-fallback-generator');
 
   try {
-    return await analyzeFrameworkInChunks({
-      frameworkName: 'CliftonStrengths',
-      url,
-      contentTitle: existing.title || '',
-      contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
-      contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
-      contentText: existing.cleanText || '',
-      chunks: [
-        {
-          categoryName: 'Strategic Thinking',
-          categoryKey: 'strategic_thinking',
-          elements: [
-            'analytical', 'context', 'futuristic', 'ideation',
-            'input', 'intellection', 'learner', 'strategic',
-          ],
-        },
-        {
-          categoryName: 'Executing',
-          categoryKey: 'executing',
-          elements: [
-            'achiever', 'arranger', 'belief', 'consistency',
-            'deliberative', 'discipline', 'focus', 'responsibility',
-            'restorative',
-          ],
-        },
-        {
-          categoryName: 'Influencing',
-          categoryKey: 'influencing',
-          elements: [
-            'activator', 'command', 'communication', 'competition',
-            'maximizer', 'self_assurance', 'significance', 'woo',
-          ],
-        },
-        {
-          categoryName: 'Relationship Building',
-          categoryKey: 'relationship_building',
-          elements: [
-            'adaptability', 'connectedness', 'developer', 'empathy',
-            'harmony', 'includer', 'individualization', 'positivity',
-            'relator',
-          ],
-        },
-      ],
-    });
+    return await analyzeFrameworkInChunks(buildCSOptions(existing, url));
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'AI analysis failed';
     console.log(`📄 [CS] AI failed, generating Markdown fallback: ${errorMessage}`);

@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
       proposedContent,
       analysisType: _analysisType,
       existingContent,
+      stream: useStreaming,
     } = await request.json();
 
     if (!url) {
@@ -104,14 +105,8 @@ export async function POST(request: NextRequest) {
 
     // Step 3: Run Golden Circle analysis
     console.log('🤖 Step 3: Running Golden Circle analysis...');
-    const analysis = await generateGoldenCircleAnalysis(
-      existingData,
-      proposedData,
-      url,
-      _analysisType || 'full'
-    );
 
-    return NextResponse.json({
+    const buildResponsePayload = (analysis: Record<string, unknown>) => ({
       success: true,
       existing: {
         title: existingData.title,
@@ -123,9 +118,21 @@ export async function POST(request: NextRequest) {
         url: existingData.url,
       },
       proposed: proposedData,
-      analysis: analysis,
+      analysis,
       message: 'Golden Circle analysis completed',
     });
+
+    if (useStreaming) {
+      const { streamChunkedAnalysis } = await import('@/lib/streaming-analysis');
+      return streamChunkedAnalysis({
+        analysisOptions: buildGCOptions(existingData, url),
+        buildResponse: buildResponsePayload,
+        frameworkLabel: 'Golden Circle',
+      });
+    }
+
+    const analysis = await generateGoldenCircleAnalysis(existingData, proposedData, url, _analysisType || 'full');
+    return NextResponse.json(buildResponsePayload(analysis as Record<string, unknown>));
   } catch (error) {
     console.error('Golden Circle analysis error:', error);
     return NextResponse.json(
@@ -184,68 +191,62 @@ function extractHeadings(content: string): string[] {
     .slice(0, 10);
 }
 
-// Golden Circle Analysis — chunked by component so each gets thorough evaluation
-async function generateGoldenCircleAnalysis(
-  existing: any,
-  proposed: any,
-  url: string,
-  _analysisType: string
-) {
-  const { analyzeFrameworkInChunks } = await import(
-    '@/lib/chunked-framework-analysis'
-  );
-  const { generateFrameworkFallbackMarkdown } = await import(
-    '@/lib/framework-fallback-generator'
-  );
-
-  try {
-    return await analyzeFrameworkInChunks({
-      frameworkName: 'Golden Circle (Simon Sinek)',
-      url,
-      contentTitle: existing.title || '',
-      contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
-      contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
-      contentText: existing.cleanText || '',
-      scoringInstructions: `Score each dimension 0.0-1.0 (flat fractional scoring):
+function buildGCOptions(existing: any, url: string) {
+  return {
+    frameworkName: 'Golden Circle (Simon Sinek)',
+    url,
+    contentTitle: existing.title || '',
+    contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
+    contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
+    contentText: existing.cleanText || '',
+    scoringInstructions: `Score each dimension 0.0-1.0 (flat fractional scoring):
 - 0.8-1.0: Excellent — clearly articulated with strong evidence
 - 0.6-0.79: Good — present but could be more compelling
 - 0.4-0.59: Needs Work — vague or inconsistent
 - 0.0-0.39: Poor — absent or contradictory`,
-      chunks: [
-        {
-          categoryName: 'WHY (Purpose, Cause, Belief)',
-          categoryKey: 'why',
-          elements: [
-            'clarity', 'authenticity', 'inspiration',
-            'consistency', 'differentiation', 'emotional_resonance',
-          ],
-        },
-        {
-          categoryName: 'HOW (Process, Methodology, Differentiation)',
-          categoryKey: 'how',
-          elements: [
-            'uniqueness', 'clarity', 'consistency',
-            'alignment', 'proof_points', 'competitive_moat',
-          ],
-        },
-        {
-          categoryName: 'WHAT (Products, Services, Features)',
-          categoryKey: 'what',
-          elements: [
-            'clarity', 'alignment', 'quality',
-            'proof', 'evolution', 'market_fit',
-          ],
-        },
-        {
-          categoryName: 'WHO (Target Audience, People, Relationships)',
-          categoryKey: 'who',
-          elements: [
-            'clarity', 'alignment', 'specificity',
-            'understanding', 'resonance', 'loyalty',
-          ],
-        },
-      ],
-    });
+    chunks: [
+      {
+        categoryName: 'WHY (Purpose, Cause, Belief)',
+        categoryKey: 'why',
+        elements: [
+          'clarity', 'authenticity', 'inspiration',
+          'consistency', 'differentiation', 'emotional_resonance',
+        ],
+      },
+      {
+        categoryName: 'HOW (Process, Methodology, Differentiation)',
+        categoryKey: 'how',
+        elements: [
+          'uniqueness', 'clarity', 'consistency',
+          'alignment', 'proof_points', 'competitive_moat',
+        ],
+      },
+      {
+        categoryName: 'WHAT (Products, Services, Features)',
+        categoryKey: 'what',
+        elements: [
+          'clarity', 'alignment', 'quality',
+          'proof', 'evolution', 'market_fit',
+        ],
+      },
+      {
+        categoryName: 'WHO (Target Audience, People, Relationships)',
+        categoryKey: 'who',
+        elements: [
+          'clarity', 'alignment', 'specificity',
+          'understanding', 'resonance', 'loyalty',
+        ],
+      },
+    ],
+  };
+}
+
+async function generateGoldenCircleAnalysis(existing: any, proposed: any, url: string, _analysisType: string) {
+  const { analyzeFrameworkInChunks } = await import('@/lib/chunked-framework-analysis');
+  const { generateFrameworkFallbackMarkdown } = await import('@/lib/framework-fallback-generator');
+
+  try {
+    return await analyzeFrameworkInChunks(buildGCOptions(existing, url));
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'AI analysis failed';
     console.log(`📄 [GC] AI failed, generating Markdown fallback: ${errorMessage}`);

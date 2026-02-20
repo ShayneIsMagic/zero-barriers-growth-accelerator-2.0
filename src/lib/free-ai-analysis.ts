@@ -12,6 +12,19 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 /**
+ * Strip API keys and other secrets from error messages before
+ * they ever reach the client. Matches common key patterns
+ * (AIza..., sk-..., hex tokens, etc.) and redacts them.
+ */
+function sanitizeError(msg: string): string {
+  return msg
+    .replace(/AIza[A-Za-z0-9_-]{30,}/g, '[REDACTED_KEY]')
+    .replace(/sk-[A-Za-z0-9_-]{20,}/g, '[REDACTED_KEY]')
+    .replace(/api_key:[A-Za-z0-9_-]{20,}/g, 'api_key:[REDACTED_KEY]')
+    .replace(/key=[A-Za-z0-9_-]{20,}/g, 'key=[REDACTED_KEY]');
+}
+
+/**
  * Scrape website content for analysis
  */
 async function scrapeWebsiteContent(url: string): Promise<string> {
@@ -123,7 +136,7 @@ export async function analyzeWithAI(
   }
 
   throw new Error(
-    `AI analysis failed — all providers unavailable. Last error: ${lastError}`
+    sanitizeError(`AI analysis failed — all providers unavailable. Last error: ${lastError}`)
   );
 }
 
@@ -176,14 +189,14 @@ async function callGeminiDirect(
         originalText: text,
       };
     }
-    throw new Error(`AI analysis failed: ${jsonText.substring(0, 100)}`);
+    throw new Error(sanitizeError(`AI analysis failed: ${jsonText.substring(0, 100)}`));
   }
 
   try {
     return JSON.parse(jsonText);
   } catch {
     throw new Error(
-      `Invalid JSON response from AI: ${jsonText.substring(0, 100)}`
+      sanitizeError(`Invalid JSON response from AI: ${jsonText.substring(0, 100)}`)
     );
   }
 }
@@ -411,7 +424,7 @@ export async function performRealAnalysis(
   } catch (error) {
     console.error('Real analysis failed:', error);
     throw new Error(
-      `Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      sanitizeError(`Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
     );
   }
 }

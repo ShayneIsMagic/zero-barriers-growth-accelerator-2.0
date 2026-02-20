@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
       proposedContent,
       analysisType: _analysisType,
       existingContent,
+      stream: useStreaming,
     } = await request.json();
 
     if (!url) {
@@ -110,16 +111,10 @@ export async function POST(request: NextRequest) {
 
     // Step 3: Run B2C Elements analysis
     console.log('🤖 [B2C] Running B2C Elements analysis...');
-    const analysis = await generateB2CAnalysis(
-      existingData,
-      proposedData,
-      url,
-      _analysisType || 'full'
-    );
 
-    console.log(`✅ [B2C] Analysis complete`);
+    const analysisOptions = buildB2COptions(existingData, url);
 
-    return NextResponse.json({
+    const buildResponsePayload = (analysis: Record<string, unknown>) => ({
       success: true,
       framework: 'b2c',
       existing: {
@@ -132,11 +127,24 @@ export async function POST(request: NextRequest) {
         url: existingData.url || url,
       },
       proposed: proposedData,
-      analysis: analysis,
+      analysis,
       comparison: analysis,
       scrapedContent: existingData,
       message: 'B2C Elements analysis completed successfully',
     });
+
+    if (useStreaming) {
+      const { streamChunkedAnalysis } = await import('@/lib/streaming-analysis');
+      return streamChunkedAnalysis({
+        analysisOptions,
+        buildResponse: buildResponsePayload,
+        frameworkLabel: 'B2C',
+      });
+    }
+
+    const analysis = await generateB2CAnalysis(existingData, proposedData, url, _analysisType || 'full');
+    console.log('✅ [B2C] Analysis complete');
+    return NextResponse.json(buildResponsePayload(analysis as Record<string, unknown>));
   } catch (error) {
     console.error('[B2C] Error:', error);
     return NextResponse.json(
@@ -195,63 +203,63 @@ function extractHeadings(content: string): string[] {
     .slice(0, 10);
 }
 
-// B2C Elements Analysis — chunked by category so every element is evaluated
+// Shared chunk definitions used by both streaming and non-streaming paths
+function buildB2COptions(existing: any, url: string) {
+  return {
+    frameworkName: 'B2C Elements of Value',
+    url,
+    contentTitle: existing.title || '',
+    contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
+    contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
+    contentText: existing.cleanText || '',
+    chunks: [
+      {
+        categoryName: 'Functional',
+        categoryKey: 'functional',
+        elements: [
+          'saves_time', 'simplifies', 'makes_money', 'reduces_effort',
+          'reduces_cost', 'reduces_risk', 'organizes', 'integrates',
+          'connects', 'quality', 'variety', 'informs',
+          'avoids_hassles', 'sensory_appeal',
+        ],
+      },
+      {
+        categoryName: 'Emotional',
+        categoryKey: 'emotional',
+        elements: [
+          'reduces_anxiety', 'rewards_me', 'nostalgia', 'design_aesthetics',
+          'badge_value', 'wellness', 'therapeutic', 'fun_entertainment',
+          'attractiveness', 'provides_access',
+        ],
+      },
+      {
+        categoryName: 'Life-Changing',
+        categoryKey: 'life_changing',
+        elements: [
+          'provides_hope', 'self_actualization', 'motivation',
+          'heirloom', 'affiliation_belonging',
+        ],
+      },
+      {
+        categoryName: 'Social Impact',
+        categoryKey: 'social_impact',
+        elements: ['self_transcendence'],
+      },
+    ],
+  };
+}
+
 async function generateB2CAnalysis(
   existing: any,
   proposed: any,
   url: string,
   _analysisType: string
 ) {
-  const { analyzeFrameworkInChunks } = await import(
-    '@/lib/chunked-framework-analysis'
-  );
-  const { generateFrameworkFallbackMarkdown } = await import(
-    '@/lib/framework-fallback-generator'
-  );
+  const { analyzeFrameworkInChunks } = await import('@/lib/chunked-framework-analysis');
+  const { generateFrameworkFallbackMarkdown } = await import('@/lib/framework-fallback-generator');
 
   try {
-    return await analyzeFrameworkInChunks({
-      frameworkName: 'B2C Elements of Value',
-      url,
-      contentTitle: existing.title || '',
-      contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
-      contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
-      contentText: existing.cleanText || '',
-      chunks: [
-        {
-          categoryName: 'Functional',
-          categoryKey: 'functional',
-          elements: [
-            'saves_time', 'simplifies', 'makes_money', 'reduces_effort',
-            'reduces_cost', 'reduces_risk', 'organizes', 'integrates',
-            'connects', 'quality', 'variety', 'informs',
-            'avoids_hassles', 'sensory_appeal',
-          ],
-        },
-        {
-          categoryName: 'Emotional',
-          categoryKey: 'emotional',
-          elements: [
-            'reduces_anxiety', 'rewards_me', 'nostalgia', 'design_aesthetics',
-            'badge_value', 'wellness', 'therapeutic', 'fun_entertainment',
-            'attractiveness', 'provides_access',
-          ],
-        },
-        {
-          categoryName: 'Life-Changing',
-          categoryKey: 'life_changing',
-          elements: [
-            'provides_hope', 'self_actualization', 'motivation',
-            'heirloom', 'affiliation_belonging',
-          ],
-        },
-        {
-          categoryName: 'Social Impact',
-          categoryKey: 'social_impact',
-          elements: ['self_transcendence'],
-        },
-      ],
-    });
+    return await analyzeFrameworkInChunks(buildB2COptions(existing, url));
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'AI analysis failed';
     console.log(`📄 [B2C] AI failed, generating Markdown fallback: ${errorMessage}`);

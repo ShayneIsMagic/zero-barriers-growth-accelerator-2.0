@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
       proposedContent,
       analysisType: _analysisType,
       existingContent,
+      stream: useStreaming,
     } = await request.json();
 
     if (!url) {
@@ -104,16 +105,8 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('🤖 [Archetypes] Running Brand Archetypes analysis...');
-    const analysis = await generateArchetypesAnalysis(
-      existingData,
-      proposedData,
-      url,
-      _analysisType || 'full'
-    );
 
-    console.log('✅ [Archetypes] Analysis complete');
-
-    return NextResponse.json({
+    const buildResponsePayload = (analysis: Record<string, unknown>) => ({
       success: true,
       framework: 'brand-archetypes',
       existing: {
@@ -140,6 +133,19 @@ export async function POST(request: NextRequest) {
       scrapedContent: existingData,
       message: 'Brand Archetypes analysis completed successfully',
     });
+
+    if (useStreaming) {
+      const { streamChunkedAnalysis } = await import('@/lib/streaming-analysis');
+      return streamChunkedAnalysis({
+        analysisOptions: buildArchetypeOptions(existingData, url),
+        buildResponse: buildResponsePayload,
+        frameworkLabel: 'Brand Archetypes',
+      });
+    }
+
+    const analysis = await generateArchetypesAnalysis(existingData, proposedData, url, _analysisType || 'full');
+    console.log('✅ [Archetypes] Analysis complete');
+    return NextResponse.json(buildResponsePayload(analysis as Record<string, unknown>));
   } catch (error) {
     console.error('[Archetypes] Error:', error);
     return NextResponse.json(
@@ -197,49 +203,15 @@ function extractHeadings(content: string): string[] {
     .slice(0, 10);
 }
 
-/**
- * Brand Archetypes Analysis — chunked by motivational group.
- *
- * The 12 Jungian archetypes fall into 4 motivation clusters:
- *   Ego (leave a mark):  Hero, Magician, Outlaw
- *   Order (structure):   Caregiver, Ruler, Creator
- *   Freedom (paradise):  Innocent, Explorer, Sage
- *   Social (connect):    Regular Guy/Girl, Jester, Lover
- *
- * Each cluster is evaluated as one chunk so related archetypes
- * are assessed together and nothing is skipped.
- */
-async function generateArchetypesAnalysis(
-  existing: any,
-  proposed: any,
-  url: string,
-  _analysisType: string
-) {
-  const { analyzeFrameworkInChunks } = await import(
-    '@/lib/chunked-framework-analysis'
-  );
-  const { generateFrameworkFallbackMarkdown } = await import(
-    '@/lib/framework-fallback-generator'
-  );
-
-  try {
-    return await analyzeFrameworkInChunks({
-      frameworkName: 'Jambojon Brand Archetypes',
-      url,
-      contentTitle: existing.title || '',
-      contentMeta:
-        existing.metaDescription ||
-        existing.seo?.metaDescription ||
-        '',
-      contentKeywords: (
-        existing.extractedKeywords ||
-        existing.seo?.extractedKeywords ||
-        []
-      )
-        .slice(0, 10)
-        .join(', '),
-      contentText: existing.cleanText || '',
-      scoringInstructions: `Score each archetype 0.0-1.0 based on three weighted factors:
+function buildArchetypeOptions(existing: any, url: string) {
+  return {
+    frameworkName: 'Jambojon Brand Archetypes',
+    url,
+    contentTitle: existing.title || '',
+    contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
+    contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
+    contentText: existing.cleanText || '',
+    scoringInstructions: `Score each archetype 0.0-1.0 based on three weighted factors:
   1. Keyword Presence (40%): exact keyword matches from the archetype's KEYWORD SIGNALS list, plus synonyms and thematic matches
   2. Thematic Alignment (30%): how well content matches the archetype definition and core characteristics
   3. Value Delivery (30%): match with the archetype's "as the guide" assistance patterns and tone consistency
@@ -249,41 +221,42 @@ Rubric:
 - 0.6-0.79 (Strong): Multiple keywords + thematic patterns present + value signals evident
 - 0.4-0.59 (Moderate): Some keywords + moderate thematic match + weak value signals
 - 0.0-0.39 (Weak/Absent): Minimal or no meaningful presence`,
-      chunks: [
-        {
-          categoryName: 'Ego Archetypes (Leave a Mark on the World)',
-          categoryKey: 'ego',
-          elements: ['hero', 'magician', 'outlaw'],
-        },
-        {
-          categoryName: 'Order Archetypes (Provide Structure)',
-          categoryKey: 'order',
-          elements: ['caregiver', 'ruler', 'creator'],
-        },
-        {
-          categoryName: 'Freedom Archetypes (Yearn for Paradise)',
-          categoryKey: 'freedom',
-          elements: ['innocent', 'explorer', 'sage'],
-        },
-        {
-          categoryName: 'Social Archetypes (Connect with Others)',
-          categoryKey: 'social',
-          elements: ['regular_guy_girl', 'jester', 'lover'],
-        },
-      ],
-    });
+    chunks: [
+      {
+        categoryName: 'Ego Archetypes (Leave a Mark on the World)',
+        categoryKey: 'ego',
+        elements: ['hero', 'magician', 'outlaw'],
+      },
+      {
+        categoryName: 'Order Archetypes (Provide Structure)',
+        categoryKey: 'order',
+        elements: ['caregiver', 'ruler', 'creator'],
+      },
+      {
+        categoryName: 'Freedom Archetypes (Yearn for Paradise)',
+        categoryKey: 'freedom',
+        elements: ['innocent', 'explorer', 'sage'],
+      },
+      {
+        categoryName: 'Social Archetypes (Connect with Others)',
+        categoryKey: 'social',
+        elements: ['regular_guy_girl', 'jester', 'lover'],
+      },
+    ],
+  };
+}
+
+async function generateArchetypesAnalysis(existing: any, proposed: any, url: string, _analysisType: string) {
+  const { analyzeFrameworkInChunks } = await import('@/lib/chunked-framework-analysis');
+  const { generateFrameworkFallbackMarkdown } = await import('@/lib/framework-fallback-generator');
+
+  try {
+    return await analyzeFrameworkInChunks(buildArchetypeOptions(existing, url));
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'AI analysis failed';
-    console.log(
-      `📄 [Archetypes] AI failed, generating Markdown fallback: ${errorMessage}`
-    );
+    const errorMessage = error instanceof Error ? error.message : 'AI analysis failed';
+    console.log(`📄 [Archetypes] AI failed, generating Markdown fallback: ${errorMessage}`);
     const fallbackMarkdown = generateFrameworkFallbackMarkdown({
-      framework: 'brand-archetypes',
-      url,
-      existing,
-      proposed,
-      errorMessage,
+      framework: 'brand-archetypes', url, existing, proposed, errorMessage,
     });
     return { _isFallback: true, fallbackMarkdown, error: errorMessage };
   }

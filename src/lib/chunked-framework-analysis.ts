@@ -7,6 +7,14 @@
  * Flow: one API call per category → merge into unified result.
  */
 
+function sanitizeError(msg: string): string {
+  return msg
+    .replace(/AIza[A-Za-z0-9_-]{30,}/g, '[REDACTED_KEY]')
+    .replace(/sk-[A-Za-z0-9_-]{20,}/g, '[REDACTED_KEY]')
+    .replace(/api_key:[A-Za-z0-9_-]{20,}/g, 'api_key:[REDACTED_KEY]')
+    .replace(/key=[A-Za-z0-9_-]{20,}/g, 'key=[REDACTED_KEY]');
+}
+
 export interface FrameworkChunk {
   categoryName: string;
   categoryKey: string;
@@ -21,7 +29,18 @@ export interface ChunkResult {
   >;
 }
 
-interface ChunkedAnalysisOptions {
+export interface ChunkProgressEvent {
+  type: 'progress';
+  chunkIndex: number;
+  chunksTotal: number;
+  categoryName: string;
+  categoryKey: string;
+  status: 'started' | 'completed' | 'error';
+  percent: number;
+  error?: string;
+}
+
+export interface ChunkedAnalysisOptions {
   frameworkName: string;
   url: string;
   contentText: string;
@@ -30,6 +49,7 @@ interface ChunkedAnalysisOptions {
   contentKeywords: string;
   chunks: FrameworkChunk[];
   scoringInstructions?: string;
+  onProgress?: (event: ChunkProgressEvent) => void;
 }
 
 /**
@@ -45,8 +65,21 @@ export async function analyzeFrameworkInChunks(
   const categoryResults: Record<string, ChunkResult> = {};
   const errors: string[] = [];
 
-  for (const chunk of options.chunks) {
+  const total = options.chunks.length;
+
+  for (let i = 0; i < total; i++) {
+    const chunk = options.chunks[i];
     const prompt = buildChunkPrompt(chunk, options, contentSummary);
+
+    options.onProgress?.({
+      type: 'progress',
+      chunkIndex: i,
+      chunksTotal: total,
+      categoryName: chunk.categoryName,
+      categoryKey: chunk.categoryKey,
+      status: 'started',
+      percent: Math.round((i / total) * 100),
+    });
 
     try {
       const result = await analyzeWithAI(
@@ -57,9 +90,20 @@ export async function analyzeFrameworkInChunks(
         result,
         chunk.elements
       );
+
+      options.onProgress?.({
+        type: 'progress',
+        chunkIndex: i,
+        chunksTotal: total,
+        categoryName: chunk.categoryName,
+        categoryKey: chunk.categoryKey,
+        status: 'completed',
+        percent: Math.round(((i + 1) / total) * 100),
+      });
     } catch (error) {
-      const msg =
-        error instanceof Error ? error.message : 'Chunk analysis failed';
+      const msg = sanitizeError(
+        error instanceof Error ? error.message : 'Chunk analysis failed'
+      );
       console.error(
         `❌ [${options.frameworkName}] Chunk "${chunk.categoryName}" failed: ${msg}`
       );
@@ -74,6 +118,17 @@ export async function analyzeFrameworkInChunks(
           ])
         ),
       };
+
+      options.onProgress?.({
+        type: 'progress',
+        chunkIndex: i,
+        chunksTotal: total,
+        categoryName: chunk.categoryName,
+        categoryKey: chunk.categoryKey,
+        status: 'error',
+        percent: Math.round(((i + 1) / total) * 100),
+        error: msg,
+      });
     }
   }
 

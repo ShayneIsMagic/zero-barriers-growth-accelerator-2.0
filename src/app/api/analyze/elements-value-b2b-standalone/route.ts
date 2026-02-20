@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
       proposedContent,
       analysisType: _analysisType,
       existingContent,
+      stream: useStreaming,
     } = await request.json();
 
     if (!url) {
@@ -104,14 +105,8 @@ export async function POST(request: NextRequest) {
 
     // Step 3: Run B2B Elements analysis
     console.log('🤖 Step 3: Running B2B Elements analysis...');
-    const analysis = await generateB2BAnalysis(
-      existingData,
-      proposedData,
-      url,
-      _analysisType || 'full'
-    );
 
-    return NextResponse.json({
+    const buildResponsePayload = (analysis: Record<string, unknown>) => ({
       success: true,
       existing: {
         title: existingData.title,
@@ -126,6 +121,18 @@ export async function POST(request: NextRequest) {
       comparison: analysis,
       message: 'B2B Elements analysis completed',
     });
+
+    if (useStreaming) {
+      const { streamChunkedAnalysis } = await import('@/lib/streaming-analysis');
+      return streamChunkedAnalysis({
+        analysisOptions: buildB2BOptions(existingData, url),
+        buildResponse: buildResponsePayload,
+        frameworkLabel: 'B2B',
+      });
+    }
+
+    const analysis = await generateB2BAnalysis(existingData, proposedData, url, _analysisType || 'full');
+    return NextResponse.json(buildResponsePayload(analysis as Record<string, unknown>));
   } catch (error) {
     console.error('B2B Elements analysis error:', error);
     return NextResponse.json(
@@ -184,73 +191,67 @@ function extractHeadings(content: string): string[] {
     .slice(0, 10);
 }
 
-// B2B Elements Analysis — chunked by category so every element is evaluated
-async function generateB2BAnalysis(
-  existing: any,
-  proposed: any,
-  url: string,
-  _analysisType: string
-) {
-  const { analyzeFrameworkInChunks } = await import(
-    '@/lib/chunked-framework-analysis'
-  );
-  const { generateFrameworkFallbackMarkdown } = await import(
-    '@/lib/framework-fallback-generator'
-  );
+function buildB2BOptions(existing: any, url: string) {
+  return {
+    frameworkName: 'B2B Elements of Value',
+    url,
+    contentTitle: existing.title || '',
+    contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
+    contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
+    contentText: existing.cleanText || '',
+    chunks: [
+      {
+        categoryName: 'Table Stakes',
+        categoryKey: 'table_stakes',
+        elements: [
+          'meeting_specifications', 'acceptable_price',
+          'regulatory_compliance', 'ethical_standards',
+        ],
+      },
+      {
+        categoryName: 'Functional Value',
+        categoryKey: 'functional',
+        elements: [
+          'improved_top_line', 'cost_reduction', 'product_quality',
+          'scalability', 'innovation', 'risk_reduction', 'reach',
+          'flexibility', 'component_quality',
+        ],
+      },
+      {
+        categoryName: 'Ease of Doing Business',
+        categoryKey: 'ease_of_business',
+        elements: [
+          'time_savings', 'reduced_effort', 'decreased_hassles',
+          'information', 'transparency', 'organization', 'simplification',
+          'connection', 'integration', 'access', 'availability',
+          'variety', 'configurability', 'responsiveness', 'expertise',
+          'commitment', 'stability', 'cultural_fit',
+        ],
+      },
+      {
+        categoryName: 'Individual Value',
+        categoryKey: 'individual',
+        elements: [
+          'network_expansion', 'marketability', 'reputational_assurance',
+          'design_aesthetics_b2b', 'growth_development',
+          'reduced_anxiety_b2b', 'fun_perks',
+        ],
+      },
+      {
+        categoryName: 'Inspirational Value',
+        categoryKey: 'inspirational',
+        elements: ['purpose', 'vision', 'hope_b2b', 'social_responsibility'],
+      },
+    ],
+  };
+}
+
+async function generateB2BAnalysis(existing: any, proposed: any, url: string, _analysisType: string) {
+  const { analyzeFrameworkInChunks } = await import('@/lib/chunked-framework-analysis');
+  const { generateFrameworkFallbackMarkdown } = await import('@/lib/framework-fallback-generator');
 
   try {
-    return await analyzeFrameworkInChunks({
-      frameworkName: 'B2B Elements of Value',
-      url,
-      contentTitle: existing.title || '',
-      contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
-      contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
-      contentText: existing.cleanText || '',
-      chunks: [
-        {
-          categoryName: 'Table Stakes',
-          categoryKey: 'table_stakes',
-          elements: [
-            'meeting_specifications', 'acceptable_price',
-            'regulatory_compliance', 'ethical_standards',
-          ],
-        },
-        {
-          categoryName: 'Functional Value',
-          categoryKey: 'functional',
-          elements: [
-            'improved_top_line', 'cost_reduction', 'product_quality',
-            'scalability', 'innovation', 'risk_reduction', 'reach',
-            'flexibility', 'component_quality',
-          ],
-        },
-        {
-          categoryName: 'Ease of Doing Business',
-          categoryKey: 'ease_of_business',
-          elements: [
-            'time_savings', 'reduced_effort', 'decreased_hassles',
-            'information', 'transparency', 'organization', 'simplification',
-            'connection', 'integration', 'access', 'availability',
-            'variety', 'configurability', 'responsiveness', 'expertise',
-            'commitment', 'stability', 'cultural_fit',
-          ],
-        },
-        {
-          categoryName: 'Individual Value',
-          categoryKey: 'individual',
-          elements: [
-            'network_expansion', 'marketability', 'reputational_assurance',
-            'design_aesthetics_b2b', 'growth_development',
-            'reduced_anxiety_b2b', 'fun_perks',
-          ],
-        },
-        {
-          categoryName: 'Inspirational Value',
-          categoryKey: 'inspirational',
-          elements: ['purpose', 'vision', 'hope_b2b', 'social_responsibility'],
-        },
-      ],
-    });
+    return await analyzeFrameworkInChunks(buildB2BOptions(existing, url));
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'AI analysis failed';
     console.log(`📄 [B2B] AI failed, generating Markdown fallback: ${errorMessage}`);
