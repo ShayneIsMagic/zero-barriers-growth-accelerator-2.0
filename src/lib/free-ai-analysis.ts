@@ -1,24 +1,15 @@
 /**
- * Free AI Analysis Service
- * Uses Google Gemini API (free tier) and Anthropic Claude API (free tier)
- * for real content analysis with trustworthy scoring
+ * AI Analysis Service
+ * Centralized AI provider: Claude (primary) → Gemini (fallback)
+ * All AI calls in the app flow through analyzeWithAI.
  */
 
 import { runLighthouseAnalysis } from '@/lib/lighthouse-service';
 import { WebsiteAnalysisResult } from '@/types/analysis';
-// import { scrapeWebsiteContent as scrapeFullContent } from '@/lib/reliable-content-scraper';
-import Anthropic from '@anthropic-ai/sdk';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// Free API configurations
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'your-gemini-api-key';
-const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY || 'your-claude-api-key';
-
-// Initialize AI clients
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-const claude = new Anthropic({
-  apiKey: CLAUDE_API_KEY,
-});
 
 /**
  * Scrape website content for analysis
@@ -93,133 +84,119 @@ function _extractKeywordsFromContent(content: string): string[] {
 }
 
 /**
- * Analyze content using Google Gemini (Free Tier)
- * 15 requests/minute, 1 million tokens/day
+ * Centralized AI analysis: Claude (primary) → Gemini (fallback)
+ * Every AI call in the codebase should use this function.
+ */
+export async function analyzeWithAI(
+  prompt: string,
+  analysisType: string
+): Promise<any> {
+  const {
+    analyzeWithClaude,
+    isClaudeConfigured,
+  } = await import('@/lib/claude-analysis');
+
+  let lastError = '';
+
+  // PRIMARY: Claude
+  if (isClaudeConfigured()) {
+    try {
+      console.log(`🤖 [${analysisType}] Trying Claude (primary)...`);
+      return await analyzeWithClaude(prompt, analysisType);
+    } catch (claudeError) {
+      lastError =
+        claudeError instanceof Error ? claudeError.message : 'Claude failed';
+      console.log(`⚠️ [${analysisType}] Claude failed: ${lastError}`);
+    }
+  }
+
+  // FALLBACK: Gemini
+  if (GEMINI_API_KEY && GEMINI_API_KEY !== 'your-gemini-api-key') {
+    try {
+      console.log(`🔄 [${analysisType}] Trying Gemini (fallback)...`);
+      return await callGeminiDirect(prompt, analysisType);
+    } catch (geminiError) {
+      lastError =
+        geminiError instanceof Error ? geminiError.message : 'Gemini failed';
+      console.log(`⚠️ [${analysisType}] Gemini also failed: ${lastError}`);
+    }
+  }
+
+  throw new Error(
+    `AI analysis failed — all providers unavailable. Last error: ${lastError}`
+  );
+}
+
+/**
+ * Backward-compatible alias — callers that import analyzeWithGemini
+ * now automatically get Claude-first behavior.
  */
 export async function analyzeWithGemini(
   content: string,
   analysisType: string
 ): Promise<any> {
+  const prompt = createAnalysisPrompt(content, analysisType);
+  return analyzeWithAI(prompt, analysisType);
+}
+
+/**
+ * Direct Gemini call (internal — used only as fallback by analyzeWithAI)
+ */
+async function callGeminiDirect(
+  prompt: string,
+  analysisType: string
+): Promise<any> {
+  const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+  const model = genAI.getGenerativeModel({ model: modelName });
+
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+  const text = response.text();
+
+  let jsonText = text.trim();
+  jsonText = jsonText
+    .replace(/^```(?:json|javascript)?\s*/i, '')
+    .replace(/\s*```$/i, '');
+
+  const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
+  if (jsonMatch) {
+    jsonText = jsonMatch[0];
+  }
+
+  if (
+    jsonText.toLowerCase().startsWith('an error') ||
+    jsonText.toLowerCase().startsWith('error') ||
+    jsonText.toLowerCase().startsWith('failed') ||
+    (!jsonText.startsWith('{') && !jsonText.startsWith('['))
+  ) {
+    if (analysisType === 'comparison') {
+      return {
+        raw: text,
+        error: 'AI returned text instead of JSON',
+        originalText: text,
+      };
+    }
+    throw new Error(`AI analysis failed: ${jsonText.substring(0, 100)}`);
+  }
+
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-
-    const prompt = createAnalysisPrompt(content, analysisType);
-
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-
-    // Handle JSON wrapped in markdown code blocks
-    let jsonText = text.trim();
-    
-    // Remove markdown code blocks (json, javascript, or plain)
-    jsonText = jsonText.replace(/^```(?:json|javascript)?\s*/i, '').replace(/\s*```$/i, '');
-    
-    // Try to extract JSON from text if it contains JSON
-    const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      jsonText = jsonMatch[0];
-    }
-
-    // Check if response looks like an error message
-    if (
-      jsonText.toLowerCase().startsWith('an error') ||
-      jsonText.toLowerCase().startsWith('error') ||
-      jsonText.toLowerCase().startsWith('failed') ||
-      (!jsonText.startsWith('{') && !jsonText.startsWith('['))
-    ) {
-      // For comparison analysis, return the raw text so it can be handled
-      if (analysisType === 'comparison') {
-        return { raw: text, error: 'AI returned text instead of JSON', originalText: text };
-      }
-      throw new Error(`AI analysis failed: ${jsonText.substring(0, 100)}`);
-    }
-
-    try {
-      return JSON.parse(jsonText);
-    } catch (parseError) {
-      console.error('JSON parsing error:', parseError);
-      console.error('Raw AI response:', jsonText);
-      throw new Error(
-        `Invalid JSON response from AI: ${jsonText.substring(0, 100)}`
-      );
-    }
-  } catch (error) {
-    console.error('Gemini analysis error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    const errorString = JSON.stringify(error);
-    
-    // Check for suspended API key
-    if (
-      errorMessage.includes('CONSUMER_SUSPENDED') ||
-      errorMessage.includes('suspended') ||
-      errorString.includes('CONSUMER_SUSPENDED') ||
-      errorMessage.includes('Permission denied') && errorMessage.includes('suspended')
-    ) {
-      throw new Error(
-        'GEMINI_API_KEY_SUSPENDED: Your Gemini API key has been suspended by Google. ' +
-        'Please check your Google Cloud Console, resolve any billing or policy issues, ' +
-        'or generate a new API key. The existing content has been collected successfully, ' +
-        'but AI analysis is unavailable until the API key issue is resolved.'
-      );
-    }
-    
-    // Check for API key issues
-    if (errorMessage.includes('API_KEY') || errorMessage.includes('api key') || errorMessage.includes('API key not found')) {
-      throw new Error('GEMINI_API_KEY not configured or invalid. Please set GEMINI_API_KEY environment variable.');
-    }
-    
-    // Check for rate limiting
-    if (errorMessage.includes('429') || errorMessage.includes('rate limit') || errorMessage.includes('quota')) {
-      throw new Error('Gemini API rate limit exceeded. Please try again later.');
-    }
-    
-    // Check for 403 Forbidden (could be suspended or other permission issue)
-    if (errorMessage.includes('403') || errorMessage.includes('Forbidden')) {
-      if (errorString.includes('CONSUMER_SUSPENDED') || errorMessage.includes('suspended')) {
-        throw new Error(
-          'GEMINI_API_KEY_SUSPENDED: Your Gemini API key has been suspended. ' +
-          'Please check your Google Cloud Console or generate a new API key.'
-        );
-      }
-      throw new Error('Gemini API access forbidden. Please check your API key permissions.');
-    }
-    
-    throw new Error(`Gemini analysis failed: ${errorMessage}`);
+    return JSON.parse(jsonText);
+  } catch {
+    throw new Error(
+      `Invalid JSON response from AI: ${jsonText.substring(0, 100)}`
+    );
   }
 }
 
 /**
- * Analyze content using Anthropic Claude (Free Tier)
- * Limited free usage
+ * Re-export analyzeWithClaude for callers that import it from this file
  */
 export async function analyzeWithClaude(
   content: string,
   analysisType: string
 ): Promise<any> {
-  try {
-    const prompt = createAnalysisPrompt(content, analysisType);
-
-    const message = await claude.messages.create({
-      model: 'claude-3-haiku-20240307',
-      max_tokens: 4000,
-      messages: [
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-    });
-
-    const text =
-      message.content?.[0]?.type === 'text'
-        ? message.content[0].text || ''
-        : '';
-    return JSON.parse(text);
-  } catch (error) {
-    console.error('Claude analysis error:', error);
-    throw new Error('Claude analysis failed');
-  }
+  const claude = await import('@/lib/claude-analysis');
+  return claude.analyzeWithClaude(content, analysisType);
 }
 
 /**
@@ -389,25 +366,9 @@ export async function performRealAnalysis(
 
     console.log(`✅ Scraped ${scrapedContent.length} characters of content`);
 
-    // Step 2: Try Gemini first (more generous free tier)
-    let analysisResult;
-    try {
-      console.log('🤖 Analyzing with Google Gemini...');
-      analysisResult = await analyzeWithGemini(scrapedContent, analysisType);
-    } catch (geminiError) {
-      console.log('Gemini failed, trying Claude...');
-      // Fallback to Claude if Gemini fails and Claude key is available
-      if (
-        process.env.CLAUDE_API_KEY &&
-        process.env.CLAUDE_API_KEY !== 'your-real-key-here'
-      ) {
-        analysisResult = await analyzeWithClaude(scrapedContent, analysisType);
-      } else {
-        throw new Error(
-          'Gemini analysis failed and Claude API key not configured'
-        );
-      }
-    }
+    // Step 2: Analyze with AI (Claude primary, Gemini fallback)
+    console.log('🤖 Running AI analysis...');
+    const analysisResult = await analyzeWithGemini(scrapedContent, analysisType);
 
     // Step 3: Run Lighthouse analysis
     console.log('Running Lighthouse performance analysis...');
@@ -471,30 +432,28 @@ export async function testAPIConnectivity(): Promise<{
 }> {
   const results = { gemini: false, claude: false };
 
-  try {
-    // Test Gemini
-    const geminiModel = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-    await geminiModel.generateContent('Test connectivity');
-    results.gemini = true;
-  } catch (error) {
-    console.log('Gemini API not available:', error);
+  // Test Claude (primary)
+  const { isClaudeConfigured, analyzeWithClaude: testClaude } = await import(
+    '@/lib/claude-analysis'
+  );
+  if (isClaudeConfigured()) {
+    try {
+      await testClaude('Respond with: {"status":"ok"}', 'test');
+      results.claude = true;
+    } catch {
+      console.log('Claude API not available');
+    }
   }
 
-  // Skip Claude test if key is placeholder
-  if (
-    process.env.CLAUDE_API_KEY &&
-    process.env.CLAUDE_API_KEY !== 'your-real-key-here'
-  ) {
+  // Test Gemini (fallback)
+  if (GEMINI_API_KEY && GEMINI_API_KEY !== 'your-gemini-api-key') {
     try {
-      // Test Claude
-      await claude.messages.create({
-        model: 'claude-3-haiku-20240307',
-        max_tokens: 10,
-        messages: [{ role: 'user', content: 'Test' }],
-      });
-      results.claude = true;
-    } catch (error) {
-      console.log('Claude API not available:', error);
+      const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+      const geminiModel = genAI.getGenerativeModel({ model: modelName });
+      await geminiModel.generateContent('Test connectivity');
+      results.gemini = true;
+    } catch {
+      console.log('Gemini API not available');
     }
   }
 

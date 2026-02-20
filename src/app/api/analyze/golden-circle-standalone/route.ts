@@ -191,10 +191,7 @@ async function generateGoldenCircleAnalysis(
   url: string,
   _analysisType: string
 ) {
-  const { analyzeWithGemini } = await import('@/lib/free-ai-analysis');
-  const { analyzeWithClaude, isClaudeConfigured } = await import(
-    '@/lib/claude-analysis'
-  );
+  const { analyzeWithAI } = await import('@/lib/free-ai-analysis');
   const { generateFrameworkFallbackMarkdown } = await import(
     '@/lib/framework-fallback-generator'
   );
@@ -256,32 +253,11 @@ Provide analysis with:
 
 Return structured analysis with scores and actionable insights in JSON format.`;
 
-  // Try Gemini first
   try {
-    console.log('🤖 [GC] Trying Gemini...');
-    const result = await analyzeWithGemini(prompt, 'golden-circle');
-    return result;
-  } catch (geminiError) {
-    const geminiMsg =
-      geminiError instanceof Error ? geminiError.message : 'Gemini failed';
-    console.log(`⚠️ [GC] Gemini failed: ${geminiMsg}`);
-
-    // Try Claude as fallback
-    if (isClaudeConfigured()) {
-      try {
-        console.log('🔄 [GC] Falling back to Claude...');
-        const result = await analyzeWithClaude(prompt, 'golden-circle');
-        return result;
-      } catch (claudeError) {
-        const claudeMsg =
-          claudeError instanceof Error ? claudeError.message : 'Claude failed';
-        console.log(`⚠️ [GC] Claude also failed: ${claudeMsg}`);
-      }
-    }
-
-    // Both AI providers failed — return Markdown fallback
-    console.log('📄 [GC] All AI providers failed, generating Markdown fallback...');
-    const errorMessage = geminiMsg;
+    return await analyzeWithAI(prompt, 'golden-circle');
+  } catch (aiError) {
+    const errorMessage = aiError instanceof Error ? aiError.message : 'AI analysis failed';
+    console.log(`📄 [GC] AI failed, generating Markdown fallback: ${errorMessage}`);
     const fallbackMarkdown = generateFrameworkFallbackMarkdown({
       framework: 'golden-circle',
       url,
@@ -289,10 +265,6 @@ Return structured analysis with scores and actionable insights in JSON format.`;
       proposed,
       errorMessage,
     });
-    return {
-      _isFallback: true,
-      fallbackMarkdown,
-      error: errorMessage,
-    };
+    return { _isFallback: true, fallbackMarkdown, error: errorMessage };
   }
 }

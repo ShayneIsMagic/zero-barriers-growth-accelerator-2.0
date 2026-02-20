@@ -77,9 +77,11 @@ export async function analyzeWithClaude(
   // Truncate prompt to stay within input token limits
   const safePrompt = truncateForTokenLimit(prompt, 8000);
 
+  const model = process.env.CLAUDE_MODEL || 'claude-3-haiku-20240307';
+
   const message = await claude.messages.create({
-    model: 'claude-3-haiku-20240307',
-    max_tokens: 3500, // Stay under 4K output limit
+    model,
+    max_tokens: 3500,
     messages: [
       {
         role: 'user',

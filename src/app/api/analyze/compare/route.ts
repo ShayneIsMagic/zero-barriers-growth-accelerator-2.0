@@ -534,10 +534,7 @@ async function generateComparisonReport(
   _analysisType: string,
   comprehensiveData?: any
 ) {
-  const { analyzeWithGemini } = await import('@/lib/free-ai-analysis');
-  const { analyzeWithClaude, isClaudeConfigured } = await import(
-    '@/lib/claude-analysis'
-  );
+  const { analyzeWithAI } = await import('@/lib/free-ai-analysis');
 
   // Extract SEO metadata from comprehensive data
   const homepage = comprehensiveData?.pages?.[0] || {};
@@ -720,37 +717,15 @@ IMPORTANT:
 - All scores must be numbers (0-10 for risk scores)
 - All arrays must be valid JSON arrays`;
 
-  // Try Gemini first, then Claude fallback
-  let lastError: string = '';
-
   try {
-    console.log('🤖 [Compare] Trying Gemini...');
-    const result = await analyzeWithGemini(prompt, 'comparison');
+    const result = await analyzeWithAI(prompt, 'comparison');
     return parseAIResult(result);
-  } catch (geminiError) {
-    lastError = geminiError instanceof Error ? geminiError.message : 'Gemini failed';
-    console.log(`⚠️ [Compare] Gemini failed: ${lastError}`);
+  } catch (aiError) {
+    return {
+      error: 'AI comparison failed — all providers unavailable',
+      details: aiError instanceof Error ? aiError.message : 'Unknown error',
+    };
   }
-
-  // Gemini failed — try Claude as fallback
-  if (isClaudeConfigured()) {
-    try {
-      console.log('🔄 [Compare] Falling back to Claude...');
-      const result = await analyzeWithClaude(prompt, 'comparison');
-      return parseAIResult(result);
-    } catch (claudeError) {
-      const claudeMsg = claudeError instanceof Error ? claudeError.message : 'Claude failed';
-      console.log(`⚠️ [Compare] Claude also failed: ${claudeMsg}`);
-    }
-  } else {
-    console.log('⚠️ [Compare] Claude not configured, skipping fallback');
-  }
-
-  // Both AI providers failed
-  return {
-    error: 'AI comparison failed — both Gemini and Claude unavailable',
-    details: lastError,
-  };
 }
 
 function parseAIResult(result: any): any {

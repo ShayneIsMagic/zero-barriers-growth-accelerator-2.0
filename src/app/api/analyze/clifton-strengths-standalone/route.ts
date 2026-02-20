@@ -191,10 +191,7 @@ async function generateCliftonStrengthsAnalysis(
   url: string,
   _analysisType: string
 ) {
-  const { analyzeWithGemini } = await import('@/lib/free-ai-analysis');
-  const { analyzeWithClaude, isClaudeConfigured } = await import(
-    '@/lib/claude-analysis'
-  );
+  const { analyzeWithAI } = await import('@/lib/free-ai-analysis');
   const { generateFrameworkFallbackMarkdown } = await import(
     '@/lib/framework-fallback-generator'
   );
@@ -243,32 +240,11 @@ Provide analysis with:
 
 Return structured analysis with scores and actionable insights in JSON format.`;
 
-  // Try Gemini first
   try {
-    console.log('🤖 [CS] Trying Gemini...');
-    const result = await analyzeWithGemini(prompt, 'clifton-strengths');
-    return result;
-  } catch (geminiError) {
-    const geminiMsg =
-      geminiError instanceof Error ? geminiError.message : 'Gemini failed';
-    console.log(`⚠️ [CS] Gemini failed: ${geminiMsg}`);
-
-    // Try Claude as fallback
-    if (isClaudeConfigured()) {
-      try {
-        console.log('🔄 [CS] Falling back to Claude...');
-        const result = await analyzeWithClaude(prompt, 'clifton-strengths');
-        return result;
-      } catch (claudeError) {
-        const claudeMsg =
-          claudeError instanceof Error ? claudeError.message : 'Claude failed';
-        console.log(`⚠️ [CS] Claude also failed: ${claudeMsg}`);
-      }
-    }
-
-    // Both AI providers failed — return Markdown fallback
-    console.log('📄 [CS] All AI providers failed, generating Markdown fallback...');
-    const errorMessage = geminiMsg;
+    return await analyzeWithAI(prompt, 'clifton-strengths');
+  } catch (aiError) {
+    const errorMessage = aiError instanceof Error ? aiError.message : 'AI analysis failed';
+    console.log(`📄 [CS] AI failed, generating Markdown fallback: ${errorMessage}`);
     const fallbackMarkdown = generateFrameworkFallbackMarkdown({
       framework: 'clifton-strengths',
       url,
@@ -276,10 +252,6 @@ Return structured analysis with scores and actionable insights in JSON format.`;
       proposed,
       errorMessage,
     });
-    return {
-      _isFallback: true,
-      fallbackMarkdown,
-      error: errorMessage,
-    };
+    return { _isFallback: true, fallbackMarkdown, error: errorMessage };
   }
 }
