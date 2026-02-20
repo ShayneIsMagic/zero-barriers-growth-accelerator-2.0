@@ -36,8 +36,9 @@ AI-powered marketing optimization platform that systematically analyzes content 
 ### **Prerequisites**
 
 - Node.js 18+
-- PostgreSQL database
-- Google Gemini API key
+- PostgreSQL database (Supabase recommended)
+- Google Gemini API key (required)
+- Anthropic Claude API key (optional fallback)
 
 ### **Installation**
 
@@ -63,10 +64,19 @@ npm run dev
 ### **Environment Variables**
 
 ```bash
+# Required
 DATABASE_URL=postgresql://...
 NEXTAUTH_SECRET=your-secret-key
 NEXTAUTH_URL=http://localhost:3000
-GOOGLE_GEMINI_API_KEY=your-gemini-key
+GEMINI_API_KEY=your-gemini-api-key
+
+# Optional (Claude fallback when Gemini is unavailable)
+CLAUDE_API_KEY=your-claude-api-key
+
+# Optional (defaults shown)
+GEMINI_MODEL=gemini-1.5-flash
+CLAUDE_MODEL=claude-3-haiku-20240307
+NODE_ENV=development
 ```
 
 ## 📊 **API ENDPOINTS**

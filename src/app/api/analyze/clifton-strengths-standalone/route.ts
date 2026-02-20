@@ -1,11 +1,15 @@
 /**
  * CliftonStrengths Analysis API
- * Uses Content-Comparison approach for reliability
+ * Accepts existingContent from client (LocalForage) or scrapes as fallback
+ * Uses ProductionContentExtractor on Vercel, compare API locally
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 30;
+
+const isServerless =
+  process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,17 +32,41 @@ export async function POST(request: NextRequest) {
 
     console.log(`🔄 Starting CliftonStrengths analysis for: ${url}`);
 
-    // Step 1: Use provided existing content (from content-comparison) or fetch it
+    // Step 1: Use provided existing content (from LocalForage/content-comparison) or fetch it
     let existingData;
     if (existingContent) {
-      console.log('📦 Using provided existing content from content-comparison');
+      console.log('📦 Using provided existing content from client');
       existingData = existingContent;
-    } else {
-      console.log(
-        '🔍 No existing content provided - calling content-comparison API to get scraped data...'
+    } else if (isServerless) {
+      console.log('🌐 No existing content - using ProductionContentExtractor on Vercel...');
+      const { ProductionContentExtractor } = await import(
+        '@/lib/production-content-extractor'
       );
+      const extractor = new ProductionContentExtractor();
+      const extractedData = await extractor.extractContent(url);
+      existingData = {
+        title: extractedData.title || 'Untitled',
+        metaDescription: extractedData.metaDescription || '',
+        wordCount: extractedData.wordCount || 0,
+        cleanText: extractedData.content || '',
+        extractedKeywords: [],
+        headings: { h1: [], h2: [], h3: [] },
+        url,
+        seo: {
+          metaTitle: extractedData.title || '',
+          metaDescription: extractedData.metaDescription || '',
+          extractedKeywords: [],
+          headings: { h1: [], h2: [], h3: [] },
+        },
+      };
+    } else {
+      console.log('🔍 No existing content - calling compare API locally...');
+      const baseUrl =
+        process.env.NEXT_PUBLIC_APP_URL ||
+        process.env.NEXTAUTH_URL ||
+        'http://localhost:3000';
       const compareResponse = await fetch(
-        `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/analyze/compare`,
+        `${baseUrl}/api/analyze/compare`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -164,6 +192,12 @@ async function generateCliftonStrengthsAnalysis(
   _analysisType: string
 ) {
   const { analyzeWithGemini } = await import('@/lib/free-ai-analysis');
+  const { analyzeWithClaude, isClaudeConfigured } = await import(
+    '@/lib/claude-analysis'
+  );
+  const { generateFrameworkFallbackMarkdown } = await import(
+    '@/lib/framework-fallback-generator'
+  );
 
   const prompt = `Analyze this website using the CliftonStrengths framework (34 themes across 4 domains):
 
@@ -172,9 +206,9 @@ URL: ${url}
 EXISTING CONTENT:
 - Word Count: ${existing.wordCount}
 - Title: ${existing.title}
-- Meta Description: ${existing.metaDescription}
-- Keywords: ${existing.extractedKeywords.slice(0, 10).join(', ')}
-- Content: ${existing.cleanText.substring(0, 2000)}
+- Meta Description: ${existing.metaDescription || existing.seo?.metaDescription || ''}
+- Keywords: ${(existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', ')}
+- Content: ${existing.cleanText?.substring(0, 2000) || ''}
 
 ${
   proposed
@@ -184,54 +218,20 @@ PROPOSED CONTENT:
 - Title: ${proposed.title}
 - Meta Description: ${proposed.metaDescription}
 - Keywords: ${proposed.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
-- Content: ${proposed.cleanText.substring(0, 2000)}
+- Content: ${proposed.cleanText?.substring(0, 2000) || ''}
 `
     : 'No proposed content provided - analyze existing only'
 }
 
 CLIFTONSTRENGTHS FRAMEWORK (34 Themes - Gallup):
 
-STRATEGIC THINKING (8 themes):
-1. analytical - Seeks data and logical reasoning
-2. context - Understands the past to plan the future
-3. futuristic - Inspired by what could be
-4. ideation - Fascinated by ideas
-5. input - Collects information and resources
-6. intellection - Enjoys thinking and mental activity
-7. learner - Has a strong desire to learn
-8. strategic - Creates alternative ways to proceed
+STRATEGIC THINKING (8): analytical, context, futuristic, ideation, input, intellection, learner, strategic
 
-EXECUTING (9 themes):
-9. achiever - Works hard and takes satisfaction from being busy
-10. arranger - Can organize and figure out complex situations
-11. belief - Has core values that are unchanging
-12. consistency - Treats all people equally
-13. deliberative - Takes serious care in making decisions
-14. discipline - Enjoys routine and structure
-15. focus - Takes direction and follows through
-16. responsibility - Takes psychological ownership
-17. restorative - Enjoys solving problems
+EXECUTING (9): achiever, arranger, belief, consistency, deliberative, discipline, focus, responsibility, restorative
 
-INFLUENCING (8 themes):
-18. activator - Impatient for action
-19. command - Has presence and can take control
-20. communication - Enjoys explaining and describing
-21. competition - Measures progress against others
-22. maximizer - Focuses on strengths to stimulate personal and group excellence
-23. self_assurance - Confident in abilities
-24. significance - Wants to be recognized and heard
-25. woo - Enjoys meeting new people
+INFLUENCING (8): activator, command, communication, competition, maximizer, self_assurance, significance, woo
 
-RELATIONSHIP BUILDING (9 themes):
-26. adaptability - Prefers to go with the flow
-27. connectedness - Believes all things happen for a reason
-28. developer - Recognizes and cultivates potential in others
-29. empathy - Senses the feelings of others
-30. harmony - Looks for consensus
-31. includer - Accepting of others
-32. individualization - Intrigued by the unique qualities of each person
-33. positivity - Upbeat and can get others excited
-34. relator - Enjoys close relationships
+RELATIONSHIP BUILDING (9): adaptability, connectedness, developer, empathy, harmony, includer, individualization, positivity, relator
 
 Provide analysis with:
 1. Overall CliftonStrengths Score (0-34)
@@ -241,15 +241,45 @@ Provide analysis with:
 5. Missing themes with recommendations
 6. Specific improvements for better strength alignment
 
-Return structured analysis with scores and actionable insights.`;
+Return structured analysis with scores and actionable insights in JSON format.`;
 
+  // Try Gemini first
   try {
+    console.log('🤖 [CS] Trying Gemini...');
     const result = await analyzeWithGemini(prompt, 'clifton-strengths');
     return result;
-  } catch (error) {
+  } catch (geminiError) {
+    const geminiMsg =
+      geminiError instanceof Error ? geminiError.message : 'Gemini failed';
+    console.log(`⚠️ [CS] Gemini failed: ${geminiMsg}`);
+
+    // Try Claude as fallback
+    if (isClaudeConfigured()) {
+      try {
+        console.log('🔄 [CS] Falling back to Claude...');
+        const result = await analyzeWithClaude(prompt, 'clifton-strengths');
+        return result;
+      } catch (claudeError) {
+        const claudeMsg =
+          claudeError instanceof Error ? claudeError.message : 'Claude failed';
+        console.log(`⚠️ [CS] Claude also failed: ${claudeMsg}`);
+      }
+    }
+
+    // Both AI providers failed — return Markdown fallback
+    console.log('📄 [CS] All AI providers failed, generating Markdown fallback...');
+    const errorMessage = geminiMsg;
+    const fallbackMarkdown = generateFrameworkFallbackMarkdown({
+      framework: 'clifton-strengths',
+      url,
+      existing,
+      proposed,
+      errorMessage,
+    });
     return {
-      error: 'CliftonStrengths analysis failed',
-      fallbackPrompt: prompt,
+      _isFallback: true,
+      fallbackMarkdown,
+      error: errorMessage,
     };
   }
 }

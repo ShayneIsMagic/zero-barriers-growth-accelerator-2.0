@@ -535,6 +535,9 @@ async function generateComparisonReport(
   comprehensiveData?: any
 ) {
   const { analyzeWithGemini } = await import('@/lib/free-ai-analysis');
+  const { analyzeWithClaude, isClaudeConfigured } = await import(
+    '@/lib/claude-analysis'
+  );
 
   // Extract SEO metadata from comprehensive data
   const homepage = comprehensiveData?.pages?.[0] || {};
@@ -717,70 +720,68 @@ IMPORTANT:
 - All scores must be numbers (0-10 for risk scores)
 - All arrays must be valid JSON arrays`;
 
+  // Try Gemini first, then Claude fallback
+  let lastError: string = '';
+
   try {
+    console.log('🤖 [Compare] Trying Gemini...');
     const result = await analyzeWithGemini(prompt, 'comparison');
-    
-    // Handle different response formats
-    let parsedResult: any;
-    
-    if (typeof result === 'string') {
-      // Try to extract JSON from markdown code blocks
-      const jsonMatch = result.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
-      if (jsonMatch) {
-        try {
-          parsedResult = JSON.parse(jsonMatch[1]);
-        } catch {
-          // If that fails, try parsing the whole string
-          try {
-            parsedResult = JSON.parse(result);
-          } catch {
-            // Last resort: return as raw with error
-            parsedResult = { 
-              raw: result, 
-              error: 'Failed to parse JSON response',
-              note: 'AI returned text instead of JSON. Please check the prompt format.'
-            };
-          }
-        }
-      } else {
-        // No code blocks, try direct parse
-        try {
-          parsedResult = JSON.parse(result);
-        } catch {
-          parsedResult = { 
-            raw: result, 
-            error: 'Failed to parse JSON response',
-            note: 'AI returned text instead of JSON. Please check the prompt format.'
-          };
-        }
-      }
-    } else if (typeof result === 'object' && result !== null) {
-      // Already an object
-      parsedResult = result;
-    } else {
-      parsedResult = { 
-        error: 'Unexpected response format',
-        raw: result 
-      };
+    return parseAIResult(result);
+  } catch (geminiError) {
+    lastError = geminiError instanceof Error ? geminiError.message : 'Gemini failed';
+    console.log(`⚠️ [Compare] Gemini failed: ${lastError}`);
+  }
+
+  // Gemini failed — try Claude as fallback
+  if (isClaudeConfigured()) {
+    try {
+      console.log('🔄 [Compare] Falling back to Claude...');
+      const result = await analyzeWithClaude(prompt, 'comparison');
+      return parseAIResult(result);
+    } catch (claudeError) {
+      const claudeMsg = claudeError instanceof Error ? claudeError.message : 'Claude failed';
+      console.log(`⚠️ [Compare] Claude also failed: ${claudeMsg}`);
     }
-    
-    // Validate structure has expected fields
-    if (!parsedResult.error && !parsedResult.seoComparison && !parsedResult.recommendations) {
-      // If structure doesn't match, wrap it
-      return {
-        raw: parsedResult,
-        note: 'Response structure may not match expected format',
-        parsed: parsedResult
-      };
+  } else {
+    console.log('⚠️ [Compare] Claude not configured, skipping fallback');
+  }
+
+  // Both AI providers failed
+  return {
+    error: 'AI comparison failed — both Gemini and Claude unavailable',
+    details: lastError,
+  };
+}
+
+function parseAIResult(result: any): any {
+  if (typeof result === 'object' && result !== null) {
+    return result;
+  }
+
+  if (typeof result === 'string') {
+    let jsonText = result.trim();
+    const codeBlockMatch = jsonText.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
+    if (codeBlockMatch) {
+      try {
+        return JSON.parse(codeBlockMatch[1]);
+      } catch { /* fall through */ }
     }
-    
-    return parsedResult;
-  } catch (error) {
-    console.error('AI comparison generation error:', error);
+
+    const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      try {
+        return JSON.parse(jsonMatch[0]);
+      } catch { /* fall through */ }
+    }
+
     return {
-      error: 'AI comparison failed',
-      details: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
+      raw: result,
+      error: 'Failed to parse JSON response',
     };
   }
+
+  return {
+    error: 'Unexpected response format',
+    raw: result,
+  };
 }
