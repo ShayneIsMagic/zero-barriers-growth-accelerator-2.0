@@ -6,6 +6,7 @@
 
 import { PuppeteerComprehensiveCollector } from '@/lib/puppeteer-comprehensive-collector';
 import { ContentStorageService } from '@/lib/services/content-storage.service';
+import { touchOllamaActivity } from '@/lib/server/ollama-lifecycle';
 import { NextRequest, NextResponse } from 'next/server';
 
 function sanitizeError(msg: string): string {
@@ -60,6 +61,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    await touchOllamaActivity();
 
     const isServerless =
       process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';

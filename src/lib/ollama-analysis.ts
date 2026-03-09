@@ -11,6 +11,8 @@
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || 'http://127.0.0.1:11434';
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llama3.1:8b';
 const OLLAMA_KEEP_ALIVE = process.env.OLLAMA_KEEP_ALIVE || '6h';
+const OLLAMA_API_KEY = process.env.OLLAMA_API_KEY || '';
+const OLLAMA_AUTH_SCHEME = process.env.OLLAMA_AUTH_SCHEME || 'Bearer';
 
 interface OllamaGenerateResponse {
   model: string;
@@ -18,7 +20,32 @@ interface OllamaGenerateResponse {
   done: boolean;
 }
 
+function getOllamaRequestHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  if (OLLAMA_API_KEY) {
+    headers.Authorization = `${OLLAMA_AUTH_SCHEME} ${OLLAMA_API_KEY}`;
+  }
+  return headers;
+}
+
+function isLocalOllamaUrl(url: string): boolean {
+  return url.includes('127.0.0.1') || url.includes('localhost');
+}
+
+export function getOllamaConfigurationIssue(): string | null {
+  const isVercelRuntime = process.env.VERCEL === '1';
+  if (isVercelRuntime && isLocalOllamaUrl(OLLAMA_BASE_URL)) {
+    return `Invalid OLLAMA_BASE_URL for Vercel: ${OLLAMA_BASE_URL}. Use a network-reachable Ollama endpoint (remote VM/container), not localhost.`;
+  }
+  return null;
+}
+
 export async function ensureOllamaReadyForAssessment(): Promise<boolean> {
+  if (getOllamaConfigurationIssue()) {
+    return false;
+  }
   return isOllamaAvailable();
 }
 
@@ -26,8 +53,15 @@ export async function ensureOllamaReadyForAssessment(): Promise<boolean> {
  * Check whether the Ollama server is reachable and the configured model is available.
  */
 export async function isOllamaAvailable(): Promise<boolean> {
+  const configurationIssue = getOllamaConfigurationIssue();
+  if (configurationIssue) {
+    console.log(configurationIssue);
+    return false;
+  }
+
   try {
     const res = await fetch(`${OLLAMA_BASE_URL}/api/tags`, {
+      headers: getOllamaRequestHeaders(),
       signal: AbortSignal.timeout(10_000),
     });
     if (!res.ok) {
@@ -63,13 +97,18 @@ export async function analyzeWithOllama(
   prompt: string,
   _analysisType: string
 ): Promise<Record<string, unknown>> {
+  const configurationIssue = getOllamaConfigurationIssue();
+  if (configurationIssue) {
+    throw new Error(configurationIssue);
+  }
+
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 900_000);
 
   try {
     const res = await fetch(`${OLLAMA_BASE_URL}/api/generate`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getOllamaRequestHeaders(),
       body: JSON.stringify({
         model: OLLAMA_MODEL,
         prompt:
