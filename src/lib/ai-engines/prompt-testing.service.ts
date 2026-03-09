@@ -3,7 +3,7 @@
  * A/B tests prompts between Gemini and Claude to determine which performs better
  */
 
-import { analyzeWithGemini } from '@/lib/free-ai-analysis';
+import { analyzeWithClaude, analyzeWithGemini } from '@/lib/free-ai-analysis';
 
 export interface PromptTestResult {
   engine: 'gemini' | 'claude';
@@ -132,21 +132,23 @@ export class PromptTestingService {
     const startTime = Date.now();
 
     try {
-      let analysis;
+      let analysis: Record<string, unknown>;
 
-      if (engine === 'gemini') {
-        const result = await analyzeWithGemini(prompt, 'gemini');
-        if (!result.success) {
-          throw new Error(result.error || 'Gemini analysis failed');
-        }
-        analysis = JSON.parse(result.analysis);
+      const result =
+        engine === 'gemini'
+          ? await analyzeWithGemini(prompt, 'gemini')
+          : await analyzeWithClaude(prompt, 'claude');
+
+      if (typeof result.error === 'string' && !result.analysis) {
+        throw new Error(result.error);
+      }
+
+      if (typeof result.analysis === 'string') {
+        analysis = JSON.parse(result.analysis) as Record<string, unknown>;
+      } else if (typeof result.analysis === 'object' && result.analysis !== null) {
+        analysis = result.analysis;
       } else {
-        // Placeholder for Claude integration
-        // In real implementation, this would call Claude API
-        analysis = {
-          error: 'Claude integration not yet implemented',
-          placeholder: true,
-        };
+        analysis = result;
       }
 
       const responseTime = Date.now() - startTime;

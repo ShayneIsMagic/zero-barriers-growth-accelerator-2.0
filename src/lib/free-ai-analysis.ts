@@ -13,6 +13,37 @@ const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 const AI_PROVIDER = (process.env.AI_PROVIDER || 'ollama').toLowerCase();
 const AI_ALLOW_FALLBACKS = process.env.AI_ALLOW_FALLBACKS === 'true';
 
+export interface AIAnalysisResponse extends Record<string, unknown> {
+  success?: boolean;
+  error?: string;
+  analysis?: string | Record<string, unknown>;
+  raw?: string;
+  originalText?: string;
+  overallScore?: number;
+  executiveSummary?: string;
+  goldenCircle?: WebsiteAnalysisResult['goldenCircle'];
+  elementsOfValue?: WebsiteAnalysisResult['elementsOfValue'];
+  b2bElements?: WebsiteAnalysisResult['b2bElements'];
+  cliftonStrengths?: WebsiteAnalysisResult['cliftonStrengths'];
+  transformation?: WebsiteAnalysisResult['transformation'];
+  recommendations?: WebsiteAnalysisResult['recommendations'];
+  socialMediaStrategy?: WebsiteAnalysisResult['socialMediaStrategy'];
+  successMetrics?: WebsiteAnalysisResult['successMetrics'];
+}
+
+interface _RequiredWebsiteAnalysisPayload {
+  overallScore: number;
+  executiveSummary?: string;
+  goldenCircle: WebsiteAnalysisResult['goldenCircle'];
+  elementsOfValue: WebsiteAnalysisResult['elementsOfValue'];
+  b2bElements: WebsiteAnalysisResult['b2bElements'];
+  cliftonStrengths: WebsiteAnalysisResult['cliftonStrengths'];
+  transformation: WebsiteAnalysisResult['transformation'];
+  recommendations: WebsiteAnalysisResult['recommendations'];
+  socialMediaStrategy: WebsiteAnalysisResult['socialMediaStrategy'];
+  successMetrics: WebsiteAnalysisResult['successMetrics'];
+}
+
 /**
  * Strip API keys and other secrets from error messages before
  * they ever reach the client. Matches common key patterns
@@ -107,7 +138,7 @@ function _extractKeywordsFromContent(content: string): string[] {
 export async function analyzeWithAI(
   prompt: string,
   analysisType: string
-): Promise<any> {
+): Promise<AIAnalysisResponse> {
   const {
     analyzeWithClaude,
     isClaudeConfigured,
@@ -186,7 +217,7 @@ export async function analyzeWithAI(
 export async function analyzeWithGemini(
   content: string,
   analysisType: string
-): Promise<any> {
+): Promise<AIAnalysisResponse> {
   const prompt = createAnalysisPrompt(content, analysisType);
   return analyzeWithAI(prompt, analysisType);
 }
@@ -197,7 +228,7 @@ export async function analyzeWithGemini(
 async function callGeminiDirect(
   prompt: string,
   analysisType: string
-): Promise<any> {
+): Promise<AIAnalysisResponse> {
   const modelName = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
   const model = genAI.getGenerativeModel({ model: modelName });
 
@@ -246,7 +277,7 @@ async function callGeminiDirect(
 export async function analyzeWithClaude(
   content: string,
   analysisType: string
-): Promise<any> {
+): Promise<AIAnalysisResponse> {
   const claude = await import('@/lib/claude-analysis');
   return claude.analyzeWithClaude(content, analysisType);
 }
@@ -398,6 +429,30 @@ Provide specific, actionable insights and recommendations for each area.
 `;
 }
 
+function isRequiredWebsiteAnalysisPayload(
+  value: AIAnalysisResponse
+): value is AIAnalysisResponse & _RequiredWebsiteAnalysisPayload {
+  return (
+    typeof value.overallScore === 'number' &&
+    typeof value.goldenCircle === 'object' &&
+    value.goldenCircle !== null &&
+    typeof value.elementsOfValue === 'object' &&
+    value.elementsOfValue !== null &&
+    typeof value.b2bElements === 'object' &&
+    value.b2bElements !== null &&
+    typeof value.cliftonStrengths === 'object' &&
+    value.cliftonStrengths !== null &&
+    typeof value.transformation === 'object' &&
+    value.transformation !== null &&
+    typeof value.recommendations === 'object' &&
+    value.recommendations !== null &&
+    typeof value.socialMediaStrategy === 'object' &&
+    value.socialMediaStrategy !== null &&
+    typeof value.successMetrics === 'object' &&
+    value.successMetrics !== null
+  );
+}
+
 /**
  * Main analysis function using free AI services
  */
@@ -421,6 +476,11 @@ export async function performRealAnalysis(
     // Step 2: Analyze with AI (Claude primary, Gemini fallback)
     console.log('🤖 Running AI analysis...');
     const analysisResult = await analyzeWithGemini(scrapedContent, analysisType);
+    if (!isRequiredWebsiteAnalysisPayload(analysisResult)) {
+      throw new Error(
+        'AI response did not include the required structured analysis fields'
+      );
+    }
 
     // Step 3: Run Lighthouse analysis
     console.log('Running Lighthouse performance analysis...');

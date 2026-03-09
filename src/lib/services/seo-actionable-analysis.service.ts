@@ -3,7 +3,7 @@ import { analyzeWithGemini } from '@/lib/free-ai-analysis';
 export interface SEOActionableReport {
   success: boolean;
   url: string;
-  report: {
+  report?: {
     executiveSummary: {
       overallScore: number;
       verdict: string;
@@ -95,6 +95,19 @@ export interface SEOActionableReport {
 }
 
 export class SEOActionableAnalysisService {
+  private static parseAnalysisObject(
+    aiResponse: Record<string, unknown>
+  ): Record<string, unknown> {
+    const analysisValue = aiResponse.analysis;
+    if (typeof analysisValue === 'string') {
+      return JSON.parse(analysisValue) as Record<string, unknown>;
+    }
+    if (typeof analysisValue === 'object' && analysisValue !== null) {
+      return analysisValue as Record<string, unknown>;
+    }
+    return aiResponse;
+  }
+
   static async generateSEOReport(
     url: string,
     scrapedContent: any,
@@ -110,23 +123,23 @@ export class SEOActionableAnalysisService {
         `seo-actionable-${focusArea}`
       );
 
-      if (!aiResponse.success) {
-        throw new Error(aiResponse.error || 'AI analysis failed');
+      if (typeof aiResponse.error === 'string' && !aiResponse.analysis) {
+        throw new Error(aiResponse.error);
       }
 
       console.log(`✅ SEO actionable analysis completed for: ${url}`);
+      const parsedReport = this.parseAnalysisObject(aiResponse);
 
       return {
         success: true,
         url,
-        report: aiResponse.analysis,
+        report: parsedReport as SEOActionableReport['report'],
       };
     } catch (error) {
       console.error('SEO actionable analysis failed:', error);
       return {
         success: false,
         url,
-        report: {} as any,
         error: error instanceof Error ? error.message : 'SEO analysis failed',
       };
     }

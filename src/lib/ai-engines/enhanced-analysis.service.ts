@@ -65,20 +65,27 @@ export class EnhancedAnalysisService {
         assessmentType
       );
 
-      if (!aiResponse.success) {
-        throw new Error(aiResponse.error || 'AI analysis failed');
+      if (typeof aiResponse.error === 'string' && !aiResponse.analysis) {
+        throw new Error(aiResponse.error);
       }
 
       // Parse the analysis
-      let analysis;
-      try {
-        analysis = JSON.parse(aiResponse.analysis);
-      } catch (parseError) {
-        console.error('Failed to parse AI response:', parseError);
-        analysis = {
-          error: 'Failed to parse AI response',
-          raw_response: aiResponse.analysis,
-        };
+      let analysis: Record<string, unknown>;
+      if (typeof aiResponse.analysis === 'string') {
+        try {
+          analysis = JSON.parse(aiResponse.analysis) as Record<string, unknown>;
+        } catch (parseError) {
+          throw new Error(
+            `Failed to parse AI response JSON: ${parseError instanceof Error ? parseError.message : 'unknown parse error'}`
+          );
+        }
+      } else if (
+        typeof aiResponse.analysis === 'object' &&
+        aiResponse.analysis !== null
+      ) {
+        analysis = aiResponse.analysis;
+      } else {
+        analysis = aiResponse;
       }
 
       // Validate against framework criteria

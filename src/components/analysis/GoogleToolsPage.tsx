@@ -22,6 +22,7 @@ import {
   CheckCircle,
   Copy,
   ExternalLink,
+  Loader2,
   RefreshCw,
   Search,
   TrendingUp,
@@ -45,6 +46,8 @@ export function GoogleToolsPage() {
   const [manualData, setManualData] = useState('');
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [copiedTool, setCopiedTool] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
 
   // Clear previous searches when URL changes
   const handleUrlChange = (newUrl: string) => {
@@ -56,6 +59,7 @@ export function GoogleToolsPage() {
       setManualData('');
       setAnalysisResult(null);
       setCopiedTool(null);
+      setAnalysisError(null);
     }
   };
 
@@ -84,29 +88,45 @@ export function GoogleToolsPage() {
     setManualData('');
     setAnalysisResult(null);
     setCopiedTool(null);
+    setAnalysisError(null);
   };
 
   const handleAnalyzeData = async () => {
     if (!selectedTool || !manualData.trim()) return;
+    setIsAnalyzing(true);
+    setAnalysisError(null);
 
     try {
-      const prompts = GoogleToolsDirectService.getPTCFPrompts();
-      const prompt = prompts[selectedTool];
+      const keywordArray = keywords
+        .split(',')
+        .map((k) => k.trim())
+        .filter((k) => k.length > 0);
 
-      if (!prompt) return;
+      const response = await fetch('/api/analyze/google-tools-ollama', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url: url.trim(),
+          keywords: keywordArray,
+          toolType: selectedTool,
+          manualData: manualData.trim(),
+        }),
+      });
 
-      const fullPrompt = `${prompt.persona}
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Ollama analysis failed');
+      }
 
-${prompt.task}
-
-${prompt.context.replace('[PASTE', manualData)}
-
-${prompt.format}`;
-
-      // For now, just display the prompt - in production, this would send to Gemini
-      setAnalysisResult(fullPrompt);
-    } catch (_error) {
-      // Analysis failed - error handled by UI state
+      setAnalysisResult(JSON.stringify(result.analysis, null, 2));
+    } catch (error) {
+      setAnalysisError(
+        error instanceof Error ? error.message : 'Ollama analysis failed'
+      );
+    } finally {
+      setIsAnalyzing(false);
     }
   };
 
@@ -322,14 +342,29 @@ ${prompt.format}`;
 
               <Button
                 onClick={handleAnalyzeData}
-                disabled={!selectedTool || !manualData.trim()}
+                disabled={!selectedTool || !manualData.trim() || isAnalyzing}
                 className="w-full"
               >
-                Analyze Data with AI
+                {isAnalyzing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Analyzing with Ollama...
+                  </>
+                ) : (
+                  'Analyze Data with Ollama'
+                )}
               </Button>
             </div>
           </CardContent>
         </Card>
+
+        {analysisError && (
+          <Card className="mb-8 border-red-200 bg-red-50 dark:bg-red-900/10">
+            <CardContent className="pt-6 text-sm text-red-700 dark:text-red-300">
+              {analysisError}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Analysis Results */}
         {analysisResult && (

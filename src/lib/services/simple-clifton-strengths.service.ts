@@ -9,7 +9,7 @@ import { analyzeWithGemini } from '@/lib/free-ai-analysis';
 export interface SimpleCliftonStrengthsResult {
   success: boolean;
   url: string;
-  data: {
+  data?: {
     overall_score: number;
     strategic_thinking_score: number;
     executing_score: number;
@@ -79,7 +79,6 @@ export class SimpleCliftonStrengthsService {
       return {
         success: false,
         url,
-        data: {} as any,
         error: error instanceof Error ? error.message : 'Analysis failed',
       };
     }
@@ -96,14 +95,19 @@ export class SimpleCliftonStrengthsService {
 
     const aiResponse = await analyzeWithGemini(prompt, 'gemini');
 
-    if (!aiResponse.success) {
-      throw new Error(aiResponse.error || 'AI analysis failed');
+    if (typeof aiResponse.error === 'string' && !aiResponse.analysis) {
+      throw new Error(aiResponse.error);
     }
 
     // Parse the AI response
     try {
-      const analysis = JSON.parse(aiResponse.analysis);
-      return analysis;
+      if (typeof aiResponse.analysis === 'string') {
+        return JSON.parse(aiResponse.analysis);
+      }
+      if (typeof aiResponse.analysis === 'object' && aiResponse.analysis !== null) {
+        return aiResponse.analysis;
+      }
+      return aiResponse;
     } catch (parseError) {
       console.error('Failed to parse AI response:', parseError);
       throw new Error(`CliftonStrengths analysis failed: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);

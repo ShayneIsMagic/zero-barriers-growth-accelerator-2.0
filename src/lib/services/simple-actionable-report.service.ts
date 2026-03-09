@@ -3,7 +3,7 @@ import { analyzeWithGemini } from '@/lib/free-ai-analysis';
 export interface SimpleActionableReport {
   success: boolean;
   url: string;
-  report: {
+  report?: {
     executiveSummary: {
       overallScore: number;
       verdict: string;
@@ -52,6 +52,19 @@ export interface SimpleActionableReport {
 }
 
 export class SimpleActionableReportService {
+  private static parseAnalysisObject(
+    aiResponse: Record<string, unknown>
+  ): Record<string, unknown> {
+    const analysisValue = aiResponse.analysis;
+    if (typeof analysisValue === 'string') {
+      return JSON.parse(analysisValue) as Record<string, unknown>;
+    }
+    if (typeof analysisValue === 'object' && analysisValue !== null) {
+      return analysisValue as Record<string, unknown>;
+    }
+    return aiResponse;
+  }
+
   static async generateReport(
     url: string,
     scrapedContent: any,
@@ -70,24 +83,23 @@ export class SimpleActionableReportService {
         `simple-actionable-${analysisType}`
       );
 
-      // The analyzeWithGemini function returns the analysis directly, not wrapped in success/error
-      if (!aiResponse) {
-        throw new Error('AI analysis returned empty response');
+      if (typeof aiResponse.error === 'string' && !aiResponse.analysis) {
+        throw new Error(aiResponse.error);
       }
 
       console.log(`✅ Simple actionable report generated for: ${url}`);
+      const parsedReport = this.parseAnalysisObject(aiResponse);
 
       return {
         success: true,
         url,
-        report: aiResponse,
+        report: parsedReport as SimpleActionableReport['report'],
       };
     } catch (error) {
       console.error('Simple actionable report generation failed:', error);
       return {
         success: false,
         url,
-        report: {} as any,
         error:
           error instanceof Error ? error.message : 'Report generation failed',
       };

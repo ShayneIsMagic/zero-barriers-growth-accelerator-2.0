@@ -743,7 +743,7 @@ function parseAIResult(result: any): any {
   }
 
   if (typeof result === 'string') {
-    let jsonText = result.trim();
+    const jsonText = result.trim();
     const codeBlockMatch = jsonText.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
     if (codeBlockMatch) {
       try {

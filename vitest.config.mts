@@ -1,20 +1,17 @@
-import react from '@vitejs/plugin-react';
-import path from 'path';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 export default defineConfig({
-  plugins: [react()],
+  esbuild: {
+    jsx: 'automatic',
+  },
   test: {
-    // Test environment
     environment: 'jsdom',
-
-    // Setup files
     setupFiles: ['./src/test/setup.ts'],
-
-    // Global test configurations
     globals: true,
-
-    // Coverage configuration
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
@@ -27,20 +24,14 @@ export default defineConfig({
         '.next/',
       ],
     },
-
-    // Test match patterns
-    include: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-
-    // Test timeout
+    include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    exclude: ['src/test/e2e/**', 'tests/e2e/**', '**/*.e2e.{ts,tsx,js,jsx}'],
     testTimeout: 10000,
     hookTimeout: 10000,
-
-    // Mock reset behavior
     clearMocks: true,
     mockReset: true,
     restoreMocks: true,
   },
-
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
