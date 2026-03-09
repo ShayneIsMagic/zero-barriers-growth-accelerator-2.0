@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     // Step 5: Combine all analysis data
     const comprehensiveAnalysis = {
       url,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(),
       ...aiAnalysis,
       lighthouseAnalysis: lighthouseData,
       pageAuditAnalysis: pageAuditData,

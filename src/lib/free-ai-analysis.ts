@@ -107,7 +107,7 @@ function _extractKeywordsFromContent(content: string): string[] {
 export async function analyzeWithAI(
   prompt: string,
   analysisType: string
-): Promise<Record<string, unknown>> {
+): Promise<any> {
   const {
     analyzeWithClaude,
     isClaudeConfigured,
@@ -186,7 +186,7 @@ export async function analyzeWithAI(
 export async function analyzeWithGemini(
   content: string,
   analysisType: string
-): Promise<Record<string, unknown>> {
+): Promise<any> {
   const prompt = createAnalysisPrompt(content, analysisType);
   return analyzeWithAI(prompt, analysisType);
 }
@@ -197,7 +197,7 @@ export async function analyzeWithGemini(
 async function callGeminiDirect(
   prompt: string,
   analysisType: string
-): Promise<Record<string, unknown>> {
+): Promise<any> {
   const modelName = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
   const model = genAI.getGenerativeModel({ model: modelName });
 
@@ -246,7 +246,7 @@ async function callGeminiDirect(
 export async function analyzeWithClaude(
   content: string,
   analysisType: string
-): Promise<Record<string, unknown>> {
+): Promise<any> {
   const claude = await import('@/lib/claude-analysis');
   return claude.analyzeWithClaude(content, analysisType);
 }

@@ -258,7 +258,7 @@ This report is generated using a comprehensive analysis framework that evaluates
   }
 
   public generateMarkdownReport(
-    analysisData: ComprehensiveAnalysisResult
+    analysisData: Partial<ComprehensiveAnalysisResult>
   ): string {
     const reportData = this.transformAnalysisData(analysisData);
 
@@ -277,7 +277,7 @@ This report is generated using a comprehensive analysis framework that evaluates
   }
 
   private transformAnalysisData(
-    analysis: ComprehensiveAnalysisResult
+    analysis: Partial<ComprehensiveAnalysisResult>
   ): ExecutiveReportData {
     // Calculate overall score
     const scores = [
@@ -334,7 +334,7 @@ This report is generated using a comprehensive analysis framework that evaluates
     }
 
     return {
-      websiteUrl: analysis.url,
+      websiteUrl: analysis.url || 'Unknown URL',
       analysisDate: new Date().toLocaleDateString(),
       overallScore,
       frameworkScores: {
