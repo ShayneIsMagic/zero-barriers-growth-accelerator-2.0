@@ -5,6 +5,11 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  buildPuppeteerEvidencePackage,
+  formatEvidenceForPrompt,
+} from '@/lib/framework-evidence-protocol';
+import { touchOllamaActivity } from '@/lib/server/ollama-lifecycle';
 
 export const maxDuration = 30;
 
@@ -32,6 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`🔄 Starting CliftonStrengths analysis for: ${url}`);
+    await touchOllamaActivity();
 
     // Step 1: Use provided existing content (from LocalForage/content-comparison) or fetch it
     let existingData;
@@ -83,6 +89,8 @@ export async function POST(request: NextRequest) {
       existingData = compareResult.existing;
     }
 
+    const evidencePackage = buildPuppeteerEvidencePackage(existingData);
+
     // Step 2: Process proposed content (if provided)
     let proposedData = null;
     if (proposedContent && proposedContent.trim().length > 0) {
@@ -119,13 +127,16 @@ export async function POST(request: NextRequest) {
       },
       proposed: proposedData,
       analysis,
+      puppeteerEvidence: evidencePackage,
       message: 'CliftonStrengths analysis completed',
     });
+
+    const analysisOptions = buildCSOptions(existingData, url, evidencePackage);
 
     if (useStreaming) {
       const { streamChunkedAnalysis } = await import('@/lib/streaming-analysis');
       return streamChunkedAnalysis({
-        analysisOptions: buildCSOptions(existingData, url),
+        analysisOptions,
         buildResponse: buildResponsePayload,
         frameworkLabel: 'CliftonStrengths',
       });
@@ -191,14 +202,19 @@ function extractHeadings(content: string): string[] {
     .slice(0, 10);
 }
 
-function buildCSOptions(existing: any, url: string) {
+function buildCSOptions(
+  existing: any,
+  url: string,
+  evidencePackage = buildPuppeteerEvidencePackage(existing)
+) {
+  const protocolSummary = formatEvidenceForPrompt(evidencePackage);
   return {
     frameworkName: 'CliftonStrengths',
     url,
     contentTitle: existing.title || '',
     contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
     contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
-    contentText: existing.cleanText || '',
+    contentText: `${protocolSummary}\n\n${existing.cleanText || ''}`,
     chunks: [
       {
         categoryName: 'Strategic Thinking',

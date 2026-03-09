@@ -10,11 +10,16 @@
 
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || 'http://127.0.0.1:11434';
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llama3.1:8b';
+const OLLAMA_KEEP_ALIVE = process.env.OLLAMA_KEEP_ALIVE || '6h';
 
 interface OllamaGenerateResponse {
   model: string;
   response: string;
   done: boolean;
+}
+
+export async function ensureOllamaReadyForAssessment(): Promise<boolean> {
+  return isOllamaAvailable();
 }
 
 /**
@@ -71,7 +76,8 @@ export async function analyzeWithOllama(
           prompt +
           '\n\nIMPORTANT: Return ONLY valid JSON. No markdown code fences, no explanatory text outside the JSON object.',
         stream: false,
-        keep_alive: '30m',
+        // Keep model loaded during active usage; auto-unload after 6h inactivity.
+        keep_alive: OLLAMA_KEEP_ALIVE,
         options: {
           temperature: 0.3,
           num_predict: 4096,

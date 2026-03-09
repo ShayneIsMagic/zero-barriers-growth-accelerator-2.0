@@ -5,6 +5,11 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  buildPuppeteerEvidencePackage,
+  formatEvidenceForPrompt,
+} from '@/lib/framework-evidence-protocol';
+import { touchOllamaActivity } from '@/lib/server/ollama-lifecycle';
 
 export const maxDuration = 30;
 
@@ -29,6 +34,7 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`🎭 [Archetypes] Starting Brand Archetypes analysis for: ${url}`);
+    await touchOllamaActivity();
 
     let existingData;
     if (existingContent) {
@@ -85,6 +91,8 @@ export async function POST(request: NextRequest) {
       `📦 [Archetypes] Got scraped content: ${existingData?.wordCount || 0} words`
     );
 
+    const evidencePackage = buildPuppeteerEvidencePackage(existingData);
+
     let proposedData = null;
     if (proposedContent && proposedContent.trim().length > 0) {
       console.log('📝 [Archetypes] Processing proposed content...');
@@ -131,13 +139,16 @@ export async function POST(request: NextRequest) {
       analysis,
       comparison: analysis,
       scrapedContent: existingData,
+      puppeteerEvidence: evidencePackage,
       message: 'Brand Archetypes analysis completed successfully',
     });
+
+    const analysisOptions = buildArchetypeOptions(existingData, url, evidencePackage);
 
     if (useStreaming) {
       const { streamChunkedAnalysis } = await import('@/lib/streaming-analysis');
       return streamChunkedAnalysis({
-        analysisOptions: buildArchetypeOptions(existingData, url),
+        analysisOptions,
         buildResponse: buildResponsePayload,
         frameworkLabel: 'Brand Archetypes',
       });
@@ -203,14 +214,19 @@ function extractHeadings(content: string): string[] {
     .slice(0, 10);
 }
 
-function buildArchetypeOptions(existing: any, url: string) {
+function buildArchetypeOptions(
+  existing: any,
+  url: string,
+  evidencePackage = buildPuppeteerEvidencePackage(existing)
+) {
+  const protocolSummary = formatEvidenceForPrompt(evidencePackage);
   return {
     frameworkName: 'Jambojon Brand Archetypes',
     url,
     contentTitle: existing.title || '',
     contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
     contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
-    contentText: existing.cleanText || '',
+    contentText: `${protocolSummary}\n\n${existing.cleanText || ''}`,
     scoringInstructions: `Score each archetype 0.0-1.0 based on three weighted factors:
   1. Keyword Presence (40%): exact keyword matches from the archetype's KEYWORD SIGNALS list, plus synonyms and thematic matches
   2. Thematic Alignment (30%): how well content matches the archetype definition and core characteristics

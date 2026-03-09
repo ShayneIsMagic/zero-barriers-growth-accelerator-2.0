@@ -4,6 +4,11 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  buildPuppeteerEvidencePackage,
+  formatEvidenceForPrompt,
+} from '@/lib/framework-evidence-protocol';
+import { touchOllamaActivity } from '@/lib/server/ollama-lifecycle';
 
 export const maxDuration = 300;
 
@@ -29,6 +34,8 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    await touchOllamaActivity();
 
     let existingData;
     if (existingContent) {
@@ -71,6 +78,8 @@ export async function POST(request: NextRequest) {
       existingData = compareResult.existing;
     }
 
+    const evidencePackage = buildPuppeteerEvidencePackage(existingData);
+
     let proposedData = null;
     if (proposedContent && proposedContent.trim().length > 0) {
       proposedData = {
@@ -111,10 +120,11 @@ export async function POST(request: NextRequest) {
       analysis,
       comparison: analysis,
       scrapedContent: existingData,
+      puppeteerEvidence: evidencePackage,
       message: 'Revenue Trends analysis completed successfully',
     });
 
-    const analysisOptions = buildRevenueOptions(existingData, url);
+    const analysisOptions = buildRevenueOptions(existingData, url, evidencePackage);
     if (useStreaming) {
       const { streamChunkedAnalysis } = await import('@/lib/streaming-analysis');
       return streamChunkedAnalysis({
@@ -181,7 +191,12 @@ function extractHeadings(content: string): string[] {
     .slice(0, 10);
 }
 
-function buildRevenueOptions(existing: any, url: string) {
+function buildRevenueOptions(
+  existing: any,
+  url: string,
+  evidencePackage = buildPuppeteerEvidencePackage(existing)
+) {
+  const protocolSummary = formatEvidenceForPrompt(evidencePackage);
   return {
     frameworkName: 'Revenue Trends',
     url,
@@ -190,7 +205,7 @@ function buildRevenueOptions(existing: any, url: string) {
     contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || [])
       .slice(0, 10)
       .join(', '),
-    contentText: existing.cleanText || '',
+    contentText: `${protocolSummary}\n\n${existing.cleanText || ''}`,
     scoringInstructions: `Score each element 0.0-1.0 (flat fractional scoring):
 - 0.8-1.0: Excellent — strong market/revenue evidence
 - 0.6-0.79: Good — present but can be strengthened

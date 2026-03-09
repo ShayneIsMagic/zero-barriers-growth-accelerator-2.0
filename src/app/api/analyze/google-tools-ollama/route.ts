@@ -1,5 +1,6 @@
 import { analyzeWithOllama, isOllamaAvailable } from '@/lib/ollama-analysis';
 import googleToolsRules from '@/lib/ai-engines/assessment-rules/google-tools-rules.json';
+import { touchOllamaActivity } from '@/lib/server/ollama-lifecycle';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 300;
@@ -95,6 +96,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    await touchOllamaActivity();
     const ollamaReady = await isOllamaAvailable();
     if (!ollamaReady) {
       return NextResponse.json(

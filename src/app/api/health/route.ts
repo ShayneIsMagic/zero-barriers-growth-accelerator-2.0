@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
+    const { isOllamaAvailable } = await import('@/lib/ollama-analysis');
+    const ollamaAvailable = await isOllamaAvailable();
+    const ollamaBaseUrl =
+      process.env.OLLAMA_BASE_URL || 'http://127.0.0.1:11434';
+    const ollamaModel = process.env.OLLAMA_MODEL || 'llama3.1:8b';
+
     // Basic health check
     const healthStatus = {
       status: 'healthy',
@@ -10,7 +16,12 @@ export async function GET() {
       services: {
         api: 'healthy',
         database: 'unknown', // Could add database health check here
-        ai: 'unknown', // Could add AI service health check here
+        ai: ollamaAvailable ? 'healthy' : 'unhealthy',
+        ollama: {
+          available: ollamaAvailable,
+          baseUrl: ollamaBaseUrl,
+          model: ollamaModel,
+        },
       },
       uptime: process.uptime(),
       memory: process.memoryUsage(),

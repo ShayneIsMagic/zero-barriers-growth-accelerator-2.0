@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node scripts/dev-with-ollama.js",
+    "dev:raw": "next dev",
+    "dev:preflight": "DEV_PREFLIGHT_ONLY=true node scripts/dev-with-ollama.js",
     "build": "prisma generate && next build",
     "postinstall": "prisma generate",
     "preinstall": "node scripts/check-versions.js || true",

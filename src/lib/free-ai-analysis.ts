@@ -145,13 +145,13 @@ export async function analyzeWithAI(
   } = await import('@/lib/claude-analysis');
   const {
     analyzeWithOllama,
-    isOllamaAvailable,
+    ensureOllamaReadyForAssessment,
   } = await import('@/lib/ollama-analysis');
 
   let lastError = '';
 
   // PRIMARY: Ollama (local or remote via OLLAMA_BASE_URL)
-  const ollamaAvailable = await isOllamaAvailable();
+  const ollamaAvailable = await ensureOllamaReadyForAssessment();
   if (ollamaAvailable) {
     try {
       console.log(`🦙 [${analysisType}] Trying Ollama (primary)...`);

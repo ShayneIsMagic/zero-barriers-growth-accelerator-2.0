@@ -5,6 +5,11 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  buildPuppeteerEvidencePackage,
+  formatEvidenceForPrompt,
+} from '@/lib/framework-evidence-protocol';
+import { touchOllamaActivity } from '@/lib/server/ollama-lifecycle';
 
 export const maxDuration = 30;
 
@@ -32,6 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`🎯 [B2C] Starting B2C Elements analysis for: ${url}`);
+    await touchOllamaActivity();
 
     // Step 1: Use provided existing content (from LocalForage/content-comparison) or fetch it
     let existingData;
@@ -89,6 +95,8 @@ export async function POST(request: NextRequest) {
 
     console.log(`📦 [B2C] Got scraped content: ${existingData?.wordCount || 0} words`);
 
+    const evidencePackage = buildPuppeteerEvidencePackage(existingData);
+
     // Step 2: Process proposed content (if provided)
     let proposedData = null;
     if (proposedContent && proposedContent.trim().length > 0) {
@@ -112,7 +120,7 @@ export async function POST(request: NextRequest) {
     // Step 3: Run B2C Elements analysis
     console.log('🤖 [B2C] Running B2C Elements analysis...');
 
-    const analysisOptions = buildB2COptions(existingData, url);
+    const analysisOptions = buildB2COptions(existingData, url, evidencePackage);
 
     const buildResponsePayload = (analysis: Record<string, unknown>) => ({
       success: true,
@@ -130,6 +138,7 @@ export async function POST(request: NextRequest) {
       analysis,
       comparison: analysis,
       scrapedContent: existingData,
+      puppeteerEvidence: evidencePackage,
       message: 'B2C Elements analysis completed successfully',
     });
 
@@ -204,14 +213,19 @@ function extractHeadings(content: string): string[] {
 }
 
 // Shared chunk definitions used by both streaming and non-streaming paths
-function buildB2COptions(existing: any, url: string) {
+function buildB2COptions(
+  existing: any,
+  url: string,
+  evidencePackage = buildPuppeteerEvidencePackage(existing)
+) {
+  const protocolSummary = formatEvidenceForPrompt(evidencePackage);
   return {
     frameworkName: 'B2C Elements of Value',
     url,
     contentTitle: existing.title || '',
     contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
     contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
-    contentText: existing.cleanText || '',
+    contentText: `${protocolSummary}\n\n${existing.cleanText || ''}`,
     chunks: [
       {
         categoryName: 'Functional',
