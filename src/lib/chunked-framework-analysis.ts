@@ -248,33 +248,48 @@ function mergeResults(
         )
       : 0;
 
-  const topElements = allScores
-    .map((_, i) => {
-      const entries = Object.entries(categories).flatMap(([, cat]) =>
-        Object.entries(cat.elements)
-      );
-      return entries[i];
-    })
-    .filter(Boolean)
-    .sort(([, a], [, b]) => b.score - a.score);
+  const entries = Object.entries(categories).flatMap(([categoryKey, cat]) =>
+    Object.entries(cat.elements).map(([name, detail]) => ({
+      categoryKey,
+      name,
+      detail,
+    }))
+  );
+
+  const topElements = [...entries].sort((a, b) => b.detail.score - a.detail.score);
 
   const strengths = topElements
-    .filter(([, e]) => e.score >= 0.7)
+    .filter((entry) => entry.detail.score >= 0.7)
     .slice(0, 5)
-    .map(([name, e]) => ({
-      element: name,
-      score: e.score,
-      evidence: e.evidence,
+    .map((entry) => ({
+      element: entry.name,
+      category: entry.categoryKey,
+      score: entry.detail.score,
+      evidence: entry.detail.evidence,
     }));
 
   const weaknesses = topElements
-    .filter(([, e]) => e.score < 0.4)
+    .filter((entry) => entry.detail.score < 0.4)
     .slice(0, 5)
-    .map(([name, e]) => ({
-      element: name,
-      score: e.score,
-      recommendation: e.recommendation,
+    .map((entry) => ({
+      element: entry.name,
+      category: entry.categoryKey,
+      score: entry.detail.score,
+      recommendation: entry.detail.recommendation,
     }));
+
+  const expectedTotal = options.chunks.reduce(
+    (sum, chunk) => sum + chunk.elements.length,
+    0
+  );
+  const analyzedTotal = entries.length;
+  const present = entries.filter((entry) => entry.detail.score >= 0.6).length;
+  const partial = entries.filter(
+    (entry) => entry.detail.score > 0 && entry.detail.score < 0.6
+  ).length;
+  const missing = analyzedTotal - present - partial;
+  const allElementsAccountedFor = analyzedTotal === expectedTotal;
+  const completenessCheck = allElementsAccountedFor ? 'pass' : 'fail';
 
   return {
     framework: options.frameworkName,
@@ -288,5 +303,17 @@ function mergeResults(
     analysisMethod: 'chunked',
     chunksCompleted: options.chunks.length - errors.length,
     chunksTotal: options.chunks.length,
+    verification: {
+      total_elements_in_framework: expectedTotal,
+      total_elements_analyzed: analyzedTotal,
+      completeness_check: completenessCheck,
+      all_elements_accounted_for: allElementsAccountedFor,
+      breakdown: {
+        present,
+        missing,
+        partial,
+        total: analyzedTotal,
+      },
+    },
   };
 }

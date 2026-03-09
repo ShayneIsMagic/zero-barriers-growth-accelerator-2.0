@@ -19,9 +19,11 @@ import { useState } from 'react';
 export function RevenueTrendsPage() {
   const [url, setUrl] = useState('');
   const [proposedContent, setProposedContent] = useState('');
+  const [scrapedContent, setScrapedContent] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const analysisPayload = result?.analysis || result?.comparison || result?.data;
 
   const runAnalysis = async () => {
     if (!url.trim()) {
@@ -34,12 +36,24 @@ export function RevenueTrendsPage() {
     setResult(null);
 
     try {
+      let existingContent = null;
+      if (scrapedContent.trim()) {
+        try {
+          existingContent = JSON.parse(scrapedContent.trim());
+        } catch {
+          setError('Scraped content JSON is invalid. Paste valid JSON from Content-Comparison.');
+          setIsAnalyzing(false);
+          return;
+        }
+      }
+
       const response = await fetch('/api/analyze/revenue-trends', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           url: url.trim(),
           proposedContent: proposedContent.trim(),
+          existingContent,
           analysisType: 'full',
         }),
       });
@@ -158,6 +172,30 @@ Example:
             </p>
           </div>
 
+          {/* Paste Scraped Content (from Content-Comparison) */}
+          <div>
+            <label
+              htmlFor="scraped-content"
+              className="mb-2 block text-sm font-medium"
+            >
+              Paste Scraped Content (Optional - from Content-Comparison)
+            </label>
+            <Textarea
+              id="scraped-content"
+              name="scraped-content"
+              placeholder='Paste the "Copy Scraped Data" JSON from the Content-Comparison page here to reuse already-scraped content...
+
+Example: {"title":"...","metaDescription":"...","wordCount":...}'
+              value={scrapedContent}
+              onChange={(e) => setScrapedContent(e.target.value)}
+              disabled={isAnalyzing}
+              className="min-h-[100px] font-mono text-xs"
+            />
+            <p className="mt-2 text-xs text-muted-foreground">
+              💡 Reusing scraped content prevents re-scraping and reduces 403/timeouts.
+            </p>
+          </div>
+
           {/* What You Get */}
           <div className="rounded-lg bg-green-50 p-4 dark:bg-green-950">
             <h4 className="mb-2 font-semibold text-green-900 dark:text-green-100">
@@ -256,7 +294,7 @@ Example:
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
-                {result.data && (
+                {analysisPayload && (
                   <div className="prose dark:prose-invert max-w-none">
                     {/* Side-by-side comparison if proposed content exists */}
                     {result.proposed && (
@@ -351,13 +389,13 @@ Example:
                           Assessment Results
                         </h4>
                         <div className="whitespace-pre-wrap text-sm">
-                          {JSON.stringify(result.data, null, 2)}
+                          {JSON.stringify(analysisPayload, null, 2)}
                         </div>
                       </div>
 
                       <Button
                         onClick={() =>
-                          copyToClipboard(JSON.stringify(result.data, null, 2))
+                          copyToClipboard(JSON.stringify(analysisPayload, null, 2))
                         }
                       >
                         <Copy className="mr-2 h-4 w-4" />
@@ -492,7 +530,7 @@ ${
 
 ## Revenue Trends Analysis Results
 
-${JSON.stringify(result.data, null, 2)}
+${JSON.stringify(result.analysis || result.comparison || result.data, null, 2)}
 `
     : ''
 }

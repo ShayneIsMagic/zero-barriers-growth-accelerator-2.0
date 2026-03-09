@@ -317,6 +317,25 @@ export default function DashboardPage() {
       complexity: 'Beginner',
       prerequisites: 'None - just enter your website URL',
     },
+    {
+      id: 'brand-archetypes-standalone',
+      name: 'Brand Archetypes Analysis',
+      status: 'ready',
+      description:
+        'Evaluate all 12 Jambojon brand archetypes with flat scoring and complete element verification.',
+      icon: Brain,
+      route: '/dashboard/brand-archetypes-standalone',
+      whatYouGet: [
+        '12 archetypes across 4 motivational groups',
+        'Flat fractional scoring (0.0 to 1.0)',
+        'Coverage verification for all archetypes',
+        'Optional proposed content comparison',
+        'Optional reuse of scraped content JSON',
+      ],
+      estimatedTime: '2-3 minutes',
+      complexity: 'Beginner',
+      prerequisites: 'None - just enter your website URL',
+    },
   ];
 
   const comingSoonAssessments = [

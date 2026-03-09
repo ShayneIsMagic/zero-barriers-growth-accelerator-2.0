@@ -1001,16 +1001,83 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     console.log(`🌐 Multi-page scraping: ${url} (max ${options.maxPages} pages, serverless: ${isServerless})`);
 
-    // Step 1: Fetch and parse homepage
+    if (!isServerless) {
+      // =============================================
+      // LOCAL: Use PuppeteerComprehensiveCollector
+      // (same proven approach as /api/analyze/compare)
+      // =============================================
+      const { PuppeteerComprehensiveCollector } = await import(
+        '@/lib/puppeteer-comprehensive-collector'
+      );
+
+      const collector = new PuppeteerComprehensiveCollector({
+        maxPages: options.maxPages,
+        maxDepth: options.maxDepth,
+        timeout: 30000,
+      });
+
+      const comprehensiveData = await collector.collectComprehensiveData(url);
+
+      const allPages = (comprehensiveData.pages || []).map(
+        (page, idx) => transformPuppeteerPage(page as unknown as Record<string, unknown>, idx)
+      );
+
+      const totalWordCount = allPages.reduce((sum: number, p: PageSEOData) => sum + p.wordCount, 0);
+      const pageTypes: Record<string, number> = {};
+      allPages.forEach((p: PageSEOData) => {
+        pageTypes[p.pageType] = (pageTypes[p.pageType] || 0) + 1;
+      });
+
+      const contentThemes = identifyContentThemes(allPages);
+
+      const result: MultiPageResult = {
+        url,
+        totalPagesScraped: allPages.length,
+        pages: allPages,
+        siteMap: {
+          totalPages: allPages.length,
+          discoveredPages: allPages.map((p: PageSEOData) => p.url),
+          pageTypes,
+        },
+        siteSummary: {
+          allKeywords: [...new Set(allPages.flatMap((p: PageSEOData) => [
+            ...p.keywords.metaKeywords,
+            ...p.keywords.extractedFromContent.slice(0, 10),
+            ...p.keywords.extractedFromHeadings,
+          ]))],
+          allHeadings: [...new Set(allPages.flatMap((p: PageSEOData) => [
+            ...p.seo.headings.h1,
+            ...p.seo.headings.h2,
+          ]))],
+          contentThemes,
+          ga4MeasurementIds: [...new Set(allPages.flatMap((p: PageSEOData) => p.analytics.ga4MeasurementIds))],
+          gtmContainerIds: [...new Set(allPages.flatMap((p: PageSEOData) => p.analytics.gtmContainerIds))],
+          totalWordCount,
+          averageWordCount: Math.round(totalWordCount / (allPages.length || 1)),
+          pagesWithSchema: allPages.filter((p: PageSEOData) => p.seo.hasSchemaMarkup).length,
+          pagesWithCanonical: allPages.filter((p: PageSEOData) => p.seo.hasCanonical).length,
+          pagesWithOG: allPages.filter((p: PageSEOData) => p.openGraph.title.length > 0).length,
+          pagesWithTwitterCard: allPages.filter((p: PageSEOData) => p.twitterCard.card.length > 0).length,
+        },
+        extractedAt: new Date().toISOString(),
+      };
+
+      const totalTime = Date.now() - overallStart;
+      console.log(`✅ Multi-page scraping (Puppeteer) complete: ${allPages.length} pages in ${totalTime}ms`);
+
+      return NextResponse.json({ success: true, data: result });
+    }
+
+    // =============================================
+    // VERCEL: Use fetch-based HTML parsing (no Puppeteer)
+    // =============================================
     const homeStart = Date.now();
     const homepageHtml = await fetchHTML(url);
     const homepage = parsePageSEO(homepageHtml, url, 'homepage', 10, homeStart);
 
-    // Step 2: Discover internal links from homepage
     const discoveredPages = discoverInternalLinks(homepageHtml, url, options);
     console.log(`🔍 Discovered ${discoveredPages.length} internal pages`);
 
-    // Step 3: Scrape each discovered page
     const allPages: PageSEOData[] = [homepage];
     const pageTypes: Record<string, number> = { homepage: 1 };
 
@@ -1036,7 +1103,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
     }
 
-    // Step 4: Build site summary
     const allKeywords = [
       ...new Set(
         allPages.flatMap((p) => [
@@ -1093,7 +1159,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const totalTime = Date.now() - overallStart;
     console.log(
-      `✅ Multi-page scraping complete: ${allPages.length} pages in ${totalTime}ms`
+      `✅ Multi-page scraping (fetch) complete: ${allPages.length} pages in ${totalTime}ms`
     );
 
     return NextResponse.json({
@@ -1124,5 +1190,180 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { status: 500 }
     );
   }
+}
+
+/**
+ * Transform a PuppeteerComprehensiveCollector page into the PageSEOData shape
+ * expected by the multi-page response.
+ */
+function transformPuppeteerPage(
+  page: Record<string, unknown>,
+  idx: number
+): PageSEOData {
+  const meta = (page.metaTags || {}) as Record<string, unknown>;
+  const analytics = (page.analytics || {}) as Record<string, unknown>;
+  const ga4 = (analytics.googleAnalytics4 || {}) as Record<string, unknown>;
+  const gtm = (analytics.googleTagManager || {}) as Record<string, unknown>;
+  const fb = (analytics.facebookPixel || {}) as Record<string, unknown>;
+  const headingsRaw = (page.headings || {}) as Record<string, string[]>;
+  const title = (page.title || meta.title || '') as string;
+
+  // page.content may be an object (ContentData) or a string — extract text safely
+  let content = '';
+  if (typeof page.content === 'string') {
+    content = page.content;
+  } else if (page.content && typeof page.content === 'object') {
+    const contentObj = page.content as Record<string, unknown>;
+    content = (typeof contentObj.text === 'string' ? contentObj.text : '') ||
+              (typeof contentObj.cleanText === 'string' ? contentObj.cleanText : '');
+  }
+  if (!content && typeof page.cleanText === 'string') {
+    content = page.cleanText;
+  }
+
+  const wordCount = typeof page.wordCount === 'number'
+    ? page.wordCount
+    : content.split(/\s+/).filter(Boolean).length;
+
+  const headings = {
+    h1: headingsRaw.h1 || [],
+    h2: headingsRaw.h2 || [],
+    h3: headingsRaw.h3 || [],
+    h4: headingsRaw.h4 || [],
+    h5: headingsRaw.h5 || [],
+    h6: headingsRaw.h6 || [],
+  };
+
+  const metaKeywords = typeof meta.keywords === 'string'
+    ? (meta.keywords as string).split(',').map((k: string) => k.trim()).filter(Boolean)
+    : [];
+
+  const extractedFromHeadings = [...headings.h1, ...headings.h2, ...headings.h3]
+    .join(' ')
+    .toLowerCase()
+    .replace(/[^\w\s]/g, ' ')
+    .split(/\s+/)
+    .filter((w: string) => w.length > 3);
+
+  const contentWords = content
+    .toLowerCase()
+    .replace(/[^\w\s]/g, ' ')
+    .split(/\s+/)
+    .filter((w: string) => w.length > 4);
+  const freqMap: Record<string, number> = {};
+  contentWords.forEach((w: string) => { freqMap[w] = (freqMap[w] || 0) + 1; });
+  const topKeywords = Object.entries(freqMap)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 20);
+  const extractedFromContent = topKeywords.map(([k]) => k);
+
+  const ga4Ids = Array.isArray(ga4.measurementIds) ? ga4.measurementIds as string[] : [];
+  const gtmIds = Array.isArray(gtm.containerIds) ? gtm.containerIds as string[] : [];
+  const fbIds = fb.pixelId ? [fb.pixelId as string] : [];
+
+  return {
+    url: (page.url || '') as string,
+    pageType: (page.pageType || (idx === 0 ? 'homepage' : 'subpage')) as string,
+    priority: idx === 0 ? 10 : 2,
+    title,
+    wordCount,
+    meta: {
+      title,
+      description: (meta.description || page.metaDescription || '') as string,
+      keywords: metaKeywords,
+      author: (meta.author || '') as string,
+      robots: (meta.robots || '') as string,
+      viewport: (meta.viewport || '') as string,
+      charset: (meta.charset || 'utf-8') as string,
+      language: (meta.language || '') as string,
+      canonical: (meta.canonical || '') as string,
+      generator: (meta.generator || '') as string,
+      themeColor: (meta.themeColor || '') as string,
+      copyright: (meta.copyright || '') as string,
+      revisitAfter: (meta.revisitAfter || '') as string,
+      rating: (meta.rating || '') as string,
+    },
+    openGraph: {
+      title: (meta.ogTitle || '') as string,
+      description: (meta.ogDescription || '') as string,
+      image: (meta.ogImage || '') as string,
+      url: (meta.ogUrl || '') as string,
+      type: (meta.ogType || '') as string,
+      siteName: (meta.ogSiteName || '') as string,
+      locale: (meta.ogLocale || '') as string,
+    },
+    twitterCard: {
+      card: (meta.twitterCard || '') as string,
+      title: (meta.twitterTitle || '') as string,
+      description: (meta.twitterDescription || '') as string,
+      image: (meta.twitterImage || '') as string,
+      site: (meta.twitterSite || '') as string,
+      creator: (meta.twitterCreator || '') as string,
+    },
+    analytics: {
+      ga4MeasurementIds: ga4Ids,
+      gtmContainerIds: gtmIds,
+      facebookPixelIds: fbIds,
+      otherTracking: [],
+      hasGoogleAnalytics: ga4Ids.length > 0,
+      hasGTM: gtmIds.length > 0,
+      hasFacebookPixel: fbIds.length > 0,
+      hasHotjar: false,
+      hasClarityMs: false,
+    },
+    seo: {
+      headings,
+      headingStructureValid: headings.h1.length === 1,
+      titleLength: title.length,
+      descriptionLength: ((meta.description || '') as string).length,
+      internalLinkCount: 0,
+      externalLinkCount: 0,
+      imageCount: 0,
+      imagesWithAlt: 0,
+      imagesWithoutAlt: 0,
+      hasCanonical: Boolean(meta.canonical),
+      hasRobotsMeta: Boolean(meta.robots),
+      hasSitemap: false,
+      hasSchemaMarkup: false,
+      schemaTypes: [],
+      structuredData: [],
+    },
+    keywords: {
+      metaKeywords,
+      extractedFromContent,
+      extractedFromHeadings: [...new Set(extractedFromHeadings)],
+      topKeywordsByFrequency: topKeywords.map(([keyword, count]) => ({
+        keyword,
+        count,
+        density: Math.round((count / (contentWords.length || 1)) * 10000) / 100,
+      })),
+      totalUniqueKeywords: new Set([...metaKeywords, ...extractedFromContent, ...extractedFromHeadings]).size,
+    },
+    tags: {
+      article: 0, section: 0, nav: 0, header: 0, footer: 0,
+      aside: 0, main: 0, figure: 0, time: 0, address: 0,
+      totalSemanticTags: 0,
+    },
+    content: {
+      text: content.substring(0, 50000),
+      wordCount,
+      paragraphCount: 0,
+      listCount: 0,
+      formCount: 0,
+      videoCount: 0,
+      socialMediaLinks: [],
+    },
+    contactInfo: { phones: [], emails: [], addresses: [] },
+    technical: {
+      hasSSL: ((page.url || '') as string).startsWith('https://'),
+      hasMobileViewport: Boolean(meta.viewport),
+      loadTime: 0,
+      cssFileCount: 0,
+      jsFileCount: 0,
+      technologies: [],
+    },
+    extractedAt: new Date().toISOString(),
+    method: 'puppeteer',
+  };
 }
 

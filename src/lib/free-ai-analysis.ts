@@ -1,6 +1,6 @@
 /**
  * AI Analysis Service
- * Centralized AI provider: Claude (primary) → Gemini (fallback)
+ * Centralized AI provider: Ollama (primary) → Claude (fallback) → Gemini (last resort)
  * All AI calls in the app flow through analyzeWithAI.
  */
 
@@ -10,6 +10,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+const AI_PROVIDER = (process.env.AI_PROVIDER || 'ollama').toLowerCase();
+const AI_ALLOW_FALLBACKS = process.env.AI_ALLOW_FALLBACKS === 'true';
 
 /**
  * Strip API keys and other secrets from error messages before
@@ -97,24 +99,61 @@ function _extractKeywordsFromContent(content: string): string[] {
 }
 
 /**
- * Centralized AI analysis: Claude (primary) → Gemini (fallback)
+ * Centralized AI analysis:
+ * - Default: Ollama only
+ * - Optional (AI_ALLOW_FALLBACKS=true): Ollama → Claude → Gemini
  * Every AI call in the codebase should use this function.
  */
 export async function analyzeWithAI(
   prompt: string,
   analysisType: string
-): Promise<any> {
+): Promise<Record<string, unknown>> {
   const {
     analyzeWithClaude,
     isClaudeConfigured,
   } = await import('@/lib/claude-analysis');
+  const {
+    analyzeWithOllama,
+    isOllamaAvailable,
+  } = await import('@/lib/ollama-analysis');
 
   let lastError = '';
 
-  // PRIMARY: Claude
+  // PRIMARY: Ollama (local or remote via OLLAMA_BASE_URL)
+  const ollamaAvailable = await isOllamaAvailable();
+  if (ollamaAvailable) {
+    try {
+      console.log(`🦙 [${analysisType}] Trying Ollama (primary)...`);
+      return await analyzeWithOllama(prompt, analysisType);
+    } catch (ollamaError) {
+      lastError =
+        ollamaError instanceof Error ? ollamaError.message : 'Ollama failed';
+      console.log(`⚠️ [${analysisType}] Ollama failed: ${lastError}`);
+      if (!AI_ALLOW_FALLBACKS) {
+        throw new Error(
+          sanitizeError(`Ollama analysis failed: ${lastError}`)
+        );
+      }
+    }
+  } else {
+    const noOllamaMsg =
+      'Ollama is not reachable. Start Ollama and ensure OLLAMA_BASE_URL points to a reachable Ollama server.';
+    console.log(`⚠️ [${analysisType}] ${noOllamaMsg}`);
+    if (!AI_ALLOW_FALLBACKS || AI_PROVIDER === 'ollama') {
+      throw new Error(noOllamaMsg);
+    }
+  }
+
+  if (!AI_ALLOW_FALLBACKS) {
+    throw new Error(
+      sanitizeError(`AI analysis failed with Ollama and fallbacks are disabled. Last error: ${lastError}`)
+    );
+  }
+
+  // FALLBACK 1: Claude
   if (isClaudeConfigured()) {
     try {
-      console.log(`🤖 [${analysisType}] Trying Claude (primary)...`);
+      console.log(`🤖 [${analysisType}] Trying Claude (fallback 1)...`);
       return await analyzeWithClaude(prompt, analysisType);
     } catch (claudeError) {
       lastError =
@@ -123,10 +162,10 @@ export async function analyzeWithAI(
     }
   }
 
-  // FALLBACK: Gemini
+  // FALLBACK 2: Gemini
   if (GEMINI_API_KEY && GEMINI_API_KEY !== 'your-gemini-api-key') {
     try {
-      console.log(`🔄 [${analysisType}] Trying Gemini (fallback)...`);
+      console.log(`🔄 [${analysisType}] Trying Gemini (fallback 2)...`);
       return await callGeminiDirect(prompt, analysisType);
     } catch (geminiError) {
       lastError =
@@ -142,12 +181,12 @@ export async function analyzeWithAI(
 
 /**
  * Backward-compatible alias — callers that import analyzeWithGemini
- * now automatically get Claude-first behavior.
+ * now automatically use the centralized provider flow.
  */
 export async function analyzeWithGemini(
   content: string,
   analysisType: string
-): Promise<any> {
+): Promise<Record<string, unknown>> {
   const prompt = createAnalysisPrompt(content, analysisType);
   return analyzeWithAI(prompt, analysisType);
 }
@@ -158,8 +197,8 @@ export async function analyzeWithGemini(
 async function callGeminiDirect(
   prompt: string,
   analysisType: string
-): Promise<any> {
-  const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+): Promise<Record<string, unknown>> {
+  const modelName = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
   const model = genAI.getGenerativeModel({ model: modelName });
 
   const result = await model.generateContent(prompt);
@@ -207,7 +246,7 @@ async function callGeminiDirect(
 export async function analyzeWithClaude(
   content: string,
   analysisType: string
-): Promise<any> {
+): Promise<Record<string, unknown>> {
   const claude = await import('@/lib/claude-analysis');
   return claude.analyzeWithClaude(content, analysisType);
 }
@@ -437,15 +476,29 @@ function generateId(): string {
 }
 
 /**
- * Test API connectivity
+ * Test API connectivity for all providers
  */
 export async function testAPIConnectivity(): Promise<{
+  ollama: boolean;
   gemini: boolean;
   claude: boolean;
 }> {
-  const results = { gemini: false, claude: false };
+  const results = { ollama: false, gemini: false, claude: false };
 
-  // Test Claude (primary)
+  // Test Ollama (primary)
+  const { isOllamaAvailable, analyzeWithOllama: testOllama } = await import(
+    '@/lib/ollama-analysis'
+  );
+  if (await isOllamaAvailable()) {
+    try {
+      await testOllama('Respond with: {"status":"ok"}', 'test');
+      results.ollama = true;
+    } catch {
+      console.log('Ollama model loaded but test call failed');
+    }
+  }
+
+  // Test Claude (fallback 1)
   const { isClaudeConfigured, analyzeWithClaude: testClaude } = await import(
     '@/lib/claude-analysis'
   );
@@ -458,10 +511,10 @@ export async function testAPIConnectivity(): Promise<{
     }
   }
 
-  // Test Gemini (fallback)
+  // Test Gemini (fallback 2)
   if (GEMINI_API_KEY && GEMINI_API_KEY !== 'your-gemini-api-key') {
     try {
-      const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+      const modelName = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
       const geminiModel = genAI.getGenerativeModel({ model: modelName });
       await geminiModel.generateContent('Test connectivity');
       results.gemini = true;
