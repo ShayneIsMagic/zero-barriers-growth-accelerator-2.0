@@ -30,6 +30,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useState } from 'react';
+import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
 
 interface GoogleToolLink {
   name: string;
@@ -45,6 +46,7 @@ export function GoogleToolsPage() {
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
   const [manualData, setManualData] = useState('');
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
+  const [analysisEnvelope, setAnalysisEnvelope] = useState<Record<string, unknown> | null>(null);
   const [copiedTool, setCopiedTool] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
@@ -58,6 +60,7 @@ export function GoogleToolsPage() {
       setSelectedTool(null);
       setManualData('');
       setAnalysisResult(null);
+      setAnalysisEnvelope(null);
       setCopiedTool(null);
       setAnalysisError(null);
     }
@@ -87,6 +90,7 @@ export function GoogleToolsPage() {
     setSelectedTool(null);
     setManualData('');
     setAnalysisResult(null);
+    setAnalysisEnvelope(null);
     setCopiedTool(null);
     setAnalysisError(null);
   };
@@ -120,6 +124,7 @@ export function GoogleToolsPage() {
         throw new Error(result.error || 'Ollama analysis failed');
       }
 
+      setAnalysisEnvelope(result);
       setAnalysisResult(JSON.stringify(result.analysis, null, 2));
     } catch (error) {
       setAnalysisError(
@@ -222,6 +227,32 @@ export function GoogleToolsPage() {
             </div>
           </CardContent>
         </Card>
+
+        <div className="mb-8">
+          <WorkflowTraceabilityPanel
+            featureName='Google Tools Analysis'
+            collectionPrompts={[
+              'Collect Google Trends exports or observations',
+              'Collect PageSpeed metrics and opportunities',
+              'Collect Search Console query/ranking data',
+              'Collect Analytics traffic/conversion snapshots',
+              'Paste only measured data; avoid assumptions',
+            ]}
+            executionSteps={[
+              'Select tool source and paste raw data',
+              'Run Ollama analysis against provided metrics only',
+              'Review structured output and confidence',
+              'Compare raw metrics against analyzed conclusions',
+            ]}
+            rawData={manualData || null}
+            analyzedData={analysisResult || null}
+            traceabilityData={analysisEnvelope?.traceability || null}
+            versionInfo={{
+              assessmentType: 'google-tools',
+              hasReadableReport: Boolean(analysisEnvelope?.readableMarkdown),
+            }}
+          />
+        </div>
 
         {/* Google Tools Links */}
         {toolLinks.length > 0 && (

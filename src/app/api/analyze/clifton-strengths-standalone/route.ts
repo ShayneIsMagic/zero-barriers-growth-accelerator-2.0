@@ -9,6 +9,7 @@ import {
   buildPuppeteerEvidencePackage,
   formatEvidenceForPrompt,
 } from '@/lib/framework-evidence-protocol';
+import { buildAnalysisTraceability } from '@/lib/server/analysis-traceability';
 import { touchOllamaActivity } from '@/lib/server/ollama-lifecycle';
 
 export const maxDuration = 30;
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
       const baseUrl =
         process.env.NEXT_PUBLIC_APP_URL ||
         process.env.NEXTAUTH_URL ||
-        'http://localhost:3000';
+        request.nextUrl.origin;
       const compareResponse = await fetch(
         `${baseUrl}/api/analyze/compare`,
         {
@@ -114,22 +115,34 @@ export async function POST(request: NextRequest) {
     // Step 3: Run CliftonStrengths analysis
     console.log('🤖 Step 3: Running CliftonStrengths analysis...');
 
-    const buildResponsePayload = (analysis: Record<string, unknown>) => ({
-      success: true,
-      existing: {
-        title: existingData.title,
-        metaDescription: existingData.seo.metaDescription,
-        wordCount: existingData.wordCount,
-        extractedKeywords: existingData.seo.extractedKeywords,
-        headings: existingData.seo.headings,
-        cleanText: existingData.cleanText,
-        url: existingData.url,
-      },
-      proposed: proposedData,
-      analysis,
-      puppeteerEvidence: evidencePackage,
-      message: 'CliftonStrengths analysis completed',
-    });
+    const buildResponsePayload = (analysis: Record<string, unknown>) => {
+      const readableMarkdown =
+        typeof analysis.unifiedReport === 'string' ? analysis.unifiedReport : null;
+      return {
+        success: true,
+        existing: {
+          title: existingData.title,
+          metaDescription: existingData.seo.metaDescription,
+          wordCount: existingData.wordCount,
+          extractedKeywords: existingData.seo.extractedKeywords,
+          headings: existingData.seo.headings,
+          cleanText: existingData.cleanText,
+          url: existingData.url,
+        },
+        proposed: proposedData,
+        analysis,
+        readableMarkdown,
+        traceability: buildAnalysisTraceability({
+          url,
+          existing: existingData,
+          proposed: proposedData,
+          analysis,
+          usedProvidedExistingContent: Boolean(existingContent),
+        }),
+        puppeteerEvidence: evidencePackage,
+        message: 'CliftonStrengths analysis completed',
+      };
+    };
 
     const analysisOptions = buildCSOptions(existingData, url, evidencePackage);
 

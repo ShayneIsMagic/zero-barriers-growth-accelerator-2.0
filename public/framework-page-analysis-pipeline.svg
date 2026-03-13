@@ -1,0 +1,47 @@
+<svg width="1200" height="780" viewBox="0 0 1200 780" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .title { font: 700 28px sans-serif; fill: #0f172a; }
+    .subtitle { font: 500 14px sans-serif; fill: #475569; }
+    .stageTitle { font: 700 18px sans-serif; fill: #0f172a; }
+    .text { font: 500 13px sans-serif; fill: #334155; }
+    .small { font: 500 12px sans-serif; fill: #475569; }
+    .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; rx: 12; }
+    .stage { fill: #f8fafc; stroke: #94a3b8; stroke-width: 1.5; rx: 12; }
+  </style>
+
+  <rect x="0" y="0" width="1200" height="780" fill="#f8fafc" />
+
+  <text x="40" y="44" class="title">Framework Page Analysis Pipeline (Ollama-First)</text>
+  <text x="40" y="70" class="subtitle">Applies to framework assessment pages. Excludes content-comparison and multi-page-scraping.</text>
+
+  <rect class="stage" x="40" y="100" width="1120" height="130" />
+  <text x="60" y="130" class="stageTitle">Stage 1 - Collect</text>
+  <text x="60" y="155" class="text">Inputs: URL + optional proposed content + framework selection</text>
+  <text x="60" y="177" class="text">Output: canonical payload (url, snapshotId, collectedAt, collectorType, rawEvidence, proposedContent?)</text>
+  <text x="60" y="199" class="text">snapshotId is generated here and becomes the primary key downstream</text>
+
+  <rect class="stage" x="40" y="250" width="1120" height="130" />
+  <text x="60" y="280" class="stageTitle">Stage 2 - Persist</text>
+  <text x="60" y="305" class="text">Store canonical payload in LocalForage keyed by snapshotId</text>
+  <text x="60" y="327" class="text">Write traceability hashes: existing, proposed, analysis</text>
+  <text x="60" y="349" class="text">Reuse gate: once saved, never re-scrape unless explicitly requested</text>
+
+  <rect class="stage" x="40" y="400" width="1120" height="150" />
+  <text x="60" y="430" class="stageTitle">Stage 3 - Analyze</text>
+  <text x="60" y="455" class="text">Ollama-first execution</text>
+  <text x="60" y="477" class="text">Chunking: 1 category for long/large or timeout-prone runs; 2 categories for moderate runs</text>
+  <text x="60" y="499" class="text">Flow: chunk blocks -> merge outputs -> unified synthesis -> validate all scores are 0.0 to 1.0</text>
+  <text x="60" y="521" class="text">Completeness check: all required framework elements must be present and scored</text>
+
+  <rect class="stage" x="40" y="570" width="1120" height="130" />
+  <text x="60" y="600" class="stageTitle">Stage 4 - Report</text>
+  <text x="60" y="625" class="text">Save chunked + unified + readable markdown reports under same snapshotId</text>
+  <text x="60" y="647" class="text">Expose tabs: Raw payload / Analyzed output / Traceability-version history</text>
+  <text x="60" y="669" class="text">Allow regeneration of reports without recollecting raw data</text>
+
+  <rect x="700" y="118" width="430" height="92" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 5" rx="10" />
+  <text x="720" y="142" class="small">Reuse patterns:</text>
+  <text x="720" y="162" class="small">- Re-run same framework on same snapshotId</text>
+  <text x="720" y="180" class="small">- Run multiple frameworks on one snapshotId</text>
+  <text x="720" y="198" class="small">- Compare proposed versions on one base snapshot</text>
+</svg>

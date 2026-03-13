@@ -1,5 +1,6 @@
 import { analyzeWithOllama, isOllamaAvailable } from '@/lib/ollama-analysis';
 import googleToolsRules from '@/lib/ai-engines/assessment-rules/google-tools-rules.json';
+import { buildAnalysisTraceability } from '@/lib/server/analysis-traceability';
 import { touchOllamaActivity } from '@/lib/server/ollama-lifecycle';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -70,8 +71,29 @@ ${googleToolsRules.format}
 
 IMPORTANT:
 - This is a Google tools assessment data interpretation task.
-- Use the provided tool data only; do not invent metrics.
+- Use provided tool data only; do not invent metrics.
+- If a tool section is missing, mark it as missing or insufficient_data.
+- Separate observed facts from inferred recommendations.
 - Return valid JSON only.`;
+}
+
+function buildReadableMarkdownPrompt(params: {
+  url: string;
+  analysis: unknown;
+}): string {
+  const jsonPayload = truncateText(JSON.stringify(params.analysis, null, 2), 12000);
+  return `Convert the following FINAL JSON into a readable markdown report.
+
+URL: ${params.url}
+
+FINAL JSON:
+${jsonPayload}
+
+Return markdown with sections:
+1) Executive Summary
+2) Tool Findings
+3) Priority Actions (next 30 days)
+4) Data Gaps / Verification Needed`;
 }
 
 export async function POST(request: NextRequest) {
@@ -118,6 +140,15 @@ export async function POST(request: NextRequest) {
     });
 
     const analysis = await analyzeWithOllama(prompt, 'google-tools');
+    const readableMarkdown = await analyzeWithOllama(
+      buildReadableMarkdownPrompt({ url, analysis }),
+      'google-tools-markdown'
+    );
+    const rawInputText = manualData
+      ? manualData
+      : scrapedData
+        ? JSON.stringify(scrapedData)
+        : '';
 
     return NextResponse.json({
       success: true,
@@ -125,6 +156,21 @@ export async function POST(request: NextRequest) {
       keywords,
       toolType: toolType || 'all-tools',
       analysis,
+      readableMarkdown,
+      traceability: buildAnalysisTraceability({
+        url,
+        existing: {
+          cleanText: rawInputText,
+          title: url,
+          metaDescription: 'Google tools raw inputs',
+          wordCount: rawInputText.split(/\s+/).filter(Boolean).length,
+          url,
+        },
+        analysis: {
+          result: analysis,
+        },
+        usedProvidedExistingContent: true,
+      }),
       analysisProvider: 'ollama',
       timestamp: new Date().toISOString(),
     });

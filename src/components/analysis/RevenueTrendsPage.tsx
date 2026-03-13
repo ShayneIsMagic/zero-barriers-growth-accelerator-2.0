@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Copy, Download, Loader2, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
+import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
 
 export function RevenueTrendsPage() {
   const [url, setUrl] = useState('');
@@ -264,6 +265,30 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
           </Button>
         </CardContent>
       </Card>
+
+      <WorkflowTraceabilityPanel
+        featureName='Revenue-Focused Market Analysis'
+        collectionPrompts={[
+          'Collect market-demand and opportunity language from key pages',
+          'Collect offer/pricing/benefit claims and proof points',
+          'Collect audience intent cues from CTAs and navigation',
+          'Collect testimonial and result-oriented language',
+          'Collect purpose and positioning statements',
+        ]}
+        executionSteps={[
+          'Use provided scraped dataset if available',
+          'Run revenue trends analysis with category chunking',
+          'Generate merged plus unified narrative report',
+          'Review raw vs analyzed outputs for each run',
+        ]}
+        rawData={result?.puppeteerEvidence || result?.existing || scrapedContent || null}
+        analyzedData={analysisPayload || null}
+        traceabilityData={result?.traceability || null}
+        versionInfo={{
+          assessmentType: 'revenue-trends',
+          hasReadableReport: Boolean(result?.readableMarkdown),
+        }}
+      />
 
       {/* Results */}
       {result && (

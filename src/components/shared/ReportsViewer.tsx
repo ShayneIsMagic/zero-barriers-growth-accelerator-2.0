@@ -251,7 +251,11 @@ export function ReportsViewer({
                                 if (dateCompare !== 0) return dateCompare;
                                 return (b.version || 0) - (a.version || 0);
                               })
-                              .map((report) => (
+                              .map((report) => {
+                                const isChunked = report.assessmentType?.endsWith('-chunked');
+                                const isUnified = report.assessmentType?.endsWith('-unified');
+                                const isReadable = report.assessmentType?.endsWith('-readable');
+                                return (
                                 <div
                                   key={report.id}
                                   className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors"
@@ -261,6 +265,21 @@ export function ReportsViewer({
                                       <Badge variant="outline" className="font-medium">
                                         {report.assessmentDisplayName || report.assessmentType || 'Report'}
                                       </Badge>
+                                      {isChunked && (
+                                        <Badge variant="secondary" className="text-xs">
+                                          Chunked
+                                        </Badge>
+                                      )}
+                                      {isUnified && (
+                                        <Badge variant="secondary" className="text-xs">
+                                          Unified
+                                        </Badge>
+                                      )}
+                                      {isReadable && (
+                                        <Badge variant="secondary" className="text-xs">
+                                          Readable
+                                        </Badge>
+                                      )}
                                       {report.version && report.version > 1 && (
                                         <Badge variant="secondary" className="text-xs">
                                           v{report.version}
@@ -315,7 +334,8 @@ export function ReportsViewer({
                                 )}
                               </div>
                                 </div>
-                              ))}
+                                );
+                              })}
                           </div>
                         </CardContent>
                       </Card>

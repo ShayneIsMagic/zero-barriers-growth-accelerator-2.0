@@ -33,6 +33,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useState } from 'react';
+import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
 
 interface GoogleToolLink {
   name: string;
@@ -57,6 +58,7 @@ export function AutomatedGoogleToolsPage() {
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
   const [manualData, setManualData] = useState('');
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
+  const [analysisEnvelope, setAnalysisEnvelope] = useState<Record<string, unknown> | null>(null);
   const [copiedTool, setCopiedTool] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
@@ -70,6 +72,7 @@ export function AutomatedGoogleToolsPage() {
       setSelectedTool(null);
       setManualData('');
       setAnalysisResult(null);
+      setAnalysisEnvelope(null);
       setCopiedTool(null);
       setAnalysisError(null);
     }
@@ -137,6 +140,7 @@ export function AutomatedGoogleToolsPage() {
     setSelectedTool(null);
     setManualData('');
     setAnalysisResult(null);
+    setAnalysisEnvelope(null);
     setCopiedTool(null);
     setAnalysisError(null);
   };
@@ -170,6 +174,7 @@ export function AutomatedGoogleToolsPage() {
         throw new Error(result.error || 'Ollama analysis failed');
       }
 
+      setAnalysisEnvelope(result);
       setAnalysisResult(JSON.stringify(result.analysis, null, 2));
     } catch (error) {
       setAnalysisError(
@@ -208,6 +213,7 @@ export function AutomatedGoogleToolsPage() {
         throw new Error(result.error || 'Ollama analysis failed');
       }
 
+      setAnalysisEnvelope(result);
       setAnalysisResult(JSON.stringify(result.analysis, null, 2));
     } catch (error) {
       setAnalysisError(
@@ -341,6 +347,32 @@ export function AutomatedGoogleToolsPage() {
             </div>
           </CardContent>
         </Card>
+
+        <div className="mb-8">
+          <WorkflowTraceabilityPanel
+            featureName='Automated Google Tools Analysis'
+            collectionPrompts={[
+              'Auto-collect Google Trends and PageSpeed data via Puppeteer flow',
+              'Collect optional authenticated sources (Search Console/Analytics)',
+              'Capture raw snapshots before analysis',
+              'Allow manual override with pasted tool data',
+              'Preserve source evidence for every recommendation',
+            ]}
+            executionSteps={[
+              'Run auto-scrape and validate extracted payload',
+              'Execute Ollama analysis on scraped or manual data',
+              'Produce structured recommendations with evidence source',
+              'Review raw payload against final analysis output',
+            ]}
+            rawData={scrapedData || manualData || null}
+            analyzedData={analysisResult || null}
+            traceabilityData={analysisEnvelope?.traceability || null}
+            versionInfo={{
+              assessmentType: 'automated-google-tools',
+              hasReadableReport: Boolean(analysisEnvelope?.readableMarkdown),
+            }}
+          />
+        </div>
 
         {/* Scraped Data Results */}
         {scrapedData && (

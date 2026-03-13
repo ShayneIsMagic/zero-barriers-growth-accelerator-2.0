@@ -26,6 +26,7 @@ import { useState } from 'react';
 import { MarkdownFallbackViewer } from '@/components/analysis/MarkdownFallbackViewer';
 import { Progress } from '@/components/ui/progress';
 import { useChunkedAnalysis } from '@/hooks/useChunkedAnalysis';
+import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
 
 export function CliftonStrengthsPage() {
   const [url, setUrl] = useState('');
@@ -465,6 +466,32 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
           )}
         </CardContent>
       </Card>
+
+      <WorkflowTraceabilityPanel
+        featureName='CliftonStrengths'
+        collectionPrompts={[
+          'Collect language signals showing strategic thinking patterns',
+          'Collect execution/process discipline evidence',
+          'Collect influencing and persuasion language',
+          'Collect relationship-building and empathy signals',
+          'Collect CTA, headlines, testimonials, and purpose language',
+        ]}
+        executionSteps={[
+          'Validate and parse raw scraped content payload',
+          'Run chunked theme analysis by strengths domain',
+          'Merge domain outputs and build unified strategic summary',
+          'Store outputs for replay and report comparison',
+        ]}
+        rawData={result?.puppeteerEvidence || result?.existing || scrapedContent || null}
+        analyzedData={result?.analysis || result?.comparison || null}
+        traceabilityData={result?.traceability || null}
+        versionInfo={{
+          assessmentType: 'clifton-strengths-standalone',
+          snapshotId,
+          proposedContentId,
+          hasReadableReport: Boolean(result?.readableMarkdown),
+        }}
+      />
 
       {/* Results */}
       {result && (

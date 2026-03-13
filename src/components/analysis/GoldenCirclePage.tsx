@@ -26,6 +26,7 @@ import { useState } from 'react';
 import { MarkdownFallbackViewer } from '@/components/analysis/MarkdownFallbackViewer';
 import { Progress } from '@/components/ui/progress';
 import { useChunkedAnalysis } from '@/hooks/useChunkedAnalysis';
+import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
 
 export function GoldenCirclePage() {
   const [url, setUrl] = useState('');
@@ -468,6 +469,32 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
           )}
         </CardContent>
       </Card>
+
+      <WorkflowTraceabilityPanel
+        featureName='Golden Circle'
+        collectionPrompts={[
+          'Collect purpose and mission language for WHY',
+          'Collect methodology/process wording for HOW',
+          'Collect product/service statements for WHAT',
+          'Collect audience and persona cues for WHO',
+          'Collect supporting proof from CTAs, testimonials, and navigation',
+        ]}
+        executionSteps={[
+          'Load provided scraped content or run fresh extraction',
+          'Score Golden Circle blocks with flat fractional scoring',
+          'Merge block outputs and synthesize one unified report',
+          'Store reports so raw and analyzed outputs remain auditable',
+        ]}
+        rawData={result?.puppeteerEvidence || result?.existing || scrapedContent || null}
+        analyzedData={result?.analysis || result?.comparison || null}
+        traceabilityData={result?.traceability || null}
+        versionInfo={{
+          assessmentType: 'golden-circle-standalone',
+          snapshotId,
+          proposedContentId,
+          hasReadableReport: Boolean(result?.readableMarkdown),
+        }}
+      />
 
       {/* Results */}
       {result && (

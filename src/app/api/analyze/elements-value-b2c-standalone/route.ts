@@ -9,6 +9,7 @@ import {
   buildPuppeteerEvidencePackage,
   formatEvidenceForPrompt,
 } from '@/lib/framework-evidence-protocol';
+import { buildAnalysisTraceability } from '@/lib/server/analysis-traceability';
 import { touchOllamaActivity } from '@/lib/server/ollama-lifecycle';
 
 export const maxDuration = 30;
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
         const baseUrl =
           process.env.NEXT_PUBLIC_APP_URL ||
           process.env.NEXTAUTH_URL ||
-          'http://localhost:3000';
+          request.nextUrl.origin;
         const compareResponse = await fetch(
           `${baseUrl}/api/analyze/compare`,
           {
@@ -122,25 +123,37 @@ export async function POST(request: NextRequest) {
 
     const analysisOptions = buildB2COptions(existingData, url, evidencePackage);
 
-    const buildResponsePayload = (analysis: Record<string, unknown>) => ({
-      success: true,
-      framework: 'b2c',
-      existing: {
-        title: existingData.title,
-        metaDescription: existingData.metaDescription || existingData.seo?.metaDescription || '',
-        wordCount: existingData.wordCount,
-        extractedKeywords: existingData.extractedKeywords || existingData.seo?.extractedKeywords || [],
-        headings: existingData.headings || existingData.seo?.headings || { h1: [], h2: [], h3: [] },
-        cleanText: existingData.cleanText,
-        url: existingData.url || url,
-      },
-      proposed: proposedData,
-      analysis,
-      comparison: analysis,
-      scrapedContent: existingData,
-      puppeteerEvidence: evidencePackage,
-      message: 'B2C Elements analysis completed successfully',
-    });
+    const buildResponsePayload = (analysis: Record<string, unknown>) => {
+      const readableMarkdown =
+        typeof analysis.unifiedReport === 'string' ? analysis.unifiedReport : null;
+      return {
+        success: true,
+        framework: 'b2c',
+        existing: {
+          title: existingData.title,
+          metaDescription: existingData.metaDescription || existingData.seo?.metaDescription || '',
+          wordCount: existingData.wordCount,
+          extractedKeywords: existingData.extractedKeywords || existingData.seo?.extractedKeywords || [],
+          headings: existingData.headings || existingData.seo?.headings || { h1: [], h2: [], h3: [] },
+          cleanText: existingData.cleanText,
+          url: existingData.url || url,
+        },
+        proposed: proposedData,
+        analysis,
+        comparison: analysis,
+        readableMarkdown,
+        traceability: buildAnalysisTraceability({
+          url,
+          existing: existingData,
+          proposed: proposedData,
+          analysis,
+          usedProvidedExistingContent: Boolean(existingContent),
+        }),
+        scrapedContent: existingData,
+        puppeteerEvidence: evidencePackage,
+        message: 'B2C Elements analysis completed successfully',
+      };
+    };
 
     if (useStreaming) {
       const { streamChunkedAnalysis } = await import('@/lib/streaming-analysis');

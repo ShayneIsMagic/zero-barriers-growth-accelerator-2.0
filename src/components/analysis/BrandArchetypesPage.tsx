@@ -16,6 +16,7 @@ import { MarkdownFallbackViewer } from '@/components/analysis/MarkdownFallbackVi
 import { useChunkedAnalysis } from '@/hooks/useChunkedAnalysis';
 import { CheckCircle2, Copy, Download, Loader2, Sparkles } from 'lucide-react';
 import { useState } from 'react';
+import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
 
 export function BrandArchetypesPage() {
   const [url, setUrl] = useState('');
@@ -162,6 +163,30 @@ export function BrandArchetypesPage() {
           </Button>
         </CardContent>
       </Card>
+
+      <WorkflowTraceabilityPanel
+        featureName='Brand Archetypes'
+        collectionPrompts={[
+          'Collect archetype cues from headlines and story framing',
+          'Collect CTA intent and emotional language',
+          'Collect testimonials and trust narrative',
+          'Collect mission/belief statements and promise language',
+          'Collect navigation labels and image alt text cues',
+        ]}
+        executionSteps={[
+          'Parse raw scraped payload and evidence streams',
+          'Score all 12 archetypes in block mode',
+          'Merge archetype chunks and generate one unified report',
+          'Store reports to show both chunked and unified outputs',
+        ]}
+        rawData={result?.puppeteerEvidence || result?.existing || scrapedContent || null}
+        analyzedData={analysisPayload || null}
+        traceabilityData={result?.traceability || null}
+        versionInfo={{
+          assessmentType: 'brand-archetypes-standalone',
+          hasReadableReport: Boolean(result?.readableMarkdown),
+        }}
+      />
 
       {isAnalyzing && (
         <Card>

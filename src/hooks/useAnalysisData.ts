@@ -67,6 +67,15 @@ export function useAnalysisData(
     setIsFromCache(false);
 
     try {
+      // Map analysis types to actual API endpoints
+      const apiEndpoint =
+        analysisType === 'compare'
+          ? '/api/analyze/compare'
+          : `/api/analyze/${analysisType}`;
+
+      // Compare flow should use /api/analyze/compare as the source of truth
+      // for comprehensive reusable content instead of pre-scraping via /api/scrape/content.
+      const shouldPreScrape = analysisType !== 'compare';
 
       // Step 1: Check Local Forage cache FIRST
       const cached = await UnifiedLocalForageStorage.getPuppeteerData(trimmedUrl);
@@ -75,14 +84,14 @@ export function useAnalysisData(
       let usedCache = false;
 
       if (cached) {
-        // Using cached Puppeteer data
         setIsFromCache(true);
         usedCache = true;
       } else {
-        // No cache found, scraping with Puppeteer
         setIsFromCache(false);
+      }
 
-        // Step 2: Scrape if no cache
+      // Step 2: Pre-scrape only for non-compare flows
+      if (!puppeteerData && shouldPreScrape) {
         const scrapeResponse = await fetch('/api/scrape/content', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -115,21 +124,15 @@ export function useAnalysisData(
 
         puppeteerData = scrapeResult.comprehensive || scrapeResult.data;
 
-        // Store for future use
         if (puppeteerData) {
           await UnifiedLocalForageStorage.storePuppeteerData(
             trimmedUrl,
             puppeteerData
           );
-          // Stored Puppeteer data in Local Forage
         }
       }
 
       // Step 3: Run analysis
-      // Map analysis types to actual API endpoints
-      const apiEndpoint = analysisType === 'compare' 
-        ? '/api/analyze/compare'
-        : `/api/analyze/${analysisType}`;
       
       const analysisResponse = await fetch(apiEndpoint, {
         method: 'POST',
@@ -172,6 +175,15 @@ export function useAnalysisData(
         throw new Error(analysisResult.error || 'Analysis failed');
       }
 
+      // Compare route can return rich multi-page comprehensive data.
+      // Persist it so framework selection/reports can be reused from local storage.
+      if (analysisType === 'compare' && analysisResult.comprehensive) {
+        await UnifiedLocalForageStorage.storePuppeteerData(
+          trimmedUrl,
+          analysisResult.comprehensive
+        );
+      }
+
       // Step 4: Store analysis result
       if (analysisResult) {
         await UnifiedLocalForageStorage.storeReport(
@@ -180,7 +192,46 @@ export function useAnalysisData(
           'json',
           analysisType
         );
-        // Stored analysis result
+
+        const chunkedReport =
+          typeof analysisResult?.analysis?.chunkedReport === 'string'
+            ? analysisResult.analysis.chunkedReport
+            : null;
+        const unifiedReport =
+          typeof analysisResult?.analysis?.unifiedReport === 'string'
+            ? analysisResult.analysis.unifiedReport
+            : null;
+        const readableMarkdown =
+          typeof analysisResult?.readableMarkdown === 'string'
+            ? analysisResult.readableMarkdown
+            : null;
+
+        if (chunkedReport) {
+          await UnifiedLocalForageStorage.storeReport(
+            trimmedUrl,
+            chunkedReport,
+            'markdown',
+            `${analysisType}-chunked`
+          );
+        }
+
+        if (unifiedReport) {
+          await UnifiedLocalForageStorage.storeReport(
+            trimmedUrl,
+            unifiedReport,
+            'markdown',
+            `${analysisType}-unified`
+          );
+        }
+
+        if (readableMarkdown) {
+          await UnifiedLocalForageStorage.storeReport(
+            trimmedUrl,
+            readableMarkdown,
+            'markdown',
+            `${analysisType}-readable`
+          );
+        }
       }
 
       // Update cache info

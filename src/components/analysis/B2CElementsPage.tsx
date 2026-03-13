@@ -31,6 +31,7 @@ import { useState } from 'react';
 import { MarkdownFallbackViewer } from '@/components/analysis/MarkdownFallbackViewer';
 import { Progress } from '@/components/ui/progress';
 import { useChunkedAnalysis } from '@/hooks/useChunkedAnalysis';
+import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
 
 export function B2CElementsPage() {
   const [url, setUrl] = useState('');
@@ -469,6 +470,32 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
           )}
         </CardContent>
       </Card>
+
+      <WorkflowTraceabilityPanel
+        featureName='B2C Elements of Value'
+        collectionPrompts={[
+          'Collect headlines, hero sections, and subheads',
+          'Collect CTA language and button text',
+          'Collect testimonials, social proof, and trust language',
+          'Collect mission/purpose and promise statements',
+          'Collect navigation labels and image alt text',
+        ]}
+        executionSteps={[
+          'Validate URL and load existing scraped content if provided',
+          'Run chunked/block analysis with flat fractional scoring',
+          'Merge category blocks and generate unified report',
+          'Store both chunked and unified outputs for reports',
+        ]}
+        rawData={result?.puppeteerEvidence || result?.existing || scrapedContent || null}
+        analyzedData={result?.analysis || result?.comparison || null}
+        traceabilityData={result?.traceability || null}
+        versionInfo={{
+          assessmentType: 'elements-value-b2c-standalone',
+          snapshotId,
+          proposedContentId,
+          hasReadableReport: Boolean(result?.readableMarkdown),
+        }}
+      />
 
       {/* Results */}
       {result && (

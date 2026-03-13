@@ -13,6 +13,7 @@ const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llama3.1:8b';
 const OLLAMA_KEEP_ALIVE = process.env.OLLAMA_KEEP_ALIVE || '6h';
 const OLLAMA_API_KEY = process.env.OLLAMA_API_KEY || '';
 const OLLAMA_AUTH_SCHEME = process.env.OLLAMA_AUTH_SCHEME || 'Bearer';
+const OLLAMA_NUM_PREDICT = Number(process.env.OLLAMA_NUM_PREDICT || '1400');
 
 interface OllamaGenerateResponse {
   model: string;
@@ -119,7 +120,8 @@ export async function analyzeWithOllama(
         keep_alive: OLLAMA_KEEP_ALIVE,
         options: {
           temperature: 0.3,
-          num_predict: 4096,
+          // Keep chunked framework responses bounded so local analyses do not stall.
+          num_predict: OLLAMA_NUM_PREDICT,
         },
       }),
       signal: controller.signal,

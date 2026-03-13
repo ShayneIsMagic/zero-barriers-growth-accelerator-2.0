@@ -11,7 +11,7 @@ AI-powered marketing optimization platform that systematically analyzes content 
 - **B2B Elements of Value** - 40-element business value analysis (flat fractional scoring)
 - **Golden Circle** - Simon Sinek's Why/How/What/Who framework (flat fractional scoring)
 - **CliftonStrengths** - Gallup's 34 strengths analysis (flat fractional scoring)
-- **Brand Archetypes** - 12 archetypal brand identities for narrative analysis
+- **Brand Archetypes** - 12 archetypal brand identities with flat fractional scoring (0.0-1.0)
 
 ### **Enterprise Features**
 

@@ -6,6 +6,7 @@
 
 import { PuppeteerComprehensiveCollector } from '@/lib/puppeteer-comprehensive-collector';
 import { ContentStorageService } from '@/lib/services/content-storage.service';
+import { buildAnalysisTraceability } from '@/lib/server/analysis-traceability';
 import { touchOllamaActivity } from '@/lib/server/ollama-lifecycle';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -243,6 +244,13 @@ export async function POST(request: NextRequest) {
             details: aiErrorMessage,
             storedSnapshotId,
             comprehensive: comprehensiveData,
+            traceability: buildAnalysisTraceability({
+              url,
+              existing: existingData,
+              proposed: proposedData,
+              analysis: {},
+              usedProvidedExistingContent: false,
+            }),
             message: isSuspended
               ? 'Existing content collected successfully. AI comparison unavailable due to suspended API key. Please check your Google Cloud Console or update your API key.'
               : 'Existing content collected. AI comparison failed.',
@@ -273,6 +281,13 @@ export async function POST(request: NextRequest) {
       comparison: comparisonReport, // null if no proposed content
       storedSnapshotId, // Return snapshot ID for reference
       comprehensive: comprehensiveData, // Full comprehensive data with SEO/GA4
+      traceability: buildAnalysisTraceability({
+        url,
+        existing: existingData,
+        proposed: proposedData,
+        analysis: comparisonReport || {},
+        usedProvidedExistingContent: false,
+      }),
       message: proposedData 
         ? 'Enhanced comparison analysis completed'
         : 'Existing content collected and ready for analysis',

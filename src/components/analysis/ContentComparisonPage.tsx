@@ -168,7 +168,8 @@ export function ContentComparisonPage() {
 
   // Version control functions
   const saveSnapshot = async () => {
-    if (!url.trim() || !displayResult?.existingData) {
+    const existingForSnapshot = displayResult?.existingData || displayResult?.existing;
+    if (!url.trim() || !existingForSnapshot) {
       setError('Please run analysis first to save snapshot');
       return;
     }
@@ -182,12 +183,12 @@ export function ContentComparisonPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           url: url.trim(),
-          title: displayResult.existingData.title || 'Untitled',
-          content: displayResult.existingData.cleanText || '',
+          title: existingForSnapshot.title || 'Untitled',
+          content: existingForSnapshot.cleanText || '',
           metadata: {
-            wordCount: displayResult.existingData.wordCount,
-            keywords: displayResult.existingData.extractedKeywords,
-            headings: displayResult.existingData.headings
+            wordCount: existingForSnapshot.wordCount,
+            keywords: existingForSnapshot.extractedKeywords,
+            headings: existingForSnapshot.headings
           },
           userId: 'current-user' // TODO: Get from auth context
         })
@@ -561,8 +562,30 @@ New compelling description that highlights our unique value proposition.
                   initialCollectedData={
                     displayResult?.comprehensive 
                       ? { pages: displayResult.comprehensive.pages || [], ...displayResult.comprehensive }
-                      : displayResult?.existingData
-                        ? { pages: [displayResult.existingData], url: url.trim() }
+                      : (displayResult?.existingData || displayResult?.existing)
+                        ? {
+                            pages: [
+                              {
+                                url: url.trim(),
+                                pageLabel: 'Primary Page',
+                                pageType: 'page',
+                                title: (displayResult?.existingData || displayResult?.existing)?.title || '',
+                                metaDescription:
+                                  (displayResult?.existingData || displayResult?.existing)?.metaDescription || '',
+                                content: {
+                                  text:
+                                    (displayResult?.existingData || displayResult?.existing)?.cleanText || '',
+                                  wordCount:
+                                    (displayResult?.existingData || displayResult?.existing)?.wordCount || 0,
+                                },
+                                keywords: {
+                                  extractedKeywords:
+                                    (displayResult?.existingData || displayResult?.existing)?.extractedKeywords || [],
+                                },
+                              },
+                            ],
+                            url: url.trim(),
+                          }
                         : undefined
                   }
                   onReportsGenerated={(_reports) => {

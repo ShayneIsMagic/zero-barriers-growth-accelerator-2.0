@@ -30,6 +30,7 @@ import { useState } from 'react';
 import { MarkdownFallbackViewer } from '@/components/analysis/MarkdownFallbackViewer';
 import { Progress } from '@/components/ui/progress';
 import { useChunkedAnalysis } from '@/hooks/useChunkedAnalysis';
+import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
 
 export function B2BElementsPage() {
   const [url, setUrl] = useState('');
@@ -469,6 +470,32 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
           )}
         </CardContent>
       </Card>
+
+      <WorkflowTraceabilityPanel
+        featureName='B2B Elements of Value'
+        collectionPrompts={[
+          'Collect enterprise claims and value proposition statements',
+          'Collect CTA language and conversion intent text',
+          'Collect trust proof: clients, certifications, compliance language',
+          'Collect process/method descriptions and integration claims',
+          'Collect nav labels, headings, and image alt text',
+        ]}
+        executionSteps={[
+          'Use provided scraped content when available, else scrape source',
+          'Run block-based B2B category scoring with complete coverage',
+          'Generate merged chunk output and unified narrative report',
+          'Persist raw, chunked, and unified artifacts for reuse',
+        ]}
+        rawData={result?.puppeteerEvidence || result?.existing || scrapedContent || null}
+        analyzedData={result?.analysis || result?.comparison || null}
+        traceabilityData={result?.traceability || null}
+        versionInfo={{
+          assessmentType: 'elements-value-b2b-standalone',
+          snapshotId,
+          proposedContentId,
+          hasReadableReport: Boolean(result?.readableMarkdown),
+        }}
+      />
 
       {/* Results */}
       {result && (
