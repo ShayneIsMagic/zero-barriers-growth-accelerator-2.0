@@ -2,6 +2,12 @@
 
 import { useState, useCallback } from 'react';
 import type { ChunkProgressEvent } from '@/lib/chunked-framework-analysis';
+import {
+  buildCanonicalFrameworkPayload,
+  CanonicalFrameworkPayload,
+} from '@/types/canonical-framework-payload';
+import { saveSnapshot } from '@/lib/snapshot-storage';
+import { analyzeFrameworkWithAI } from '@/lib/framework-analysis-entrypoint';
 
 interface ChunkedAnalysisState {
   isAnalyzing: boolean;
@@ -10,6 +16,7 @@ interface ChunkedAnalysisState {
   completedCategories: string[];
   result: any | null;
   error: string | null;
+  canonicalPayload: CanonicalFrameworkPayload | null;
 }
 
 const INITIAL_STATE: ChunkedAnalysisState = {
@@ -19,6 +26,15 @@ const INITIAL_STATE: ChunkedAnalysisState = {
   completedCategories: [],
   result: null,
   error: null,
+  canonicalPayload: null,
+};
+
+const FRAMEWORK_NAME_BY_ENDPOINT: Record<string, string> = {
+  '/api/analyze/elements-value-b2c-standalone': 'b2c-elements',
+  '/api/analyze/elements-value-b2b-standalone': 'b2b-elements',
+  '/api/analyze/clifton-strengths-standalone': 'clifton',
+  '/api/analyze/golden-circle-standalone': 'golden-circle',
+  '/api/analyze/brand-archetypes-standalone': 'brand-archetypes',
 };
 
 /**
@@ -41,10 +57,42 @@ export function useChunkedAnalysis(endpoint: string) {
       });
 
       try {
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...body, stream: true }),
+        const url = typeof body.url === 'string' ? body.url : '';
+        const proposedContent =
+          typeof body.proposedContent === 'string' ? body.proposedContent : '';
+        const rawEvidence =
+          typeof body.existingContent === 'object' && body.existingContent !== null
+            ? (body.existingContent as Record<string, unknown>)
+            : {};
+        const collectorType =
+          typeof body.collectorType === 'string'
+            ? body.collectorType
+            : 'framework-page-collector';
+
+        const canonicalPayload = buildCanonicalFrameworkPayload({
+          url,
+          collectorType,
+          rawEvidence,
+          proposedContent,
+        });
+        await saveSnapshot(canonicalPayload.snapshotId, canonicalPayload);
+
+        const frameworkName = FRAMEWORK_NAME_BY_ENDPOINT[endpoint];
+        if (!frameworkName) {
+          throw new Error(`Unsupported analysis endpoint: ${endpoint}`);
+        }
+
+        setState((prev) => ({
+          ...prev,
+          canonicalPayload,
+        }));
+
+        const response = await analyzeFrameworkWithAI({
+          frameworkName,
+          payload: canonicalPayload,
+          stream: true,
+          analysisType:
+            typeof body.analysisType === 'string' ? body.analysisType : 'full',
         });
 
         if (!response.ok || !response.body) {
@@ -95,7 +143,10 @@ export function useChunkedAnalysis(endpoint: string) {
                   isAnalyzing: false,
                   percent: 100,
                   currentCategory: '',
-                  result: event.data,
+                  result: {
+                    ...event.data,
+                    canonicalPayload: prev.canonicalPayload,
+                  },
                 }));
               } else if (event.type === 'error') {
                 setState((prev) => ({
@@ -119,7 +170,10 @@ export function useChunkedAnalysis(endpoint: string) {
                 ...prev,
                 isAnalyzing: false,
                 percent: 100,
-                result: event.data,
+                result: {
+                  ...event.data,
+                  canonicalPayload: prev.canonicalPayload,
+                },
               }));
             } else if (event.type === 'error') {
               setState((prev) => ({

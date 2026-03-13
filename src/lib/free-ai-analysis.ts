@@ -10,8 +10,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-const AI_PROVIDER = (process.env.AI_PROVIDER || 'ollama').toLowerCase();
-const AI_ALLOW_FALLBACKS = process.env.AI_ALLOW_FALLBACKS === 'true';
+const AI_ALLOW_FALLBACKS = process.env.AI_ALLOW_FALLBACKS !== 'false';
 
 export interface AIAnalysisResponse extends Record<string, unknown> {
   success?: boolean;
@@ -170,7 +169,7 @@ export async function analyzeWithAI(
     const noOllamaMsg =
       'Ollama is not reachable. Start Ollama and ensure OLLAMA_BASE_URL points to a reachable Ollama server.';
     console.log(`⚠️ [${analysisType}] ${noOllamaMsg}`);
-    if (!AI_ALLOW_FALLBACKS || AI_PROVIDER === 'ollama') {
+    if (!AI_ALLOW_FALLBACKS) {
       throw new Error(noOllamaMsg);
     }
   }

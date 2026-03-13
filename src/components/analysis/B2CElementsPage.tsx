@@ -27,11 +27,13 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MarkdownFallbackViewer } from '@/components/analysis/MarkdownFallbackViewer';
 import { Progress } from '@/components/ui/progress';
 import { useChunkedAnalysis } from '@/hooks/useChunkedAnalysis';
 import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
+import { loadSnapshot } from '@/lib/snapshot-storage';
+import { CanonicalFrameworkPayload } from '@/types/canonical-framework-payload';
 
 export function B2CElementsPage() {
   const [url, setUrl] = useState('');
@@ -58,6 +60,26 @@ export function B2CElementsPage() {
   );
   const [isSavingSnapshot, setIsSavingSnapshot] = useState(false);
   const [isCreatingProposed, setIsCreatingProposed] = useState(false);
+  const [storedPayload, setStoredPayload] =
+    useState<CanonicalFrameworkPayload | null>(null);
+
+  useEffect(() => {
+    const syncStoredSnapshot = async () => {
+      const canonicalPayload = result?.canonicalPayload as
+        | CanonicalFrameworkPayload
+        | undefined;
+      if (!canonicalPayload?.snapshotId) {
+        setStoredPayload(null);
+        return;
+      }
+
+      const payload = await loadSnapshot(canonicalPayload.snapshotId);
+      setStoredPayload(payload);
+      setSnapshotId(canonicalPayload.snapshotId);
+    };
+
+    void syncStoredSnapshot();
+  }, [result]);
 
   const runAnalysis = async () => {
     if (!url.trim()) return;
@@ -532,6 +554,59 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
           </Card>
 
           {/* Side-by-Side Layout */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Pipeline Output</CardTitle>
+              <CardDescription>
+                Canonical payload, analyzed scores, and traceability hashes
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tabs defaultValue="raw" className="space-y-4">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="raw">Raw</TabsTrigger>
+                  <TabsTrigger value="analyzed">Analyzed</TabsTrigger>
+                  <TabsTrigger value="traceability">Traceability</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="raw">
+                  <pre className="max-h-96 overflow-auto whitespace-pre-wrap rounded border bg-muted/50 p-3 text-xs">
+                    {JSON.stringify(
+                      storedPayload || result?.canonicalPayload || null,
+                      null,
+                      2
+                    )}
+                  </pre>
+                </TabsContent>
+
+                <TabsContent value="analyzed">
+                  <pre className="max-h-96 overflow-auto whitespace-pre-wrap rounded border bg-muted/50 p-3 text-xs">
+                    {JSON.stringify(
+                      result?.analysis || result?.comparison || null,
+                      null,
+                      2
+                    )}
+                  </pre>
+                </TabsContent>
+
+                <TabsContent value="traceability">
+                  <pre className="max-h-96 overflow-auto whitespace-pre-wrap rounded border bg-muted/50 p-3 text-xs">
+                    {JSON.stringify(
+                      {
+                        snapshotId: storedPayload?.snapshotId || snapshotId,
+                        collectedAt: storedPayload?.collectedAt,
+                        collectorType: storedPayload?.collectorType,
+                        hashes: result?.traceability || null,
+                      },
+                      null,
+                      2
+                    )}
+                  </pre>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Left Column - Existing Content */}
             <Card>
