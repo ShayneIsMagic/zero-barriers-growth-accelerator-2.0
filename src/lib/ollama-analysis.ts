@@ -8,7 +8,9 @@
  * Default model: llama3.1:8b
  */
 
-const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || 'http://127.0.0.1:11434';
+const DEFAULT_LOCAL_OLLAMA_URL = 'http://127.0.0.1:11434';
+const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || DEFAULT_LOCAL_OLLAMA_URL;
+const OLLAMA_PUBLIC_URL = process.env.OLLAMA_PUBLIC_URL || '';
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llama3.1:8b';
 const OLLAMA_KEEP_ALIVE = process.env.OLLAMA_KEEP_ALIVE || '6h';
 const OLLAMA_API_KEY = process.env.OLLAMA_API_KEY || '';
@@ -20,6 +22,8 @@ interface OllamaGenerateResponse {
   response: string;
   done: boolean;
 }
+
+let cachedReachableBaseUrl: string | null = null;
 
 function getOllamaRequestHeaders(): Record<string, string> {
   const headers: Record<string, string> = {
@@ -35,10 +39,80 @@ function isLocalOllamaUrl(url: string): boolean {
   return url.includes('127.0.0.1') || url.includes('localhost');
 }
 
+function normalizeBaseUrl(url: string): string {
+  return url.replace(/\/$/, '');
+}
+
+function getOllamaBaseUrlCandidates(): string[] {
+  const isVercelRuntime = process.env.VERCEL === '1';
+  const rawCandidates = [
+    OLLAMA_PUBLIC_URL,
+    OLLAMA_BASE_URL,
+    ...(!isVercelRuntime ? [DEFAULT_LOCAL_OLLAMA_URL, 'http://localhost:11434'] : []),
+  ]
+    .map((value) => value.trim())
+    .filter(Boolean)
+    .map(normalizeBaseUrl);
+
+  return [...new Set(rawCandidates)];
+}
+
+async function checkOllamaAtBaseUrl(
+  baseUrl: string
+): Promise<{ reachable: boolean; modelFound: boolean; models: string[] }> {
+  try {
+    const res = await fetch(`${baseUrl}/api/tags`, {
+      headers: getOllamaRequestHeaders(),
+      signal: AbortSignal.timeout(10_000),
+    });
+
+    if (!res.ok) {
+      return { reachable: false, modelFound: false, models: [] };
+    }
+
+    const data = (await res.json()) as { models?: { name: string }[] };
+    const models = (data.models || []).map((model) => model.name);
+    const modelPrefix = OLLAMA_MODEL.split(':')[0];
+    const modelFound = models.some(
+      (name) => name === OLLAMA_MODEL || name.startsWith(modelPrefix)
+    );
+
+    return { reachable: true, modelFound, models };
+  } catch {
+    return { reachable: false, modelFound: false, models: [] };
+  }
+}
+
+async function resolveReachableOllamaBaseUrl(): Promise<string | null> {
+  if (cachedReachableBaseUrl) {
+    const cachedCheck = await checkOllamaAtBaseUrl(cachedReachableBaseUrl);
+    if (cachedCheck.reachable && cachedCheck.modelFound) {
+      return cachedReachableBaseUrl;
+    }
+    cachedReachableBaseUrl = null;
+  }
+
+  const candidates = getOllamaBaseUrlCandidates();
+
+  for (const candidate of candidates) {
+    const status = await checkOllamaAtBaseUrl(candidate);
+    if (status.reachable && status.modelFound) {
+      cachedReachableBaseUrl = candidate;
+      return candidate;
+    }
+  }
+
+  return null;
+}
+
 export function getOllamaConfigurationIssue(): string | null {
   const isVercelRuntime = process.env.VERCEL === '1';
-  if (isVercelRuntime && isLocalOllamaUrl(OLLAMA_BASE_URL)) {
-    return `Invalid OLLAMA_BASE_URL for Vercel: ${OLLAMA_BASE_URL}. Use a network-reachable Ollama endpoint (remote VM/container), not localhost.`;
+  if (isVercelRuntime) {
+    const candidates = getOllamaBaseUrlCandidates();
+    const hasRemoteCandidate = candidates.some((candidate) => !isLocalOllamaUrl(candidate));
+    if (!hasRemoteCandidate) {
+      return `No network-reachable Ollama endpoint configured for Vercel. Set OLLAMA_PUBLIC_URL or OLLAMA_BASE_URL to a remote HTTPS endpoint. Current OLLAMA_BASE_URL=${OLLAMA_BASE_URL}`;
+    }
   }
   return null;
 }
@@ -60,34 +134,16 @@ export async function isOllamaAvailable(): Promise<boolean> {
     return false;
   }
 
-  try {
-    const res = await fetch(`${OLLAMA_BASE_URL}/api/tags`, {
-      headers: getOllamaRequestHeaders(),
-      signal: AbortSignal.timeout(10_000),
-    });
-    if (!res.ok) {
-      console.log(`Ollama health check returned ${res.status}`);
-      return false;
-    }
-
-    const data = (await res.json()) as { models?: { name: string }[] };
-    const models = data.models || [];
-    const modelPrefix = OLLAMA_MODEL.split(':')[0];
-    const found = models.some(
-      (m) => m.name === OLLAMA_MODEL || m.name.startsWith(modelPrefix)
+  const resolvedBaseUrl = await resolveReachableOllamaBaseUrl();
+  if (!resolvedBaseUrl) {
+    const candidateList = getOllamaBaseUrlCandidates().join(', ');
+    console.log(
+      `Ollama not reachable with model "${OLLAMA_MODEL}" at candidates: ${candidateList || 'none'}`
     );
-
-    if (!found) {
-      console.log(
-        `Ollama is running but model "${OLLAMA_MODEL}" not found. Available: ${models.map((m) => m.name).join(', ')}`
-      );
-    }
-
-    return found;
-  } catch (err) {
-    console.log(`Ollama not reachable at ${OLLAMA_BASE_URL}: ${err instanceof Error ? err.message : 'unknown'}`);
     return false;
   }
+
+  return true;
 }
 
 /**
@@ -103,11 +159,18 @@ export async function analyzeWithOllama(
     throw new Error(configurationIssue);
   }
 
+  const resolvedBaseUrl = await resolveReachableOllamaBaseUrl();
+  if (!resolvedBaseUrl) {
+    throw new Error(
+      `Ollama is not reachable. Tried: ${getOllamaBaseUrlCandidates().join(', ') || 'none'}`
+    );
+  }
+
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 900_000);
 
   try {
-    const res = await fetch(`${OLLAMA_BASE_URL}/api/generate`, {
+    const res = await fetch(`${resolvedBaseUrl}/api/generate`, {
       method: 'POST',
       headers: getOllamaRequestHeaders(),
       body: JSON.stringify({

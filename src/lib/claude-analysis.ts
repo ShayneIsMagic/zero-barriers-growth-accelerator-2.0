@@ -11,7 +11,8 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 
-const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY || '';
+const CLAUDE_API_KEY =
+  process.env.CLAUDE_API_KEY || process.env.ANTHROPIC_API_KEY || '';
 
 // Rate limiting state
 let requestTimestamps: number[] = [];
@@ -63,7 +64,7 @@ export async function analyzeWithClaude(
 ): Promise<Record<string, unknown>> {
   if (!CLAUDE_API_KEY) {
     throw new Error(
-      'CLAUDE_API_KEY not configured. Add CLAUDE_API_KEY to your .env.local file.'
+      'Claude key not configured. Add CLAUDE_API_KEY or ANTHROPIC_API_KEY to your .env.local file.'
     );
   }
 
@@ -121,6 +122,10 @@ export async function analyzeWithClaude(
  * Check if Claude API key is configured
  */
 export function isClaudeConfigured(): boolean {
-  return Boolean(CLAUDE_API_KEY && CLAUDE_API_KEY !== 'your-claude-api-key');
+  return Boolean(
+    CLAUDE_API_KEY &&
+      CLAUDE_API_KEY !== 'your-claude-api-key' &&
+      !CLAUDE_API_KEY.includes('your-key-here')
+  );
 }
 

@@ -9,6 +9,7 @@ export async function GET() {
     const ollamaAvailable = await isOllamaAvailable();
     const ollamaBaseUrl =
       process.env.OLLAMA_BASE_URL || 'http://127.0.0.1:11434';
+    const ollamaPublicUrl = process.env.OLLAMA_PUBLIC_URL || null;
     const ollamaModel = process.env.OLLAMA_MODEL || 'llama3.1:8b';
     const ollamaConfigurationIssue = getOllamaConfigurationIssue();
 
@@ -24,6 +25,7 @@ export async function GET() {
         ollama: {
           available: ollamaAvailable,
           baseUrl: ollamaBaseUrl,
+          publicUrl: ollamaPublicUrl,
           model: ollamaModel,
           configurationIssue: ollamaConfigurationIssue,
         },
