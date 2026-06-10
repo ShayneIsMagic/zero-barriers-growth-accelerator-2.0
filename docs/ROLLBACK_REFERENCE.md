@@ -11,12 +11,12 @@
 
 | Role | Branch / ref | Commit | Remote |
 |------|--------------|--------|--------|
-| **Production baseline (`main`)** | `main` | `bf6b824` | `origin/main` ✅ |
-| **Feature branch (last pushed commit)** | `shayne-agents-v6` | `8dd7017` | `origin/shayne-agents-v6` ✅ |
-| **Local dev server (this machine)** | `shayne-agents-v6` + **uncommitted WIP** | see §3 | not on any commit |
+| **Production on remote (`origin/main`)** | `main` | `bf6b824` | until `git push` |
+| **Local `main` (merged)** | `main` | `ab5afec` | **15 commits ahead of `origin/main`** — not pushed |
+| **Feature branch tip** | `shayne-agents-v6` | `ab5afec` | same as local `main` after merge |
+| **Pre-merge production rollback** | tag/commit | `bf6b824` | last known `origin/main` |
 
-**Commits on feature branch ahead of `main`:** 14  
-**Uncommitted local changes:** ~116 paths (staged + unstaged + untracked)
+**Merge completed:** 2026-06-08 — fast-forward `main` ← `shayne-agents-v6` (15 commits including checkpoint `ab5afec`).
 
 ---
 
@@ -118,11 +118,10 @@ git commit -m "chore: checkpoint pre-merge agents v6 + assessment guides"
 git stash push -u -m "pre-merge WIP 2026-06-08"
 ```
 
-Record the new commit hash here after you create it:
-
 | Checkpoint | Commit | Notes |
 |------------|--------|-------|
-| *(pending)* | — | User should commit or tag WIP before merge |
+| Pre-merge WIP checkpoint | `ab5afec` | All guides, apiCall layer, archetype ranking, API docs |
+| Merged `main` HEAD | `ab5afec` | Fast-forward merge 2026-06-08 |
 
 ---
 
@@ -167,10 +166,11 @@ Oldest → newest (from `git log main..shayne-agents-v6`):
 
 | Event | Date | `main` commit | Notes |
 |-------|------|---------------|-------|
-| Pre-merge production | 2026-06-08 | `bf6b824` | Documented baseline |
-| Pre-merge feature tip | 2026-06-08 | `8dd7017` | + local WIP not committed |
-| Merge to `main` | — | — | *pending* |
-| Post-merge production | — | — | *pending* |
+| Pre-merge production (`origin/main`) | 2026-06-08 | `bf6b824` | Rollback target if deploy fails |
+| Pre-merge feature tip | 2026-06-08 | `8dd7017` | Before WIP checkpoint |
+| WIP checkpoint | 2026-06-08 | `ab5afec` | Committed before merge |
+| Merge to `main` (local) | 2026-06-08 | `ab5afec` | Fast-forward; **not pushed** |
+| Post-merge production | — | — | *pending `git push origin main`* |
 
 ---
 
