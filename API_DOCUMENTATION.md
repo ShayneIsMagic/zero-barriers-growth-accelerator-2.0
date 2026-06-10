@@ -18,8 +18,8 @@ Signed with `NEXTAUTH_SECRET`.
 
 | Auth level | Description |
 |---|---|
-| **None** | Public in local dev when `REQUIRE_API_AUTH=false` |
-| **Bearer** | Valid JWT required when `REQUIRE_API_AUTH=true` or in production (middleware enforces on `/api/analyze`, `/api/scrape`, `/api/content`, `/api/reports`, `/api/analysis`, `/api/generate-*`, `/api/tools`) |
+| **None** | Default — auth open until `ENABLE_AUTH=true` or `DISABLE_AUTH=false` |
+| **Bearer** | Valid JWT required when auth is enabled (`ENABLE_AUTH=true`, `REQUIRE_API_AUTH=true`, or `DISABLE_AUTH=false`) — middleware enforces on `/api/analyze`, `/api/scrape`, `/api/content`, `/api/reports`, `/api/analysis`, `/api/generate-*`, `/api/tools` |
 | **Bearer (route)** | Some routes also require auth at handler level (`/api/content/snapshots`, `GET /api/analysis`) |
 | **Dev only** | Returns `404` in production (`NODE_ENV !== 'development'` and `TEST_MODE !== 'true'`) |
 
@@ -327,7 +327,7 @@ These are the production-ready framework endpoints. All accept:
 | Status | Body |
 |---|---|
 | `400` | `{ "success": false, "error": "URL required" }` |
-| `200` | `{ "success": true, "existing": {}, "analysis": {}, "readableMarkdown": "...", "message": "..." }` |
+| `200` | `{ "success": true, "existing": {}, "analysis": {}, "readableMarkdown": "...", "analysisId": "uuid (when authenticated)", "message": "..." }` |
 | `500` | `{ "success": false, "error": "...", "details": "..." }` |
 
 When AI is unavailable, standalone routes may return `fallbackMarkdown` for manual analysis.
@@ -438,6 +438,44 @@ Query for debug-user: `?email=user@example.com`
 
 ---
 
+## Database (PostgreSQL / Prisma)
+
+**Source of truth:** `prisma/schema.prisma` (75 models). **Production:** Supabase-hosted Postgres. **Never** apply schema changes with ad-hoc SQL outside migrations.
+
+### Schema management
+
+| Command | When to use |
+|---|---|
+| `npm run db:migrate` | Local dev — create/review migration after `schema.prisma` changes |
+| `npm run db:migrate:deploy` | Production / Supabase — apply pending migrations |
+| `npm run db:migrate:status` | Verify migration state |
+| `npm run db:push` | Quick local prototype only — prefer migrations for shared environments |
+| `npm run admin:ensure` | Seed/update `SUPER_ADMIN` from env (not demo data) |
+
+Migrations live in `prisma/migrations/`. Baseline: `20250610120000_baseline`. Legacy SQL in `prisma/migrations/advanced-schema/` is archival — do not run directly.
+
+**Existing Supabase (schema already applied):** mark baseline as applied without re-running DDL:
+
+```bash
+npx prisma migrate resolve --applied 20250610120000_baseline
+```
+
+### What is persisted server-side
+
+| Data | Table(s) | When |
+|---|---|---|
+| Users / auth | `User` | Signup, `admin:ensure` |
+| Content snapshots | `ContentSnapshot`, `ProposedContent`, `ContentComparison` | `/api/content/*` (Bearer required) |
+| Standalone framework runs | `Analysis`, `FrameworkResult`, `FrameworkCategory`, `FrameworkElement` | Standalone `POST /api/analyze/*-standalone` and `revenue-trends` when caller is authenticated |
+| Phased / comprehensive reports | `Analysis` (+ related) | Phase routes, `report-storage.ts` |
+| Client cache | LocalForage / `localStorage` | Scraped content and UI session — **not** authoritative; see Client storage keys |
+
+Standalone routes return `analysisId` when a valid JWT is present. Unauthenticated local dev (`DISABLE_AUTH=true`) skips DB writes by design.
+
+Retrieve saved runs: `GET /api/analysis` (user-scoped list), `GET /api/analysis/report/[id]`.
+
+---
+
 ## Environment variables
 
 | Variable | Required | Purpose |
@@ -484,3 +522,4 @@ Frontend API calls must use `apiCall` (`src/lib/api-call.ts`) or `useAPICall` / 
 |---|---|
 | 2026-06-08 | Initial contract document; dev-only route gating; shared `api-route.ts` helpers |
 | 2026-06-08 | Auth table corrected; system/status + brand-archetypes documented; client storage keys; IDOR fix on GET /api/analysis |
+| 2026-06-10 | Database section: Prisma migrations, persistence model, `analysisId` on standalone responses |

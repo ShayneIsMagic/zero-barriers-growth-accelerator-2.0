@@ -593,10 +593,18 @@ uploads/
 - [ ] New routes use `src/lib/server/api-route.ts` helpers (`apiErrorResponse`, `requireAuth`, `parseRequestJson`)
 - [ ] Input validated; errors return documented `{ success: false, error, details? }` shape
 - [ ] Secrets in `.env.local` / Vercel env — never hardcoded
-- [ ] Schema changes via Prisma (`prisma/schema.prisma` + migrations)
+- [ ] Schema changes via Prisma (`prisma/schema.prisma` + migrations in `prisma/migrations/`)
+
+**Database (AGENTS Backend — adapted):**
+- [ ] **All schema changes** go through Prisma migrations (`npm run db:migrate` locally, `npm run db:migrate:deploy` on Supabase/Vercel). Never modify production Postgres by hand.
+- [ ] **Production `DATABASE_URL`** points at Supabase (or managed Postgres). Local `zerobarriers` is dev-only.
+- [ ] **No mock/fallback data** in production paths. Seed super admin with `npm run admin:ensure` — not hardcoded demo users.
+- [ ] **Server owns durable analysis data.** Standalone framework routes persist via `src/lib/server/analysis-persistence.ts` when the user is authenticated. Client LocalForage is a cache, not the system of record.
+- [ ] **Structured results** use `StructuredStorageService` → `FrameworkResult` / `FrameworkCategory` / `FrameworkElement` (wired from analysis-persistence).
+- [ ] **User-scoped reads** — `GET /api/analysis` filters by `userId` (IDOR-safe).
 
 **Documentation:**
-- [ ] `API_DOCUMENTATION.md` updated for new/changed endpoints
+- [ ] `API_DOCUMENTATION.md` updated for new/changed endpoints (including Database section)
 - [ ] `postman/zero-barriers-api.postman_collection.json` updated to match
 
 ---

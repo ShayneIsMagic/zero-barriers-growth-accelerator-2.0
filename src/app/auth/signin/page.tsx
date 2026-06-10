@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Link from 'next/link';
+import { isClientAuthDisabled } from '@/lib/security-config';
 
 function SignInForm(): React.ReactElement {
   const [email, setEmail] = useState('');
@@ -26,6 +27,10 @@ function SignInForm(): React.ReactElement {
   const callbackUrl = searchParams.get('callbackUrl') || '/workspace';
 
   useEffect(() => {
+    if (isClientAuthDisabled()) {
+      router.replace('/workspace');
+      return;
+    }
     if (!authLoading && user) {
       router.replace(callbackUrl.startsWith('/') ? callbackUrl : '/workspace');
     }

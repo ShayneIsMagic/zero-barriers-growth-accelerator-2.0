@@ -10,6 +10,10 @@ import {
   formatEvidenceForPrompt,
 } from '@/lib/framework-evidence-protocol';
 import { buildAnalysisTraceability } from '@/lib/server/analysis-traceability';
+import {
+  buildPersistenceOnComplete,
+  enrichResponseWithPersistence,
+} from '@/lib/server/analysis-persistence';
 export const maxDuration = 300;
 
 const isServerless =
@@ -152,18 +156,34 @@ export async function POST(request: NextRequest) {
       };
     };
 
+    const persistenceMeta = {
+      url,
+      framework: 'b2c-elements',
+      contentType: 'elements-value-b2c-standalone',
+      proposed: proposedData,
+    };
+    const onComplete = buildPersistenceOnComplete(request, persistenceMeta);
+
     if (useStreaming) {
       const { streamChunkedAnalysis } = await import('@/lib/streaming-analysis');
       return streamChunkedAnalysis({
         analysisOptions,
         buildResponse: buildResponsePayload,
         frameworkLabel: 'B2C',
+        onComplete,
       });
     }
 
     const analysis = await generateB2CAnalysis(existingData, proposedData, url, _analysisType || 'full');
     console.log('✅ [B2C] Analysis complete');
-    return NextResponse.json(buildResponsePayload(analysis as Record<string, unknown>));
+    const analysisRecord = analysis as Record<string, unknown>;
+    const payload = buildResponsePayload(analysisRecord);
+    return NextResponse.json(
+      await enrichResponseWithPersistence(request, {
+        ...persistenceMeta,
+        analysis: analysisRecord,
+      }, payload)
+    );
   } catch (error) {
     console.error('[B2C] Error:', error);
     return NextResponse.json(

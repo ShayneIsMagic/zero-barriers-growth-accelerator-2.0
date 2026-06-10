@@ -2,12 +2,14 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/contexts/auth-context';
+import { isClientAuthDisabled } from '@/lib/security-config';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { MobileNav } from '@/components/ui/mobile-nav';
 import { Logo } from '@/components/ui/logo';
 
 export function Header() {
+  const authDisabled = isClientAuthDisabled();
   const { user, signOut } = useAuth();
 
   const handleSignOut = async () => {
@@ -43,6 +45,10 @@ export function Header() {
                   Sign Out
                 </Button>
               </div>
+            ) : authDisabled ? (
+              <Button size="sm" asChild>
+                <Link href="/workspace">Open Workspace</Link>
+              </Button>
             ) : (
               <div className="flex items-center space-x-2">
                 <Button variant="outline" size="sm" asChild>

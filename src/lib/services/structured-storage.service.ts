@@ -5,6 +5,7 @@
  * Enables proper querying, reporting, and analytics
  */
 
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 
 export interface StructuredFrameworkResult {
@@ -176,9 +177,9 @@ export class StructuredStorageService {
           elementName: element.name,
           isPresent: element.present,
           confidence: element.confidence,
-          evidence: element.evidence,
+          evidence: element.evidence as Prisma.InputJsonValue,
           revenueOpportunity: element.revenueOpportunity,
-          recommendations: element.recommendations,
+          recommendations: element.recommendations as Prisma.InputJsonValue,
         },
       });
 
@@ -200,20 +201,25 @@ export class StructuredStorageService {
    * Extract overall score from results
    */
   private static extractOverallScore(
-    results: any,
+    results: Record<string, unknown>,
     _framework: string
   ): number | null {
+    if (typeof results.overallScore === 'number') {
+      return results.overallScore;
+    }
     if (results.overall_score) {
       if (
         typeof results.overall_score === 'object' &&
-        results.overall_score.present &&
-        results.overall_score.total
+        results.overall_score !== null &&
+        'present' in results.overall_score &&
+        'total' in results.overall_score
       ) {
-        return (
-          (results.overall_score.present / results.overall_score.total) * 100
-        );
+        const ratio = results.overall_score as { present: number; total: number };
+        return (ratio.present / ratio.total) * 100;
       }
-      return results.overall_score;
+      if (typeof results.overall_score === 'number') {
+        return results.overall_score;
+      }
     }
     return null;
   }
@@ -236,48 +242,74 @@ export class StructuredStorageService {
    * Extract categories based on framework
    */
   private static extractCategories(
-    results: any,
+    results: Record<string, unknown>,
     framework: string
-  ): Record<string, any> {
-    const categories: Record<string, any> = {};
+  ): Record<string, Record<string, unknown>> {
+    const chunkedCategories = results.categories;
+    if (
+      chunkedCategories &&
+      typeof chunkedCategories === 'object' &&
+      !Array.isArray(chunkedCategories)
+    ) {
+      return chunkedCategories as Record<string, Record<string, unknown>>;
+    }
+
+    const categories: Record<string, Record<string, unknown>> = {};
 
     switch (framework) {
       case 'b2c-elements':
-        categories.functional = results.functional || {};
-        categories.emotional = results.emotional || {};
-        categories.life_changing = results.life_changing || {};
-        categories.social_impact = results.social_impact || {};
+        categories.functional = (results.functional as Record<string, unknown>) || {};
+        categories.emotional = (results.emotional as Record<string, unknown>) || {};
+        categories.life_changing =
+          (results.life_changing as Record<string, unknown>) || {};
+        categories.social_impact =
+          (results.social_impact as Record<string, unknown>) || {};
         break;
 
       case 'b2b-elements':
-        categories.table_stakes = results.table_stakes || {};
-        categories.functional = results.functional || {};
+        categories.table_stakes =
+          (results.table_stakes as Record<string, unknown>) || {};
+        categories.functional = (results.functional as Record<string, unknown>) || {};
         categories.ease_of_doing_business =
-          results.ease_of_doing_business || {};
-        categories.individual = results.individual || {};
-        categories.inspirational = results.inspirational || {};
+          (results.ease_of_doing_business as Record<string, unknown>) || {};
+        categories.individual = (results.individual as Record<string, unknown>) || {};
+        categories.inspirational =
+          (results.inspirational as Record<string, unknown>) || {};
         break;
 
       case 'golden-circle':
-        categories.why = results.why || {};
-        categories.how = results.how || {};
-        categories.what = results.what || {};
-        categories.who = results.who || {};
+        categories.why = (results.why as Record<string, unknown>) || {};
+        categories.how = (results.how as Record<string, unknown>) || {};
+        categories.what = (results.what as Record<string, unknown>) || {};
+        categories.who = (results.who as Record<string, unknown>) || {};
         break;
 
       case 'clifton-strengths':
-        categories.executing = results.executing || {};
-        categories.influencing = results.influencing || {};
-        categories.relationship_building = results.relationship_building || {};
-        categories.strategic_thinking = results.strategic_thinking || {};
+        categories.executing = (results.executing as Record<string, unknown>) || {};
+        categories.influencing =
+          (results.influencing as Record<string, unknown>) || {};
+        categories.relationship_building =
+          (results.relationship_building as Record<string, unknown>) || {};
+        categories.strategic_thinking =
+          (results.strategic_thinking as Record<string, unknown>) || {};
+        break;
+
+      case 'brand-archetypes':
+        categories.ego = (results.ego as Record<string, unknown>) || {};
+        categories.order = (results.order as Record<string, unknown>) || {};
+        categories.freedom = (results.freedom as Record<string, unknown>) || {};
+        categories.social = (results.social as Record<string, unknown>) || {};
         break;
 
       case 'revenue-trends':
-        categories.market_analysis = results.market_analysis || {};
+        categories.market_analysis =
+          (results.market_analysis as Record<string, unknown>) || {};
         categories.opportunity_identification =
-          results.opportunity_identification || {};
-        categories.revenue_optimization = results.revenue_optimization || {};
-        categories.growth_strategies = results.growth_strategies || {};
+          (results.opportunity_identification as Record<string, unknown>) || {};
+        categories.revenue_optimization =
+          (results.revenue_optimization as Record<string, unknown>) || {};
+        categories.growth_strategies =
+          (results.growth_strategies as Record<string, unknown>) || {};
         break;
     }
 
@@ -287,9 +319,20 @@ export class StructuredStorageService {
   /**
    * Extract category score
    */
-  private static extractCategoryScore(categoryInfo: any): number | null {
-    if (categoryInfo.score) return categoryInfo.score;
-    if (categoryInfo.present && categoryInfo.total) {
+  private static extractCategoryScore(
+    categoryInfo: Record<string, unknown>
+  ): number | null {
+    if (typeof categoryInfo.categoryScore === 'number') {
+      return categoryInfo.categoryScore;
+    }
+    if (typeof categoryInfo.score === 'number') {
+      return categoryInfo.score;
+    }
+    if (
+      typeof categoryInfo.present === 'number' &&
+      typeof categoryInfo.total === 'number' &&
+      categoryInfo.total > 0
+    ) {
       return (categoryInfo.present / categoryInfo.total) * 100;
     }
     return null;
@@ -311,14 +354,25 @@ export class StructuredStorageService {
       };
     }
 
-    // Fallback to counting elements
-    const elements = categoryInfo.elements || [];
-    const presentCount = elements.filter((e: any) => e.present).length;
+    const elements = categoryInfo.elements;
+    if (elements && typeof elements === 'object' && !Array.isArray(elements)) {
+      const entries = Object.values(elements as Record<string, { score?: number }>);
+      const presentCount = entries.filter((e) => (e.score ?? 0) >= 0.6).length;
+      return {
+        presentElements: presentCount,
+        totalElements: entries.length,
+        fraction: `${presentCount}/${entries.length}`,
+      };
+    }
+
+    const elementList = Array.isArray(elements) ? elements : [];
+    const presentCount = elementList.filter((e: { present?: boolean }) => e.present)
+      .length;
 
     return {
       presentElements: presentCount,
-      totalElements: elements.length,
-      fraction: `${presentCount}/${elements.length}`,
+      totalElements: elementList.length,
+      fraction: `${presentCount}/${elementList.length}`,
     };
   }
 
@@ -339,17 +393,57 @@ export class StructuredStorageService {
   /**
    * Extract elements from category
    */
-  private static extractElements(categoryInfo: any, _framework: string): any[] {
-    if (categoryInfo.elements) {
-      return categoryInfo.elements.map((element: any) => ({
-        name: element.element_name || element.name,
-        present: element.present || false,
-        confidence: element.confidence,
-        evidence: element.evidence || [],
-        revenueOpportunity: element.revenue_opportunity,
-        recommendations: element.recommendations || [],
+  private static extractElements(
+    categoryInfo: Record<string, unknown>,
+    _framework: string
+  ): Array<{
+    name: string;
+    present: boolean;
+    confidence: number | null;
+    evidence: unknown[];
+    revenueOpportunity: string | null;
+    recommendations: unknown[];
+  }> {
+    const elements = categoryInfo.elements;
+    if (!elements) {
+      return [];
+    }
+
+    if (typeof elements === 'object' && !Array.isArray(elements)) {
+      return Object.entries(elements as Record<string, Record<string, unknown>>).map(
+        ([name, detail]) => ({
+          name,
+          present: typeof detail.score === 'number' ? detail.score >= 0.6 : false,
+          confidence: typeof detail.score === 'number' ? detail.score : null,
+          evidence: Array.isArray(detail.evidence) ? detail.evidence : [],
+          revenueOpportunity:
+            typeof detail.revenue_opportunity === 'string'
+              ? detail.revenue_opportunity
+              : null,
+          recommendations: Array.isArray(detail.recommendations)
+            ? detail.recommendations
+            : [],
+        })
+      );
+    }
+
+    if (Array.isArray(elements)) {
+      return elements.map((element: Record<string, unknown>) => ({
+        name: String(element.element_name || element.name || 'unknown'),
+        present: Boolean(element.present),
+        confidence:
+          typeof element.confidence === 'number' ? element.confidence : null,
+        evidence: Array.isArray(element.evidence) ? element.evidence : [],
+        revenueOpportunity:
+          typeof element.revenue_opportunity === 'string'
+            ? element.revenue_opportunity
+            : null,
+        recommendations: Array.isArray(element.recommendations)
+          ? element.recommendations
+          : [],
       }));
     }
+
     return [];
   }
 

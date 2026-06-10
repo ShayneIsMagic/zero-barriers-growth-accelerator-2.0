@@ -5,10 +5,12 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
+import { isClientAuthDisabled } from '@/lib/security-config';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
+  const authDisabled = isClientAuthDisabled();
   const { user, signOut } = useAuth();
 
   const navigation = [
@@ -83,6 +85,12 @@ export function MobileNav() {
                           Sign Out
                         </Button>
                       </>
+                    ) : authDisabled ? (
+                      <Link href="/workspace" onClick={() => setIsOpen(false)}>
+                        <Button className="w-full justify-start">
+                          Open Workspace
+                        </Button>
+                      </Link>
                     ) : (
                       <>
                         <Link

@@ -48,6 +48,13 @@ const nextConfig = {
   // Environment variables
   env: {
     CLOUDFLARE_PAGES: 'false',
+    // Open app without login until ENABLE_AUTH=true on Vercel / .env.local
+    NEXT_PUBLIC_DISABLE_AUTH:
+      process.env.ENABLE_AUTH === 'true' ||
+      process.env.REQUIRE_API_AUTH === 'true' ||
+      process.env.DISABLE_AUTH === 'false'
+        ? 'false'
+        : 'true',
   },
 
   // Performance headers

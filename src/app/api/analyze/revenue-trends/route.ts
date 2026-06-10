@@ -9,6 +9,10 @@ import {
   formatEvidenceForPrompt,
 } from '@/lib/framework-evidence-protocol';
 import { buildAnalysisTraceability } from '@/lib/server/analysis-traceability';
+import {
+  buildPersistenceOnComplete,
+  enrichResponseWithPersistence,
+} from '@/lib/server/analysis-persistence';
 
 export const maxDuration = 300;
 
@@ -135,17 +139,33 @@ export async function POST(request: NextRequest) {
     };
 
     const analysisOptions = buildRevenueOptions(existingData, url, evidencePackage);
+    const persistenceMeta = {
+      url,
+      framework: 'revenue-trends',
+      contentType: 'revenue-trends',
+      proposed: proposedData,
+    };
+    const onComplete = buildPersistenceOnComplete(request, persistenceMeta);
+
     if (useStreaming) {
       const { streamChunkedAnalysis } = await import('@/lib/streaming-analysis');
       return streamChunkedAnalysis({
         analysisOptions,
         buildResponse: buildResponsePayload,
         frameworkLabel: 'Revenue Trends',
+        onComplete,
       });
     }
 
     const analysis = await generateRevenueAnalysis(existingData, proposedData, url);
-    return NextResponse.json(buildResponsePayload(analysis));
+    const analysisRecord = analysis as Record<string, unknown>;
+    const payload = buildResponsePayload(analysisRecord);
+    return NextResponse.json(
+      await enrichResponseWithPersistence(request, {
+        ...persistenceMeta,
+        analysis: analysisRecord,
+      }, payload)
+    );
   } catch (error) {
     console.error('Revenue trends analysis error:', error);
     return NextResponse.json(

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,7 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { signUpUser } from '@/services/auth-services';
 import { ArrowRight, Loader2, UserPlus } from 'lucide-react';
+import { isClientAuthDisabled } from '@/lib/security-config';
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState({
@@ -27,6 +28,12 @@ export default function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+
+  useEffect(() => {
+    if (isClientAuthDisabled()) {
+      router.replace('/workspace');
+    }
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

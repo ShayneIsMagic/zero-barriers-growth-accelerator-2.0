@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { changeUserPassword, updateUserProfile } from '@/services/auth-services';
 import { useRouter } from 'next/navigation';
+import { isClientAuthDisabled } from '@/lib/security-config';
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
@@ -44,7 +45,7 @@ export default function ProfilePage() {
   }
 
   if (!user) {
-    router.push('/auth/signin');
+    router.push(isClientAuthDisabled() ? '/workspace' : '/auth/signin');
     return null;
   }
 

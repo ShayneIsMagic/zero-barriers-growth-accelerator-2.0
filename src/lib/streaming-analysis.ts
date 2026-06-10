@@ -21,6 +21,10 @@ interface StreamingAnalysisParams {
   analysisOptions: Omit<ChunkedAnalysisOptions, 'onProgress'>;
   buildResponse: (analysis: Record<string, unknown>) => Record<string, unknown>;
   frameworkLabel: string;
+  onComplete?: (
+    analysis: Record<string, unknown>,
+    response: Record<string, unknown>
+  ) => Promise<Record<string, unknown>>;
 }
 
 /**
@@ -31,6 +35,7 @@ export function streamChunkedAnalysis({
   analysisOptions,
   buildResponse,
   frameworkLabel,
+  onComplete,
 }: StreamingAnalysisParams): Response {
   const encoder = new TextEncoder();
 
@@ -50,7 +55,10 @@ export function streamChunkedAnalysis({
           },
         });
 
-        const finalPayload = buildResponse(analysis);
+        let finalPayload = buildResponse(analysis);
+        if (onComplete) {
+          finalPayload = await onComplete(analysis, finalPayload);
+        }
 
         controller.enqueue(
           encoder.encode(

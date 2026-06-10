@@ -29,24 +29,42 @@ export function isProductionEnvironment(): boolean {
   );
 }
 
-/**
- * Local testing only — skips JWT on pages and APIs. Never applies in production.
- */
-export function isAuthDisabled(): boolean {
-  if (isProductionEnvironment()) {
-    return false;
-  }
-  if (process.env.DISABLE_AUTH === 'true') {
-    return true;
-  }
-  return false;
+function isAuthExplicitlyEnabled(): boolean {
+  return (
+    process.env.ENABLE_AUTH === 'true' ||
+    process.env.REQUIRE_API_AUTH === 'true'
+  );
 }
 
 /**
- * Client-visible mirror of DISABLE_AUTH (set NEXT_PUBLIC_DISABLE_AUTH=true in .env.local).
+ * When true, JWT is not required on pages or protected APIs.
+ * Defaults to open access until ENABLE_AUTH=true (Supabase login restored).
+ * Set DISABLE_AUTH=false to require auth without ENABLE_AUTH.
+ */
+export function isAuthDisabled(): boolean {
+  if (isAuthExplicitlyEnabled()) {
+    return false;
+  }
+  if (process.env.DISABLE_AUTH === 'false') {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Client-visible mirror — set via next.config.js from build-time env.
  */
 export function isClientAuthDisabled(): boolean {
-  return process.env.NEXT_PUBLIC_DISABLE_AUTH === 'true';
+  if (process.env.NEXT_PUBLIC_ENABLE_AUTH === 'true') {
+    return false;
+  }
+  if (process.env.NEXT_PUBLIC_DISABLE_AUTH === 'false') {
+    return false;
+  }
+  if (process.env.NEXT_PUBLIC_DISABLE_AUTH === 'true') {
+    return true;
+  }
+  return !isAuthExplicitlyEnabled();
 }
 
 /**
@@ -56,6 +74,9 @@ export function isClientAuthDisabled(): boolean {
 export function isApiAuthRequired(): boolean {
   if (isAuthDisabled()) {
     return false;
+  }
+  if (isAuthExplicitlyEnabled()) {
+    return true;
   }
   if (process.env.REQUIRE_API_AUTH === 'true') {
     return true;

@@ -12,6 +12,10 @@ import {
 import { buildChunkAnalysisOptions } from '@/lib/framework/build-chunk-options';
 import { enrichAnalysisWithArchetypeRanking } from '@/lib/framework/archetype-ranking';
 import { buildAnalysisTraceability } from '@/lib/server/analysis-traceability';
+import {
+  buildPersistenceOnComplete,
+  enrichResponseWithPersistence,
+} from '@/lib/server/analysis-persistence';
 
 export const maxDuration = 300;
 
@@ -168,12 +172,21 @@ export async function POST(request: NextRequest) {
       evidencePackage
     );
 
+    const persistenceMeta = {
+      url,
+      framework: 'brand-archetypes',
+      contentType: 'brand-archetypes-standalone',
+      proposed: proposedData,
+    };
+    const onComplete = buildPersistenceOnComplete(request, persistenceMeta);
+
     if (useStreaming) {
       const { streamChunkedAnalysis } = await import('@/lib/streaming-analysis');
       return streamChunkedAnalysis({
         analysisOptions,
         buildResponse: buildResponsePayload,
         frameworkLabel: 'Brand Archetypes',
+        onComplete,
       });
     }
 
@@ -183,7 +196,14 @@ export async function POST(request: NextRequest) {
       url,
       evidencePackage
     );
-    return NextResponse.json(buildResponsePayload(analysis));
+    const analysisRecord = analysis as Record<string, unknown>;
+    const payload = buildResponsePayload(analysisRecord);
+    return NextResponse.json(
+      await enrichResponseWithPersistence(request, {
+        ...persistenceMeta,
+        analysis: analysisRecord,
+      }, payload)
+    );
   } catch (error) {
     return NextResponse.json(
       {

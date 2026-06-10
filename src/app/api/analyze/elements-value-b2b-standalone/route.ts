@@ -10,6 +10,10 @@ import {
   formatEvidenceForPrompt,
 } from '@/lib/framework-evidence-protocol';
 import { buildAnalysisTraceability } from '@/lib/server/analysis-traceability';
+import {
+  buildPersistenceOnComplete,
+  enrichResponseWithPersistence,
+} from '@/lib/server/analysis-persistence';
 export const maxDuration = 300;
 
 const isServerless =
@@ -142,6 +146,13 @@ export async function POST(request: NextRequest) {
     };
 
     const analysisOptions = buildB2BOptions(existingData, url, evidencePackage);
+    const persistenceMeta = {
+      url,
+      framework: 'b2b-elements',
+      contentType: 'elements-value-b2b-standalone',
+      proposed: proposedData,
+    };
+    const onComplete = buildPersistenceOnComplete(request, persistenceMeta);
 
     if (useStreaming) {
       const { streamChunkedAnalysis } = await import('@/lib/streaming-analysis');
@@ -149,11 +160,19 @@ export async function POST(request: NextRequest) {
         analysisOptions,
         buildResponse: buildResponsePayload,
         frameworkLabel: 'B2B',
+        onComplete,
       });
     }
 
     const analysis = await generateB2BAnalysis(existingData, proposedData, url, _analysisType || 'full');
-    return NextResponse.json(buildResponsePayload(analysis as Record<string, unknown>));
+    const analysisRecord = analysis as Record<string, unknown>;
+    const payload = buildResponsePayload(analysisRecord);
+    return NextResponse.json(
+      await enrichResponseWithPersistence(request, {
+        ...persistenceMeta,
+        analysis: analysisRecord,
+      }, payload)
+    );
   } catch (error) {
     console.error('B2B Elements analysis error:', error);
     return NextResponse.json(
