@@ -30,6 +30,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { PageAnalysisResult } from '@/lib/page-analyzer';
+import { apiCall } from '@/lib/api-call';
 
 interface PageAnalysisFormProps {
   onAnalysisComplete?: (result: PageAnalysisResult) => void;
@@ -74,28 +75,21 @@ export function PageAnalysisForm({
       setCurrentStep('Analyzing with AI...');
       setProgress(40);
 
-      const response = await fetch('/api/analyze/page', {
+      const { data } = await apiCall<{
+        analysis: PageAnalysisResult;
+      }>('/api/analyze/page', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+        body: {
           url: url.trim(),
           pageType,
           deepAnalysis: true,
-        }),
+        },
+        showErrorToast: false,
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.details || 'Analysis failed');
-      }
 
       // Step 3: Processing results
       setCurrentStep('Processing results...');
       setProgress(80);
-
-      const data = await response.json();
       const result = data.analysis as PageAnalysisResult;
 
       // Step 4: Complete
@@ -116,17 +110,12 @@ export function PageAnalysisForm({
     if (!analysis) return;
 
     try {
-      const response = await fetch('/api/generate-pdf', {
+      const { response } = await apiCall('/api/generate-pdf', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ analysis }),
+        body: { analysis },
+        showErrorToast: false,
+        rawResponse: true,
       });
-
-      if (!response.ok) {
-        throw new Error('PDF generation failed');
-      }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);

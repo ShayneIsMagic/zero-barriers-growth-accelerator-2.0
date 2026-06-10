@@ -27,6 +27,7 @@ import {
   Download,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { apiCall } from '@/lib/api-call';
 
 interface UnifiedDataCollectionProps {
   onDataCollected: (data: CollectedData) => void;
@@ -91,13 +92,11 @@ export function UnifiedDataCollection({
     setValidationErrors([]);
 
     try {
-      const response = await fetch('/api/scrape-content', {
+      const { data } = await apiCall<{ success: boolean; scrapedData?: any; data?: any; error?: string }>('/api/scrape-content', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: url.trim() }),
+        body: { url: url.trim() },
+        showErrorToast: false,
       });
-
-      const data = await response.json();
 
       if (data.success) {
         const scrapedData = data.scrapedData || data.data;

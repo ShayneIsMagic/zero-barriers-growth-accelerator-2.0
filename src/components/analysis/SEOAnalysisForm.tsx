@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { AnalysisClient } from '@/lib/analysis-client';
 import { SEOAnalysis } from '@/types/analysis';
+import { apiCall } from '@/lib/api-call';
 import { AlertCircle, CheckCircle2, Loader2, Search } from 'lucide-react';
 import { useState } from 'react';
 import SEOAnalysisResults from './SEOAnalysisResults';
@@ -52,26 +53,21 @@ export default function SEOAnalysisForm() {
         .map((c) => c.trim())
         .filter((c) => c.length > 0);
 
-      const response = await fetch('/api/analyze/seo', {
+      const { data } = await apiCall<{
+        data: SEOAnalysis;
+        timestamp: string;
+      }>('/api/analyze/seo', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+        body: {
           url,
           targetKeywords: keywords.length > 0 ? keywords : undefined,
           competitorUrls: _competitors.length > 0 ? _competitors : undefined,
           includeSearchConsole,
           includeKeywordResearch,
           includeCompetitiveAnalysis,
-        }),
+        },
+        showErrorToast: false,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'SEO analysis failed');
-      }
 
       // Save to localStorage
       try {
@@ -128,14 +124,13 @@ export default function SEOAnalysisForm() {
     setAnalysis(null);
 
     try {
-      const response = await fetch(
-        `/api/analyze/seo?url=${encodeURIComponent(url)}`
-      );
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Quick SEO analysis failed');
-      }
+      const { data } = await apiCall<{
+        data: SEOAnalysis;
+        timestamp: string;
+      }>(`/api/analyze/seo?url=${encodeURIComponent(url)}`, {
+        method: 'GET',
+        showErrorToast: false,
+      });
 
       // Save to localStorage
       try {

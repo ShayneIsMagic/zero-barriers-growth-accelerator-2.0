@@ -12,6 +12,11 @@ import { UnifiedLocalForageStorage } from '@/lib/services/unified-localforage-st
 import { UnifiedReportGenerator } from '@/lib/services/unified-report-generator.service';
 import { FileUploadInput } from '@/components/shared/FileUploadInput';
 import { useAnalysisData } from '@/hooks/useAnalysisData';
+import {
+  createProposedContent as postProposedContent,
+  createVersionComparison as postVersionComparison,
+  saveContentSnapshot,
+} from '@/services/content-api';
 // ElementUsageTable imported but not used in this component
 import { ContentExporter } from '@/components/shared/ContentExporter';
 import { PageMetadataDisplay } from '@/components/analysis/PageMetadataDisplay';
@@ -178,23 +183,16 @@ export function ContentComparisonPage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/content/snapshots', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          url: url.trim(),
-          title: existingForSnapshot.title || 'Untitled',
-          content: existingForSnapshot.cleanText || '',
-          metadata: {
-            wordCount: existingForSnapshot.wordCount,
-            keywords: existingForSnapshot.extractedKeywords,
-            headings: existingForSnapshot.headings
-          },
-          userId: 'current-user' // TODO: Get from auth context
-        })
+      const data = await saveContentSnapshot({
+        url: url.trim(),
+        title: existingForSnapshot.title || 'Untitled',
+        content: existingForSnapshot.cleanText || '',
+        metadata: {
+          wordCount: existingForSnapshot.wordCount,
+          keywords: existingForSnapshot.extractedKeywords,
+          headings: existingForSnapshot.headings,
+        },
       });
-
-      const data = await response.json();
 
       if (data.success) {
         setSnapshotId(data.snapshot.id);
@@ -219,18 +217,10 @@ export function ContentComparisonPage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/content/proposed', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          snapshotId,
-          content: proposedContent.trim(),
-          createdBy: 'current-user', // TODO: Get from auth context
-          status: 'draft'
-        })
+      const data = await postProposedContent({
+        snapshotId,
+        content: proposedContent.trim(),
       });
-
-      const data = await response.json();
 
       if (data.success) {
         setProposedContentId(data.proposedContent.id);
@@ -252,18 +242,12 @@ export function ContentComparisonPage() {
     }
 
     try {
-      const response = await fetch('/api/content/compare', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          existingId: snapshotId,
-          proposedId: proposedContentId,
-          analysisResults: displayResult?.comparison || null,
-          similarityScore: displayResult?.similarityScore || null
-        })
+      const data = await postVersionComparison({
+        existingId: snapshotId,
+        proposedId: proposedContentId,
+        analysisResults: displayResult?.comparison || null,
+        similarityScore: displayResult?.similarityScore || null,
       });
-
-      const data = await response.json();
 
       if (data.success) {
         setError(null);
@@ -546,12 +530,12 @@ New compelling description that highlights our unique value proposition.
           <TabsContent value="framework-analysis">
             <Card>
               <CardHeader>
-                <CardTitle>Enhanced Framework Analysis Runner</CardTitle>
+                <CardTitle>Framework Analysis Runner</CardTitle>
                 <CardDescription>
-                  Select pages and assessments to evaluate with Google Analytics/GA4 best practices and conversion flow optimization.
+                  Uses raw collected content from this session — no re-scrape. Start with one page (your entered URL or homepage), run chunked Ollama assessments, then expand to more pages if needed.
                   {displayResult?.comprehensive && (
                     <span className="block mt-2 text-sm text-green-600 dark:text-green-400">
-                      ✅ Content collected! Pages are automatically loaded below.
+                      ✅ Content collected! One primary page is pre-selected for analysis.
                     </span>
                   )}
                 </CardDescription>

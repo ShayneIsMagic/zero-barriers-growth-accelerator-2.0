@@ -10,9 +10,7 @@ import {
   formatEvidenceForPrompt,
 } from '@/lib/framework-evidence-protocol';
 import { buildAnalysisTraceability } from '@/lib/server/analysis-traceability';
-import { touchOllamaActivity } from '@/lib/server/ollama-lifecycle';
-
-export const maxDuration = 30;
+export const maxDuration = 300;
 
 const isServerless =
   process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
@@ -38,7 +36,6 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`🔄 Starting Golden Circle analysis for: ${url}`);
-    await touchOllamaActivity();
 
     // Step 1: Use provided existing content (from LocalForage/content-comparison) or fetch it
     let existingData;

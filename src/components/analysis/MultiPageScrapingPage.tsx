@@ -25,6 +25,7 @@ import {
   TabsTrigger,
 } from '@/components/ui/tabs';
 import { UnifiedLocalForageStorage } from '@/lib/services/unified-localforage-storage.service';
+import { apiCall } from '@/lib/api-call';
 import {
   AlertTriangle,
   BarChart3,
@@ -1015,13 +1016,11 @@ export function MultiPageScrapingPage(): React.ReactElement {
     setSavedToLocalForage(false);
 
     try {
-      const response = await fetch('/api/scrape-multi-page', {
+      const { data } = await apiCall<{ success: boolean; data?: MultiPageResult; error?: string }>('/api/scrape-multi-page', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: url.trim(), options }),
+        body: { url: url.trim(), options },
+        showErrorToast: false,
       });
-
-      const data = await response.json();
 
       if (data.success) {
         setResult(data.data);

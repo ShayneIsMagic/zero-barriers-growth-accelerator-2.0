@@ -128,3 +128,8 @@ export async function touchOllamaActivity(): Promise<void> {
   }, OLLAMA_IDLE_TIMEOUT_MS);
 }
 
+/** Invoke only when AI analysis starts — never during Puppeteer/content collection. */
+export async function touchOllamaBeforeAnalysis(): Promise<void> {
+  await touchOllamaActivity();
+}
+

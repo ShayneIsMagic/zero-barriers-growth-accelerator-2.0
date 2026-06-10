@@ -7,15 +7,31 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
   buildPuppeteerEvidencePackage,
-  formatEvidenceForPrompt,
+  type PuppeteerEvidencePackage,
 } from '@/lib/framework-evidence-protocol';
+import { buildChunkAnalysisOptions } from '@/lib/framework/build-chunk-options';
+import { enrichAnalysisWithArchetypeRanking } from '@/lib/framework/archetype-ranking';
 import { buildAnalysisTraceability } from '@/lib/server/analysis-traceability';
-import { touchOllamaActivity } from '@/lib/server/ollama-lifecycle';
 
-export const maxDuration = 30;
+export const maxDuration = 300;
 
 const isServerless =
   process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
+
+interface ExistingContentShape {
+  title?: string;
+  metaDescription?: string;
+  wordCount?: number;
+  cleanText?: string;
+  extractedKeywords?: string[];
+  headings?: { h1: string[]; h2: string[]; h3: string[] };
+  url?: string;
+  seo?: {
+    metaDescription?: string;
+    extractedKeywords?: string[];
+    headings?: { h1: string[]; h2: string[]; h3: string[] };
+  };
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,90 +50,80 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`🎭 [Archetypes] Starting Brand Archetypes analysis for: ${url}`);
-    await touchOllamaActivity();
-
-    let existingData;
+    let existingData: ExistingContentShape;
     if (existingContent) {
-      console.log('📦 [Archetypes] Using provided existing content from client');
-      existingData = existingContent;
-    } else {
-      console.log('🔍 [Archetypes] No existing content provided - scraping...');
-
-      if (isServerless) {
-        const { ProductionContentExtractor } = await import(
-          '@/lib/production-content-extractor'
-        );
-        const extractor = new ProductionContentExtractor();
-        const extractedData = await extractor.extractContent(url);
-        existingData = {
-          title: extractedData.title || 'Untitled',
+      existingData = existingContent as ExistingContentShape;
+    } else if (isServerless) {
+      const { ProductionContentExtractor } = await import(
+        '@/lib/production-content-extractor'
+      );
+      const extractor = new ProductionContentExtractor();
+      const extractedData = await extractor.extractContent(url);
+      existingData = {
+        title: extractedData.title || 'Untitled',
+        metaDescription: extractedData.metaDescription || '',
+        wordCount: extractedData.wordCount || 0,
+        cleanText: extractedData.content || '',
+        extractedKeywords: [],
+        headings: { h1: [], h2: [], h3: [] },
+        url,
+        seo: {
           metaDescription: extractedData.metaDescription || '',
-          wordCount: extractedData.wordCount || 0,
-          cleanText: extractedData.content || '',
           extractedKeywords: [],
           headings: { h1: [], h2: [], h3: [] },
-          url,
-          seo: {
-            metaTitle: extractedData.title || '',
-            metaDescription: extractedData.metaDescription || '',
-            extractedKeywords: [],
-            headings: { h1: [], h2: [], h3: [] },
-          },
-        };
-      } else {
-        const baseUrl =
-          process.env.NEXT_PUBLIC_APP_URL ||
-          process.env.NEXTAUTH_URL ||
-          request.nextUrl.origin;
-        const compareResponse = await fetch(
-          `${baseUrl}/api/analyze/compare`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url, proposedContent: '' }),
-          }
-        );
+        },
+      };
+    } else {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_APP_URL ||
+        process.env.NEXTAUTH_URL ||
+        request.nextUrl.origin;
+      const compareResponse = await fetch(`${baseUrl}/api/analyze/compare`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, proposedContent: '' }),
+      });
 
-        if (!compareResponse.ok) {
-          throw new Error('Failed to get scraped content');
-        }
-
-        const compareResult = await compareResponse.json();
-        existingData = compareResult.existing;
+      if (!compareResponse.ok) {
+        throw new Error('Failed to get scraped content');
       }
+
+      const compareResult = await compareResponse.json();
+      existingData = compareResult.existing as ExistingContentShape;
     }
 
-    console.log(
-      `📦 [Archetypes] Got scraped content: ${existingData?.wordCount || 0} words`
+    const evidencePackage = buildPuppeteerEvidencePackage(
+      existingData as Parameters<typeof buildPuppeteerEvidencePackage>[0]
     );
 
-    const evidencePackage = buildPuppeteerEvidencePackage(existingData);
-
-    let proposedData = null;
+    let proposedData: ExistingContentShape | null = null;
     if (proposedContent && proposedContent.trim().length > 0) {
-      console.log('📝 [Archetypes] Processing proposed content...');
       proposedData = {
         cleanText: proposedContent.trim(),
         wordCount: proposedContent.trim().split(/\s+/).length,
         title: extractTitle(proposedContent),
         metaDescription: extractMetaDescription(proposedContent),
         extractedKeywords: extractKeywordsFromText(proposedContent),
-        headings: extractHeadings(proposedContent),
+        headings: { h1: extractHeadings(proposedContent), h2: [], h3: [] } as {
+          h1: string[];
+          h2: string[];
+          h3: string[];
+        },
         seo: {
-          metaTitle: extractTitle(proposedContent),
           metaDescription: extractMetaDescription(proposedContent),
           extractedKeywords: extractKeywordsFromText(proposedContent),
-          headings: extractHeadings(proposedContent),
+          headings: { h1: extractHeadings(proposedContent), h2: [], h3: [] },
         },
       };
     }
 
-    console.log('🤖 [Archetypes] Running Brand Archetypes analysis...');
-
     const buildResponsePayload = (analysis: Record<string, unknown>) => {
+      const enrichedAnalysis = enrichAnalysisWithArchetypeRanking(analysis);
       const readableMarkdown =
-        typeof analysis.unifiedReport === 'string' ? analysis.unifiedReport : null;
+        typeof enrichedAnalysis.unifiedReport === 'string'
+          ? enrichedAnalysis.unifiedReport
+          : null;
+
       return {
         success: true,
         framework: 'brand-archetypes',
@@ -140,14 +146,14 @@ export async function POST(request: NextRequest) {
           url: existingData.url || url,
         },
         proposed: proposedData,
-        analysis,
-        comparison: analysis,
+        analysis: enrichedAnalysis,
+        comparison: enrichedAnalysis,
         readableMarkdown,
         traceability: buildAnalysisTraceability({
           url,
           existing: existingData,
           proposed: proposedData,
-          analysis,
+          analysis: enrichedAnalysis,
           usedProvidedExistingContent: Boolean(existingContent),
         }),
         scrapedContent: existingData,
@@ -156,7 +162,11 @@ export async function POST(request: NextRequest) {
       };
     };
 
-    const analysisOptions = buildArchetypeOptions(existingData, url, evidencePackage);
+    const analysisOptions = buildArchetypeOptions(
+      existingData,
+      url,
+      evidencePackage
+    );
 
     if (useStreaming) {
       const { streamChunkedAnalysis } = await import('@/lib/streaming-analysis');
@@ -167,11 +177,14 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const analysis = await generateArchetypesAnalysis(existingData, proposedData, url, _analysisType || 'full');
-    console.log('✅ [Archetypes] Analysis complete');
-    return NextResponse.json(buildResponsePayload(analysis as Record<string, unknown>));
+    const analysis = await generateArchetypesAnalysis(
+      existingData,
+      proposedData,
+      url,
+      evidencePackage
+    );
+    return NextResponse.json(buildResponsePayload(analysis));
   } catch (error) {
-    console.error('[Archetypes] Error:', error);
     return NextResponse.json(
       {
         success: false,
@@ -179,6 +192,7 @@ export async function POST(request: NextRequest) {
           error instanceof Error
             ? error.message
             : 'Brand Archetypes analysis failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -205,7 +219,7 @@ function extractKeywordsFromText(text: string): string[] {
     .split(/\s+/)
     .filter((word) => word.length > 4);
 
-  const wordCount: { [key: string]: number } = {};
+  const wordCount: Record<string, number> = {};
   words.forEach((word) => {
     wordCount[word] = (wordCount[word] || 0) + 1;
   });
@@ -228,64 +242,44 @@ function extractHeadings(content: string): string[] {
 }
 
 function buildArchetypeOptions(
-  existing: any,
+  existing: ExistingContentShape,
   url: string,
-  evidencePackage = buildPuppeteerEvidencePackage(existing)
+  evidencePackage: PuppeteerEvidencePackage
 ) {
-  const protocolSummary = formatEvidenceForPrompt(evidencePackage);
-  return {
-    frameworkName: 'Jambojon Brand Archetypes',
+  return buildChunkAnalysisOptions(
+    'brand-archetypes',
+    existing,
     url,
-    contentTitle: existing.title || '',
-    contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
-    contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
-    contentText: `${protocolSummary}\n\n${existing.cleanText || ''}`,
-    scoringInstructions: `Score each archetype 0.0-1.0 based on three weighted factors:
-  1. Keyword Presence (40%): exact keyword matches from the archetype's KEYWORD SIGNALS list, plus synonyms and thematic matches
-  2. Thematic Alignment (30%): how well content matches the archetype definition and core characteristics
-  3. Value Delivery (30%): match with the archetype's "as the guide" assistance patterns and tone consistency
-
-Rubric:
-- 0.8-1.0 (Dominant): Strong keyword clusters + perfect thematic match + clear value delivery
-- 0.6-0.79 (Strong): Multiple keywords + thematic patterns present + value signals evident
-- 0.4-0.59 (Moderate): Some keywords + moderate thematic match + weak value signals
-- 0.0-0.39 (Weak/Absent): Minimal or no meaningful presence`,
-    chunks: [
-      {
-        categoryName: 'Ego Archetypes (Leave a Mark on the World)',
-        categoryKey: 'ego',
-        elements: ['hero', 'magician', 'outlaw'],
-      },
-      {
-        categoryName: 'Order Archetypes (Provide Structure)',
-        categoryKey: 'order',
-        elements: ['caregiver', 'ruler', 'creator'],
-      },
-      {
-        categoryName: 'Freedom Archetypes (Yearn for Paradise)',
-        categoryKey: 'freedom',
-        elements: ['innocent', 'explorer', 'sage'],
-      },
-      {
-        categoryName: 'Social Archetypes (Connect with Others)',
-        categoryKey: 'social',
-        elements: ['regular_guy_girl', 'jester', 'lover'],
-      },
-    ],
-  };
+    evidencePackage
+  );
 }
 
-async function generateArchetypesAnalysis(existing: any, proposed: any, url: string, _analysisType: string) {
-  const { analyzeFrameworkInChunks } = await import('@/lib/chunked-framework-analysis');
-  const { generateFrameworkFallbackMarkdown } = await import('@/lib/framework-fallback-generator');
+async function generateArchetypesAnalysis(
+  existing: ExistingContentShape,
+  proposed: ExistingContentShape | null,
+  url: string,
+  evidencePackage: PuppeteerEvidencePackage
+): Promise<Record<string, unknown>> {
+  const { analyzeFrameworkInChunks } = await import(
+    '@/lib/chunked-framework-analysis'
+  );
+  const { generateFrameworkFallbackMarkdown } = await import(
+    '@/lib/framework-fallback-generator'
+  );
 
   try {
-    return await analyzeFrameworkInChunks(buildArchetypeOptions(existing, url));
+    return (await analyzeFrameworkInChunks(
+      buildArchetypeOptions(existing, url, evidencePackage)
+    )) as Record<string, unknown>;
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'AI analysis failed';
-    console.log(`📄 [Archetypes] AI failed, generating Markdown fallback: ${errorMessage}`);
+    const errorMessage =
+      error instanceof Error ? error.message : 'AI analysis failed';
     const fallbackMarkdown = generateFrameworkFallbackMarkdown({
-      framework: 'brand-archetypes', url, existing, proposed, errorMessage,
+      framework: 'brand-archetypes',
+      url,
+      existing,
+      proposed,
+      errorMessage,
     });
     return { _isFallback: true, fallbackMarkdown, error: errorMessage };
   }

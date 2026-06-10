@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import {
   Card,
@@ -15,15 +15,23 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Link from 'next/link';
 
-export default function SignInPage() {
+function SignInForm(): React.ReactElement {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { signIn } = useAuth();
+  const { signIn, user, loading: authLoading } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/workspace';
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.replace(callbackUrl.startsWith('/') ? callbackUrl : '/workspace');
+    }
+  }, [authLoading, user, router, callbackUrl]);
+
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -31,12 +39,11 @@ export default function SignInPage() {
     try {
       const success = await signIn(email, password);
       if (success) {
-        // Redirect to phased analysis (primary tool) instead of generic dashboard
-        router.push('/dashboard/phased-analysis');
+        router.push(callbackUrl.startsWith('/') ? callbackUrl : '/workspace');
       } else {
         setError('Invalid email or password');
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred during sign in');
     } finally {
       setLoading(false);
@@ -130,5 +137,19 @@ export default function SignInPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function SignInPage(): React.ReactElement {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
+      <SignInForm />
+    </Suspense>
   );
 }

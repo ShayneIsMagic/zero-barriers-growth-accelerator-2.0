@@ -693,8 +693,19 @@ export class PuppeteerComprehensiveCollector {
         }
       }
 
-      // Collect site map and discover all pages
-      const siteMap = await this.collectSiteMap(page, url);
+      const homepageOnly = this.maxPages <= 0 && this.maxDepth <= 0;
+
+      // Collect site map only when subpages are requested
+      const siteMap: SiteMapData = homepageOnly
+        ? {
+            totalPages: 1,
+            depth: 0,
+            orphanedPages: [],
+            brokenLinks: [],
+            redirects: [],
+            sitemap: [],
+          }
+        : await this.collectSiteMap(page, url);
 
       // Collect data from each page - use the same page but ensure stealth measures persist
       const pages: PageData[] = [];
@@ -711,7 +722,7 @@ export class PuppeteerComprehensiveCollector {
         throw error;
       }
 
-      // Then collect other pages
+      // Then collect other pages (skipped in homepage-only mode)
       for (const pageUrl of siteMap.sitemap.slice(0, this.maxPages)) {
         if (visitedUrls.has(pageUrl.url)) continue;
         visitedUrls.add(pageUrl.url);
@@ -844,6 +855,7 @@ export class PuppeteerComprehensiveCollector {
 
               try {
                 const url = new URL(href, window.location.origin);
+                url.hash = '';
                 return {
                   href: url.href,
                   text: link.textContent?.trim() || '',

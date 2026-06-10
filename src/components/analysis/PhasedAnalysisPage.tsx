@@ -15,6 +15,7 @@ import { ArrowRight, CheckCircle, Loader2, Play } from 'lucide-react';
 import { useState } from 'react';
 // ContentPreviewCard removed - using simple display instead
 import { IndividualReportsView } from './IndividualReportsView';
+import { apiCall } from '@/lib/api-call';
 
 export function PhasedAnalysisPage() {
   const [url, setUrl] = useState('');
@@ -36,21 +37,15 @@ export function PhasedAnalysisPage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/analyze/phase', {
+      const { data } = await apiCall<any>('/api/analyze/phase', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           url: url.trim(),
           phase,
-          analysisId: analysisId,
-        }),
+          analysisId,
+        },
+        showErrorToast: false,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Phase execution failed');
-      }
 
       if (data.success) {
         setAnalysisId(data.analysisId);

@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/dialog';
 import { UnifiedLocalForageStorage } from '@/lib/services/unified-localforage-storage.service';
 import { Database, Loader2, CheckCircle2, FileText, Upload } from 'lucide-react';
-// Toast will be handled via callback or console for now
+import { toast } from 'sonner';
 // Format date helper
 const formatDate = (dateString: string) => {
   try {
@@ -127,7 +127,7 @@ export function DataLoader({
       }
     } catch (error) {
       void error; // Silently handle
-      alert('Failed to load saved data');
+      toast.error('Failed to load saved data');
     } finally {
       setLoading(false);
     }
@@ -157,7 +157,7 @@ export function DataLoader({
 
   const handleLoad = async () => {
     if (!selectedUrl) {
-      alert('Please select a URL');
+      toast.error('Please select a URL');
       return;
     }
 
@@ -200,7 +200,7 @@ export function DataLoader({
           content: page.content?.text || '',
           selectedPage: page,
         });
-        alert('Page loaded successfully');
+        toast.success('Page loaded successfully');
         setOpen(false);
         return;
       }
@@ -212,7 +212,7 @@ export function DataLoader({
       const puppeteerData = await UnifiedLocalForageStorage.getPuppeteerData(selectedUrl);
 
       if (!puppeteerData) {
-        alert('No saved data found for this URL');
+        toast.error('No saved data found for this URL');
         return;
       }
 
@@ -274,11 +274,11 @@ export function DataLoader({
       });
 
       setOpen(false);
-      alert('Data loaded successfully');
+      toast.success('Data loaded successfully');
     } catch (error) {
       void error; // handle error
       const errorMsg = `Failed to load: ${error instanceof Error ? error.message : 'Unknown error'}`;
-      alert(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }

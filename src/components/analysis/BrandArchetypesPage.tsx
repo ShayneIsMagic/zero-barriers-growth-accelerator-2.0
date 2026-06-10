@@ -1,6 +1,7 @@
 'use client';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -13,10 +14,15 @@ import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
 import { MarkdownFallbackViewer } from '@/components/analysis/MarkdownFallbackViewer';
-import { useChunkedAnalysis } from '@/hooks/useChunkedAnalysis';
+import { useFrameworkPageAnalysis } from '@/hooks/useFrameworkPageAnalysis';
 import { CheckCircle2, Copy, Download, Loader2, Sparkles } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
+import {
+  rankArchetypesFromAnalysis,
+  type ArchetypeRankingSummary,
+  type RankedArchetype,
+} from '@/lib/framework/archetype-ranking';
 
 export function BrandArchetypesPage() {
   const [url, setUrl] = useState('');
@@ -26,25 +32,56 @@ export function BrandArchetypesPage() {
 
   const {
     isAnalyzing,
+    isCollecting,
     percent,
     currentCategory,
     completedCategories,
     result,
     error: streamError,
-    runAnalysis: runStreamingAnalysis,
-  } = useChunkedAnalysis('/api/analyze/brand-archetypes-standalone');
+    runAnalysis: runFrameworkAnalysis,
+  } = useFrameworkPageAnalysis('/api/analyze/brand-archetypes-standalone');
+
+  const isBusy = isAnalyzing || isCollecting;
 
   const error = streamError || localError;
   const analysisPayload = result?.analysis || result?.comparison || result?.data;
+
+  const archetypeRanking = useMemo(() => {
+    if (!analysisPayload || typeof analysisPayload !== 'object') {
+      return null;
+    }
+    return rankArchetypesFromAnalysis(
+      analysisPayload as Record<string, unknown>
+    );
+  }, [analysisPayload]);
+
+  const primaryFromApi = useMemo((): ArchetypeRankingSummary[] => {
+    if (!analysisPayload || typeof analysisPayload !== 'object') {
+      return [];
+    }
+    const raw = (analysisPayload as Record<string, unknown>).primary_archetype;
+    if (!raw) return [];
+    return Array.isArray(raw) ? raw : [raw as ArchetypeRankingSummary];
+  }, [analysisPayload]);
+
+  const secondaryFromApi = useMemo((): ArchetypeRankingSummary[] => {
+    if (!analysisPayload || typeof analysisPayload !== 'object') {
+      return [];
+    }
+    const raw = (analysisPayload as Record<string, unknown>).secondary_archetypes;
+    return Array.isArray(raw) ? (raw as ArchetypeRankingSummary[]) : [];
+  }, [analysisPayload]);
 
   const runAnalysis = async () => {
     if (!url.trim()) return;
     setLocalError(null);
 
     let existingContent = null;
+    let skipCollection = false;
     if (scrapedContent.trim()) {
       try {
         existingContent = JSON.parse(scrapedContent.trim());
+        skipCollection = true;
       } catch {
         setLocalError(
           'Scraped content JSON is invalid. Paste valid JSON from Content-Comparison.'
@@ -53,12 +90,12 @@ export function BrandArchetypesPage() {
       }
     }
 
-    await runStreamingAnalysis({
+    await runFrameworkAnalysis({
       url: url.trim(),
       proposedContent: proposedContent.trim(),
       existingContent,
+      skipCollection,
       analysisType: 'full',
-      stream: true,
     });
   };
 
@@ -103,7 +140,7 @@ export function BrandArchetypesPage() {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder='https://example.com'
-              disabled={isAnalyzing}
+              disabled={isBusy}
             />
           </div>
 
@@ -119,7 +156,7 @@ export function BrandArchetypesPage() {
               value={proposedContent}
               onChange={(e) => setProposedContent(e.target.value)}
               placeholder='Paste your proposed homepage or marketing content here...'
-              disabled={isAnalyzing}
+              disabled={isBusy}
               className='min-h-[140px]'
             />
           </div>
@@ -136,7 +173,7 @@ export function BrandArchetypesPage() {
               value={scrapedContent}
               onChange={(e) => setScrapedContent(e.target.value)}
               placeholder='Paste the "Copy Scraped Data" JSON from the Content-Comparison page to skip re-scraping...'
-              disabled={isAnalyzing}
+              disabled={isBusy}
               className='min-h-[100px] font-mono text-xs'
             />
             <p className='mt-2 text-xs text-muted-foreground'>
@@ -146,10 +183,10 @@ export function BrandArchetypesPage() {
 
           <Button
             onClick={runAnalysis}
-            disabled={isAnalyzing || !url.trim()}
+            disabled={isBusy || !url.trim()}
             className='w-full'
           >
-            {isAnalyzing ? (
+            {isBusy ? (
               <>
                 <Loader2 className='mr-2 h-4 w-4 animate-spin' />
                 Running Brand Archetypes Analysis...
@@ -188,7 +225,7 @@ export function BrandArchetypesPage() {
         }}
       />
 
-      {isAnalyzing && (
+      {(isAnalyzing || isCollecting) && (
         <Card>
           <CardHeader>
             <CardTitle className='text-base'>Analysis Progress</CardTitle>
@@ -223,12 +260,83 @@ export function BrandArchetypesPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className='space-y-4'>
-            <div className='rounded-lg border bg-green-50 p-4 dark:bg-green-950'>
-              <h4 className='mb-2 font-semibold'>Assessment Results</h4>
-              <div className='whitespace-pre-wrap text-sm'>
-                {JSON.stringify(analysisPayload, null, 2)}
+            {(archetypeRanking || primaryFromApi.length > 0) && (
+              <div className='space-y-4 rounded-lg border bg-muted/40 p-4'>
+                <div className='flex flex-wrap items-center gap-3'>
+                  <span className='text-sm font-medium'>Overall score</span>
+                  <Badge variant='secondary'>
+                    {(
+                      archetypeRanking?.overallScore ??
+                      (analysisPayload as { overallScore?: number })?.overallScore ??
+                      0
+                    ).toFixed(3)}
+                  </Badge>
+                </div>
+
+                <div>
+                  <h4 className='mb-2 text-sm font-semibold'>Primary archetype(s)</h4>
+                  <div className='space-y-2'>
+                    {(primaryFromApi.length > 0
+                      ? primaryFromApi
+                      : archetypeRanking?.primary ?? []
+                    ).map((item) => (
+                      <ArchetypeSummaryCard
+                        key={'slug' in item ? item.slug : (item as RankedArchetype).slug}
+                        item={item}
+                        variant='primary'
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {(secondaryFromApi.length > 0 ||
+                  (archetypeRanking?.secondary.length ?? 0) > 0) && (
+                  <div>
+                    <h4 className='mb-2 text-sm font-semibold'>Secondary archetypes</h4>
+                    <div className='space-y-2'>
+                      {(secondaryFromApi.length > 0
+                        ? secondaryFromApi
+                        : archetypeRanking?.secondary ?? []
+                      ).map((item) => (
+                        <ArchetypeSummaryCard
+                          key={'slug' in item ? item.slug : (item as RankedArchetype).slug}
+                          item={item}
+                          variant='secondary'
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {archetypeRanking && archetypeRanking.allRanked.length > 0 && (
+                  <div>
+                    <h4 className='mb-2 text-sm font-semibold'>All archetypes (ranked)</h4>
+                    <div className='grid gap-2 sm:grid-cols-2'>
+                      {archetypeRanking.allRanked.map((item) => (
+                        <div
+                          key={item.slug}
+                          className='flex items-center justify-between rounded-md border px-3 py-2 text-sm'
+                        >
+                          <span>{item.displayName}</span>
+                          <Badge variant='outline'>{item.score.toFixed(2)}</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
+            )}
+
+            <details className='rounded-lg border'>
+              <summary className='cursor-pointer px-4 py-3 text-sm font-medium'>
+                Raw JSON response
+              </summary>
+              <div className='border-t bg-green-50 p-4 dark:bg-green-950'>
+                <pre className='overflow-x-auto whitespace-pre-wrap text-xs'>
+                  {JSON.stringify(analysisPayload, null, 2)}
+                </pre>
+              </div>
+            </details>
 
             <div className='flex flex-wrap gap-2'>
               <Button
@@ -256,6 +364,38 @@ export function BrandArchetypesPage() {
           errorMessage={result.analysis.error}
         />
       )}
+    </div>
+  );
+}
+
+interface ArchetypeSummaryCardProps {
+  item: ArchetypeRankingSummary | RankedArchetype;
+  variant: 'primary' | 'secondary';
+}
+
+function ArchetypeSummaryCard({ item, variant }: ArchetypeSummaryCardProps) {
+  const name = 'displayName' in item ? item.displayName : item.name;
+  const strength = 'strengthLabel' in item ? item.strengthLabel : item.strength;
+  const group = item.group;
+  const evidence = item.evidence;
+
+  return (
+    <div
+      className={
+        variant === 'primary'
+          ? 'rounded-md border border-purple-200 bg-purple-50 p-3 dark:border-purple-800 dark:bg-purple-950/40'
+          : 'rounded-md border p-3'
+      }
+    >
+      <div className='mb-1 flex flex-wrap items-center gap-2'>
+        <span className='font-medium'>{name}</span>
+        <Badge>{item.score.toFixed(2)}</Badge>
+        <Badge variant='outline'>{strength}</Badge>
+        <Badge variant='secondary'>{group}</Badge>
+      </div>
+      {evidence ? (
+        <p className='text-xs text-muted-foreground'>{evidence}</p>
+      ) : null}
     </div>
   );
 }

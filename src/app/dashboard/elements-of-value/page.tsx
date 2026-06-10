@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { apiCall } from '@/lib/api-call';
 
 interface ElementScore {
   element_name: string;
@@ -67,47 +68,62 @@ export default function ElementsOfValuePage() {
 
     try {
       // Run Phase 1: Data Collection
-      const phase1Response = await fetch('/api/analyze/phase-new', {
+      const { data: phase1Data } = await apiCall<{
+        success?: boolean;
+        analysisId?: string;
+      }>('/api/analyze/phase-new', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, phase: 1 }),
+        body: { url, phase: 1 },
+        showErrorToast: false,
       });
 
-      if (!phase1Response.ok) {
+      if (!phase1Data?.success || !phase1Data.analysisId) {
         throw new Error('Phase 1 failed');
       }
 
-      const phase1Data = await phase1Response.json();
       const newAnalysisId = phase1Data.analysisId;
       // setAnalysisId(newAnalysisId);
 
       // Run Phase 2: Framework Analysis (includes Elements of Value)
-      const phase2Response = await fetch('/api/analyze/phase-new', {
+      const { data: phase2Data } = await apiCall<{ success?: boolean }>(
+        '/api/analyze/phase-new',
+        {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, phase: 2, analysisId: newAnalysisId }),
-      });
+        body: { url, phase: 2, analysisId: newAnalysisId },
+        showErrorToast: false,
+        }
+      );
 
-      if (!phase2Response.ok) {
+      if (!phase2Data?.success) {
         throw new Error('Phase 2 failed');
       }
 
       // Fetch B2C Elements of Value analysis
-      const b2cResponse = await fetch(
-        `/api/analysis/elements-value-b2c/${newAnalysisId}`
-      );
-      if (b2cResponse.ok) {
-        const b2cData = await b2cResponse.json();
+      try {
+        const { data: b2cData } = await apiCall<ElementsAnalysis>(
+          `/api/analysis/elements-value-b2c/${newAnalysisId}`,
+          {
+            method: 'GET',
+            showErrorToast: false,
+          }
+        );
         setB2cAnalysis(b2cData);
+      } catch {
+        // B2C analysis may be unavailable; keep current behavior
       }
 
       // Fetch B2B Elements of Value analysis
-      const b2bResponse = await fetch(
-        `/api/analysis/elements-value-b2b/${newAnalysisId}`
-      );
-      if (b2bResponse.ok) {
-        const b2bData = await b2bResponse.json();
+      try {
+        const { data: b2bData } = await apiCall<ElementsAnalysis>(
+          `/api/analysis/elements-value-b2b/${newAnalysisId}`,
+          {
+            method: 'GET',
+            showErrorToast: false,
+          }
+        );
         setB2bAnalysis(b2bData);
+      } catch {
+        // B2B analysis may be unavailable; keep current behavior
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Analysis failed');

@@ -1,5 +1,6 @@
 'use client';
 
+import { apiCallStream } from '@/lib/api-call';
 import { CanonicalFrameworkPayload } from '@/types/canonical-framework-payload';
 
 interface AnalyzeFrameworkParams {
@@ -32,16 +33,12 @@ export async function analyzeFrameworkWithAI({
     throw new Error(`Unsupported framework: ${frameworkName}`);
   }
 
-  return fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      url: payload.url,
-      proposedContent: payload.proposedContent || '',
-      existingContent: payload.rawEvidence,
-      canonicalPayload: payload,
-      analysisType,
-      stream,
-    }),
+  return apiCallStream(endpoint, {
+    url: payload.url,
+    proposedContent: payload.proposedContent || '',
+    existingContent: payload.rawEvidence,
+    canonicalPayload: payload,
+    analysisType,
+    stream,
   });
 }

@@ -1,12 +1,26 @@
+import { USER_ROLES } from '@/constants';
 import { prisma } from '@/lib/prisma';
+import { createAuthCookie } from '@/lib/server/jwt';
+import { isConfiguredSuperAdminEmail } from '@/lib/server/super-admin';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
 
 const JWT_SECRET = process.env.NEXTAUTH_SECRET;
 
+function missingSecretResponse(): NextResponse {
+  return NextResponse.json(
+    { error: 'Authentication is not configured' },
+    { status: 503 }
+  );
+}
+
 export async function POST(request: NextRequest) {
   try {
+    if (!JWT_SECRET) {
+      return missingSecretResponse();
+    }
+
     const body = await request.json();
     const { email, password } = body;
 
@@ -39,27 +53,42 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate JWT token
+    let effectiveRole = user.role || USER_ROLES.USER;
+    if (isConfiguredSuperAdminEmail(user.email)) {
+      effectiveRole = USER_ROLES.SUPER_ADMIN;
+      if (user.role !== USER_ROLES.SUPER_ADMIN) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { role: USER_ROLES.SUPER_ADMIN },
+        });
+      }
+    }
+
     const token = jwt.sign(
       {
         userId: user.id,
         email: user.email,
-        role: user.role,
+        role: effectiveRole,
       },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       user: {
         id: user.id,
         email: user.email,
         name: user.name,
-        role: user.role,
+        role: effectiveRole,
       },
       token,
       message: 'Sign in successful',
     });
+
+    const cookie = createAuthCookie(token);
+    response.cookies.set(cookie);
+
+    return response;
   } catch (error) {
     console.error('Sign in error:', error);
     return NextResponse.json(

@@ -1,59 +1,53 @@
 /**
- * API endpoint for testing prompts between Gemini and Claude
+ * API endpoint for testing prompts between Gemini and Claude (dev only).
  */
 
 import { PromptTestingService } from '@/lib/ai-engines/prompt-testing.service';
+import {
+  apiErrorResponse,
+  guardDevelopmentOnly,
+  logRouteError,
+} from '@/lib/server/api-route';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const maxDuration = 120; // 2 minutes for comprehensive testing
+export const maxDuration = 120;
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  const blocked = guardDevelopmentOnly();
+  if (blocked) {
+    return blocked;
+  }
+
   try {
     const body = await request.json();
-    const { url, scrapedData, assessmentType } = body;
+    const { url, scrapedData, assessmentType } = body as {
+      url?: string;
+      scrapedData?: unknown;
+      assessmentType?: string;
+    };
 
     if (!url) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'URL is required',
-        },
-        { status: 400 }
-      );
+      return apiErrorResponse(400, 'URL is required');
     }
 
     if (!scrapedData) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Scraped data is required',
-        },
-        { status: 400 }
-      );
+      return apiErrorResponse(400, 'Scraped data is required');
     }
-
-    console.log(`🧪 Starting prompt testing for: ${url}`);
 
     let results;
 
     if (assessmentType) {
-      // Test specific assessment type
-      console.log(`Testing ${assessmentType} assessment...`);
       results = await PromptTestingService.testPrompt(
         assessmentType,
         scrapedData,
         url
       );
     } else {
-      // Test all assessment types
-      console.log('Running comprehensive prompt testing...');
       results = await PromptTestingService.runComprehensiveTest(
         scrapedData,
         url
       );
     }
-
-    console.log(`✅ Prompt testing completed for: ${url}`);
 
     return NextResponse.json({
       success: true,
@@ -63,15 +57,11 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Prompt testing failed:', error);
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : 'Prompt testing failed',
-        details: 'Failed to test prompts between Gemini and Claude',
-      },
-      { status: 500 }
+    logRouteError('POST /api/test-prompts', error);
+    return apiErrorResponse(
+      500,
+      'Prompt testing failed',
+      error instanceof Error ? error.message : 'Unknown error'
     );
   }
 }

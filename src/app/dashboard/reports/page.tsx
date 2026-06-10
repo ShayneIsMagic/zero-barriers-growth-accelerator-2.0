@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { apiCall } from '@/lib/api-call';
 import {
   Card,
   CardContent,
@@ -91,12 +92,13 @@ export default function ReportsPage() {
       setIsLoadingReports(true);
 
       // Fetch from database API
-      const response = await fetch('/api/analysis');
-      if (!response.ok) throw new Error('Failed to fetch analyses');
-      const data = await response.json();
+      const { data } = await apiCall<{ analyses?: any[] }>('/api/analysis', {
+        method: 'GET',
+        showErrorToast: false,
+      });
 
       // Parse and categorize reports by phase
-      const analyses = data.analyses || [];
+      const analyses = data?.analyses || [];
       const phase1 = analyses.filter(
         (a: any) => a.contentType === 'phase1-complete'
       );

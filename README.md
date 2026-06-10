@@ -31,6 +31,24 @@ AI-powered marketing optimization platform that systematically analyzes content 
 - **Deployment**: Vercel
 - **Authentication**: JWT with bcrypt
 
+## Running Locally (VS Code)
+
+1. Open the repository root in VS Code.
+2. Open an integrated terminal (**Terminal → New Terminal**).
+3. Check whether port **3000** is already in use; kill any stale `next dev` process.
+4. Ensure `.env.local` exists (`cp .env.example .env.local` on first setup).
+5. Start the dev server:
+
+```bash
+npm run dev
+```
+
+6. Open [http://localhost:3000](http://localhost:3000).
+
+Optional local AI (Ollama): run `ollama serve` in a second terminal.
+
+Agent and API conventions: see `AGENTS-app.md`. API contract: `API_DOCUMENTATION.md`. **Pre-merge rollback pins:** [`docs/ROLLBACK_REFERENCE.md`](docs/ROLLBACK_REFERENCE.md).
+
 ## 🚀 **QUICK START**
 
 ### **Prerequisites**

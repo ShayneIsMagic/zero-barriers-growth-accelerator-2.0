@@ -4,6 +4,7 @@
  */
 
 import { useState } from 'react';
+import { apiCall } from '@/lib/api-call';
 import { UnifiedLocalForageStorage } from '@/lib/services/unified-localforage-storage.service';
 
 interface UseAnalysisDataOptions {
@@ -12,6 +13,7 @@ interface UseAnalysisDataOptions {
   analysisType?: string;
   maxPages?: number;
   maxDepth?: number;
+  includeSubpages?: boolean;
 }
 
 interface UseAnalysisDataReturn {
@@ -92,34 +94,23 @@ export function useAnalysisData(
 
       // Step 2: Pre-scrape only for non-compare flows
       if (!puppeteerData && shouldPreScrape) {
-        const scrapeResponse = await fetch('/api/scrape/content', {
+        const { data: scrapeResult } = await apiCall<{
+          success: boolean;
+          error?: string;
+          comprehensive?: unknown;
+          data?: unknown;
+        }>('/api/scrape/content', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+          body: {
             url: trimmedUrl,
             maxPages: options.maxPages || 10,
             maxDepth: options.maxDepth || 2,
-          }),
+          },
+          showErrorToast: true,
         });
 
-        if (!scrapeResponse.ok) {
-          const errorText = await scrapeResponse.text();
-          let errorData;
-          try {
-            errorData = JSON.parse(errorText);
-          } catch {
-            errorData = {
-              success: false,
-              error: errorText || `HTTP ${scrapeResponse.status}`,
-            };
-          }
-          throw new Error(errorData.error || 'Scraping failed');
-        }
-
-        const scrapeResult = await scrapeResponse.json();
-
-        if (!scrapeResult.success) {
-          throw new Error(scrapeResult.error || 'Scraping failed');
+        if (!scrapeResult?.success) {
+          throw new Error(scrapeResult?.error || 'Scraping failed');
         }
 
         puppeteerData = scrapeResult.comprehensive || scrapeResult.data;
@@ -134,45 +125,36 @@ export function useAnalysisData(
 
       // Step 3: Run analysis
       
-      const analysisResponse = await fetch(apiEndpoint, {
+      const { data: analysisResult } = await apiCall<{
+        success: boolean;
+        error?: string;
+        comprehensive?: unknown;
+        readableMarkdown?: string;
+        analysis?: {
+          chunkedReport?: string;
+          unifiedReport?: string;
+        };
+      }>(apiEndpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           url: trimmedUrl,
           comprehensiveData: puppeteerData,
           proposedContent: options.proposedContent || '',
           existingContent: options.existingContent,
           analysisType: options.analysisType || 'full',
+          includeSubpages: options.maxPages != null ? options.maxPages > 0 : false,
           maxPages: options.maxPages,
           maxDepth: options.maxDepth,
-        }),
+        },
+        showErrorToast: true,
       });
 
-      // Check if response is OK and is JSON
-      if (!analysisResponse.ok) {
-        const errorText = await analysisResponse.text();
-        let errorData;
-        try {
-          errorData = JSON.parse(errorText);
-        } catch {
-          errorData = {
-            success: false,
-            error: errorText || `HTTP ${analysisResponse.status}`,
-          };
-        }
-        throw new Error(errorData.error || 'Analysis failed');
+      if (!analysisResult?.success) {
+        throw new Error(analysisResult?.error || 'Analysis failed');
       }
 
-      const contentType = analysisResponse.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        const text = await analysisResponse.text();
-        throw new Error(`Invalid response format: ${text.substring(0, 100)}`);
-      }
-
-      const analysisResult = await analysisResponse.json();
-
-      if (!analysisResult.success) {
-        throw new Error(analysisResult.error || 'Analysis failed');
+      if (!analysisResult) {
+        throw new Error('Analysis failed');
       }
 
       // Compare route can return rich multi-page comprehensive data.

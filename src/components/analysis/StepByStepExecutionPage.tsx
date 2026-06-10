@@ -23,6 +23,7 @@ import {
   Download,
 } from 'lucide-react';
 import { RawAnalysisReport } from '@/lib/comprehensive-scraper';
+import { apiCall } from '@/lib/api-call';
 
 interface StepStatus {
   id: string;
@@ -91,21 +92,16 @@ export function StepByStepExecutionPage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/analyze/step-by-step-execution', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url: url.trim() }),
-      });
+      const { data } = await apiCall<StepByStepExecutionResponse>(
+        '/api/analyze/step-by-step-execution',
+        {
+          method: 'POST',
+          body: { url: url.trim() },
+          showErrorToast: false,
+        }
+      );
 
-      const data: StepByStepExecutionResponse = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Analysis failed');
-      }
-
-      if (data.success && data.data) {
+      if (data?.success && data.data) {
         setResult(data.data);
         setProgress(100);
         setCurrentStep('Analysis Complete');
@@ -117,7 +113,7 @@ export function StepByStepExecutionPage() {
 
         // Step-by-step analysis completed successfully
       } else {
-        throw new Error(data.error || 'Analysis failed');
+        throw new Error(data?.error || 'Analysis failed');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Analysis failed');

@@ -16,6 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Copy, Download, Loader2, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
+import { apiCall } from '@/lib/api-call';
 
 export function RevenueTrendsPage() {
   const [url, setUrl] = useState('');
@@ -48,20 +49,18 @@ export function RevenueTrendsPage() {
         }
       }
 
-      const response = await fetch('/api/analyze/revenue-trends', {
+      const { data } = await apiCall<{ success: boolean; error?: string }>('/api/analyze/revenue-trends', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           url: url.trim(),
           proposedContent: proposedContent.trim(),
           existingContent,
           analysisType: 'full',
-        }),
+        },
+        showErrorToast: false,
       });
 
-      const data = await response.json();
-
-      if (data.success) {
+      if (data?.success) {
         setResult(data);
       } else {
         setError(data.error || 'Revenue trends analysis failed');

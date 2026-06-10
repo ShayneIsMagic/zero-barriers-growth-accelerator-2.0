@@ -12,6 +12,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { changeUserPassword, updateUserProfile } from '@/services/auth-services';
 import { useRouter } from 'next/navigation';
 
 export default function ProfilePage() {
@@ -53,19 +54,13 @@ export default function ProfilePage() {
     setUpdateMessage('');
 
     try {
-      const response = await fetch('/api/user/profile', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
+      const result = await updateUserProfile(formData);
+      if (result.success) {
         setUpdateMessage('Profile updated successfully!');
       } else {
-        const error = await response.json();
-        setUpdateMessage(`Error: ${error.error}`);
+        setUpdateMessage(`Error: ${result.error || 'Update failed'}`);
       }
-    } catch (error) {
+    } catch {
       setUpdateMessage('An error occurred while updating profile');
     } finally {
       setIsUpdating(false);
@@ -90,16 +85,11 @@ export default function ProfilePage() {
     }
 
     try {
-      const response = await fetch('/api/user/change-password', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          currentPassword: passwordData.currentPassword,
-          newPassword: passwordData.newPassword,
-        }),
+      const result = await changeUserPassword({
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword,
       });
-
-      if (response.ok) {
+      if (result.success) {
         setPasswordMessage('Password changed successfully!');
         setPasswordData({
           currentPassword: '',
@@ -107,10 +97,9 @@ export default function ProfilePage() {
           confirmPassword: '',
         });
       } else {
-        const error = await response.json();
-        setPasswordMessage(`Error: ${error.error}`);
+        setPasswordMessage(`Error: ${result.error || 'Password change failed'}`);
       }
-    } catch (error) {
+    } catch {
       setPasswordMessage('An error occurred while changing password');
     } finally {
       setIsChangingPassword(false);

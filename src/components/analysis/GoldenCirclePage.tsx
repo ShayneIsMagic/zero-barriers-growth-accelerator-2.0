@@ -25,7 +25,12 @@ import {
 import { useState } from 'react';
 import { MarkdownFallbackViewer } from '@/components/analysis/MarkdownFallbackViewer';
 import { Progress } from '@/components/ui/progress';
-import { useChunkedAnalysis } from '@/hooks/useChunkedAnalysis';
+import { useFrameworkPageAnalysis } from '@/hooks/useFrameworkPageAnalysis';
+import {
+  createProposedContent as postProposedContent,
+  createVersionComparison as postVersionComparison,
+  saveContentSnapshot,
+} from '@/services/content-api';
 import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
 
 export function GoldenCirclePage() {
@@ -35,13 +40,16 @@ export function GoldenCirclePage() {
 
   const {
     isAnalyzing,
+    isCollecting,
     percent,
     currentCategory,
     completedCategories,
     result,
     error: streamError,
-    runAnalysis: runStreamingAnalysis,
-  } = useChunkedAnalysis('/api/analyze/golden-circle-standalone');
+    runAnalysis: runFrameworkAnalysis,
+  } = useFrameworkPageAnalysis('/api/analyze/golden-circle-standalone');
+
+  const isBusy = isAnalyzing || isCollecting;
 
   const [localError, setLocalError] = useState<string | null>(null);
   const error = streamError || localError;
@@ -58,20 +66,23 @@ export function GoldenCirclePage() {
     if (!url.trim()) return;
 
     let existingContent = null;
+    let skipCollection = false;
     if (scrapedContent.trim()) {
       try {
         existingContent = JSON.parse(scrapedContent.trim());
+        skipCollection = true;
       } catch {
+        setLocalError('Invalid JSON in scraped content field');
         return;
       }
     }
 
-    await runStreamingAnalysis({
+    await runFrameworkAnalysis({
       url: url.trim(),
       proposedContent: proposedContent.trim(),
       existingContent,
+      skipCollection,
       analysisType: 'full',
-      stream: true,
     });
   };
 
@@ -114,23 +125,16 @@ export function GoldenCirclePage() {
     setLocalError(null);
 
     try {
-      const response = await fetch('/api/content/snapshots', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          url: url.trim(),
-          title: result.existingData.title || 'Untitled',
-          content: result.existingData.cleanText || '',
-          metadata: {
-            wordCount: result.existingData.wordCount,
-            keywords: result.existingData.extractedKeywords,
-            headings: result.existingData.headings,
-          },
-          userId: 'current-user',
-        }),
+      const data = await saveContentSnapshot({
+        url: url.trim(),
+        title: result.existingData.title || 'Untitled',
+        content: result.existingData.cleanText || '',
+        metadata: {
+          wordCount: result.existingData.wordCount,
+          keywords: result.existingData.extractedKeywords,
+          headings: result.existingData.headings,
+        },
       });
-
-      const data = await response.json();
 
       if (data.success) {
         setSnapshotId(data.snapshot.id);
@@ -155,18 +159,10 @@ export function GoldenCirclePage() {
     setLocalError(null);
 
     try {
-      const response = await fetch('/api/content/proposed', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          snapshotId,
-          content: proposedContent.trim(),
-          createdBy: 'current-user',
-          status: 'draft',
-        }),
+      const data = await postProposedContent({
+        snapshotId,
+        content: proposedContent.trim(),
       });
-
-      const data = await response.json();
 
       if (data.success) {
         setProposedContentId(data.proposedContent.id);
@@ -190,18 +186,12 @@ export function GoldenCirclePage() {
     }
 
     try {
-      const response = await fetch('/api/content/compare', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          existingId: snapshotId,
-          proposedId: proposedContentId,
-          analysisResults: result?.comparison || null,
-          similarityScore: result?.similarityScore || null,
-        }),
+      const data = await postVersionComparison({
+        existingId: snapshotId,
+        proposedId: proposedContentId,
+        analysisResults: result?.comparison || null,
+        similarityScore: result?.similarityScore || null,
       });
-
-      const data = await response.json();
 
       if (data.success) {
         setLocalError(null);
@@ -246,7 +236,7 @@ export function GoldenCirclePage() {
               placeholder="https://example.com"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              disabled={isAnalyzing}
+              disabled={isBusy}
               aria-label="Enter website URL to analyze"
               aria-describedby="url-help"
               autoComplete="url"
@@ -287,7 +277,7 @@ Comprehensive marketing optimization tools and insights.
 [Your content here...]"
               value={proposedContent}
               onChange={(e) => setProposedContent(e.target.value)}
-              disabled={isAnalyzing}
+              disabled={isBusy}
               className="min-h-[200px] font-mono text-sm"
               aria-label="Enter proposed new content for Golden Circle analysis"
               aria-describedby="content-help"
@@ -314,7 +304,7 @@ Comprehensive marketing optimization tools and insights.
 Example: {"title":"...","metaDescription":"...","wordCount":...}'
               value={scrapedContent}
               onChange={(e) => setScrapedContent(e.target.value)}
-              disabled={isAnalyzing}
+              disabled={isBusy}
               className="min-h-[100px] font-mono text-xs"
               aria-label="Paste scraped content from content-comparison"
               aria-describedby="scraped-help"
@@ -365,11 +355,11 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
           {/* Analyze Button */}
           <Button
             onClick={runAnalysis}
-            disabled={isAnalyzing || !url.trim()}
+            disabled={isBusy || !url.trim()}
             className="w-full"
             size="lg"
           >
-            {isAnalyzing ? (
+            {isBusy ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Analyzing...
@@ -385,7 +375,7 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
           </Button>
 
           {/* Chunk Progress Bar */}
-          {isAnalyzing && (
+          {(isAnalyzing || isCollecting) && (
             <div className="space-y-2">
               <Progress value={percent} className="h-3" />
               <div className="flex items-center justify-between text-sm text-muted-foreground">

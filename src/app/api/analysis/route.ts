@@ -1,25 +1,33 @@
 /**
  * Analysis List API
- * GET /api/analysis - List all analyses with optional filtering
+ * GET /api/analysis - List analyses for the authenticated user
  */
 
+import { getRequestUser, apiErrorResponse } from '@/lib/server/api-route';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
+    const user = getRequestUser(request);
+    if (!user) {
+      return apiErrorResponse(401, 'Authentication required');
+    }
+
     const { searchParams } = new URL(request.url);
     const contentType = searchParams.get('contentType');
     const status = searchParams.get('status');
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const limit = parseInt(searchParams.get('limit') || '50', 10);
+    const offset = parseInt(searchParams.get('offset') || '0', 10);
 
-    // Build where clause for filtering using proper Prisma methods
     const where: {
       contentType?: string;
       status?: string;
-      userId?: string;
-    } = {};
+      userId: string;
+    } = {
+      userId: user.userId,
+    };
+
     if (contentType) {
       where.contentType = contentType;
     }
@@ -27,7 +35,6 @@ export async function GET(request: NextRequest) {
       where.status = status;
     }
 
-    // Fetch analyses using proper Prisma client methods (no raw SQL)
     const analyses = await prisma.analysis.findMany({
       where,
       orderBy: { createdAt: 'desc' },
@@ -44,7 +51,6 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // Parse content to extract URL and other metadata
     interface AnalysisWithContent {
       id: string;
       contentType: string | null;
@@ -70,13 +76,13 @@ export async function GET(request: NextRequest) {
             url = content.url || content.data?.url || 'Unknown URL';
             data = content;
           }
-        } catch (error) {
-          console.warn('Failed to parse analysis content:', error);
+        } catch {
+          // keep defaults
         }
 
         return {
           id: analysis.id,
-          url: url,
+          url,
           contentType: analysis.contentType,
           status: analysis.status,
           score: analysis.score,
@@ -87,18 +93,19 @@ export async function GET(request: NextRequest) {
       }
     );
 
+    const total = await prisma.analysis.count({ where });
+
     return NextResponse.json({
       success: true,
       analyses: processedAnalyses,
       pagination: {
-        total: processedAnalyses.length, // Simplified for now
+        total,
         limit,
         offset,
-        hasMore: processedAnalyses.length === limit,
+        hasMore: offset + processedAnalyses.length < total,
       },
     });
   } catch (error) {
-    console.error('Failed to fetch analyses:', error);
     return NextResponse.json(
       {
         success: false,

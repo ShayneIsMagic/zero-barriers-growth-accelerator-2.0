@@ -24,6 +24,7 @@ import {
   Users,
 } from 'lucide-react';
 import { useState } from 'react';
+import { apiCall } from '@/lib/api-call';
 
 /**
  * Enhanced Content Comparison Page
@@ -75,94 +76,109 @@ export function ContentComparisonEnhancedPage() {
     });
 
     try {
+      type FrameworkApiResult = {
+        success: boolean;
+        error?: string;
+        comparison?: unknown;
+      };
+
       // Create promises for each framework with individual error handling
-      const generalPromise = fetch('/api/analyze/compare', {
+      const generalPromise = apiCall<FrameworkApiResult>('/api/analyze/compare', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           url: url.trim(),
           proposedContent: proposedContent.trim(),
           analysisType: 'full',
-        }),
+        },
+        showErrorToast: false,
       })
-        .then((r) => {
+        .then(({ data }) => {
           setLoadingFrameworks((prev) => ({ ...prev, general: false }));
-          return r.json();
+          return data;
         })
         .catch((err) => {
           setLoadingFrameworks((prev) => ({ ...prev, general: false }));
           return { success: false, error: err.message };
         });
 
-      const b2cPromise = fetch('/api/analyze/elements-value-b2c-standalone', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          url: url.trim(),
-          proposedContent: proposedContent.trim(),
-          analysisType: 'full',
-        }),
-      })
-        .then((r) => {
-          setLoadingFrameworks((prev) => ({ ...prev, b2c: false }));
-          return r.json();
-        })
-        .catch((err) => {
-          setLoadingFrameworks((prev) => ({ ...prev, b2c: false }));
-          return { success: false, error: err.message };
-        });
-
-      const b2bPromise = fetch('/api/analyze/elements-value-b2b-standalone', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          url: url.trim(),
-          proposedContent: proposedContent.trim(),
-          analysisType: 'full',
-        }),
-      })
-        .then((r) => {
-          setLoadingFrameworks((prev) => ({ ...prev, b2b: false }));
-          return r.json();
-        })
-        .catch((err) => {
-          setLoadingFrameworks((prev) => ({ ...prev, b2b: false }));
-          return { success: false, error: err.message };
-        });
-
-      const cliftonPromise = fetch(
-        '/api/analyze/clifton-strengths-standalone',
+      const b2cPromise = apiCall<FrameworkApiResult>(
+        '/api/analyze/elements-value-b2c-standalone',
         {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            url: url.trim(),
-            proposedContent: proposedContent.trim(),
-            analysisType: 'full',
-          }),
+        method: 'POST',
+        body: {
+          url: url.trim(),
+          proposedContent: proposedContent.trim(),
+          analysisType: 'full',
+        },
+        showErrorToast: false,
         }
       )
-        .then((r) => {
+        .then(({ data }) => {
+          setLoadingFrameworks((prev) => ({ ...prev, b2c: false }));
+          return data;
+        })
+        .catch((err) => {
+          setLoadingFrameworks((prev) => ({ ...prev, b2c: false }));
+          return { success: false, error: err.message };
+        });
+
+      const b2bPromise = apiCall<FrameworkApiResult>(
+        '/api/analyze/elements-value-b2b-standalone',
+        {
+        method: 'POST',
+        body: {
+          url: url.trim(),
+          proposedContent: proposedContent.trim(),
+          analysisType: 'full',
+        },
+        showErrorToast: false,
+        }
+      )
+        .then(({ data }) => {
+          setLoadingFrameworks((prev) => ({ ...prev, b2b: false }));
+          return data;
+        })
+        .catch((err) => {
+          setLoadingFrameworks((prev) => ({ ...prev, b2b: false }));
+          return { success: false, error: err.message };
+        });
+
+      const cliftonPromise = apiCall<FrameworkApiResult>(
+        '/api/analyze/clifton-strengths-standalone',
+        {
+        method: 'POST',
+        body: {
+          url: url.trim(),
+          proposedContent: proposedContent.trim(),
+          analysisType: 'full',
+        },
+        showErrorToast: false,
+        }
+      )
+        .then(({ data }) => {
           setLoadingFrameworks((prev) => ({ ...prev, clifton: false }));
-          return r.json();
+          return data;
         })
         .catch((err) => {
           setLoadingFrameworks((prev) => ({ ...prev, clifton: false }));
           return { success: false, error: err.message };
         });
 
-      const goldenPromise = fetch('/api/analyze/golden-circle-standalone', {
+      const goldenPromise = apiCall<FrameworkApiResult>(
+        '/api/analyze/golden-circle-standalone',
+        {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           url: url.trim(),
           proposedContent: proposedContent.trim(),
           analysisType: 'full',
-        }),
-      })
-        .then((r) => {
+        },
+        showErrorToast: false,
+        }
+      )
+        .then(({ data }) => {
           setLoadingFrameworks((prev) => ({ ...prev, golden: false }));
-          return r.json();
+          return data;
         })
         .catch((err) => {
           setLoadingFrameworks((prev) => ({ ...prev, golden: false }));

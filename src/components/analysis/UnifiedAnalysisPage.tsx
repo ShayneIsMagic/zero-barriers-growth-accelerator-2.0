@@ -22,6 +22,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useState } from 'react';
+import { apiCall } from '@/lib/api-call';
 
 interface AnalysisOptions {
   includeGoldenCircle?: boolean;
@@ -68,17 +69,13 @@ export function UnifiedAnalysisPage() {
     setResult(null);
 
     try {
-      const response = await fetch('/api/analyze/unified', {
+      const { data } = await apiCall<{ success: boolean; data?: UnifiedAnalysisResult; error?: string }>('/api/analyze/unified', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url, options }),
+        body: { url, options },
+        showErrorToast: false,
       });
 
-      const data = await response.json();
-
-      if (data.success) {
+      if (data?.success) {
         setResult(data.data);
       } else {
         setError(data.error || 'Analysis failed');

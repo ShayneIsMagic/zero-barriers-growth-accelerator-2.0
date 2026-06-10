@@ -4,23 +4,34 @@
  */
 
 import { prisma } from '@/lib/prisma';
+import { getRequestUser } from '@/lib/server/api-route';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 30;
 
 export async function POST(request: NextRequest) {
   try {
-    const { url, title, content, metadata, userId } = await request.json();
+    const user = getRequestUser(request);
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
 
-    if (!url || !content || !userId) {
+    const { url, title, content, metadata } = await request.json();
+
+    if (!url || !content) {
       return NextResponse.json(
         {
           success: false,
-          error: 'URL, content, and userId are required',
+          error: 'URL and content are required',
         },
         { status: 400 }
       );
     }
+
+    const userId = user.userId;
 
     console.log(`📸 Creating content snapshot for: ${url}`);
 
@@ -65,19 +76,17 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
-    const url = searchParams.get('url');
-
-    if (!userId) {
+    const user = getRequestUser(request);
+    if (!user) {
       return NextResponse.json(
-        {
-          success: false,
-          error: 'userId is required',
-        },
-        { status: 400 }
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
       );
     }
+
+    const { searchParams } = new URL(request.url);
+    const userId = user.userId;
+    const url = searchParams.get('url');
 
     console.log(`📋 Fetching content snapshots for user: ${userId}`);
 

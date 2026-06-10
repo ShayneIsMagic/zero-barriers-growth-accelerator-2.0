@@ -34,6 +34,8 @@ import {
   EyeOff,
 } from 'lucide-react';
 import SimpleProgressTracker from './SimpleProgressTracker';
+import { toast } from 'sonner';
+import { apiCall } from '@/lib/api-call';
 
 interface StepResult {
   type: string;
@@ -121,7 +123,7 @@ export default function StepByStepAnalysisPage() {
 
   const executeStep = async (stepId: string) => {
     if (!url.trim()) {
-      alert('Please enter a valid URL');
+      toast.error('Please enter a valid URL');
       return;
     }
 
@@ -166,22 +168,14 @@ export default function StepByStepAnalysisPage() {
           break;
       }
 
-      const response = await fetch('/api/analyze/step-by-step', {
+      const { data: result } = await apiCall<any>('/api/analyze/step-by-step', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+        body: {
           step: stepId,
           data: requestData,
-        }),
+        },
+        showErrorToast: false,
       });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || 'Step execution failed');
-      }
 
       // Update step result
       setSteps((prev) => ({

@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
+import { apiCall } from '@/lib/api-call';
 
 interface GoogleToolLink {
   name: string;
@@ -106,22 +107,24 @@ export function GoogleToolsPage() {
         .map((k) => k.trim())
         .filter((k) => k.length > 0);
 
-      const response = await fetch('/api/analyze/google-tools-ollama', {
+      const { data: result } = await apiCall<{
+        success: boolean;
+        error?: string;
+        analysis?: unknown;
+        traceability?: unknown;
+        readableMarkdown?: string;
+      }>('/api/analyze/google-tools-ollama', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+        body: {
           url: url.trim(),
           keywords: keywordArray,
           toolType: selectedTool,
           manualData: manualData.trim(),
-        }),
+        },
+        showErrorToast: false,
       });
-
-      const result = await response.json();
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || 'Ollama analysis failed');
+      if (!result?.success) {
+        throw new Error(result?.error || 'Ollama analysis failed');
       }
 
       setAnalysisEnvelope(result);

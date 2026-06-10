@@ -22,6 +22,7 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CheckCircle, Clock, Pause, Play, XCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { apiCall } from '@/lib/api-call';
 
 interface AnalysisStep {
   id: string;
@@ -67,8 +68,13 @@ export function ControlledAnalysisPage({
 
   const loadAvailableSteps = async () => {
     try {
-      const response = await fetch('/api/analyze/controlled?action=steps');
-      const data = await response.json();
+      const { data } = await apiCall<{
+        success: boolean;
+        data?: { availableSteps: AnalysisStep[] };
+      }>('/api/analyze/controlled?action=steps', {
+        method: 'GET',
+        showErrorToast: false,
+      });
 
       if (data.success) {
         setAvailableSteps(data.data.availableSteps);
@@ -114,19 +120,19 @@ export function ControlledAnalysisPage({
       }, 0);
       setEstimatedTimeRemaining(totalTime);
 
-      const response = await fetch('/api/analyze/controlled', {
+      const { data } = await apiCall<{
+        success: boolean;
+        data?: any;
+        error?: string;
+      }>('/api/analyze/controlled', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+        body: {
           url,
           steps: selectedSteps,
           timeoutPerStep: 30000,
-        }),
+        },
+        showErrorToast: false,
       });
-
-      const data = await response.json();
 
       if (data.success) {
         setResult(data.data);

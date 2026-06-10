@@ -9,7 +9,6 @@ import {
   formatEvidenceForPrompt,
 } from '@/lib/framework-evidence-protocol';
 import { buildAnalysisTraceability } from '@/lib/server/analysis-traceability';
-import { touchOllamaActivity } from '@/lib/server/ollama-lifecycle';
 
 export const maxDuration = 300;
 
@@ -35,8 +34,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    await touchOllamaActivity();
 
     let existingData;
     if (existingContent) {

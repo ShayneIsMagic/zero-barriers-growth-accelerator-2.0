@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import type { ChunkProgressEvent } from '@/lib/chunked-framework-analysis';
+import { consumeChunkedAnalysisStream } from '@/lib/framework/consume-chunked-stream';
 import {
   buildCanonicalFrameworkPayload,
   CanonicalFrameworkPayload,
@@ -104,88 +105,33 @@ export function useChunkedAnalysis(endpoint: string) {
           throw new Error(`Server error: ${response.status}`);
         }
 
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
+        const streamResult = await consumeChunkedAnalysisStream(response, {
+          onProgress: (progressEvent: ChunkProgressEvent) => {
+            setState((prev) => ({
+              ...prev,
+              percent: progressEvent.percent,
+              currentCategory:
+                progressEvent.status === 'started'
+                  ? progressEvent.categoryName
+                  : prev.currentCategory,
+              completedCategories:
+                progressEvent.status === 'completed'
+                  ? [...prev.completedCategories, progressEvent.categoryName]
+                  : prev.completedCategories,
+            }));
+          },
+        });
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          buffer += decoder.decode(value, { stream: true });
-
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-
-          for (const line of lines) {
-            if (!line.trim()) continue;
-
-            try {
-              const event = JSON.parse(line);
-
-              if (event.type === 'progress') {
-                const progressEvent = event as ChunkProgressEvent;
-                setState((prev) => ({
-                  ...prev,
-                  percent: progressEvent.percent,
-                  currentCategory:
-                    progressEvent.status === 'started'
-                      ? progressEvent.categoryName
-                      : prev.currentCategory,
-                  completedCategories:
-                    progressEvent.status === 'completed'
-                      ? [...prev.completedCategories, progressEvent.categoryName]
-                      : prev.completedCategories,
-                }));
-              } else if (event.type === 'result') {
-                setState((prev) => ({
-                  ...prev,
-                  isAnalyzing: false,
-                  percent: 100,
-                  currentCategory: '',
-                  result: {
-                    ...event.data,
-                    canonicalPayload: prev.canonicalPayload,
-                  },
-                }));
-              } else if (event.type === 'error') {
-                setState((prev) => ({
-                  ...prev,
-                  isAnalyzing: false,
-                  error: event.error,
-                }));
-              }
-            } catch {
-              // ignore malformed lines
-            }
-          }
-        }
-
-        // Handle any remaining buffer
-        if (buffer.trim()) {
-          try {
-            const event = JSON.parse(buffer);
-            if (event.type === 'result') {
-              setState((prev) => ({
-                ...prev,
-                isAnalyzing: false,
-                percent: 100,
-                result: {
-                  ...event.data,
-                  canonicalPayload: prev.canonicalPayload,
-                },
-              }));
-            } else if (event.type === 'error') {
-              setState((prev) => ({
-                ...prev,
-                isAnalyzing: false,
-                error: event.error,
-              }));
-            }
-          } catch {
-            // ignore
-          }
-        }
+        setState((prev) => ({
+          ...prev,
+          isAnalyzing: false,
+          percent: 100,
+          currentCategory: '',
+          result: {
+            ...streamResult,
+            canonicalPayload: prev.canonicalPayload,
+          },
+        }));
       } catch (err) {
         setState((prev) => ({
           ...prev,

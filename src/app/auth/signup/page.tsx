@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { signUpUser } from '@/services/auth-services';
 import { ArrowRight, Loader2, UserPlus } from 'lucide-react';
 
 export default function SignUpPage() {
@@ -39,24 +40,20 @@ export default function SignUpPage() {
     }
 
     try {
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-
-      if (response.ok) {
+      const user = await signUpUser(
+        formData.email,
+        formData.password,
+        formData.name
+      );
+      if (user) {
         router.push('/auth/signin?message=Account created successfully');
       } else {
-        const data = await response.json();
-        setError(data.error || 'Failed to create account');
+        setError('Failed to create account');
       }
     } catch (error) {
-      setError('An error occurred during sign up');
+      setError(
+        error instanceof Error ? error.message : 'An error occurred during sign up'
+      );
     } finally {
       setIsLoading(false);
     }

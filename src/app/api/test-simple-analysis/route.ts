@@ -1,46 +1,43 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { analyzeWithGemini } from '@/lib/free-ai-analysis';
+import {
+  apiErrorResponse,
+  guardDevelopmentOnly,
+  logRouteError,
+} from '@/lib/server/api-route';
+import { logger } from '@/lib/logger';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 60;
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  const blocked = guardDevelopmentOnly();
+  if (blocked) {
+    return blocked;
+  }
+
   try {
     const body = await request.json();
-    const { content } = body;
+    const { content } = body as { content?: string };
 
     if (!content) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Content is required',
-        },
-        { status: 400 }
-      );
+      return apiErrorResponse(400, 'Content is required');
     }
 
-    console.log('🧪 Testing simple Gemini analysis...');
+    logger.info('Testing simple Gemini analysis');
 
-    // Test simple Gemini call
     const result = await analyzeWithGemini(content, 'test');
-
-    console.log('✅ Simple analysis completed');
 
     return NextResponse.json({
       success: true,
       result,
-      message: 'Simple analysis test successful',
+      message: 'Simple analysis completed',
     });
   } catch (error) {
-    console.error('Simple analysis test failed:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Simple analysis test failed',
-      },
-      { status: 500 }
+    logRouteError('POST /api/test-simple-analysis', error);
+    return apiErrorResponse(
+      500,
+      'Analysis test failed',
+      error instanceof Error ? error.message : 'Unknown error'
     );
   }
 }

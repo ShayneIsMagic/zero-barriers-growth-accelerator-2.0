@@ -46,7 +46,8 @@ Total Documentation: **5,934 lines** across 6 comprehensive framework documents
 
 ### **2. Golden Circle Framework (with WHO)** ⭐
 
-**File**: `GOLDEN_CIRCLE_COMPLETE.md` (543 lines)  
+**File**: `GOLDEN_CIRCLE_COMPLETE.md` (603 lines)  
+**Implementation guide**: [`docs/guides/GOLDEN_CIRCLE_ASSESSMENT_GUIDE.md`](../guides/GOLDEN_CIRCLE_ASSESSMENT_GUIDE.md)  
 **Source**: [Simon Sinek](https://simonsinek.com/golden-circle/)
 
 **What It Includes**:
@@ -72,6 +73,7 @@ Total Documentation: **5,934 lines** across 6 comprehensive framework documents
 ### **3. CliftonStrengths Framework** ⭐
 
 **File**: `CLIFTONSTRENGTHS_COMPLETE.md` (958 lines)  
+**Implementation guide**: [`docs/guides/CLIFTONSTRENGTHS_ASSESSMENT_GUIDE.md`](../guides/CLIFTONSTRENGTHS_ASSESSMENT_GUIDE.md)  
 **Source**: [Gallup CliftonStrengths](https://www.gallup.com/cliftonstrengths/en/253715/34-cliftonstrengths-themes.aspx)
 
 **What It Includes**:
@@ -95,6 +97,7 @@ Total Documentation: **5,934 lines** across 6 comprehensive framework documents
 ### **4. B2B Elements of Value** ⭐
 
 **File**: `B2B_ELEMENTS_OF_VALUE_COMPLETE.md` (1,028 lines)  
+**Implementation guide**: [`docs/guides/B2B_ELEMENTS_ASSESSMENT_GUIDE.md`](../guides/B2B_ELEMENTS_ASSESSMENT_GUIDE.md)  
 **Source**: [Bain & Company B2B](https://media.bain.com/b2b-eov/#)
 
 **What It Includes**:
@@ -124,6 +127,7 @@ Total Documentation: **5,934 lines** across 6 comprehensive framework documents
 ### **5. B2C Elements of Value** ⭐
 
 **File**: `B2C_ELEMENTS_OF_VALUE_COMPLETE.md` (940 lines)  
+**Implementation guide**: [`docs/guides/B2C_ELEMENTS_ASSESSMENT_GUIDE.md`](../guides/B2C_ELEMENTS_ASSESSMENT_GUIDE.md)  
 **Source**: [Bain & Company B2C](https://media.bain.com/elements-of-value/#)
 
 **What It Includes**:

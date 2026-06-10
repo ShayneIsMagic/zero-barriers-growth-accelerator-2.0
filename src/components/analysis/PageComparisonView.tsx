@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   BarChart3,
@@ -155,7 +156,7 @@ export function PageComparisonView({
       .join('\n---\n\n');
 
     await navigator.clipboard.writeText(comparisonText);
-    alert('Comparison copied to clipboard!');
+    toast.success('Comparison copied to clipboard!');
   };
 
   if (reports.length === 0) {

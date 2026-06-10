@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Brain, Loader2 } from 'lucide-react';
 import { useState } from 'react';
+import { apiCall } from '@/lib/api-call';
 
 interface Phase2ButtonProps {
   scrapedContent: any;
@@ -25,22 +26,18 @@ export function Phase2Button({
     setError(null);
 
     try {
-      const response = await fetch('/api/analyze/phase2-simple', {
+      const { data: result } = await apiCall<any>('/api/analyze/phase2-simple', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+        body: {
           url,
           content: scrapedContent,
           industry: industry || 'general',
-        }),
+        },
+        showErrorToast: false,
       });
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Phase 2 analysis failed');
+      if (!result?.success) {
+        throw new Error(result?.error || 'Phase 2 analysis failed');
       }
 
       // Phase 2 analysis complete

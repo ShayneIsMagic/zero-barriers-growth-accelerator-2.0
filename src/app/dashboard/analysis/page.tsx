@@ -23,6 +23,7 @@ import {
   Users,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { apiCall } from '@/lib/api-call';
 
 interface AnalysisData {
   url: string;
@@ -66,17 +67,17 @@ export default function AnalysisPage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/analyze/phase1-simple', {
+      const { data } = await apiCall<{
+        success?: boolean;
+        data?: any;
+        error?: string;
+      }>('/api/analyze/phase1-simple', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url }),
+        body: { url },
+        showErrorToast: false,
       });
 
-      const data = await response.json();
-
-      if (data.success) {
+      if (data?.success && data.data) {
         setContent(data.data);
         setAnalysisData((prev) => ({
           ...prev,
@@ -88,7 +89,7 @@ export default function AnalysisPage() {
         const newData = { url, content: data.data };
         localStorage.setItem('analysisData', JSON.stringify(newData));
       } else {
-        setError(data.error || 'Phase 1 failed');
+        setError(data?.error || 'Phase 1 failed');
       }
     } catch (err) {
       setError('Network error occurred');
@@ -107,17 +108,17 @@ export default function AnalysisPage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/analyze/comprehensive-report', {
+      const { data } = await apiCall<{
+        success?: boolean;
+        data?: any;
+        error?: string;
+      }>('/api/analyze/comprehensive-report', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url, content }),
+        body: { url, content },
+        showErrorToast: false,
       });
 
-      const data = await response.json();
-
-      if (data.success) {
+      if (data?.success && data.data) {
         setAnalysisData((prev) => ({
           ...prev,
           ...data.data,
@@ -126,7 +127,7 @@ export default function AnalysisPage() {
         // Save to localStorage
         localStorage.setItem('analysisData', JSON.stringify(data.data));
       } else {
-        setError(data.error || 'Comprehensive analysis failed');
+        setError(data?.error || 'Comprehensive analysis failed');
       }
     } catch (err) {
       setError('Network error occurred');

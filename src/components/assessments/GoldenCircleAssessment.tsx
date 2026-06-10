@@ -12,6 +12,7 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { AlertCircle, Loader2, Target, Play as _Play } from 'lucide-react';
 import { useState } from 'react';
+import { apiCall } from '@/lib/api-call';
 
 interface GoldenCircleData {
   why: {
@@ -83,15 +84,11 @@ export default function GoldenCircleAssessment({
     setError(null);
 
     try {
-      const response = await fetch('/api/analyze/golden-circle', {
+      const { data } = await apiCall<{ success: boolean; data?: GoldenCircleData; error?: string }>('/api/analyze/golden-circle', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url, content }),
+        body: { url, content },
+        showErrorToast: false,
       });
-
-      const data = await response.json();
 
       if (data.success) {
         setResult(data.data);

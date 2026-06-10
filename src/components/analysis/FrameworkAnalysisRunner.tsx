@@ -15,7 +15,18 @@ import {
 } from '@/components/ui/select';
 import { MultiPageSelector } from '@/components/shared/MultiPageSelector';
 import { PageComparisonView } from './PageComparisonView';
-import { UnifiedLocalForageStorage } from '@/lib/services/unified-localforage-storage.service';
+import { apiCall, apiCallStream } from '@/lib/api-call';
+import { consumeChunkedAnalysisStream } from '@/lib/framework/consume-chunked-stream';
+import { getChunkedAssessmentConfig } from '@/lib/framework/framework-assessment-config';
+import {
+  buildExistingContentForChunkedAnalysis,
+  pickPrimaryPageUrl,
+  type PuppeteerPageRecord,
+} from '@/lib/framework/page-to-existing-content';
+import {
+  UnifiedLocalForageStorage,
+  type StoredPuppeteerData,
+} from '@/lib/services/unified-localforage-storage.service';
 import {
   Target,
   Users,
@@ -37,6 +48,7 @@ import {
   ArrowRight,
   RefreshCw,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface Page {
   url: string;
@@ -79,6 +91,7 @@ interface AssessmentProgress {
   assessmentId: string;
   status: 'pending' | 'running' | 'completed' | 'error';
   progress: number;
+  currentCategory?: string;
   result?: any;
   error?: string;
 }
@@ -174,6 +187,8 @@ export function FrameworkAnalysisRunner({
   const [allCollectedContent, setAllCollectedContent] = useState<Array<{ siteUrl: string; pages: Page[]; timestamp: string; pageCount: number }>>([]);
   const [showAllContent, setShowAllContent] = useState(false);
   const [currentSiteUrl, setCurrentSiteUrl] = useState<string>(url || '');
+  const [loadedSiteData, setLoadedSiteData] =
+    useState<StoredPuppeteerData | null>(null);
 
   // Load available pages from stored data
   const loadAvailablePages = useCallback(async (providedData?: any) => {
@@ -226,6 +241,31 @@ export function FrameworkAnalysisRunner({
       }
 
       if (puppeteerData?.data?.pages) {
+        const storedBundle: StoredPuppeteerData =
+          puppeteerData.metadata && puppeteerData.data?.pages
+            ? (puppeteerData as StoredPuppeteerData)
+            : {
+                url: puppeteerData.url || url || '',
+                data: puppeteerData.data ?? puppeteerData,
+                timestamp: puppeteerData.timestamp || new Date().toISOString(),
+                metadata: puppeteerData.metadata || {
+                  tags: {},
+                  keywords: {},
+                  seo: {},
+                  analytics: {},
+                },
+              };
+
+        setLoadedSiteData(storedBundle);
+
+        const siteKey = storedBundle.url || url?.trim();
+        if (siteKey && providedData) {
+          await UnifiedLocalForageStorage.storePuppeteerData(
+            siteKey,
+            storedBundle.data
+          );
+        }
+
         const pages: Page[] = puppeteerData.data.pages.map((page: any) => ({
           url: page.url,
           pageLabel: page.pageLabel || 'Page',
@@ -243,9 +283,9 @@ export function FrameworkAnalysisRunner({
           },
         }));
         setAvailablePages(pages);
-        // Auto-select all pages by default when content is found
         if (pages.length > 0 && selectedPages.length === 0) {
-          setSelectedPages(pages.map((p) => p.url));
+          const primary = pickPrimaryPageUrl(pages, url || puppeteerData.url);
+          setSelectedPages(primary ? [primary] : []);
         }
         // Update current site URL if we found data
         if (puppeteerData?.url) {
@@ -273,8 +313,24 @@ export function FrameworkAnalysisRunner({
             },
           }));
           setAvailablePages(pages);
+          setLoadedSiteData(
+            puppeteerData.timestamp
+              ? puppeteerData
+              : {
+                  url: puppeteerData.url || url || '',
+                  data,
+                  timestamp: new Date().toISOString(),
+                  metadata: {
+                    tags: {},
+                    keywords: {},
+                    seo: {},
+                    analytics: {},
+                  },
+                }
+          );
           if (pages.length > 0 && selectedPages.length === 0) {
-            setSelectedPages(pages.map((p) => p.url));
+            const primary = pickPrimaryPageUrl(pages, url || puppeteerData.url);
+            setSelectedPages(primary ? [primary] : []);
           }
           // Update current site URL
           if (puppeteerData?.url) {
@@ -383,14 +439,109 @@ export function FrameworkAnalysisRunner({
     setSiteGoals(siteGoals.filter((_, i) => i !== index));
   };
 
+  const resolveCollectedPage = useCallback(
+    async (pageUrl: string): Promise<PuppeteerPageRecord | null> => {
+      let pageData: StoredPuppeteerData | null = loadedSiteData;
+      let resolvedPage =
+        UnifiedLocalForageStorage.findPageInStoredData(pageData, pageUrl)?.page ??
+        null;
+
+      if (!resolvedPage && currentSiteUrl) {
+        pageData = await UnifiedLocalForageStorage.getPuppeteerData(currentSiteUrl);
+        resolvedPage =
+          UnifiedLocalForageStorage.findPageInStoredData(pageData, pageUrl)?.page ??
+          null;
+      }
+
+      if (!resolvedPage && url && url !== currentSiteUrl) {
+        pageData = await UnifiedLocalForageStorage.getPuppeteerData(url);
+        resolvedPage =
+          UnifiedLocalForageStorage.findPageInStoredData(pageData, pageUrl)?.page ??
+          null;
+      }
+
+      if (!resolvedPage && pageUrl) {
+        try {
+          const pageOrigin = new URL(pageUrl).origin;
+          pageData = await UnifiedLocalForageStorage.getPuppeteerData(pageOrigin);
+          resolvedPage =
+            UnifiedLocalForageStorage.findPageInStoredData(pageData, pageUrl)?.page ??
+            null;
+        } catch {
+          // Invalid URL, continue
+        }
+      }
+
+      if (!resolvedPage) {
+        pageData = await UnifiedLocalForageStorage.getPage(pageUrl);
+        resolvedPage =
+          UnifiedLocalForageStorage.findPageInStoredData(pageData, pageUrl)?.page ??
+          null;
+      }
+
+      if (!resolvedPage) {
+        pageData = await UnifiedLocalForageStorage.findDataByPageUrl(pageUrl);
+        resolvedPage =
+          UnifiedLocalForageStorage.findPageInStoredData(pageData, pageUrl)?.page ??
+          null;
+      }
+
+      if (!resolvedPage) {
+        const memoryPage = availablePages.find(
+          (p) =>
+            p.url === pageUrl ||
+            UnifiedLocalForageStorage.urlsMatch(p.url, pageUrl)
+        );
+        if (memoryPage?.content?.text) {
+          return {
+            url: memoryPage.url,
+            title: memoryPage.title,
+            metaDescription: memoryPage.metaDescription,
+            pageLabel: memoryPage.pageLabel,
+            content: {
+              text: memoryPage.content.text,
+              wordCount: memoryPage.content.wordCount,
+            },
+            analytics: memoryPage.analytics,
+            keywords: {
+              allKeywords: memoryPage.keywords?.allKeywords,
+              extractedKeywords: memoryPage.keywords?.metaKeywords,
+            },
+            metaTags: memoryPage.metaTags,
+            seo: {
+              extractedKeywords: memoryPage.keywords?.allKeywords,
+            },
+          };
+        }
+      }
+
+      if (!resolvedPage) {
+        return null;
+      }
+
+      return {
+        url: resolvedPage.url,
+        title: resolvedPage.title,
+        metaDescription: resolvedPage.metaDescription,
+        pageLabel: resolvedPage.pageLabel,
+        content: resolvedPage.content as unknown as PuppeteerPageRecord['content'],
+        headings: undefined,
+        keywords: resolvedPage.keywords as PuppeteerPageRecord['keywords'],
+        analytics: resolvedPage.analytics as PuppeteerPageRecord['analytics'],
+        seo: resolvedPage.seo as PuppeteerPageRecord['seo'],
+      };
+    },
+    [availablePages, currentSiteUrl, loadedSiteData, url]
+  );
+
   const runAssessments = async () => {
     if (selectedPages.length === 0) {
-      alert('Please select at least one page to review');
+      toast.error('Please select at least one page to review');
       return;
     }
 
     if (selectedAssessments.length === 0) {
-      alert('Please select at least one assessment to run');
+      toast.error('Please select at least one assessment to run');
       return;
     }
 
@@ -434,96 +585,149 @@ export function FrameworkAnalysisRunner({
             },
           }));
 
-          // Get page data - try multiple strategies to find the data
-          let pageData: any = null;
-          
-          // Strategy 1: Try current site URL
-          if (currentSiteUrl) {
-            pageData = await UnifiedLocalForageStorage.getPuppeteerData(currentSiteUrl);
-          }
-          
-          // Strategy 2: Try main URL if different from current site URL
-          if (!pageData && url && url !== currentSiteUrl) {
-            pageData = await UnifiedLocalForageStorage.getPuppeteerData(url);
-          }
-          
-          // Strategy 3: Try extracting origin from page URL and search by that
-          if (!pageData && pageUrl) {
-            try {
-              const pageOrigin = new URL(pageUrl).origin;
-              pageData = await UnifiedLocalForageStorage.getPuppeteerData(pageOrigin);
-            } catch (e) {
-              // Invalid URL, continue
-            }
-          }
-          
-          // Strategy 4: Try getting by page URL directly (in case it was stored that way)
-          if (!pageData) {
-            pageData = await UnifiedLocalForageStorage.getPage(pageUrl);
-          }
-          
-          // Strategy 5: Search all stored data for the page URL
-          if (!pageData) {
-            pageData = await UnifiedLocalForageStorage.findDataByPageUrl(pageUrl);
+          const page = await resolveCollectedPage(pageUrl);
+          if (!page) {
+            throw new Error(
+              `No data found for page: ${pageUrl}. Please ensure content has been collected for this site.`
+            );
           }
 
-          if (!pageData?.data?.pages) {
-            throw new Error(`No data found for page: ${pageUrl}. Please ensure content has been collected for this site.`);
-          }
+          const chunkedConfig = getChunkedAssessmentConfig(assessment.assessmentType);
+          let report: Record<string, unknown>;
 
-          // Find the specific page in the pages array
-          const page = pageData.data.pages.find((p: any) => p.url === pageUrl) || pageData.data.pages[0];
+          if (chunkedConfig) {
+            setAssessmentProgress((prev) => ({
+              ...prev,
+              [assessmentId]: {
+                ...prev[assessmentId],
+                progress: 20,
+                currentCategory: 'Preparing chunked analysis',
+              },
+            }));
 
-          // Update progress
-          setAssessmentProgress((prev) => ({
-            ...prev,
-            [assessmentId]: {
-              ...prev[assessmentId],
-              progress: 30,
-            },
-          }));
+            const existingContent = buildExistingContentForChunkedAnalysis(
+              page,
+              pageUrl
+            );
 
-          // Run assessment via API
-          const response = await fetch('/api/analyze/enhanced', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              _url: pageUrl,
-              scrapedData: {
-                title: page.title,
-                metaDescription: page.metaDescription,
-                cleanText: page.content?.text || '',
-                headings: page.content?.headings || [],
-                analytics: page.analytics || {},
-                seo: {
-                  extractedKeywords: page.keywords?.extractedKeywords || [],
-                  schemaMarkup: page.seo?.schemaMarkup || {},
+            const response = await apiCallStream(chunkedConfig.endpoint, {
+              url: pageUrl,
+              proposedContent: '',
+              existingContent,
+              skipCollection: true,
+              stream: true,
+              analysisType: 'full',
+            });
+
+            const streamResult = await consumeChunkedAnalysisStream(response, {
+              onProgress: (event) => {
+                const mappedProgress = Math.min(
+                  95,
+                  20 + Math.round(event.percent * 0.75)
+                );
+                setAssessmentProgress((prev) => ({
+                  ...prev,
+                  [assessmentId]: {
+                    ...prev[assessmentId],
+                    status: 'running',
+                    progress: mappedProgress,
+                    currentCategory:
+                      event.status === 'started'
+                        ? `Analyzing ${event.categoryName}`
+                        : prev[assessmentId]?.currentCategory,
+                  },
+                }));
+              },
+            });
+
+            report = {
+              pageUrl,
+              pageLabel: page.pageLabel || 'Page',
+              assessmentId,
+              assessmentName: assessment.name,
+              assessmentType: assessment.assessmentType,
+              analysis: streamResult.analysis,
+              frameworkUsed: chunkedConfig.frameworkName,
+              validation: streamResult.analysis?.verification ?? null,
+              readableMarkdown: streamResult.readableMarkdown,
+              traceability: streamResult.traceability,
+              analysisMethod: 'chunked-blocked',
+              timestamp: new Date().toISOString(),
+            };
+          } else {
+            setAssessmentProgress((prev) => ({
+              ...prev,
+              [assessmentId]: {
+                ...prev[assessmentId],
+                progress: 30,
+                currentCategory: 'Running enhanced analysis',
+              },
+            }));
+
+            setAssessmentProgress((prev) => ({
+              ...prev,
+              [assessmentId]: {
+                ...prev[assessmentId],
+                progress: 50,
+              },
+            }));
+
+            const { data: result } = await apiCall<{
+              success: boolean;
+              error?: string;
+              analysis?: unknown;
+              frameworkUsed?: string;
+              validation?: unknown;
+            }>('/api/analyze/enhanced', {
+              method: 'POST',
+              body: {
+                _url: pageUrl,
+                scrapedData: {
+                  title: page.title,
+                  metaDescription: page.metaDescription,
+                  cleanText: page.content?.text || '',
+                  headings: page.content?.headings || [],
+                  analytics: page.analytics || {},
+                  seo: {
+                    extractedKeywords:
+                      page.keywords?.extractedKeywords ||
+                      page.keywords?.allKeywords ||
+                      [],
+                    schemaMarkup: page.seo?.schemaMarkup || {},
+                  },
+                },
+                assessmentType: assessment.assessmentType,
+                options: {
+                  selectedPages: [pageUrl],
+                  includeGoogleAnalytics: true,
+                  includeConversionFlow: true,
+                  siteGoals: activeGoals,
+                  selectedArchetype:
+                    selectedArchetype && selectedArchetype !== 'none'
+                      ? selectedArchetype
+                      : undefined,
+                  selectedAudience:
+                    selectedAudience && selectedAudience !== 'none'
+                      ? selectedAudience
+                      : undefined,
                 },
               },
-              assessmentType: assessment.assessmentType,
-              options: {
-                selectedPages: [pageUrl],
-                includeGoogleAnalytics: true,
-                includeConversionFlow: true,
-                siteGoals: activeGoals,
-                selectedArchetype: selectedArchetype && selectedArchetype !== 'none' ? selectedArchetype : undefined,
-                selectedAudience: selectedAudience && selectedAudience !== 'none' ? selectedAudience : undefined,
+              showErrorToast: false,
+            });
+
+            setAssessmentProgress((prev) => ({
+              ...prev,
+              [assessmentId]: {
+                ...prev[assessmentId],
+                progress: 70,
               },
-            }),
-          });
+            }));
 
-          setAssessmentProgress((prev) => ({
-            ...prev,
-            [assessmentId]: {
-              ...prev[assessmentId],
-              progress: 70,
-            },
-          }));
+            if (!result?.success) {
+              throw new Error(result?.error || 'Assessment failed');
+            }
 
-          const result = await response.json();
-
-          if (result.success) {
-            const report = {
+            report = {
               pageUrl,
               pageLabel: page.pageLabel || 'Page',
               assessmentId,
@@ -532,31 +736,30 @@ export function FrameworkAnalysisRunner({
               analysis: result.analysis,
               frameworkUsed: result.frameworkUsed,
               validation: result.validation,
+              analysisMethod: 'enhanced-monolithic',
               timestamp: new Date().toISOString(),
             };
-
-            newReports.push(report);
-
-            // Save report to Local Forage
-            await UnifiedLocalForageStorage.storeReport(
-              pageUrl,
-              JSON.stringify(report, null, 2),
-              'json',
-              assessment.assessmentType
-            );
-
-            setAssessmentProgress((prev) => ({
-              ...prev,
-              [assessmentId]: {
-                ...prev[assessmentId],
-                status: 'completed',
-                progress: 100,
-                result: report,
-              },
-            }));
-          } else {
-            throw new Error(result.error || 'Assessment failed');
           }
+
+          newReports.push(report);
+
+          await UnifiedLocalForageStorage.storeReport(
+            pageUrl,
+            JSON.stringify(report, null, 2),
+            'json',
+            chunkedConfig?.reportStorageKey ?? assessment.assessmentType
+          );
+
+          setAssessmentProgress((prev) => ({
+            ...prev,
+            [assessmentId]: {
+              ...prev[assessmentId],
+              status: 'completed',
+              progress: 100,
+              currentCategory: '',
+              result: report,
+            },
+          }));
         } catch (error) {
           // Assessment failed - update progress state
           setAssessmentProgress((prev) => ({
@@ -636,6 +839,7 @@ export function FrameworkAnalysisRunner({
           },
         }));
         setAvailablePages(pages);
+        setLoadedSiteData(puppeteerData);
         setSelectedPages(pages.map((p) => p.url)); // Auto-select all
         setShowAllContent(false);
         // Update current site URL to match selected content
@@ -645,7 +849,7 @@ export function FrameworkAnalysisRunner({
       }
     } catch (error) {
       // Show user-friendly error
-      alert(`Failed to load content from ${siteUrl}. Please try refreshing or selecting different content.`);
+      toast.error(`Failed to load content from ${siteUrl}. Please try refreshing or selecting different content.`);
     }
   };
 
@@ -894,7 +1098,7 @@ export function FrameworkAnalysisRunner({
                     </p>
                   </div>
                   <p className="text-sm text-green-800 dark:text-green-200">
-                    Content and metadata are loaded. Proceed to Step 2 below to select assessments.
+                    Raw content for the selected page is ready. Start with one page, then add more if needed. Proceed to Step 2 to choose assessments.
                   </p>
                 </div>
               )}
@@ -902,7 +1106,7 @@ export function FrameworkAnalysisRunner({
               {selectedPages.length === 0 && (
                 <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800">
                   <p className="text-sm text-blue-900 dark:text-blue-100">
-                    <strong>Tip:</strong> Select one or more pages above to analyze. You can select multiple pages to compare results.
+                    <strong>Tip:</strong> Select one page to analyze first (recommended). Add more pages later to compare results across the site.
                   </p>
                 </div>
               )}
@@ -1129,6 +1333,9 @@ export function FrameworkAnalysisRunner({
                                 <Progress value={progress.progress} className="h-2" />
                                 <p className="text-xs text-muted-foreground">
                                   {progress.progress}% complete
+                                  {progress.currentCategory
+                                    ? ` — ${progress.currentCategory}`
+                                    : ''}
                                 </p>
                               </div>
                             )}

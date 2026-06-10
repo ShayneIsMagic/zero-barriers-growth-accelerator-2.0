@@ -1,13 +1,13 @@
 /**
  * Content Comparison API
  * Compare existing website content vs. proposed new content
- * Uses PuppeteerComprehensiveCollector (enhanced) for multi-page scraping with SEO/GA4
+ * Uses unified PuppeteerComprehensiveCollector (homepage-first by default, same as live)
  */
 
-import { PuppeteerComprehensiveCollector } from '@/lib/puppeteer-comprehensive-collector';
+import { collectWebsiteContent } from '@/lib/server/content-collection/collector';
+import { transformComprehensiveData } from '@/lib/server/content-collection/transform';
 import { ContentStorageService } from '@/lib/services/content-storage.service';
 import { buildAnalysisTraceability } from '@/lib/server/analysis-traceability';
-import { touchOllamaActivity } from '@/lib/server/ollama-lifecycle';
 import { NextRequest, NextResponse } from 'next/server';
 
 function sanitizeError(msg: string): string {
@@ -45,8 +45,9 @@ export async function POST(request: NextRequest) {
       comprehensiveData: clientData, // Data from LocalForage (sent by useAnalysisData hook)
       existingContent: clientExistingContent, // Pre-scraped content from client
       analysisType: _analysisType,
-      maxPages = 10,
-      maxDepth = 2,
+      maxPages,
+      maxDepth,
+      includeSubpages = false,
       userId, // Get from auth context in production
       useStored = true, // Check for stored content first
     } = requestBody;
@@ -62,10 +63,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    await touchOllamaActivity();
-
-    const isServerless =
-      process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
 
     // Step 1: Use client-provided data from LocalForage (highest priority)
     let existingData: any = null;
@@ -93,71 +90,47 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Step 4: Scrape if no content found from any source
+    // Step 4: Puppeteer collect (homepage-first by default — same as live, no Ollama)
     if (!existingData) {
-      if (isServerless) {
-        // VERCEL: Use ProductionContentExtractor (fetch-based, no Puppeteer)
-        const { ProductionContentExtractor } = await import(
-          '@/lib/production-content-extractor'
+      try {
+        const collected = await collectWebsiteContent({
+          url,
+          mode: 'comprehensive',
+          options: {
+            maxPages,
+            maxDepth,
+            includeSubpages,
+          },
+        });
+        comprehensiveData = collected.comprehensiveRaw;
+        existingData = collected.result.existing;
+      } catch (error) {
+        const errorMessage = sanitizeError(
+          error instanceof Error ? error.message : 'Unknown error'
         );
-        const extractor = new ProductionContentExtractor();
 
-        try {
-          const extractedData = await extractor.extractContent(url);
-          existingData = {
-            wordCount: extractedData.wordCount || 0,
-            title: extractedData.title || 'Untitled',
-            metaDescription: extractedData.metaDescription || '',
-            cleanText: extractedData.content || '',
-            extractedKeywords: [],
-            headings: { h1: [], h2: [], h3: [] },
-          };
-        } catch (error) {
-          const errorMessage = sanitizeError(
-            error instanceof Error ? error.message : 'Unknown error'
-          );
+        if (
+          errorMessage.includes('blocked') ||
+          errorMessage.includes('Blocked')
+        ) {
           return NextResponse.json(
             {
               success: false,
-              error: `Failed to scrape ${url}: ${errorMessage}`,
+              error: `Website blocked the scraper: ${url}. Try a different website or contact support.`,
               details: errorMessage,
             },
-            { status: 500 }
+            { status: 403 }
           );
         }
-      } else {
-        // LOCAL: Use PuppeteerComprehensiveCollector (full browser)
-        const collector = new PuppeteerComprehensiveCollector({
-          maxPages,
-          maxDepth,
-          timeout: 30000,
-        });
 
-        try {
-          comprehensiveData = await collector.collectComprehensiveData(url);
-        } catch (error) {
-          const errorMessage = sanitizeError(
-            error instanceof Error ? error.message : 'Unknown error'
-          );
-
-          if (
-            errorMessage.includes('blocked') ||
-            errorMessage.includes('Blocked')
-          ) {
-            return NextResponse.json(
-              {
-                success: false,
-                error: `Website blocked the scraper: ${url}. Try a different website or contact support.`,
-                details: errorMessage,
-              },
-              { status: 403 }
-            );
-          }
-
-          throw error;
-        }
-
-        existingData = transformComprehensiveData(comprehensiveData);
+        return NextResponse.json(
+          {
+            success: false,
+            error: `Failed to collect ${url}: ${errorMessage}`,
+            details: errorMessage,
+          },
+          { status: 500 }
+        );
       }
 
       // Auto-save to database (if userId provided)
@@ -434,74 +407,6 @@ function extractMetadata(comprehensiveData: any) {
   return metadata;
 }
 
-/**
- * Transform comprehensive collection data to match existing format
- * Extracts all SEO metadata from comprehensive collector
- */
-function transformComprehensiveData(comprehensiveData: any) {
-  const allText = comprehensiveData.pages
-    ? comprehensiveData.pages
-        .map((page: any) => page.content?.text || '')
-        .join('\n\n--- PAGE BREAK ---\n\n')
-    : '';
-
-  const allHeadings = comprehensiveData.pages
-    ? {
-        h1: comprehensiveData.pages.flatMap(
-          (page: any) => page.headings?.h1 || []
-        ),
-        h2: comprehensiveData.pages.flatMap(
-          (page: any) => page.headings?.h2 || []
-        ),
-        h3: comprehensiveData.pages.flatMap(
-          (page: any) => page.headings?.h3 || []
-        ),
-      }
-    : { h1: [], h2: [], h3: [] };
-
-  const homepage = comprehensiveData.pages?.[0] || {};
-
-  // Extract keywords from comprehensive data if available
-  const allKeywords =
-    homepage.keywords?.allKeywords ||
-    extractKeywordsFromText(allText);
-
-  // Extract SEO metadata from homepage
-  const metaTags = homepage.metaTags || {};
-
-  return {
-    title: metaTags.title || homepage.title || comprehensiveData.url,
-    metaDescription:
-      metaTags.description || homepage.metaDescription || '',
-    wordCount:
-      comprehensiveData.content?.totalWords ||
-      allText.split(/\s+/).length,
-    extractedKeywords: allKeywords,
-    headings: allHeadings,
-    cleanText: allText,
-    url: comprehensiveData.url,
-    seo: {
-      metaTitle: metaTags.title || homepage.title || '',
-      metaDescription: metaTags.description || homepage.metaDescription || '',
-      metaKeywords: metaTags.keywords || '',
-      canonical: metaTags.canonical || '',
-      ogTitle: metaTags.ogTitle || '',
-      ogDescription: metaTags.ogDescription || '',
-      ogImage: metaTags.ogImage || '',
-      twitterCard: metaTags.twitterCard || '',
-      twitterTitle: metaTags.twitterTitle || '',
-      twitterDescription: metaTags.twitterDescription || '',
-      robots: metaTags.robots || '',
-      extractedKeywords: allKeywords,
-      headings: allHeadings,
-    },
-    // Include full metadata for comparison
-    metaTags: metaTags,
-    analytics: homepage.analytics || {},
-    keywords: homepage.keywords || {},
-  };
-}
-
 // Helper functions
 function extractTitle(content: string): string {
   const lines = content.split('\n');
@@ -560,6 +465,9 @@ async function generateComparisonReport(
   _analysisType: string,
   comprehensiveData?: any
 ) {
+  const { touchOllamaBeforeAnalysis } = await import('@/lib/server/ollama-lifecycle');
+  await touchOllamaBeforeAnalysis();
+
   const { analyzeWithAI } = await import('@/lib/free-ai-analysis');
 
   // Extract SEO metadata from comprehensive data

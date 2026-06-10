@@ -1151,7 +1151,7 @@ export const CLIFTON_STRENGTHS_ELEMENTS = {
                 'Focus on strengths as a way to stimulate personal and group excellence',
             },
             {
-              name: 'self-assurance',
+              name: 'self_assurance',
               keywords: ['confidence', 'certainty', 'conviction', 'belief'],
               description: 'Feel confident in ability to manage own life',
             },

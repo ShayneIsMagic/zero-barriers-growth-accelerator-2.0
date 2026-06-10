@@ -28,6 +28,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { UnifiedLocalForageStorage } from '@/lib/services/unified-localforage-storage.service';
 import { Save, Database, CheckCircle2, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 // Toast will be handled via callback or console for now
 
 interface SaveOptions {
@@ -85,7 +86,7 @@ export function DataSaveSelector({
 
   const handleSave = async () => {
     if (!url.trim()) {
-      alert('URL is required to save data');
+      toast.error('URL is required to save data');
       return;
     }
 
@@ -143,11 +144,10 @@ export function DataSaveSelector({
       // Data saved successfully
       setOpen(false);
       onSaved?.();
-      // Show success message (you can integrate with your toast system)
-      alert(`Saved to Local Forage: ${savedItems}`);
+      toast.success(`Saved to Local Forage: ${savedItems}`);
     } catch (error) {
       const errorMsg = `Failed to save: ${error instanceof Error ? error.message : 'Unknown error'}`;
-      alert(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setSaving(false);
     }

@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { requestPasswordReset } from '@/services/auth-services';
 import { ArrowLeft, Loader2, Mail, CheckCircle } from 'lucide-react';
 
 export default function ForgotPasswordPage() {
@@ -27,20 +28,18 @@ export default function ForgotPasswordPage() {
     setError('');
 
     try {
-      const response = await fetch('/api/auth/forgot-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-
-      if (response.ok) {
+      const ok = await requestPasswordReset(email);
+      if (ok) {
         setSuccess(true);
       } else {
-        const data = await response.json();
-        setError(data.error || 'Failed to send reset email');
+        setError('Failed to send reset email');
       }
     } catch (error) {
-      setError('An error occurred while processing your request');
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while processing your request'
+      );
     } finally {
       setIsLoading(false);
     }

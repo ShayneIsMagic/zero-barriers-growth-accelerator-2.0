@@ -1,4 +1,6 @@
 import { prisma } from '@/lib/prisma';
+import { isPublicSignupAllowed } from '@/lib/security-config';
+import { createAuthCookie } from '@/lib/server/jwt';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
@@ -7,6 +9,20 @@ const JWT_SECRET = process.env.NEXTAUTH_SECRET;
 
 export async function POST(request: NextRequest) {
   try {
+    if (!isPublicSignupAllowed()) {
+      return NextResponse.json(
+        { error: 'Registration is disabled. Contact an administrator.' },
+        { status: 403 }
+      );
+    }
+
+    if (!JWT_SECRET) {
+      return NextResponse.json(
+        { error: 'Authentication is not configured' },
+        { status: 503 }
+      );
+    }
+
     const body = await request.json();
     const { email, password, name } = body;
 
@@ -53,7 +69,7 @@ export async function POST(request: NextRequest) {
       { expiresIn: '7d' }
     );
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       user: {
         id: user.id,
         email: user.email,
@@ -63,6 +79,11 @@ export async function POST(request: NextRequest) {
       token,
       message: 'Sign up successful',
     });
+
+    const cookie = createAuthCookie(token);
+    response.cookies.set(cookie);
+
+    return response;
   } catch (error) {
     console.error('Sign up error:', error);
     return NextResponse.json(

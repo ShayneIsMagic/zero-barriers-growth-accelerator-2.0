@@ -9,6 +9,7 @@
 
 import { readFile } from 'fs/promises';
 import path from 'path';
+import { formatKeywordHintsSection } from '@/lib/framework/element-keyword-hints';
 
 function sanitizeError(msg: string): string {
   return msg
@@ -85,6 +86,11 @@ interface ChunkedAnalysisMergedResult extends Record<string, unknown> {
 export async function analyzeFrameworkInChunks(
   options: ChunkedAnalysisOptions
 ): Promise<Record<string, unknown>> {
+  const { touchOllamaBeforeAnalysis } = await import(
+    '@/lib/server/ollama-lifecycle'
+  );
+  await touchOllamaBeforeAnalysis();
+
   const { analyzeWithAI } = await import('@/lib/free-ai-analysis');
 
   const contentSummary = buildContentSummary(options);
@@ -222,6 +228,9 @@ ${chunk.elements
     )
     .join(',\n');
 
+  const keywordHints = formatKeywordHintsSection(block, options.frameworkName);
+  const keywordHintsBlock = keywordHints ? `\n\n${keywordHints}` : '';
+
   return `You are analyzing website content using the ${options.frameworkName} framework.
 Evaluate EVERY element listed below. Do not skip any element.
 
@@ -233,6 +242,7 @@ ${contentSummary}
 
 CATEGORIES IN THIS BLOCK:
 ${categoriesInstruction}
+${keywordHintsBlock}
 
 SCORING:
 ${scoring}

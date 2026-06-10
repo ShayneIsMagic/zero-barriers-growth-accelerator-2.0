@@ -22,6 +22,7 @@ import {
   Users,
 } from 'lucide-react';
 import { useState } from 'react';
+import { apiCall } from '@/lib/api-call';
 
 interface Phase2Data {
   goldenCircle: any;
@@ -48,40 +49,47 @@ export default function Phase2Page() {
     setError(null);
 
     try {
+      let effectivePhase1Data = phase1Data;
+
       // First run Phase 1 if not already done
       if (!phase1Data) {
         console.log('Running Phase 1 first...');
-        const phase1Response = await fetch('/api/analyze/phase1-complete', {
+        const { data: phase1Result } = await apiCall<{
+          success?: boolean;
+          data?: any;
+        }>('/api/analyze/phase1-complete', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url }),
+          body: { url },
+          showErrorToast: false,
         });
 
-        if (!phase1Response.ok) {
+        if (!phase1Result?.success) {
           throw new Error('Phase 1 analysis failed');
         }
 
-        const phase1Result = await phase1Response.json();
-        setPhase1Data(phase1Result.data);
+        effectivePhase1Data = phase1Result.data;
+        setPhase1Data(effectivePhase1Data);
       }
 
       // Run Phase 2 analysis
       console.log('Running Phase 2 analysis...');
-      const phase2Response = await fetch('/api/analyze/phase2-complete', {
+      const { data: phase2Result } = await apiCall<{
+        success?: boolean;
+        data?: Phase2Data;
+      }>('/api/analyze/phase2-complete', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           url,
-          content: phase1Data?.scrapedContent,
-          phase1Data,
-        }),
+          content: effectivePhase1Data?.scrapedContent,
+          phase1Data: effectivePhase1Data,
+        },
+        showErrorToast: false,
       });
 
-      if (!phase2Response.ok) {
+      if (!phase2Result?.success || !phase2Result.data) {
         throw new Error('Phase 2 analysis failed');
       }
 
-      const phase2Result = await phase2Response.json();
       setPhase2Data(phase2Result.data);
     } catch (err: any) {
       setError(err.message || 'Analysis failed');

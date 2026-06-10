@@ -29,6 +29,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useState } from 'react';
+import { apiCall } from '@/lib/api-call';
 // import { ContentPreviewBox } from './ContentPreviewBox';
 
 interface CliftonStrengthsData {
@@ -78,15 +79,11 @@ export function SimpleCliftonStrengthsPage() {
     setResult(null);
 
     try {
-      const response = await fetch('/api/scrape-content', {
+      const { data } = await apiCall<{ success: boolean; data?: unknown; error?: string }>('/api/scrape-content', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url }),
+        body: { url },
+        showErrorToast: false,
       });
-
-      const data = await response.json();
 
       if (data.success) {
         setScrapedContent(data.data);
@@ -112,21 +109,17 @@ export function SimpleCliftonStrengthsPage() {
     setError(null);
 
     try {
-      const response = await fetch(
+      const { data } = await apiCall<{ success: boolean; data?: CliftonStrengthsData; error?: string }>(
         '/api/analyze/clifton-strengths-standalone',
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
+          body: {
             url,
             scrapedContent,
-          }),
+          },
+          showErrorToast: false,
         }
       );
-
-      const data = await response.json();
 
       if (data.success) {
         setResult(data.data);

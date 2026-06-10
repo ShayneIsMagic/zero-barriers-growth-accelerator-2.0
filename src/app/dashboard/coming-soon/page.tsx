@@ -4,6 +4,7 @@ import { ComingSoonModule } from '@/components/coming-soon/ComingSoonModule';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, Clock, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 interface Module {
   id: string;
@@ -96,7 +97,7 @@ Provide specific recommendations for content improvement.`,
     // Copy to clipboard
     navigator.clipboard.writeText(prompt);
     // Could also open a modal or redirect to an AI tool
-    alert('Prompt copied to clipboard! Paste it into your preferred AI tool.');
+    toast.success('Prompt copied to clipboard! Paste it into your preferred AI tool.');
   };
 
   if (loading) {

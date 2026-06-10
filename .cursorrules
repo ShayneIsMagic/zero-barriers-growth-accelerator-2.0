@@ -1,5 +1,7 @@
 # Zero Barriers Growth Accelerator - Cursor Rules
 
+> **Agent workflow:** See `AGENTS-app.md` for shared rules, API integration, and QA checklists. This file covers TypeScript/React/Next.js coding standards for this repo.
+
 ## 🎯 Project Overview
 This is a Next.js 15 AI-powered content analysis platform that evaluates website content using proven business frameworks (B2C/B2B Elements of Value, CliftonStrengths, Golden Circle) to identify growth barriers and provide actionable recommendations.
 

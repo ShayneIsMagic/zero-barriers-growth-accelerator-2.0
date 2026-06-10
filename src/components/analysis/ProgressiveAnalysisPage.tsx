@@ -23,6 +23,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { IndividualReportsView } from './IndividualReportsView';
 import { MarkdownReportGenerator } from '@/lib/markdown-report-generator';
+import { apiCall } from '@/lib/api-call';
 
 interface StepStatus {
   id: string;
@@ -57,10 +58,13 @@ export function ProgressiveAnalysisPage() {
 
     const pollStatus = async () => {
       try {
-        const response = await fetch(
-          `/api/analyze/progressive/status?id=${analysisId}`
+        const { data } = await apiCall<AnalysisStatus & { success: boolean }>(
+          `/api/analyze/progressive/status?id=${analysisId}`,
+          {
+            method: 'GET',
+            showErrorToast: false,
+          }
         );
-        const data = await response.json();
 
         if (data.success) {
           setStatus(data);
@@ -103,13 +107,15 @@ export function ProgressiveAnalysisPage() {
     setAnalysisId(null);
 
     try {
-      const response = await fetch('/api/analyze/progressive', {
+      const { data } = await apiCall<{
+        success: boolean;
+        analysisId?: string;
+        error?: string;
+      }>('/api/analyze/progressive', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: url.trim() }),
+        body: { url: url.trim() },
+        showErrorToast: false,
       });
-
-      const data = await response.json();
 
       if (data.success) {
         setAnalysisId(data.analysisId);

@@ -120,12 +120,22 @@ export interface GoldenCircleAnalysisResult {
   message: string;
 }
 
+export interface AnalysisContentPayload {
+  title?: string;
+  metaDescription?: string;
+  wordCount?: number;
+  extractedKeywords?: string[];
+  headings?: string[];
+  cleanText?: string;
+  url?: string;
+}
+
 /**
  * Create a standardized analysis response
  */
 export function createAnalysisResponse(
-  existing: any,
-  proposed: any,
+  existing: AnalysisContentPayload,
+  proposed: AnalysisContentPayload | null | undefined,
   analysis: string,
   message: string
 ): StandardAnalysisResponse {

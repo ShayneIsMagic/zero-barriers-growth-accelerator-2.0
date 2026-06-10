@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { AnalysisClient } from '@/lib/analysis-client';
+import { apiCall, ApiCallError } from '@/lib/api-call';
 import { FileText, Globe, Loader2, Share2 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -57,20 +58,16 @@ export function WebsiteAnalysisForm({
 
     try {
       // Use the working Phase 1 simple system
-      const response = await fetch('/api/analyze/phase1-simple', {
+      const { data: result } = await apiCall<any>('/api/analyze/phase1-simple', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+        body: {
           url,
           industry: 'general',
-        }),
+        },
+        showErrorToast: false,
       });
 
-      const result = await response.json();
-
-      if (!response.ok) {
+      if (!result?.success) {
         // Handle specific error types
         if (result.error === 'AI_SERVICE_UNAVAILABLE') {
           setError({
@@ -155,16 +152,76 @@ export function WebsiteAnalysisForm({
         // Failed to save Phase 1 data - handled silently
       }
     } catch (err) {
-      setError({
-        type: 'error',
-        title: 'Connection Error',
-        message: 'Unable to connect to the analysis service.',
-        details: err instanceof Error ? err.message : 'Unknown error',
-        action: {
-          label: 'Try Again',
-          onClick: () => setError(null),
-        },
-      });
+      if (err instanceof ApiCallError && err.body && typeof err.body === 'object') {
+        const result = err.body as {
+          error?: string;
+          details?: string;
+          message?: string;
+        };
+
+        if (result.error === 'AI_SERVICE_UNAVAILABLE') {
+          setError({
+            type: 'error',
+            title: 'AI Service Not Available',
+            message:
+              'No AI services are configured. Please set up your API keys.',
+            details: result.details,
+            action: {
+              label: 'Setup AI Services',
+              onClick: () => {
+                window.open('https://makersuite.google.com/app/apikey', '_blank');
+              },
+            },
+          });
+        } else if (result.error === 'WEBSITE_UNAVAILABLE') {
+          setError({
+            type: 'error',
+            title: 'Website Not Accessible',
+            message: 'Unable to access the website. Please check the URL.',
+            details: result.details,
+            action: {
+              label: 'Try Again',
+              onClick: () => setError(null),
+            },
+          });
+        } else if (result.error === 'ANALYSIS_FAILED') {
+          setError({
+            type: 'error',
+            title: 'Analysis Failed',
+            message:
+              'AI analysis could not be completed. Please check your configuration.',
+            details: result.details,
+            action: {
+              label: 'Check Configuration',
+              onClick: () => {
+                window.open('https://console.anthropic.com/', '_blank');
+              },
+            },
+          });
+        } else {
+          setError({
+            type: 'error',
+            title: 'Analysis Error',
+            message: result.message || 'An unexpected error occurred.',
+            details: result.details,
+            action: {
+              label: 'Try Again',
+              onClick: () => setError(null),
+            },
+          });
+        }
+      } else {
+        setError({
+          type: 'error',
+          title: 'Connection Error',
+          message: 'Unable to connect to the analysis service.',
+          details: err instanceof Error ? err.message : 'Unknown error',
+          action: {
+            label: 'Try Again',
+            onClick: () => setError(null),
+          },
+        });
+      }
     } finally {
       setIsAnalyzing(false);
     }

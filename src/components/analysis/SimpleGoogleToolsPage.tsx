@@ -29,6 +29,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useState } from 'react';
+import { apiCall } from '@/lib/api-call';
 
 interface ScrapedGoogleData {
   trends?: {
@@ -77,18 +78,18 @@ export function SimpleGoogleToolsPage() {
         .map((k) => k.trim())
         .filter((k) => k.length > 0);
 
-      const response = await fetch('/api/scrape-google-tools', {
+      const { data: result } = await apiCall<{
+        success: boolean;
+        data?: ScrapedGoogleData;
+        error?: string;
+      }>('/api/scrape-google-tools', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+        body: {
           url,
           keywords: keywordArray,
-        }),
+        },
+        showErrorToast: false,
       });
-
-      const result = await response.json();
 
       if (result.success) {
         setScrapedData(result.data);
@@ -116,22 +117,22 @@ export function SimpleGoogleToolsPage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/analyze/google-tools', {
+      const { data: result } = await apiCall<{
+        success: boolean;
+        analysis?: string;
+        error?: string;
+      }>('/api/analyze/google-tools', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+        body: {
           url,
           keywords: keywords
             .split(',')
             .map((k) => k.trim())
             .filter((k) => k.length > 0),
           scrapedData,
-        }),
+        },
+        showErrorToast: false,
       });
-
-      const result = await response.json();
 
       if (result.success) {
         setScrapedData((prev) =>

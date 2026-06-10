@@ -143,6 +143,69 @@ export class UnifiedLocalForageStorage {
   }
 
   /**
+   * Normalize a page URL for comparison (strip hash fragments and trailing slashes).
+   * Hash anchors like /services/#human are client-side only and often mismatch stored keys.
+   */
+  static normalizePageUrl(url: string): string {
+    try {
+      const parsed = new URL(url.trim());
+      parsed.hash = '';
+      const base = `${parsed.origin}${parsed.pathname}${parsed.search}`;
+      return parsed.pathname !== '/' && base.endsWith('/')
+        ? base.slice(0, -1)
+        : base;
+    } catch {
+      return url.trim().split('#')[0].replace(/\/$/, '');
+    }
+  }
+
+  static urlsMatch(a: string, b: string): boolean {
+    return this.normalizePageUrl(a) === this.normalizePageUrl(b);
+  }
+
+  /**
+   * Find a page record inside stored puppeteer data, with hash-insensitive matching.
+   */
+  static findPageInStoredData(
+    stored: StoredPuppeteerData | null,
+    pageUrl: string
+  ): { stored: StoredPuppeteerData; page: { url?: string; title?: string; metaDescription?: string; content?: { text?: string; headings?: unknown[] }; analytics?: unknown; keywords?: { extractedKeywords?: string[] }; seo?: { schemaMarkup?: unknown }; pageLabel?: string } } | null {
+    if (!stored?.data?.pages || !Array.isArray(stored.data.pages)) {
+      return null;
+    }
+
+    const pages = stored.data.pages as Array<{
+      url?: string;
+      title?: string;
+      metaDescription?: string;
+      content?: { text?: string; headings?: unknown[] };
+      analytics?: unknown;
+      keywords?: { extractedKeywords?: string[] };
+      seo?: { schemaMarkup?: unknown };
+      pageLabel?: string;
+    }>;
+
+    const exact = pages.find((p) => p.url === pageUrl);
+    if (exact) {
+      return { stored, page: exact };
+    }
+
+    const normalized = this.normalizePageUrl(pageUrl);
+    const byPath = pages.find(
+      (p) => p.url && this.normalizePageUrl(p.url) === normalized
+    );
+    if (byPath) {
+      return { stored, page: byPath };
+    }
+
+    if (pages.length > 0) {
+      return { stored, page: pages[0] };
+    }
+
+    return null;
+  }
+
+  /**
    * Find stored data containing a specific page URL
    * Searches all stored data to find which site data contains the page
    */
@@ -151,12 +214,8 @@ export class UnifiedLocalForageStorage {
     
     for (const key of allKeys) {
       const stored = await puppeteerStore.getItem<StoredPuppeteerData>(key);
-      if (stored && stored.data?.pages) {
-        // Check if any page in this stored data matches the page URL
-        const matchingPage = stored.data.pages.find((p: any) => p.url === pageUrl);
-        if (matchingPage) {
-          return stored;
-        }
+      if (stored && this.findPageInStoredData(stored, pageUrl)) {
+        return stored;
       }
     }
     

@@ -10,9 +10,7 @@ import {
   formatEvidenceForPrompt,
 } from '@/lib/framework-evidence-protocol';
 import { buildAnalysisTraceability } from '@/lib/server/analysis-traceability';
-import { touchOllamaActivity } from '@/lib/server/ollama-lifecycle';
-
-export const maxDuration = 30;
+export const maxDuration = 300;
 
 const isServerless =
   process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
@@ -38,7 +36,6 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`🔄 Starting CliftonStrengths analysis for: ${url}`);
-    await touchOllamaActivity();
 
     // Step 1: Use provided existing content (from LocalForage/content-comparison) or fetch it
     let existingData;
@@ -228,6 +225,7 @@ function buildCSOptions(
     contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
     contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
     contentText: `${protocolSummary}\n\n${existing.cleanText || ''}`,
+    categoriesPerBlock: 1 as const,
     chunks: [
       {
         categoryName: 'Strategic Thinking',

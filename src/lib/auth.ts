@@ -2,10 +2,13 @@ import bcrypt from 'bcryptjs';
 import { SignJWT, jwtVerify } from 'jose';
 import { prisma } from './prisma';
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.NEXTAUTH_SECRET ||
-    'your-super-secret-jwt-key-change-in-production'
-);
+function getJwtSecretBytes(): Uint8Array {
+  const secret = process.env.NEXTAUTH_SECRET;
+  if (!secret) {
+    throw new Error('NEXTAUTH_SECRET is not configured');
+  }
+  return new TextEncoder().encode(secret);
+}
 
 export interface User {
   id: string;
@@ -50,12 +53,12 @@ export class AuthService {
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
       .setExpirationTime('7d')
-      .sign(JWT_SECRET);
+      .sign(getJwtSecretBytes());
   }
 
   static async verifyToken(token: string): Promise<JWTPayload | null> {
     try {
-      const { payload } = await jwtVerify(token, JWT_SECRET);
+      const { payload } = await jwtVerify(token, getJwtSecretBytes());
       return payload as JWTPayload;
     } catch (error) {
       return null;

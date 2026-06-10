@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 
 /**
- * Local dev bootstrap:
+ * Optional local dev bootstrap (npm run dev:ollama):
  * - loads .env.local
  * - verifies local Ollama availability
  * - attempts to start Ollama service if unreachable
  * - starts Next.js dev server
+ *
+ * Default `npm run dev` does NOT start or require Ollama.
+ * Ollama is touched only when chunked AI analysis begins.
  */
 
 const { spawn } = require('node:child_process');

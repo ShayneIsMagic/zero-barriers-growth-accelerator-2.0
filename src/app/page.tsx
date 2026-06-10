@@ -34,7 +34,7 @@ export default function HomePage() {
             recommendations.
           </p>
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <Link href="/dashboard">
+            <Link href="/workspace">
               <Button
                 size="lg"
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
@@ -194,7 +194,7 @@ export default function HomePage() {
             to eliminate growth barriers and optimize your marketing strategy.
           </p>
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <Link href="/dashboard">
+            <Link href="/workspace">
               <Button
                 size="lg"
                 variant="secondary"

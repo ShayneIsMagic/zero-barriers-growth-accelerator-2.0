@@ -18,6 +18,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { AlertCircle, BarChart3, Database } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { apiCall } from '@/lib/api-call';
 
 interface Phase1DataCollectionProps {
   onDataReceived: (data: any) => void;
@@ -228,13 +229,11 @@ export function Phase1DataCollection({
     setValidationErrors([]);
 
     try {
-      const response = await fetch('/api/scrape-content', {
+      const { data } = await apiCall<{ success: boolean; data?: any; error?: string }>('/api/scrape-content', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: url.trim() }),
+        body: { url: url.trim() },
+        showErrorToast: false,
       });
-
-      const data = await response.json();
 
       if (data.success) {
         const processedData = processCollectedData(

@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/card';
 import { CheckCircle, Loader2, Play, XCircle } from 'lucide-react';
 import { useState } from 'react';
+import { apiCall } from '@/lib/api-call';
 
 interface GoogleToolsButtonsProps {
   url: string;
@@ -34,13 +35,11 @@ export function GoogleToolsButtons({
     setLighthouseError(null);
 
     try {
-      const response = await fetch('/api/tools/lighthouse', {
+      const { data } = await apiCall<{ success: boolean; error?: string }>('/api/tools/lighthouse', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url }),
+        body: { url },
+        showErrorToast: false,
       });
-
-      const data = await response.json();
 
       if (data.success) {
         setLighthouseData(data);
@@ -60,13 +59,11 @@ export function GoogleToolsButtons({
     setTrendsError(null);
 
     try {
-      const response = await fetch('/api/tools/trends', {
+      const { data } = await apiCall<{ success: boolean; error?: string }>('/api/tools/trends', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ keywords }),
+        body: { keywords },
+        showErrorToast: false,
       });
-
-      const data = await response.json();
 
       if (data.success) {
         setTrendsData(data);

@@ -33,52 +33,124 @@ export interface AnalysisResult {
 export class UnifiedAIAnalysisService {
   /**
    * Run analysis for any framework using the content-comparison approach
+   * Accepts optional existingContent from client (LocalForage) to avoid re-scraping
    */
   static async runAnalysis(
     framework: AnalysisFramework,
     url: string,
-    proposedContent?: string
+    proposedContent?: string,
+    existingContent?: any
   ): Promise<AnalysisResult> {
     const startTime = Date.now();
+    const isServerless =
+      process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
 
     try {
       console.log(`🔍 Starting ${framework.name} analysis for: ${url}`);
 
-      // Step 1: Scrape website data using the same approach as content-comparison
-      console.log('📊 Step 1: Scraping website content...');
-      const { UniversalPuppeteerScraper } = await import(
-        '@/lib/universal-puppeteer-scraper'
-      );
-      const scrapedData = await UniversalPuppeteerScraper.scrapeWebsite(url);
+      let existingData: StandardizedWebsiteData;
 
-      // Transform to standardized format
-      const existingData: StandardizedWebsiteData = {
-        url,
-        title: scrapedData.title || 'Untitled',
-        metaDescription: scrapedData.metaDescription || '',
-        wordCount: scrapedData.wordCount || 0,
-        cleanText: scrapedData.cleanText || '',
-        extractedKeywords: scrapedData.seo?.extractedKeywords || [],
-        headings: scrapedData.seo?.headings || { h1: [], h2: [], h3: [] },
-        seo: {
-          metaTitle: scrapedData.title || '',
+      if (existingContent) {
+        // Use client-provided content (from LocalForage)
+        console.log('📦 Using provided existing content from client');
+        existingData = {
+          url,
+          title: existingContent.title || 'Untitled',
+          metaDescription: existingContent.metaDescription || existingContent.seo?.metaDescription || '',
+          wordCount: existingContent.wordCount || 0,
+          cleanText: existingContent.cleanText || '',
+          extractedKeywords: existingContent.extractedKeywords || existingContent.seo?.extractedKeywords || [],
+          headings: existingContent.headings || existingContent.seo?.headings || { h1: [], h2: [], h3: [] },
+          seo: {
+            metaTitle: existingContent.title || existingContent.seo?.metaTitle || '',
+            metaDescription: existingContent.metaDescription || existingContent.seo?.metaDescription || '',
+            extractedKeywords: existingContent.extractedKeywords || existingContent.seo?.extractedKeywords || [],
+            headings: existingContent.headings || existingContent.seo?.headings || { h1: [], h2: [], h3: [] },
+          },
+          business: {
+            industry: 'Unknown',
+            confidence: 0.5,
+            tags: [],
+          },
+          technical: {
+            images: 0,
+            links: 0,
+            schemaTypes: 0,
+          },
+          scrapedAt: new Date().toISOString(),
+          analysisId: `${framework.name}-${Date.now()}`,
+        };
+      } else if (isServerless) {
+        // VERCEL: Use ProductionContentExtractor (fetch-based)
+        console.log('🌐 Scraping with ProductionContentExtractor on Vercel...');
+        const { ProductionContentExtractor } = await import(
+          '@/lib/production-content-extractor'
+        );
+        const extractor = new ProductionContentExtractor();
+        const extractedData = await extractor.extractContent(url);
+        existingData = {
+          url,
+          title: extractedData.title || 'Untitled',
+          metaDescription: extractedData.metaDescription || '',
+          wordCount: extractedData.wordCount || 0,
+          cleanText: extractedData.content || '',
+          extractedKeywords: [],
+          headings: { h1: [], h2: [], h3: [] },
+          seo: {
+            metaTitle: extractedData.title || '',
+            metaDescription: extractedData.metaDescription || '',
+            extractedKeywords: [],
+            headings: { h1: [], h2: [], h3: [] },
+          },
+          business: {
+            industry: 'Unknown',
+            confidence: 0.5,
+            tags: [],
+          },
+          technical: {
+            images: 0,
+            links: 0,
+            schemaTypes: 0,
+          },
+          scrapedAt: new Date().toISOString(),
+          analysisId: `${framework.name}-${Date.now()}`,
+        };
+      } else {
+        // LOCAL: Use UniversalPuppeteerScraper
+        console.log('📊 Scraping website content with Puppeteer...');
+        const { UniversalPuppeteerScraper } = await import(
+          '@/lib/universal-puppeteer-scraper'
+        );
+        const scrapedData = await UniversalPuppeteerScraper.scrapeWebsite(url);
+
+        existingData = {
+          url,
+          title: scrapedData.title || 'Untitled',
           metaDescription: scrapedData.metaDescription || '',
+          wordCount: scrapedData.wordCount || 0,
+          cleanText: scrapedData.cleanText || '',
           extractedKeywords: scrapedData.seo?.extractedKeywords || [],
           headings: scrapedData.seo?.headings || { h1: [], h2: [], h3: [] },
-        },
-        business: {
-          industry: 'Unknown',
-          confidence: 0.5,
-          tags: [],
-        },
-        technical: {
-          images: 0,
-          links: 0,
-          schemaTypes: 0,
-        },
-        scrapedAt: new Date().toISOString(),
-        analysisId: `${framework.name}-${Date.now()}`,
-      };
+          seo: {
+            metaTitle: scrapedData.title || '',
+            metaDescription: scrapedData.metaDescription || '',
+            extractedKeywords: scrapedData.seo?.extractedKeywords || [],
+            headings: scrapedData.seo?.headings || { h1: [], h2: [], h3: [] },
+          },
+          business: {
+            industry: 'Unknown',
+            confidence: 0.5,
+            tags: [],
+          },
+          technical: {
+            images: 0,
+            links: 0,
+            schemaTypes: 0,
+          },
+          scrapedAt: new Date().toISOString(),
+          analysisId: `${framework.name}-${Date.now()}`,
+        };
+      }
 
       // Step 2: Process proposed content (if provided)
       let proposedData: StandardizedProposedData | null = null;

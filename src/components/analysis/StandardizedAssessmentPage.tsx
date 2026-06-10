@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Copy, Download, Loader2, LucideIcon } from 'lucide-react';
 import { useState } from 'react';
+import { apiCall } from '@/lib/api-call';
 
 interface AssessmentConfig {
   name: string;
@@ -56,17 +57,15 @@ export function StandardizedAssessmentPage({
     setResult(null);
 
     try {
-      const response = await fetch(config.apiEndpoint, {
+      const { data } = await apiCall<{ success: boolean; error?: string }>(config.apiEndpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           url: url.trim(),
           proposedContent: proposedContent.trim(),
           analysisType: 'full',
-        }),
+        },
+        showErrorToast: false,
       });
-
-      const data = await response.json();
 
       if (data.success) {
         setResult(data);

@@ -24,6 +24,7 @@ import {
   Users,
   XCircle,
 } from 'lucide-react';
+import { fetchFullAnalysisReport } from '@/services/analysis-api';
 import { useEffect, useState, useCallback } from 'react';
 
 interface ReportViewerProps {
@@ -54,45 +55,18 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
     try {
       setLoading(true);
 
-      // Fetch main analysis
-      const analysisResponse = await fetch(`/api/analysis/${analysisId}`);
-      if (!analysisResponse.ok) throw new Error('Analysis not found');
-      const analysis = await analysisResponse.json();
-
-      // Fetch all sub-analyses in parallel
-      const [goldenCircle, eovB2C, eovB2B, cliftonStrengths, lighthouse, seo] =
-        await Promise.all([
-          fetch(`/api/analysis/golden-circle/${analysisId}`)
-            .then((r) => (r.ok ? r.json() : null))
-            .catch(() => null),
-          fetch(`/api/analysis/elements-value-b2c/${analysisId}`)
-            .then((r) => (r.ok ? r.json() : null))
-            .catch(() => null),
-          fetch(`/api/analysis/elements-value-b2b/${analysisId}`)
-            .then((r) => (r.ok ? r.json() : null))
-            .catch(() => null),
-          fetch(`/api/analysis/clifton-strengths/${analysisId}`)
-            .then((r) => (r.ok ? r.json() : null))
-            .catch(() => null),
-          fetch(`/api/analysis/lighthouse/${analysisId}`)
-            .then((r) => (r.ok ? r.json() : null))
-            .catch(() => null),
-          fetch(`/api/analysis/seo/${analysisId}`)
-            .then((r) => (r.ok ? r.json() : null))
-            .catch(() => null),
-        ]);
-
+      const fullReport = await fetchFullAnalysisReport(analysisId, url);
       setReport({
-        id: analysisId,
-        url: analysis.url || url || '',
-        createdAt: analysis.createdAt,
-        status: analysis.status,
-        goldenCircle,
-        elementsOfValueB2C: eovB2C,
-        elementsOfValueB2B: eovB2B,
-        cliftonStrengths,
-        lighthouse,
-        seo,
+        id: fullReport.id,
+        url: fullReport.url,
+        createdAt: fullReport.createdAt,
+        status: fullReport.status,
+        goldenCircle: fullReport.goldenCircle,
+        elementsOfValueB2C: fullReport.elementsOfValueB2C,
+        elementsOfValueB2B: fullReport.elementsOfValueB2B,
+        cliftonStrengths: fullReport.cliftonStrengths,
+        lighthouse: fullReport.lighthouse,
+        seo: fullReport.seo,
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load report');

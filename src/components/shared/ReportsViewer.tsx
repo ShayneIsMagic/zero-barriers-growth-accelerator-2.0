@@ -27,6 +27,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { UnifiedLocalForageStorage, StoredReport } from '@/lib/services/unified-localforage-storage.service';
+import { toast } from 'sonner';
 import {
   Database,
   FileText,
@@ -145,7 +146,7 @@ export function ReportsViewer({
         ? report.content
         : JSON.stringify(report.content, null, 2);
     await navigator.clipboard.writeText(content);
-    alert('Report copied to clipboard!');
+    toast.success('Report copied to clipboard!');
   };
 
   const handleSelectReport = (report: any) => {
