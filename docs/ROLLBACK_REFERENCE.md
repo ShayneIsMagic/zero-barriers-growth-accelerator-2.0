@@ -11,8 +11,8 @@
 
 | Role | Branch / ref | Commit | Remote |
 |------|--------------|--------|--------|
-| **Production (`origin/main`)** | `main` | `32b101b` | pushed 2026-06-08 ✅ |
-| **Local `main`** | `main` | `32b101b` | in sync with `origin/main` |
+| **Production (`origin/main`)** | `main` | `43a29a1` | pushed 2026-06-08 ✅ |
+| **Local `main`** | `main` | `43a29a1` | in sync with `origin/main` |
 | **Feature branch (`origin/shayne-agents-v6`)** | `shayne-agents-v6` | `ab5afec` | 1 commit behind `main` (rollback doc only) |
 | **Pre-merge production rollback** | commit | `bf6b824` | use if Vercel deploy from new `main` fails |
 
@@ -170,7 +170,7 @@ Oldest → newest (from `git log main..shayne-agents-v6`):
 | Pre-merge feature tip | 2026-06-08 | `8dd7017` | Before WIP checkpoint |
 | WIP checkpoint | 2026-06-08 | `ab5afec` | Committed before merge |
 | Merge to `main` (local) | 2026-06-08 | `ab5afec` | Fast-forward; **not pushed** |
-| Post-merge production (`origin/main`) | 2026-06-08 | `32b101b` | Pushed; Vercel deploy expected |
+| Post-merge production (`origin/main`) | 2026-06-08 | `43a29a1` | Pushed; Vercel deploy expected |
 
 ---
 
