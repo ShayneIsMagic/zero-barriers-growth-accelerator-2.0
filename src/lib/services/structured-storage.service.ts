@@ -7,6 +7,11 @@
 
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
+import {
+  countPresentFromElementMap,
+  flattenCategoryElementMap,
+  mapFlatElementsForStorage,
+} from '@/lib/services/structured-storage-utils';
 
 export interface StructuredFrameworkResult {
   id: string;
@@ -354,6 +359,13 @@ export class StructuredStorageService {
       };
     }
 
+    const flattened = flattenCategoryElementMap(
+      categoryInfo as Record<string, unknown>
+    );
+    if (Object.keys(flattened).length > 0) {
+      return countPresentFromElementMap(flattened);
+    }
+
     const elements = categoryInfo.elements;
     if (elements && typeof elements === 'object' && !Array.isArray(elements)) {
       const entries = Object.values(elements as Record<string, { score?: number }>);
@@ -404,26 +416,19 @@ export class StructuredStorageService {
     revenueOpportunity: string | null;
     recommendations: unknown[];
   }> {
+    const flattened = flattenCategoryElementMap(categoryInfo);
+    if (Object.keys(flattened).length > 0) {
+      return mapFlatElementsForStorage(flattened);
+    }
+
     const elements = categoryInfo.elements;
     if (!elements) {
       return [];
     }
 
     if (typeof elements === 'object' && !Array.isArray(elements)) {
-      return Object.entries(elements as Record<string, Record<string, unknown>>).map(
-        ([name, detail]) => ({
-          name,
-          present: typeof detail.score === 'number' ? detail.score >= 0.6 : false,
-          confidence: typeof detail.score === 'number' ? detail.score : null,
-          evidence: Array.isArray(detail.evidence) ? detail.evidence : [],
-          revenueOpportunity:
-            typeof detail.revenue_opportunity === 'string'
-              ? detail.revenue_opportunity
-              : null,
-          recommendations: Array.isArray(detail.recommendations)
-            ? detail.recommendations
-            : [],
-        })
+      return mapFlatElementsForStorage(
+        elements as Record<string, Record<string, unknown>>
       );
     }
 

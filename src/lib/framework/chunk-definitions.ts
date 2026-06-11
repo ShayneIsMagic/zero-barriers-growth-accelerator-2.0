@@ -96,10 +96,6 @@ export const B2B_CHUNK_CONFIG: FrameworkChunkConfig = {
         'product_quality',
         'scalability',
         'innovation',
-        'risk_reduction',
-        'reach',
-        'flexibility',
-        'component_quality',
       ],
     },
     {
@@ -115,7 +111,6 @@ export const B2B_CHUNK_CONFIG: FrameworkChunkConfig = {
         'simplification',
         'connection',
         'integration',
-        'access',
         'availability',
         'variety',
         'configurability',
@@ -124,6 +119,10 @@ export const B2B_CHUNK_CONFIG: FrameworkChunkConfig = {
         'commitment',
         'stability',
         'cultural_fit',
+        'risk_reduction',
+        'reach',
+        'flexibility',
+        'component_quality',
       ],
     },
     {
@@ -142,7 +141,7 @@ export const B2B_CHUNK_CONFIG: FrameworkChunkConfig = {
     {
       categoryName: 'Inspirational Value',
       categoryKey: 'inspirational',
-      elements: ['vision', 'hope_b2b'],
+      elements: ['vision', 'hope_b2b', 'social_responsibility'],
     },
   ],
 };

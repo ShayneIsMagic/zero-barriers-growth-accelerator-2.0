@@ -4,6 +4,23 @@ Thorough implementation guides for each framework assessment in Zero Barriers Gr
 
 ---
 
+## Documentation authority (prevent conflicts)
+
+When two docs disagree, use this order:
+
+1. **Code SSOT** — `src/lib/framework/b2b-taxonomy.ts`, `b2c-taxonomy.ts`, `chunk-definitions.ts`, `archetype-ranking.ts`, `clifton-theme-ranking.ts`
+2. **Structure** — `docs/frameworks/B2B-BAIN-PYRAMID-TAXONOMY.md`, `B2C-CATEGORY-TAXONOMY.md`
+3. **Scoring bands & math** — `docs/frameworks/*-Flat-Scoring.md` (injected into AI; overrides archived 1–10 tables)
+4. **API field contracts** — root `API_DOCUMENTATION.md` (Next.js), `backend/API_DOCUMENTATION.md` (Flask)
+5. **Pipeline + UI read order** — guides in this folder (`*_ASSESSMENT_GUIDE.md`)
+6. **FE/persistence gaps** — `docs/frameworks/B2B-FE-BE-IMPACT-NOTE.md`
+
+**Not authoritative for structure or scoring:** `docs/archived/*`, `docs/frameworks/ACCURATE-PROMPTS.md`, `docs/FLOW_AUDIT_AND_FIXES.md`, `docs/ANSWERS_TO_USER_QUESTIONS.md` — historical or definitions-only.
+
+**Single rule:** Flat-scoring docs define **how to score** (0.0–1.0). Taxonomy docs define **what to score** (slugs, tiers). Guides define **how the app enriches and displays** results. Do not copy scoring tables into guides or API docs.
+
+---
+
 ## Available guides
 
 | Assessment | Guide | Elements | Keyword hint source |
@@ -23,8 +40,12 @@ Thorough implementation guides for each framework assessment in Zero Barriers Gr
 
 | Framework | Scoring authority (tiers, bands, calculations) |
 |-----------|--------------------------------------------------|
-| B2C | [`B2C-Elements-Value-Flat-Scoring.md`](../frameworks/B2C-Elements-Value-Flat-Scoring.md) |
-| B2B | [`B2B-Elements-Value-Flat-Scoring.md`](../frameworks/B2B-Elements-Value-Flat-Scoring.md) |
+| B2C (structure) | [`B2C-CATEGORY-TAXONOMY.md`](../frameworks/B2C-CATEGORY-TAXONOMY.md) |
+| B2C (scoring) | [`B2C-Elements-Value-Flat-Scoring.md`](../frameworks/B2C-Elements-Value-Flat-Scoring.md) |
+| B2C (FE display) | [`B2B-FE-BE-IMPACT-NOTE.md`](../frameworks/B2B-FE-BE-IMPACT-NOTE.md) § B2C standalone |
+| B2B (structure) | [`B2B-BAIN-PYRAMID-TAXONOMY.md`](../frameworks/B2B-BAIN-PYRAMID-TAXONOMY.md) |
+| B2B (scoring) | [`B2B-Elements-Value-Flat-Scoring.md`](../frameworks/B2B-Elements-Value-Flat-Scoring.md) |
+| B2B (FE/BE/UI impact) | [`B2B-FE-BE-IMPACT-NOTE.md`](../frameworks/B2B-FE-BE-IMPACT-NOTE.md) |
 | CliftonStrengths | [`CliftonStrengths-Flat-Scoring.md`](../frameworks/CliftonStrengths-Flat-Scoring.md) |
 | Golden Circle | [`Golden-Circle-Flat-Scoring.md`](../frameworks/Golden-Circle-Flat-Scoring.md) |
 | Brand Archetypes | [`Brand-Archetypes-Flat-Scoring.md`](../frameworks/Brand-Archetypes-Flat-Scoring.md) |
@@ -59,6 +80,16 @@ Every guide includes:
 7. **Integrity checks** — completeness tests and runtime verification
 8. **Code reference index** — every implementation file
 9. **Troubleshooting & testing**
+
+### Runtime ranking & display (this branch)
+
+| Framework | Strategic read | Code |
+|-----------|----------------|------|
+| B2B / B2C Elements | Strength-first: `topStrengths` → ranked categories | `elements-value-display.ts`, `ElementsValueResultsPanel` |
+| Brand Archetypes | Top 3 + not archetypes + `personality_profile` | `archetype-ranking.ts`, `brand-personality.ts` |
+| CliftonStrengths | Domain rankings → top 5 → full 34 + personality | `clifton-theme-ranking.ts`, `CliftonThemeResultsPanel` |
+
+API field reference: root [`API_DOCUMENTATION.md`](../../API_DOCUMENTATION.md) — standalone framework section.
 
 ---
 

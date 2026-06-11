@@ -1,6 +1,8 @@
 # ACCURATE Analysis Prompts - Exact Framework Structure
 
-**CRITICAL:** These prompts use ONLY the exact elements, categories, and structure from the original framework markdown files. No additions, no changes.
+> **⚠️ Not production SSOT (June 2026).** Chunked analysis uses `src/lib/framework/chunk-definitions.ts`, `b2b-taxonomy.ts`, `b2c-taxonomy.ts`, and `docs/frameworks/*-Flat-Scoring.md`. **B2B tier lists in this file are outdated** (e.g. "Functional 7" / "Ease 19") — use [`B2B-BAIN-PYRAMID-TAXONOMY.md`](./B2B-BAIN-PYRAMID-TAXONOMY.md) (**4+5+21+7+3**). Keep this file for historical prompt text only; do not inject into new routes.
+
+**CRITICAL (legacy):** These prompts aimed to mirror original framework markdown files. Production no longer reads this file directly.
 
 ---
 
@@ -1062,7 +1064,7 @@ Identify and score ALL 4 components across their 6 dimensions each. Use the EXAC
 
 Before using these prompts, verify:
 
-- [ ] B2B: Exactly 40 elements (4+7+19+7+3)
+- [ ] B2B: Exactly 40 elements (4+5+21+7+3) — see B2B-BAIN-PYRAMID-TAXONOMY.md
 - [ ] B2C: Exactly 30 elements (14+10+5+1)
 - [ ] CliftonStrengths: Exactly 34 themes (8+9+8+9)
 - [ ] Golden Circle: 4 components × 6 dimensions = 24 total scores

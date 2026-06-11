@@ -36,6 +36,8 @@ import {
   saveContentSnapshot,
 } from '@/services/content-api';
 import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
+import { ElementsValueResultsPanel } from '@/components/analysis/ElementsValueResultsPanel';
+import { generateElementsValueMarkdown } from '@/lib/framework/elements-value-display';
 
 export function B2BElementsPage() {
   const [url, setUrl] = useState('');
@@ -618,67 +620,23 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                     />
                   )}
 
-                  {/* Normal AI results */}
                   {result.comparison && !result.comparison._isFallback && (
-                    <div className="rounded-lg border bg-gradient-to-r from-green-50 to-emerald-50 p-6 dark:from-green-950 dark:to-emerald-950">
-                      <div className="text-center">
-                        <h3 className="mb-2 text-2xl font-bold text-green-900 dark:text-green-100">
-                          B2B Elements of Value Analysis
-                        </h3>
-                        <div className="mb-4 text-lg text-green-700 dark:text-green-300">
-                          Analysis completed successfully
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* AI Analysis Results */}
-                  {result.comparison && !result.comparison._isFallback && (
-                    <div className="mt-6 space-y-4">
-                      <h3 className="text-xl font-semibold">
-                        AI Analysis Results
-                      </h3>
-
-                      {/* Show analysis data */}
-                      <div className="rounded-lg border bg-blue-50 p-4 dark:bg-blue-950">
-                        <h4 className="mb-2 font-semibold">
-                          B2B Elements of Value Analysis
-                        </h4>
-                        <div className="max-h-96 overflow-auto whitespace-pre-wrap text-sm">
-                          {typeof result.comparison === 'string'
-                            ? result.comparison
-                            : JSON.stringify(result.comparison, null, 2)}
-                        </div>
-                      </div>
-                    </div>
+                    <ElementsValueResultsPanel
+                      framework="b2b"
+                      analysis={result.comparison}
+                    />
                   )}
                 </TabsContent>
 
                 {/* Detailed Analysis Tab */}
                 <TabsContent value="detailed" className="space-y-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Complete Analysis Data</CardTitle>
-                      <CardDescription>
-                        Full analysis results including existing and proposed
-                        content
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        <div className="rounded-lg border bg-muted/50 p-4">
-                          <h4 className="mb-2 font-semibold">
-                            Full Analysis Results
-                          </h4>
-                          <pre className="max-h-96 overflow-auto whitespace-pre-wrap text-xs">
-                            {typeof result.comparison === 'string'
-                              ? result.comparison
-                              : JSON.stringify(result.comparison, null, 2)}
-                          </pre>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  {result.comparison && !result.comparison._isFallback && (
+                    <ElementsValueResultsPanel
+                      framework="b2b"
+                      analysis={result.comparison}
+                      defaultExpanded
+                    />
+                  )}
                 </TabsContent>
 
                 {/* Recommendations Tab */}
@@ -695,12 +653,17 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-4">
+                      {result.comparison && !result.comparison._isFallback ? (
+                        <ElementsValueResultsPanel
+                          framework="b2b"
+                          analysis={result.comparison}
+                          variant="recommendations"
+                        />
+                      ) : (
                         <p className="text-sm text-muted-foreground">
-                          Review the analysis results in the Overview tab for
-                          specific recommendations and improvements.
+                          Run an analysis to see element recommendations.
                         </p>
-                      </div>
+                      )}
                     </CardContent>
                   </Card>
                 </TabsContent>
@@ -745,12 +708,31 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
   );
 }
 
-function generateB2BMarkdown(result: any): string {
-  return `# B2B Elements of Value Analysis
+function generateB2BMarkdown(result: {
+  existing?: {
+    url?: string;
+    title?: string;
+    metaDescription?: string;
+    wordCount?: number;
+    extractedKeywords?: string[];
+  };
+  proposed?: {
+    title?: string;
+    metaDescription?: string;
+    wordCount?: number;
+    extractedKeywords?: string[];
+  };
+  comparison?: Record<string, unknown>;
+}): string {
+  const analysisMarkdown =
+    result.comparison && typeof result.comparison === 'object'
+      ? generateElementsValueMarkdown('b2b', result.comparison, {
+          url: result.existing?.url,
+          title: result.existing?.title,
+        })
+      : 'No structured analysis available.';
 
-**URL:** ${result.existing?.url || 'N/A'}
-**Date:** ${new Date().toLocaleString()}
-**Analysis Type:** B2B Elements of Value
+  return `${analysisMarkdown}
 
 ---
 
@@ -763,19 +745,12 @@ function generateB2BMarkdown(result: any): string {
 
 ${
   result.proposed
-    ? `
-## Proposed Content
+    ? `## Proposed Content
 
-**Title:** ${result.proposed?.title || 'N/A'}
-**Meta Description:** ${result.proposed?.metaDescription || 'N/A'}
-**Word Count:** ${result.proposed?.wordCount || 0}
-**Keywords:** ${result.proposed?.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
-
----
-
-## B2B Elements Analysis Results
-
-${typeof result.comparison === 'string' ? result.comparison : JSON.stringify(result.comparison, null, 2)}
+**Title:** ${result.proposed.title || 'N/A'}
+**Meta Description:** ${result.proposed.metaDescription || 'N/A'}
+**Word Count:** ${result.proposed.wordCount || 0}
+**Keywords:** ${result.proposed.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
 `
     : ''
 }

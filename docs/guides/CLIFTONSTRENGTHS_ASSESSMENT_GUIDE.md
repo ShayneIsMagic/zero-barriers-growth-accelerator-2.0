@@ -16,8 +16,9 @@ That file is injected into every AI block prompt (first 12,000 characters). Noth
 
 | Document | Role |
 |----------|------|
-| `CliftonStrengths-Flat-Scoring.md` | **Scoring + structure** — use this for all score interpretation |
-| `CLIFTONSTRENGTHS_COMPLETE.md` | **Definitions + synonyms + evidence cues only** — its 1–10 tables are **not** used by the runtime assessment |
+| `CliftonStrengths-Flat-Scoring.md` | **Scoring authority** — bands, domain/overall averages |
+| This guide § strategic read + §10 | **Enrich fields + UI** — domain rankings, top 5, personality |
+| `CLIFTONSTRENGTHS_COMPLETE.md` | **Definitions + synonyms only** — its 1–10 tables are **not** used by the runtime assessment |
 
 No scoring logic was changed to produce these guides. If archived doc tables disagree with the flat-scoring doc, **trust the flat-scoring doc**.
 
@@ -269,6 +270,17 @@ The flat-scoring document also specifies analytical outputs the AI should produc
 
 The chunked runtime focuses on **per-element scores + evidence + recommendations**, then synthesizes a readable report in the unified step.
 
+### Strategic read (standalone UI — production)
+
+Analysts typically review results in this order:
+
+1. **Rankings by domain** — four domains in canonical order (Strategic Thinking → Executing → Influencing → Relationship Building), each with `categoryScore` and themes ranked within the domain
+2. **Top 5 strengths** — highest five themes across all 34 (`top_five_strengths`)
+3. **Full theme listing** — all 34 themes ranked 1–34 (`theme_ranking.allRanked`)
+4. **Site personality** — `personality_profile` flags coherent voice, multi-dominant domains, or conflicting theme pairs (e.g. Command vs Harmony)
+
+Enrichment: [`enrichAnalysisWithCliftonRanking()`](../../src/lib/framework/clifton-theme-ranking.ts) in `clifton-strengths-standalone/route.ts`. UI: [`CliftonThemeResultsPanel.tsx`](../../src/components/analysis/CliftonThemeResultsPanel.tsx) + [`BrandPersonalityPanel.tsx`](../../src/components/analysis/BrandPersonalityPanel.tsx).
+
 ---
 
 ## 5. How We Apply CliftonStrengths to Website Content
@@ -314,7 +326,7 @@ flowchart TD
 1. **Collect** — Puppeteer gathers page content. Collection does **not** call Ollama/Gemini.
 2. **Select page** — By default, one primary page is analyzed (homepage or entered URL).
 3. **Analyze** — Chunked AI runs 4 domain blocks sequentially, then one unified synthesis.
-4. **Review** — Results include per-theme scores, evidence, `verification.completeness_check`, and `readableMarkdown`.
+4. **Review** — Domain rankings, top 5 strengths, full 34-theme list, `personality_profile`, `verification.completeness_check`, and `readableMarkdown`.
 
 ### Standalone page flow
 
@@ -502,7 +514,7 @@ POST /api/analyze/clifton-strengths-standalone
 }
 ```
 
-### `analysis` object (chunked result)
+### `analysis` object (chunked result + enrich)
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -511,14 +523,35 @@ POST /api/analyze/clifton-strengths-standalone
 | `overallScore` | number | 0.0–1.0 mean of all 34 themes |
 | `totalElements` | number | Should be 34 |
 | `categories` | object | Keyed by `categoryKey` (e.g. `strategic_thinking`) |
-| `topStrengths` | array | Up to 5 themes with score ≥ 0.7 |
-| `criticalGaps` | array | Up to 5 themes with score < 0.4 |
+| `top_five_strengths` | array | **Top 5 themes** across all 34 by score |
+| `domain_rankings` | array | Per domain: `{ name, slug, score, themeCount, themes[] }` — themes ranked within domain |
+| `signature_themes` | array | Themes ≥ 0.8 (dominant strength band) |
+| `supporting_themes` | array | Themes 0.6–0.79 excluding signatures |
+| `dominant_domain` | object | `{ name, slug, score }` — highest domain average |
+| `theme_ranking.allRanked` | array | All 34 themes ranked |
+| `personality_profile` | object | Content personality — same shape as Brand Archetypes (`framework: "clifton-strengths"`) |
+| `topStrengths` | array | From merge — up to 5 themes with score ≥ 0.7 |
+| `criticalGaps` | array | From merge — up to 5 themes with score < 0.4 |
 | `verification` | object | Completeness metadata |
 | `chunkedReport` | string | Markdown from merge step |
 | `unifiedReport` | string | AI-synthesized executive report |
 | `analysisMethod` | string | `"chunked-blocked"` |
 | `chunksCompleted` / `chunksTotal` | number | Block progress |
 | `errors` | string[]? | Per-block failure messages |
+
+### `domain_rankings[]` entry
+
+```json
+{
+  "name": "Strategic Thinking",
+  "slug": "strategic_thinking",
+  "score": 0.651,
+  "themeCount": 8,
+  "themes": [
+    { "name": "Analytical", "slug": "analytical", "score": 0.85, "strength": "Dominant", "evidence": "..." }
+  ]
+}
+```
 
 ### Per-theme element shape
 
@@ -821,7 +854,11 @@ Each row links a **runtime slug** to its **archived reference section** (line nu
 
 | Concern | File | Symbol / function |
 |---------|------|-------------------|
-| HTTP entry | `src/app/api/analyze/clifton-strengths-standalone/route.ts` | `POST`, `buildCSOptions()` |
+| HTTP entry | `src/app/api/analyze/clifton-strengths-standalone/route.ts` | `POST`, `buildCSOptions()`, calls `enrichAnalysisWithCliftonRanking()` |
+| Theme ranking + enrich | `src/lib/framework/clifton-theme-ranking.ts` | `rankCliftonThemesFromAnalysis()`, `enrichAnalysisWithCliftonRanking()` |
+| Personality synthesis | `src/lib/framework/brand-personality.ts` | `deriveCliftonPersonality()` |
+| Results UI | `src/components/analysis/CliftonThemeResultsPanel.tsx` | Domain accordion, top 5, full list |
+| Personality UI | `src/components/analysis/BrandPersonalityPanel.tsx` | Shared with Brand Archetypes |
 | Chunk manifest (canonical) | `src/lib/framework/chunk-definitions.ts` | `CLIFTON_CHUNK_CONFIG` |
 | Chunk manifest (route copy) | `src/app/api/analyze/clifton-strengths-standalone/route.ts` | `buildCSOptions().chunks` — keep in sync with canonical |
 | Analysis engine | `src/lib/chunked-framework-analysis.ts` | `analyzeFrameworkInChunks()` |
@@ -863,9 +900,11 @@ Each row links a **runtime slug** to its **archived reference section** (line nu
 Framework:     CliftonStrengths (Gallup / Don Clifton)
 Themes:        34 across 4 domains
 Scoring:       0.0–1.0 flat (no weights)
+UI read:       domain_rankings → top_five_strengths → full 34 list + personality_profile
+Enrichment:    clifton-theme-ranking.ts + brand-personality.ts
 AI calls:      5 (4 domain blocks + 1 unified report)
 Endpoint:      POST /api/analyze/clifton-strengths-standalone
-UI:            /dashboard/clifton-strengths-simple
+UI:            /dashboard/clifton-strengths-simple → CliftonThemeResultsPanel
 Source of truth: docs/frameworks/CliftonStrengths-Flat-Scoring.md
 Completeness:  src/test/framework/element-completeness.test.ts (expect 34)
 ```

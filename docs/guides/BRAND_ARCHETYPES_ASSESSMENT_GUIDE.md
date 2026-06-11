@@ -8,15 +8,16 @@
 
 ## Scoring authority (read this first)
 
-**Production scoring is flat fractional only (0.0–1.0).** The sole authority for how to score, the rating bands, the calculation rules, and primary/secondary identification is:
+**Production scoring is flat fractional only (0.0–1.0).** The sole authority for **rating bands and per-archetype scoring rules** is:
 
 **[`docs/frameworks/Brand-Archetypes-Flat-Scoring.md`](../frameworks/Brand-Archetypes-Flat-Scoring.md)**
 
-That file is injected into every AI block prompt (first 12,000 characters). Nothing in this guide overrides it.
+That file is injected into every AI block prompt (first 12,000 characters). Nothing in this guide overrides its scoring math.
 
 | Document | Role |
 |----------|------|
-| `Brand-Archetypes-Flat-Scoring.md` | **Scoring + structure** — use this for all score interpretation and top-archetype rules |
+| `Brand-Archetypes-Flat-Scoring.md` | **Scoring authority** — bands, evidence policy, flat average |
+| This guide §5–§11 | **Strategic read** — top 3, not archetypes, personality, API enrich fields |
 | `JAMBOJON_ARCHETYPES_ENHANCED.md` | **Definitions + synonyms + evidence cues only** — its example JSON uses labels, not alternate scoring math |
 | `jambojon-archetypes-framework.json` | **Keyword signals + “as the guide” patterns** — supplementary recognition aids for prompts |
 
@@ -86,7 +87,7 @@ Runtime `mergeResults()` also surfaces **`topStrengths`**: up to 5 archetypes wi
 2. [Official Brand Archetype References](#2-official-brand-archetype-references)
 3. [The 12 Archetypes and Four Motivational Groups](#3-the-12-archetypes-and-four-motivational-groups)
 4. [Scoring Methodology](#4-scoring-methodology)
-5. [Identifying Primary and Secondary Archetypes](#5-identifying-primary-and-secondary-archetypes)
+5. [Strategic Read — Top 3, What You're Not, and Site Personality](#5-strategic-read--top-3-what-youre-not-and-site-personality)
 6. [How We Apply Archetypes to Website Content](#6-how-we-apply-archetypes-to-website-content)
 7. [User Workflows](#7-user-workflows)
 8. [End-to-End Pipeline](#8-end-to-end-pipeline)
@@ -235,20 +236,29 @@ Chunked JSON uses `score`, `evidence`, `recommendation` per element (slug).
 
 ---
 
-## 5. Identifying Primary and Secondary Archetypes
+## 5. Strategic Read — Top 3, What You're Not, and Site Personality
 
-This is the core strategic output. **All identification derives from flat 0.0–1.0 scores** — no weighted formulas.
+This is the core strategic output for analysts and the standalone UI. **All identification derives from flat 0.0–1.0 scores** — no weighted formulas.
 
-### Algorithm (production)
+### Algorithm (production — primary UI read)
 
 ```text
 1. Collect scores for all 12 slugs across categories.ego, .order, .freedom, .social
 2. Flatten to a single ranked list (slug, score, evidence)
-3. primary_archetype     ← rank #1 by score
-4. secondary_archetypes  ← ranks #2+ where score ≥ 0.6 AND score < primary (or co-primary tie)
-5. dominant_cluster      ← all archetypes with score ≥ 0.8
-6. weak_archetypes       ← all archetypes with score < 0.4
+3. top_three_archetypes  ← ranks #1, #2, #3 by score (always 3 when 12 analyzed)
+4. not_archetypes        ← all archetypes with score < 0.4 (what the brand is NOT)
+5. personality_profile   ← headline, signalType, tensions, coherenceScore
 ```
+
+### Co-primary / legacy fields (still in API)
+
+```text
+primary_archetype      ← rank #1 (or ties within 0.05 of #1)
+secondary_archetypes   ← score ≥ 0.6, excluding primary
+dominant_cluster       ← all archetypes with score ≥ 0.8
+```
+
+Implemented in [`src/lib/framework/archetype-ranking.ts`](../../src/lib/framework/archetype-ranking.ts) (`enrichAnalysisWithArchetypeRanking`). Personality in [`src/lib/framework/brand-personality.ts`](../../src/lib/framework/brand-personality.ts). UI: [`BrandArchetypesPage.tsx`](../../src/components/analysis/BrandArchetypesPage.tsx) + [`BrandPersonalityPanel.tsx`](../../src/components/analysis/BrandPersonalityPanel.tsx).
 
 ### Co-primary and blend detection
 
@@ -272,9 +282,12 @@ This is the core strategic output. **All identification derives from flat 0.0–
 
 | Field | Source | Use |
 |-------|--------|-----|
-| `topStrengths` | `mergeResults()` — score ≥ 0.7, max 5 | Quick primary/secondary candidates |
-| `criticalGaps` | `mergeResults()` — score < 0.4, max 5 | Weakest archetype signals |
-| `unifiedReport` | Ollama synthesis | Narrative summary naming primary/secondary |
+| `top_three_archetypes` | `enrichAnalysisWithArchetypeRanking()` | **Primary UI read** — ranks 1–3 |
+| `not_archetypes` | `enrichAnalysisWithArchetypeRanking()` | Weak/absent voices (score < 0.4) |
+| `personality_profile` | `deriveArchetypePersonality()` | Site personality + conflict detection |
+| `topStrengths` | `mergeResults()` — score ≥ 0.7, max 5 | Merge-step strength candidates |
+| `criticalGaps` | `mergeResults()` — score < 0.4, max 5 | Merge-step gap candidates |
+| `unifiedReport` | Ollama synthesis | Narrative summary |
 | `chunkedReport` | Deterministic markdown | Ranked category scores + top strengths |
 
 ### Example interpretation
@@ -296,7 +309,7 @@ This is the core strategic output. **All identification derives from flat 0.0–
 }
 ```
 
-**Reading:** Primary = **Sage** (0.87, Dominant). Secondary = **Hero** (0.74, Strong). Explorer moderate; Innocent weak. Brand reads as **Sage–Hero** with intellectual authority plus achievement narrative.
+**Reading:** Top 3 = **Sage** (0.87), **Hero** (0.74), **Creator** (0.60). Not archetypes include **Jester** (0.12), **Innocent** (0.22). `personality_profile.headline` ≈ **The Sage brand voice** with Hero/Creator support. Check `tensions` if multiple high scores conflict (e.g. Ruler + Regular Guy).
 
 ---
 
@@ -351,14 +364,14 @@ flowchart TD
     B --> C[Select one page for analysis]
     C --> D[Run Brand Archetypes in Framework Analysis]
     D --> E[4 motivational-group block calls + unified report]
-    E --> F[Identify primary/secondary from flat scores]
-    F --> G[View JSON + markdown report + traceability]
+    E --> F[Enrich: top 3 + not archetypes + personality]
+    F --> G[View personality panel + top 3 + full ranked list]
 ```
 
 1. **Collect** — Puppeteer gathers page content  
 2. **Analyze** — One AI call per motivational group (4 blocks) + unified synthesis  
-3. **Rank** — Sort 12 flat scores → primary + secondary  
-4. **Review** — JSON, `topStrengths`, `readableMarkdown`, traceability  
+3. **Rank** — Sort 12 flat scores → `top_three_archetypes`, `not_archetypes`, `personality_profile`  
+4. **Review** — Site personality, top 3, what you're not, collapsible all-12 list, `readableMarkdown`  
 
 ### Workflow documentation
 
@@ -516,30 +529,40 @@ POST /api/analyze/brand-archetypes-standalone
 
 ## 11. Response Structure
 
-### Deriving primary / secondary from response JSON
+### Enriched fields (added by `enrichAnalysisWithArchetypeRanking`)
 
-```typescript
-// Pseudocode — flatten and rank
-const all = Object.entries(categories).flatMap(([group, cat]) =>
-  Object.entries(cat.elements).map(([slug, detail]) => ({
-    slug, group, score: detail.score, evidence: detail.evidence
-  }))
-);
-const ranked = all.sort((a, b) => b.score - a.score);
-const primary = ranked[0];
-const secondary = ranked.slice(1).filter(a => a.score >= 0.6);
-const dominantCluster = ranked.filter(a => a.score >= 0.8);
-```
+| Field | Type | Description |
+|-------|------|-------------|
+| `top_three_archetypes` | array | Ranks #1–#3: `{ name, slug, score, strength, group, evidence }` |
+| `not_archetypes` | array | Score < 0.4: same shape — narratives the site does **not** project |
+| `personality_profile` | object | See below |
+| `primary_archetype` | object \| array | Co-primary within 0.05 of #1 (legacy/strategic) |
+| `secondary_archetypes` | array | Score ≥ 0.6, excluding primary |
+| `dominant_cluster` | array | All archetypes ≥ 0.8 |
+| `archetype_ranking.allRanked` | array | Full ranked list |
 
-### Top-level analysis fields
+### `personality_profile` object
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `framework` | string | `"brand-archetypes"` |
+| `headline` | string | e.g. `"The Sage–The Hero brand voice"` |
+| `summary` | string | Narrative for analysts |
+| `signalType` | string | `coherent_single` \| `coherent_blend` \| `multi_dominant` \| `conflicting_signals` \| `undefined_identity` \| `generic_messaging` |
+| `dominantLabels` | string[] | Top 3 display names |
+| `supportingLabels` | string[] | Weak/absent names (up to 3) |
+| `tensions` | array | `{ labelA, labelB, scoreA, scoreB, reason }` when opposing pairs both ≥ 0.6 |
+| `coherenceScore` | number | 0.0–1.0 |
+
+### Top-level analysis fields (from merge + enrich)
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `overallScore` | number | Mean of 12 archetype scores (0.0–1.0) |
 | `totalElements` | number | **12** when complete |
 | `categories` | object | Keys: `ego`, `order`, `freedom`, `social` |
-| `topStrengths` | array | Archetypes ≥ 0.7 (up to 5) — use for primary/secondary hints |
-| `criticalGaps` | array | Archetypes < 0.4 (up to 5) |
+| `topStrengths` | array | From merge — archetypes ≥ 0.7 (up to 5) |
+| `criticalGaps` | array | From merge — archetypes < 0.4 (up to 5) |
 | `verification.completeness_check` | string | `pass` / `fail` |
 
 ---
@@ -738,7 +761,9 @@ Each archetype in [`jambojon-archetypes-framework.json`](../../src/lib/ai-engine
 |---------|------|-------------------|
 | HTTP entry | `src/app/api/analyze/brand-archetypes-standalone/route.ts` | `POST`, `buildArchetypeOptions()` → `buildChunkAnalysisOptions` |
 | Chunk manifest | `src/lib/framework/chunk-definitions.ts` | `BRAND_ARCHETYPES_CHUNK_CONFIG` |
-| Primary/secondary | `src/lib/framework/archetype-ranking.ts` | `enrichAnalysisWithArchetypeRanking()` |
+| Top 3 + not + personality | `src/lib/framework/archetype-ranking.ts` | `enrichAnalysisWithArchetypeRanking()` |
+| Personality synthesis | `src/lib/framework/brand-personality.ts` | `deriveArchetypePersonality()` |
+| Personality UI | `src/components/analysis/BrandPersonalityPanel.tsx` | Shared with CliftonStrengths |
 | Analysis engine | `src/lib/chunked-framework-analysis.ts` | `analyzeFrameworkInChunks()` |
 | Keyword hint builder | `src/lib/framework/element-keyword-hints.ts` | `buildArchetypeHintLookup()`, `formatKeywordHintsSection()` |
 | Markdown loader | `src/lib/chunked-framework-analysis.ts` | `loadFrameworkMarkdown()` → `Brand-Archetypes-Flat-Scoring.md` |
@@ -782,7 +807,7 @@ UI:              /dashboard/brand-archetypes-standalone
 Source of truth: docs/frameworks/Brand-Archetypes-Flat-Scoring.md
 Keyword hints:   jambojon-archetypes-framework.json (keyword_signals)
 Canonical chunks: src/lib/framework/chunk-definitions.ts → BRAND_ARCHETYPES_CHUNK_CONFIG
-Runtime ranking: archetype-ranking.ts → primary_archetype, secondary_archetypes, topStrengths
+Runtime ranking: archetype-ranking.ts → top_three_archetypes, not_archetypes, personality_profile
 Research base:   Jung (1959); Mark & Pearson (2001)
 ```
 

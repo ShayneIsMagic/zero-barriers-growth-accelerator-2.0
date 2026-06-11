@@ -7,6 +7,8 @@ import {
   FRAMEWORK_CHUNK_CONFIGS,
   type FrameworkChunkConfig,
 } from '@/lib/framework/chunk-definitions';
+import { B2B_SCORING_PROMPT_INSTRUCTIONS } from '@/lib/framework/b2b-taxonomy';
+import { B2C_SCORING_PROMPT_INSTRUCTIONS } from '@/lib/framework/b2c-taxonomy';
 import type { ChunkedAnalysisOptions } from '@/lib/chunked-framework-analysis';
 
 interface ExistingContentShape {
@@ -45,7 +47,11 @@ export function buildChunkAnalysisOptions(
     .join(', ');
 
   const frameworkScoring: Partial<ChunkedAnalysisOptions> =
-    frameworkKey === 'golden-circle'
+    frameworkKey === 'b2b-elements'
+      ? { scoringInstructions: B2B_SCORING_PROMPT_INSTRUCTIONS }
+      : frameworkKey === 'b2c-elements'
+        ? { scoringInstructions: B2C_SCORING_PROMPT_INSTRUCTIONS }
+        : frameworkKey === 'golden-circle'
       ? {
           scoringInstructions: `Score each dimension 0.0-1.0 (flat fractional scoring):
 - 0.8-1.0: Excellent — clearly articulated with strong evidence

@@ -32,6 +32,7 @@ import {
   saveContentSnapshot,
 } from '@/services/content-api';
 import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
+import { CliftonThemeResultsPanel } from '@/components/analysis/CliftonThemeResultsPanel';
 
 export function CliftonStrengthsPage() {
   const [url, setUrl] = useState('');
@@ -521,48 +522,33 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                   />
                 )}
 
-                {/* Overall Score */}
                 {result.analysis && !result.analysis._isFallback && (
-                  <div className="rounded-lg border bg-gradient-to-r from-purple-50 to-violet-50 p-6 dark:from-purple-950 dark:to-violet-950">
-                    <div className="text-center">
-                      <h3 className="mb-2 text-2xl font-bold text-purple-900 dark:text-purple-100">
-                        CliftonStrengths Analysis
-                      </h3>
-                      <div className="mb-4 text-lg text-purple-700 dark:text-purple-300">
-                        Analysis completed successfully
-                      </div>
-                    </div>
-                  </div>
+                  <CliftonThemeResultsPanel analysis={result.analysis} />
                 )}
 
-                {/* AI Analysis Results */}
                 {result.analysis && !result.analysis._isFallback && (
-                  <div className="mt-6 space-y-4">
-                    <h3 className="text-xl font-semibold">
-                      AI Analysis Results
-                    </h3>
-
-                    {/* Show analysis data */}
-                    <div className="rounded-lg border bg-blue-50 p-4 dark:bg-blue-950">
-                      <h4 className="mb-2 font-semibold">
-                        CliftonStrengths Analysis
-                      </h4>
-                      <div className="whitespace-pre-wrap text-sm">
+                  <details className="rounded-lg border">
+                    <summary className="cursor-pointer px-4 py-3 text-sm font-medium">
+                      Raw JSON response
+                    </summary>
+                    <div className="border-t bg-muted/50 p-4">
+                      <pre className="max-h-96 overflow-auto whitespace-pre-wrap text-xs">
                         {JSON.stringify(result.analysis, null, 2)}
-                      </div>
+                      </pre>
+                      <Button
+                        className="mt-3"
+                        variant="outline"
+                        onClick={() =>
+                          copyToClipboard(
+                            JSON.stringify(result.analysis, null, 2)
+                          )
+                        }
+                      >
+                        <Copy className="mr-2 h-4 w-4" />
+                        Copy Analysis
+                      </Button>
                     </div>
-
-                    <Button
-                      onClick={() =>
-                        copyToClipboard(
-                          JSON.stringify(result.analysis, null, 2)
-                        )
-                      }
-                    >
-                      <Copy className="mr-2 h-4 w-4" />
-                      Copy Analysis
-                    </Button>
-                  </div>
+                  </details>
                 )}
 
                 {/* Complete Analysis Data */}

@@ -18,6 +18,11 @@ import { useFrameworkPageAnalysis } from '@/hooks/useFrameworkPageAnalysis';
 import { CheckCircle2, Copy, Download, Loader2, Sparkles } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
+import { BrandPersonalityPanel } from '@/components/analysis/BrandPersonalityPanel';
+import {
+  deriveArchetypePersonality,
+  type PersonalityProfile,
+} from '@/lib/framework/brand-personality';
 import {
   rankArchetypesFromAnalysis,
   type ArchetypeRankingSummary,
@@ -55,21 +60,35 @@ export function BrandArchetypesPage() {
     );
   }, [analysisPayload]);
 
-  const primaryFromApi = useMemo((): ArchetypeRankingSummary[] => {
+  const topThreeFromApi = useMemo((): ArchetypeRankingSummary[] => {
     if (!analysisPayload || typeof analysisPayload !== 'object') {
       return [];
     }
-    const raw = (analysisPayload as Record<string, unknown>).primary_archetype;
-    if (!raw) return [];
-    return Array.isArray(raw) ? raw : [raw as ArchetypeRankingSummary];
+    const raw = (analysisPayload as Record<string, unknown>).top_three_archetypes;
+    return Array.isArray(raw) ? (raw as ArchetypeRankingSummary[]) : [];
   }, [analysisPayload]);
 
-  const secondaryFromApi = useMemo((): ArchetypeRankingSummary[] => {
+  const notArchetypesFromApi = useMemo((): ArchetypeRankingSummary[] => {
     if (!analysisPayload || typeof analysisPayload !== 'object') {
       return [];
     }
-    const raw = (analysisPayload as Record<string, unknown>).secondary_archetypes;
+    const raw = (analysisPayload as Record<string, unknown>).not_archetypes;
     return Array.isArray(raw) ? (raw as ArchetypeRankingSummary[]) : [];
+  }, [analysisPayload]);
+
+  const personalityProfile = useMemo((): PersonalityProfile | null => {
+    if (!analysisPayload || typeof analysisPayload !== 'object') {
+      return null;
+    }
+    const fromApi = (analysisPayload as Record<string, unknown>)
+      .personality_profile as PersonalityProfile | undefined;
+    if (fromApi?.headline) {
+      return fromApi;
+    }
+    const ranking = rankArchetypesFromAnalysis(
+      analysisPayload as Record<string, unknown>
+    );
+    return ranking ? deriveArchetypePersonality(ranking) : null;
   }, [analysisPayload]);
 
   const runAnalysis = async () => {
@@ -260,13 +279,15 @@ export function BrandArchetypesPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className='space-y-4'>
-            {(archetypeRanking || primaryFromApi.length > 0) && (
+            <BrandPersonalityPanel profile={personalityProfile} />
+
+            {archetypeRanking && (
               <div className='space-y-4 rounded-lg border bg-muted/40 p-4'>
                 <div className='flex flex-wrap items-center gap-3'>
                   <span className='text-sm font-medium'>Overall score</span>
                   <Badge variant='secondary'>
                     {(
-                      archetypeRanking?.overallScore ??
+                      archetypeRanking.overallScore ??
                       (analysisPayload as { overallScore?: number })?.overallScore ??
                       0
                     ).toFixed(3)}
@@ -274,56 +295,67 @@ export function BrandArchetypesPage() {
                 </div>
 
                 <div>
-                  <h4 className='mb-2 text-sm font-semibold'>Primary archetype(s)</h4>
+                  <h4 className='mb-2 text-sm font-semibold'>Top 3 archetypes</h4>
+                  <p className='mb-3 text-xs text-muted-foreground'>
+                    The three strongest brand voices in the content.
+                  </p>
                   <div className='space-y-2'>
-                    {(primaryFromApi.length > 0
-                      ? primaryFromApi
-                      : archetypeRanking?.primary ?? []
-                    ).map((item) => (
+                    {(topThreeFromApi.length > 0
+                      ? topThreeFromApi
+                      : archetypeRanking.topThree
+                    ).map((item, index) => (
                       <ArchetypeSummaryCard
                         key={'slug' in item ? item.slug : (item as RankedArchetype).slug}
                         item={item}
-                        variant='primary'
+                        variant='top'
+                        rank={index + 1}
                       />
                     ))}
                   </div>
                 </div>
 
-                {(secondaryFromApi.length > 0 ||
-                  (archetypeRanking?.secondary.length ?? 0) > 0) && (
+                {(notArchetypesFromApi.length > 0 ||
+                  archetypeRanking.notArchetypes.length > 0) && (
                   <div>
-                    <h4 className='mb-2 text-sm font-semibold'>Secondary archetypes</h4>
+                    <h4 className='mb-2 text-sm font-semibold'>
+                      What you&apos;re not
+                    </h4>
+                    <p className='mb-3 text-xs text-muted-foreground'>
+                      Weak or absent archetypes (score &lt; 0.4) — narratives the site does not project.
+                    </p>
                     <div className='space-y-2'>
-                      {(secondaryFromApi.length > 0
-                        ? secondaryFromApi
-                        : archetypeRanking?.secondary ?? []
+                      {(notArchetypesFromApi.length > 0
+                        ? notArchetypesFromApi
+                        : archetypeRanking.notArchetypes
                       ).map((item) => (
                         <ArchetypeSummaryCard
                           key={'slug' in item ? item.slug : (item as RankedArchetype).slug}
                           item={item}
-                          variant='secondary'
+                          variant='not'
                         />
                       ))}
                     </div>
                   </div>
                 )}
 
-                {archetypeRanking && archetypeRanking.allRanked.length > 0 && (
-                  <div>
-                    <h4 className='mb-2 text-sm font-semibold'>All archetypes (ranked)</h4>
-                    <div className='grid gap-2 sm:grid-cols-2'>
-                      {archetypeRanking.allRanked.map((item) => (
-                        <div
-                          key={item.slug}
-                          className='flex items-center justify-between rounded-md border px-3 py-2 text-sm'
-                        >
-                          <span>{item.displayName}</span>
-                          <Badge variant='outline'>{item.score.toFixed(2)}</Badge>
-                        </div>
-                      ))}
-                    </div>
+                <details className='rounded-lg border bg-background'>
+                  <summary className='cursor-pointer px-4 py-3 text-sm font-medium'>
+                    All 12 archetypes (ranked)
+                  </summary>
+                  <div className='grid gap-2 border-t p-4 sm:grid-cols-2'>
+                    {archetypeRanking.allRanked.map((item, index) => (
+                      <div
+                        key={item.slug}
+                        className='flex items-center justify-between rounded-md border px-3 py-2 text-sm'
+                      >
+                        <span>
+                          {index + 1}. {item.displayName}
+                        </span>
+                        <Badge variant='outline'>{item.score.toFixed(2)}</Badge>
+                      </div>
+                    ))}
                   </div>
-                )}
+                </details>
               </div>
             )}
 
@@ -370,26 +402,31 @@ export function BrandArchetypesPage() {
 
 interface ArchetypeSummaryCardProps {
   item: ArchetypeRankingSummary | RankedArchetype;
-  variant: 'primary' | 'secondary';
+  variant: 'top' | 'not';
+  rank?: number;
 }
 
-function ArchetypeSummaryCard({ item, variant }: ArchetypeSummaryCardProps) {
+function ArchetypeSummaryCard({ item, variant, rank }: ArchetypeSummaryCardProps) {
   const name = 'displayName' in item ? item.displayName : item.name;
   const strength = 'strengthLabel' in item ? item.strengthLabel : item.strength;
   const group = item.group;
   const evidence = item.evidence;
 
+  const cardClass =
+    variant === 'top'
+      ? 'rounded-md border border-purple-200 bg-purple-50 p-3 dark:border-purple-800 dark:bg-purple-950/40'
+      : 'rounded-md border border-muted bg-muted/30 p-3';
+
   return (
-    <div
-      className={
-        variant === 'primary'
-          ? 'rounded-md border border-purple-200 bg-purple-50 p-3 dark:border-purple-800 dark:bg-purple-950/40'
-          : 'rounded-md border p-3'
-      }
-    >
+    <div className={cardClass}>
       <div className='mb-1 flex flex-wrap items-center gap-2'>
+        {variant === 'top' && rank ? (
+          <span className='text-xs font-medium text-muted-foreground'>#{rank}</span>
+        ) : null}
         <span className='font-medium'>{name}</span>
-        <Badge>{item.score.toFixed(2)}</Badge>
+        <Badge variant={variant === 'not' ? 'outline' : 'default'}>
+          {item.score.toFixed(2)}
+        </Badge>
         <Badge variant='outline'>{strength}</Badge>
         <Badge variant='secondary'>{group}</Badge>
       </div>

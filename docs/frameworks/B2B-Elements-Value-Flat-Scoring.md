@@ -1,21 +1,35 @@
 # B2B Elements of Value - Flat Fractional Scoring
 
+> **Pyramid structure (categories, subcategories, slugs):** [`B2B-BAIN-PYRAMID-TAXONOMY.md`](./B2B-BAIN-PYRAMID-TAXONOMY.md) — canonical Bain alignment. **Standalone UI:** `ElementsValueResultsPanel` — see [`B2B-FE-BE-IMPACT-NOTE.md`](./B2B-FE-BE-IMPACT-NOTE.md). This file covers **scoring only** (bands, rollups).
+
 ## Framework Overview
 
 **Framework:** B2B Elements of Value Analysis  
 **Version:** 2.0 - Flat Scoring  
-**Total Elements:** 40 elements across 5 tiers  
+**Total Elements:** 40 elements across 5 tiers (4 + 5 + 21 + 7 + 3)  
 **Scoring:** 0.0 to 1.0 fractional (NO WEIGHTS - all elements equal)
 
 ---
 
 ## Scoring Philosophy
 
-**Every element counts equally.** No arbitrary weights. Simple averages throughout.
+**Value-first grouping.** Categories and subcategories are defined by the value elements they contain (see [`B2B-BAIN-PYRAMID-TAXONOMY.md`](./B2B-BAIN-PYRAMID-TAXONOMY.md#value-first-principle)). Scores at each level represent **those specific values** — not an independent label.
 
-- Each element: Individual score 0.0-1.0
-- Tier score: Simple average of all elements in that tier
-- Overall score: Simple average of all 40 element scores
+**Three-level hierarchy.** Elements are scored from evidence; subcategories and tiers are **computed rollups** of the values in each group (see [scoring rollup rules](./B2B-BAIN-PYRAMID-TAXONOMY.md#scoring-rollup-rules)).
+
+| Level | Field | Formula |
+|-------|-------|---------|
+| **Element** | `score` | 0.0–1.0 from AI or deterministic matcher (evidence per element) |
+| **Subcategory** | `subcategoryScore` | Sum of element scores in subcategory ÷ element count |
+| **Category (tier)** | `categoryScore` | See tier rules below |
+| **Overall** | `overallScore` | Sum of all 40 element scores ÷ 40 |
+
+**Tier (`categoryScore`) rules:**
+
+- **Table Stakes** (no subcategories): average of its 4 element scores
+- **All other tiers**: average of **subcategory scores** (each Bain subcategory counts equally within the tier)
+
+**Important:** Overall score is **not** the average of five tier scores. It is the mean of all 40 elements so every element has equal weight globally.
 
 ---
 
@@ -37,28 +51,27 @@
 3. **Regulatory Compliance** - Legal, Compliant, Certified
 4. **Ethical Standards** - Integrity, Ethics, Corporate Responsibility
 
-**Tier 1 Score = Average of 4 elements**
+**Tier 1 `categoryScore`** = average of 4 element scores (no subcategory layer)
 
 ---
 
-### TIER 2: Functional (7 Elements)
+### TIER 2: Functional (5 Elements)
 
-#### Economic Value (2 elements)
+#### Economic (2 elements)
 1. **Improved Top Line** - Revenue Growth, Sales Increase, Market Share
 2. **Cost Reduction** - Savings, Efficiency, Lower Costs
 
-#### Performance Value (5 elements)
+#### Performance (3 elements)
 3. **Product Quality** - Excellence, Reliability, Performance
 4. **Scalability** - Growth, Expandable, Flexible Capacity
 5. **Innovation** - Cutting-edge, Advanced, Novel
-6. **Flexibility** - Adaptable, Customizable, Versatile
-7. **Component Quality** - Parts Quality, Materials, Inputs
 
-**Tier 2 Score = Average of 7 elements**
+**Economic `subcategoryScore`** = average of 2 elements · **Performance `subcategoryScore`** = average of 3 elements  
+**Tier 2 `categoryScore`** = average of Economic + Performance subcategory scores
 
 ---
 
-### TIER 3: Ease of Doing Business (19 Elements)
+### TIER 3: Ease of Doing Business (21 Elements)
 
 #### Productivity (5 elements)
 1. **Time Savings** - Efficiency, Speed, Quick
@@ -85,11 +98,14 @@
 16. **Stability** - Reliable, Consistent, Dependable
 17. **Cultural Fit** - Alignment, Values Match, Compatible
 
-#### Strategic (2 elements)
+#### Strategic (4 elements)
 18. **Risk Reduction** - Safety, Security, Protection
 19. **Reach** - Market Access, Distribution, Coverage
+20. **Flexibility** - Adaptable, Customizable, Versatile
+21. **Component Quality** - Parts Quality, Materials, Inputs
 
-**Tier 3 Score = Average of 19 elements**
+Each subcategory `subcategoryScore` = average of its elements (Productivity 5, Operational 4, Access 3, Relationship 5, Strategic 4)  
+**Tier 3 `categoryScore`** = average of 5 subcategory scores
 
 ---
 
@@ -106,27 +122,71 @@
 6. **Reduced Anxiety** - Peace of Mind, Confidence, Assurance
 7. **Fun and Perks** - Enjoyment, Benefits, Rewards
 
-**Tier 4 Score = Average of 7 elements**
+**Career `subcategoryScore`** = average of 3 elements · **Personal `subcategoryScore`** = average of 4 elements  
+**Tier 4 `categoryScore`** = average of Career + Personal subcategory scores
 
 ---
 
 ### TIER 5: Inspirational (3 Elements)
 
+#### Purpose (3 elements)
 1. **Vision** - Future, Strategy, Direction
 2. **Hope** - Optimism, Possibility, Aspiration
 3. **Social Responsibility** - Sustainability, CSR, Impact
 
-**Tier 5 Score = Average of 3 elements**
+**Purpose `subcategoryScore`** = average of 3 elements (`vision`, `hope_b2b`, `social_responsibility`)  
+**Tier 5 `categoryScore`** = Purpose subcategory score (single subcategory)
 
 ---
 
 ## Calculation Method
 
 ```
-OVERALL SCORE = Sum of all 40 element scores ÷ 40
+ELEMENT SCORE        = 0.0–1.0 (scored from evidence)
 
-TIER SCORE = Sum of elements in tier ÷ Number of elements in tier
+SUBCATEGORY SCORE    = Sum of element scores in subcategory ÷ elements in subcategory
+
+TABLE STAKES TIER    = Sum of 4 element scores ÷ 4
+
+OTHER TIER SCORES    = Sum of subcategory scores in tier ÷ subcategories in tier
+                       (Functional: ÷2, Ease: ÷5, Individual: ÷2, Inspirational: ÷1)
+
+OVERALL SCORE        = Sum of all 40 element scores ÷ 40
 ```
+
+### Worked example — Individual tier
+
+| Element | Score |
+|---------|-------|
+| network_expansion | 0.60 |
+| marketability | 0.50 |
+| reputational_assurance | 0.45 |
+| design_aesthetics_b2b | 0.40 |
+| growth_development | 0.50 |
+| reduced_anxiety_b2b | 0.35 |
+| fun_perks | 0.50 |
+
+```
+Career subcategoryScore   = (0.60 + 0.50 + 0.45) ÷ 3 = 0.517
+Personal subcategoryScore = (0.40 + 0.50 + 0.35 + 0.50) ÷ 4 = 0.438
+Individual categoryScore  = (0.517 + 0.438) ÷ 2 = 0.478   ← equal weight per subcategory
+```
+
+If you averaged all 7 elements directly you would get 0.486 — **that is not the tier score**. Use subcategory rollups.
+
+### Diagnostic drill-down (all tiers)
+
+Weak score at any level → evaluate the **elements that define the level below**:
+
+| Tier | Weak tier action |
+|------|------------------|
+| **Table Stakes** | Evaluate 4 elements directly (no subcategory layer) |
+| **Functional** | Weakest of Economic / Performance → then its 2 or 3 elements |
+| **Ease of Doing Business** | Weakest of 5 subcategories → then its elements |
+| **Individual** | Weakest of Career / Personal → then its 3 or 4 elements |
+| **Inspirational** | Purpose subcategory (= entire tier) → `vision`, `hope_b2b`, `social_responsibility` |
+
+Full tables: [`B2B-BAIN-PYRAMID-TAXONOMY.md`](./B2B-BAIN-PYRAMID-TAXONOMY.md#diagnostic-drill-down-all-tiers). Code: `getB2BCategoryDiagnosticGuide()`, `resolveB2BDrillDownTarget()`.
 
 ---
 
@@ -139,7 +199,8 @@ You are an expert B2B analyst specializing in the B2B Elements of Value framewor
 Analyze B2B products, services, or vendors across all 40 elements with FLAT FRACTIONAL SCORING.
 Every element is equally important - no weights applied.
 Provide scores (0.0-1.0) for each element with clear evidence and business impact.
-Calculate simple averages for tiers and overall score.
+Score elements only — the runtime rolls up subcategoryScore and categoryScore.
+Overall score = mean of all 40 element scores.
 ```
 
 ### User Prompt Template

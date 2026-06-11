@@ -14,6 +14,7 @@ import {
   buildPersistenceOnComplete,
   enrichResponseWithPersistence,
 } from '@/lib/server/analysis-persistence';
+import { enrichAnalysisWithCliftonRanking } from '@/lib/framework/clifton-theme-ranking';
 export const maxDuration = 300;
 
 const isServerless =
@@ -117,8 +118,11 @@ export async function POST(request: NextRequest) {
     console.log('🤖 Step 3: Running CliftonStrengths analysis...');
 
     const buildResponsePayload = (analysis: Record<string, unknown>) => {
+      const enrichedAnalysis = enrichAnalysisWithCliftonRanking(analysis);
       const readableMarkdown =
-        typeof analysis.unifiedReport === 'string' ? analysis.unifiedReport : null;
+        typeof enrichedAnalysis.unifiedReport === 'string'
+          ? enrichedAnalysis.unifiedReport
+          : null;
       return {
         success: true,
         existing: {
@@ -131,13 +135,13 @@ export async function POST(request: NextRequest) {
           url: existingData.url,
         },
         proposed: proposedData,
-        analysis,
+        analysis: enrichedAnalysis,
         readableMarkdown,
         traceability: buildAnalysisTraceability({
           url,
           existing: existingData,
           proposed: proposedData,
-          analysis,
+          analysis: enrichedAnalysis,
           usedProvidedExistingContent: Boolean(existingContent),
         }),
         puppeteerEvidence: evidencePackage,
@@ -165,12 +169,11 @@ export async function POST(request: NextRequest) {
     }
 
     const analysis = await generateCliftonStrengthsAnalysis(existingData, proposedData, url, _analysisType || 'full');
-    const analysisRecord = analysis as Record<string, unknown>;
-    const payload = buildResponsePayload(analysisRecord);
+    const payload = buildResponsePayload(analysis as Record<string, unknown>);
     return NextResponse.json(
       await enrichResponseWithPersistence(request, {
         ...persistenceMeta,
-        analysis: analysisRecord,
+        analysis: payload.analysis as Record<string, unknown>,
       }, payload)
     );
   } catch (error) {

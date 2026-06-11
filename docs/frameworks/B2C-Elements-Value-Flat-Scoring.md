@@ -1,5 +1,7 @@
 # B2C Elements of Value - Flat Fractional Scoring
 
+> **Category structure (no subcategories):** [`B2C-CATEGORY-TAXONOMY.md`](./B2C-CATEGORY-TAXONOMY.md) — 4 flat categories, 30 elements. **Standalone UI:** strength-first `ElementsValueResultsPanel` — see [`B2B-FE-BE-IMPACT-NOTE.md`](./B2B-FE-BE-IMPACT-NOTE.md). This file is **scoring authority** only.
+
 ## Framework Overview
 
 **Framework:** B2C Elements of Value Analysis  
@@ -115,7 +117,7 @@ You are an expert business analyst specializing in the B2C Elements of Value fra
 Analyze products or services across all 30 elements with FLAT FRACTIONAL SCORING.
 Every element is equally important - no weights applied.
 Provide scores (0.0-1.0) for each element with clear evidence.
-Calculate simple averages for tiers and overall score.
+Score elements only — runtime computes flat categoryScore per tier. overallScore = mean of all 30 elements.
 ```
 
 ### User Prompt Template

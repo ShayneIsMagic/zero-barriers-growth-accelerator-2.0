@@ -9,6 +9,8 @@ import {
   buildPuppeteerEvidencePackage,
   formatEvidenceForPrompt,
 } from '@/lib/framework-evidence-protocol';
+import { B2B_CHUNK_CONFIG } from '@/lib/framework/chunk-definitions';
+import { B2B_SCORING_PROMPT_INSTRUCTIONS } from '@/lib/framework/b2b-taxonomy';
 import { buildAnalysisTraceability } from '@/lib/server/analysis-traceability';
 import {
   buildPersistenceOnComplete,
@@ -238,56 +240,14 @@ function buildB2BOptions(
 ) {
   const protocolSummary = formatEvidenceForPrompt(evidencePackage);
   return {
-    frameworkName: 'B2B Elements of Value',
+    frameworkName: B2B_CHUNK_CONFIG.frameworkName,
     url,
     contentTitle: existing.title || '',
     contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
     contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
     contentText: `${protocolSummary}\n\n${existing.cleanText || ''}`,
-    chunks: [
-      {
-        categoryName: 'Table Stakes',
-        categoryKey: 'table_stakes',
-        elements: [
-          'meeting_specifications', 'acceptable_price',
-          'regulatory_compliance', 'ethical_standards',
-        ],
-      },
-      {
-        categoryName: 'Functional Value',
-        categoryKey: 'functional',
-        elements: [
-          'improved_top_line', 'cost_reduction', 'product_quality',
-          'scalability', 'innovation', 'risk_reduction', 'reach',
-          'flexibility', 'component_quality',
-        ],
-      },
-      {
-        categoryName: 'Ease of Doing Business',
-        categoryKey: 'ease_of_business',
-        elements: [
-          'time_savings', 'reduced_effort', 'decreased_hassles',
-          'information', 'transparency', 'organization', 'simplification',
-          'connection', 'integration', 'access', 'availability',
-          'variety', 'configurability', 'responsiveness', 'expertise',
-          'commitment', 'stability', 'cultural_fit',
-        ],
-      },
-      {
-        categoryName: 'Individual Value',
-        categoryKey: 'individual',
-        elements: [
-          'network_expansion', 'marketability', 'reputational_assurance',
-          'design_aesthetics_b2b', 'growth_development',
-          'reduced_anxiety_b2b', 'fun_perks',
-        ],
-      },
-      {
-        categoryName: 'Inspirational Value',
-        categoryKey: 'inspirational',
-        elements: ['purpose', 'vision', 'hope_b2b', 'social_responsibility'],
-      },
-    ],
+    chunks: B2B_CHUNK_CONFIG.chunks,
+    scoringInstructions: B2B_SCORING_PROMPT_INSTRUCTIONS,
   };
 }
 

@@ -1,5 +1,7 @@
 # Brand Archetypes Flat Scoring
 
+> **Scope:** This file is the **scoring authority** (bands, evidence policy, per-archetype fields). It does **not** define runtime enrich fields (`top_three_archetypes`, `personality_profile`) or UI read order — see [`docs/guides/BRAND_ARCHETYPES_ASSESSMENT_GUIDE.md`](../guides/BRAND_ARCHETYPES_ASSESSMENT_GUIDE.md) §5 and root [`API_DOCUMENTATION.md`](../../API_DOCUMENTATION.md).
+
 ## Purpose
 
 Use this framework to evaluate how clearly a brand expresses each of the 12 archetypes through website language and narrative signals.
@@ -58,9 +60,9 @@ For each archetype, provide:
 
 Also provide:
 - `overall_archetype_score` (average of all 12)
-- `primary_archetype` (highest score)
-- `secondary_archetypes` (next strongest, if meaningful)
 - `coverage_check` confirming all 12 were scored
+
+**After merge (runtime enrich, not AI output):** `top_three_archetypes` (ranks 1–3), `not_archetypes` (score < 0.4), `personality_profile`, plus legacy `primary_archetype` / `secondary_archetypes` — see `src/lib/framework/archetype-ranking.ts`.
 
 ## Flat Calculation Rules
 

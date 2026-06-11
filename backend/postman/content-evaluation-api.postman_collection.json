@@ -1,0 +1,137 @@
+{
+  "info": {
+    "name": "Zero Barriers Content Evaluation API",
+    "description": "Flask backend evaluation engine — sync with backend/API_DOCUMENTATION.md",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5001"
+    },
+    {
+      "key": "runId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/health"
+      }
+    },
+    {
+      "name": "Evaluate B2C Elements",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"payload\": {\n    \"url\": \"https://example.com\",\n    \"snapshotId\": \"snap-b2c-test\",\n    \"collectedAt\": \"2025-06-08T12:00:00.000Z\",\n    \"collectorType\": \"content-collect-api\",\n    \"rawEvidence\": {\n      \"title\": \"Example\",\n      \"cleanText\": \"We help teams save time with simple, affordable, secure software.\",\n      \"wordCount\": 10,\n      \"headings\": { \"h1\": [\"Save time\"], \"h2\": [], \"h3\": [] },\n      \"extractedKeywords\": [],\n      \"url\": \"https://example.com\",\n      \"seo\": {}\n    }\n  },\n  \"frameworkKey\": \"b2c-elements\",\n  \"persistCollection\": true\n}"
+        },
+        "url": "{{baseUrl}}/api/evaluate"
+      }
+    },
+    {
+      "name": "Evaluate B2B Elements",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"payload\": {\n    \"url\": \"https://example.com\",\n    \"snapshotId\": \"snap-b2b-test\",\n    \"collectedAt\": \"2025-06-08T12:00:00.000Z\",\n    \"collectorType\": \"content-collect-api\",\n    \"rawEvidence\": {\n      \"title\": \"Enterprise Platform\",\n      \"cleanText\": \"Reduce cost and improve top line with scalable innovation. Our expertise delivers transparency and integration for enterprise teams.\",\n      \"wordCount\": 18,\n      \"headings\": { \"h1\": [\"Enterprise growth\"], \"h2\": [], \"h3\": [] },\n      \"extractedKeywords\": [],\n      \"url\": \"https://example.com\",\n      \"seo\": {}\n    }\n  },\n  \"frameworkKey\": \"b2b-elements\",\n  \"persistCollection\": true\n}"
+        },
+        "url": "{{baseUrl}}/api/evaluate"
+      }
+    },
+    {
+      "name": "Evaluate CliftonStrengths",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"payload\": {\n    \"url\": \"https://example.com\",\n    \"snapshotId\": \"snap-clifton-test\",\n    \"collectedAt\": \"2025-06-08T12:00:00.000Z\",\n    \"collectorType\": \"content-collect-api\",\n    \"rawEvidence\": {\n      \"title\": \"Purpose-driven team\",\n      \"cleanText\": \"We believe in empowering teams with strategic thinking, empathy, and focus on meaningful results.\",\n      \"wordCount\": 14,\n      \"headings\": { \"h1\": [\"Our mission\"], \"h2\": [], \"h3\": [] },\n      \"extractedKeywords\": [],\n      \"url\": \"https://example.com\",\n      \"seo\": {}\n    }\n  },\n  \"frameworkKey\": \"clifton\",\n  \"persistCollection\": true\n}"
+        },
+        "url": "{{baseUrl}}/api/evaluate"
+      }
+    },
+    {
+      "name": "Evaluate Golden Circle",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"payload\": {\n    \"url\": \"https://example.com\",\n    \"snapshotId\": \"snap-gc-test\",\n    \"collectedAt\": \"2025-06-08T12:00:00.000Z\",\n    \"collectorType\": \"content-collect-api\",\n    \"rawEvidence\": {\n      \"title\": \"Why we exist\",\n      \"cleanText\": \"We believe in inspiring change. Our mission is clear: we help teams discover their purpose and deliver proven results.\",\n      \"wordCount\": 18,\n      \"headings\": { \"h1\": [\"Start with why\"], \"h2\": [], \"h3\": [] },\n      \"extractedKeywords\": [],\n      \"url\": \"https://example.com\",\n      \"seo\": {}\n    }\n  },\n  \"frameworkKey\": \"golden-circle\",\n  \"persistCollection\": true\n}"
+        },
+        "url": "{{baseUrl}}/api/evaluate"
+      }
+    },
+    {
+      "name": "Evaluate Brand Archetypes",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"payload\": {\n    \"url\": \"https://example.com\",\n    \"snapshotId\": \"snap-brand-test\",\n    \"collectedAt\": \"2025-06-08T12:00:00.000Z\",\n    \"collectorType\": \"content-collect-api\",\n    \"rawEvidence\": {\n      \"title\": \"Courage and strength\",\n      \"cleanText\": \"We inspire courage and determination to overcome adversity. Join our community of heroes making a noble impact.\",\n      \"wordCount\": 16,\n      \"headings\": { \"h1\": [\"Be the hero\"], \"h2\": [], \"h3\": [] },\n      \"extractedKeywords\": [],\n      \"url\": \"https://example.com\",\n      \"seo\": {}\n    }\n  },\n  \"frameworkKey\": \"brand-archetypes\",\n  \"persistCollection\": true\n}"
+        },
+        "url": "{{baseUrl}}/api/evaluate"
+      }
+    },
+    {
+      "name": "Evaluate Revenue Trends",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"payload\": {\n    \"url\": \"https://example.com\",\n    \"snapshotId\": \"snap-revenue-test\",\n    \"collectedAt\": \"2025-06-08T12:00:00.000Z\",\n    \"collectorType\": \"content-collect-api\",\n    \"rawEvidence\": {\n      \"title\": \"Growing demand\",\n      \"cleanText\": \"Growing market demand with affordable pricing, strong conversion potential, and partnership opportunities for enterprise segments.\",\n      \"wordCount\": 14,\n      \"headings\": { \"h1\": [\"Scale revenue\"], \"h2\": [], \"h3\": [] },\n      \"extractedKeywords\": [\"demand\", \"SEO\", \"partnership\"],\n      \"url\": \"https://example.com\",\n      \"seo\": {}\n    }\n  },\n  \"frameworkKey\": \"revenue-trends\",\n  \"persistCollection\": true\n}"
+        },
+        "url": "{{baseUrl}}/api/evaluate"
+      }
+    },
+    {
+      "name": "Get Evaluation Run",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/evaluate/{{runId}}"
+      }
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 # CliftonStrengths - Flat Fractional Scoring
 
+> **Scope:** **Scoring authority** (bands, domain averages, 34 themes). Runtime enrich (`top_five_strengths`, `domain_rankings`, `personality_profile`) and UI read order: [`docs/guides/CLIFTONSTRENGTHS_ASSESSMENT_GUIDE.md`](../guides/CLIFTONSTRENGTHS_ASSESSMENT_GUIDE.md) and root [`API_DOCUMENTATION.md`](../../API_DOCUMENTATION.md).
+
 ## Framework Overview
 
 **Framework:** CliftonStrengths  

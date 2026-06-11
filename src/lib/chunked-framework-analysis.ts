@@ -9,6 +9,17 @@
 
 import { readFile } from 'fs/promises';
 import path from 'path';
+import {
+  enrichB2BAnalysisPayload,
+  getSubcategoryKeyForElement,
+  isB2BFrameworkName,
+  rollupB2BCategoryBreakdown,
+  type B2BCategoryBreakdown,
+} from '@/lib/framework/b2b-taxonomy';
+import {
+  isB2CFrameworkName,
+  rollupB2CCategoryBreakdown,
+} from '@/lib/framework/b2c-taxonomy';
 import { formatKeywordHintsSection } from '@/lib/framework/element-keyword-hints';
 
 function sanitizeError(msg: string): string {
@@ -323,18 +334,37 @@ function mergeResults(
 ): ChunkedAnalysisMergedResult {
   const allScores: number[] = [];
 
+  const useB2BTaxonomy = isB2BFrameworkName(options.frameworkName);
+  const useB2CTaxonomy = isB2CFrameworkName(options.frameworkName);
   const categoryBreakdown: Record<string, unknown> = {};
   for (const chunk of options.chunks) {
     const cat = categories[chunk.categoryKey];
+    allScores.push(...Object.values(cat.elements).map((e) => e.score));
+
+    if (useB2BTaxonomy) {
+      categoryBreakdown[chunk.categoryKey] = rollupB2BCategoryBreakdown(
+        chunk.categoryKey,
+        chunk.categoryName,
+        cat.elements
+      );
+      continue;
+    }
+
+    if (useB2CTaxonomy) {
+      categoryBreakdown[chunk.categoryKey] = rollupB2CCategoryBreakdown(
+        chunk.categoryKey,
+        chunk.categoryName,
+        cat.elements
+      );
+      continue;
+    }
+
     categoryBreakdown[chunk.categoryKey] = {
       categoryName: chunk.categoryName,
       categoryScore: parseFloat(cat.categoryScore.toFixed(3)),
       elementCount: chunk.elements.length,
       elements: cat.elements,
     };
-    allScores.push(
-      ...Object.values(cat.elements).map((e) => e.score)
-    );
   }
 
   const overallScore =
@@ -360,6 +390,9 @@ function mergeResults(
     .map((entry) => ({
       element: entry.name,
       category: entry.categoryKey,
+      subcategory: useB2BTaxonomy
+        ? getSubcategoryKeyForElement(entry.categoryKey, entry.name)
+        : undefined,
       score: entry.detail.score,
       evidence: entry.detail.evidence,
     }));
@@ -370,6 +403,9 @@ function mergeResults(
     .map((entry) => ({
       element: entry.name,
       category: entry.categoryKey,
+      subcategory: useB2BTaxonomy
+        ? getSubcategoryKeyForElement(entry.categoryKey, entry.name)
+        : undefined,
       score: entry.detail.score,
       recommendation: entry.detail.recommendation,
     }));
@@ -403,7 +439,7 @@ function mergeResults(
     }
   );
 
-  return {
+  const baseResult = {
     framework: options.frameworkName,
     url: options.url,
     overallScore,
@@ -429,6 +465,28 @@ function mergeResults(
       },
     },
     chunkedReport,
+  };
+
+  if (!useB2BTaxonomy) {
+    return baseResult;
+  }
+
+  const b2bEnrichment = enrichB2BAnalysisPayload({
+    categories: categoryBreakdown as Record<string, B2BCategoryBreakdown>,
+    topStrengths: strengths,
+    criticalGaps: weaknesses,
+  });
+
+  return {
+    ...baseResult,
+    categories: b2bEnrichment.categories,
+    topStrengths: b2bEnrichment.topStrengths as unknown as Array<
+      Record<string, unknown>
+    >,
+    criticalGaps: b2bEnrichment.criticalGaps as unknown as Array<
+      Record<string, unknown>
+    >,
+    pyramidDiagnostics: b2bEnrichment.pyramidDiagnostics,
   };
 }
 
@@ -511,13 +569,30 @@ function buildChunkedMarkdownReport(
     categoryName: string;
     categoryScore: number;
     elementCount: number;
+    subcategories?: Record<
+      string,
+      {
+        subcategoryName: string;
+        subcategoryScore: number;
+        elementCount: number;
+      }
+    >;
   }>;
 
   const categoryLines = categories
-    .map(
-      (category) =>
-        `- ${category.categoryName}: ${category.categoryScore.toFixed(3)} (${category.elementCount} elements)`
-    )
+    .flatMap((category) => {
+      const lines = [
+        `- ${category.categoryName}: ${category.categoryScore.toFixed(3)} (${category.elementCount} elements)`,
+      ];
+      if (category.subcategories) {
+        for (const subcategory of Object.values(category.subcategories)) {
+          lines.push(
+            `  - ${subcategory.subcategoryName}: ${subcategory.subcategoryScore.toFixed(3)} (${subcategory.elementCount} elements)`
+          );
+        }
+      }
+      return lines;
+    })
     .join('\n');
 
   const strengthsLines = strengths

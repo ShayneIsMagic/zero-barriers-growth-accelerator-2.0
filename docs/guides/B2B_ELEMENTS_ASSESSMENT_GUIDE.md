@@ -8,16 +8,15 @@
 
 ## Scoring authority (read this first)
 
-**Production scoring is flat fractional only (0.0–1.0).** The sole authority for how to score, the rating bands, the calculation tables, and the tier/element structure is:
-
-**[`docs/frameworks/B2B-Elements-Value-Flat-Scoring.md`](../frameworks/B2B-Elements-Value-Flat-Scoring.md)**
-
-That file is injected into every AI block prompt (first 12,000 characters). Nothing in this guide overrides it.
+**Production scoring is flat fractional only (0.0–1.0).** Two framework docs split responsibilities:
 
 | Document | Role |
 |----------|------|
-| `B2B-Elements-Value-Flat-Scoring.md` | **Scoring + structure** — use this for all score interpretation |
+| [`B2B-BAIN-PYRAMID-TAXONOMY.md`](../frameworks/B2B-BAIN-PYRAMID-TAXONOMY.md) | **Structure authority** — Bain categories, subcategories, 40 slugs, rollup rules, code SSOT |
+| [`B2B-Elements-Value-Flat-Scoring.md`](../frameworks/B2B-Elements-Value-Flat-Scoring.md) | **Scoring authority** — bands, formulas; injected into every AI block prompt (first 12,000 characters) |
 | `B2B_ELEMENTS_OF_VALUE_COMPLETE.md` | **Definitions + Bain examples only** — its 1–10 tables are **not** used by the runtime assessment |
+
+Nothing in this guide overrides those two files.
 
 No scoring logic was changed to produce these guides. If any other doc disagrees with the flat-scoring doc, **trust the flat-scoring doc**.
 
@@ -40,13 +39,14 @@ No scoring logic was changed to produce these guides. If any other doc disagrees
 11. [Integrity and Completeness Checks](#11-integrity-and-completeness-checks)
 12. [Code and Documentation Reference Index](#12-code-and-documentation-reference-index)
 13. [Dual Analysis Paths (Chunked vs Enhanced)](#13-dual-analysis-paths-chunked-vs-enhanced)
-14. [Known Drift and Documentation Gaps](#14-known-drift-and-documentation-gaps)
+14. [Taxonomy Maintenance (resolved June 2026)](#14-taxonomy-maintenance-resolved-june-2026)
 15. [Environment and Performance](#15-environment-and-performance)
 16. [Troubleshooting](#16-troubleshooting)
 17. [Testing](#17-testing)
 18. [Annotated Bibliography](#18-annotated-bibliography)
 19. [Per-Element Reference Catalog](#19-per-element-reference-catalog)
 20. [Implementation & Prompt File Reference](#20-implementation--prompt-file-reference)
+21. [Frontend & Backend Impact Note](#21-frontend--backend-impact-note)
 
 ---
 
@@ -84,7 +84,8 @@ The platform:
 | Ref | Document | Purpose |
 |-----|----------|---------|
 | [B2B-INT-1] | [`docs/archived/B2B_ELEMENTS_OF_VALUE_COMPLETE.md`](../archived/B2B_ELEMENTS_OF_VALUE_COMPLETE.md) | **Definitions only** — Bain definitions, examples, synonyms (~1,156 lines). **Do not use its 1–10 scoring tables for production.** |
-| [B2B-INT-2] | [`docs/frameworks/B2B-Elements-Value-Flat-Scoring.md`](../frameworks/B2B-Elements-Value-Flat-Scoring.md) | **Scoring authority** — flat 0.0–1.0 bands, calculation tables, tier structure; injected into every block prompt |
+| [B2B-INT-2] | [`docs/frameworks/B2B-BAIN-PYRAMID-TAXONOMY.md`](../frameworks/B2B-BAIN-PYRAMID-TAXONOMY.md) | **Structure authority** — Bain pyramid, subcategories, slugs, rollup JSON, code SSOT chain |
+| [B2B-INT-2b] | [`docs/frameworks/B2B-Elements-Value-Flat-Scoring.md`](../frameworks/B2B-Elements-Value-Flat-Scoring.md) | **Scoring authority** — flat 0.0–1.0 bands, calculation tables; injected into every block prompt |
 | [B2B-INT-3] | [`docs/archived/COMPLETE_FRAMEWORK_INDEX.md`](../archived/COMPLETE_FRAMEWORK_INDEX.md) | Master index of all framework docs in this repo |
 | [B2B-INT-4] | [`docs/guides/README.md`](./README.md) | Assessment guides index |
 | [B2B-INT-5] | [`.cursorrules`](../../.cursorrules) | Project-wide B2B element inventory |
@@ -96,82 +97,53 @@ The platform:
 
 ## 3. The 40 Elements and Five Tiers
 
-The **production chunked path** organizes 40 elements into **five tiers** (categories). Slugs use **snake_case** in JSON responses and chunk definitions.
+The **production chunked path** organizes **40 value elements** into **five Bain tiers**. Categories and subcategories are **defined by the elements they contain** — labels like Career or Purpose are shorthand for specific value lists, not separate scored entities. Slugs use **snake_case** in JSON. **Table Stakes** is the only tier without subcategories; all others roll up `subcategoryScore` → `categoryScore`.
 
-| Tier | Category key | Elements | Count | Buyer question |
-|------|--------------|----------|-------|----------------|
-| 1 | `table_stakes` | Must-haves to compete | 4 | Does this vendor meet baseline requirements? |
-| 2 | `functional` | Business outcomes & performance | 9 | Does it improve revenue, reduce cost, and perform? |
-| 3 | `ease_of_business` | Productivity, operations, access, relationships | 18 | Is it easy to buy, deploy, and work with? |
-| 4 | `individual` | Personal benefits for decision-makers | 7 | Does it help *me* as a buyer/user? |
-| 5 | `inspirational` | Vision and hope at the pyramid peak | 2 | Does it inspire confidence in the future? |
+> **Full pyramid with every subcategory:** [`B2B-BAIN-PYRAMID-TAXONOMY.md`](../frameworks/B2B-BAIN-PYRAMID-TAXONOMY.md) — canonical reference. Do not re-derive from memory or the archived complete doc.
 
-> **Bain pyramid vs runtime:** Bain’s published pyramid includes **Purpose** and **Social Responsibility** in the inspirational tier. The runtime canonical config (`B2B_CHUNK_CONFIG`) scores **`vision`** and **`hope_b2b`** only in inspirational, with `risk_reduction` and `reach` placed in **Functional** rather than Ease of Doing Business. See [Section 14](#14-known-drift-and-documentation-gaps).
+| Tier | Category key | Subcategories | Elements | Buyer question |
+|------|--------------|---------------|----------|----------------|
+| 1 | `table_stakes` | *(none — flat)* | 4 | Does this vendor meet baseline requirements? |
+| 2 | `functional` | Economic, Performance | 5 | Does it improve revenue, reduce cost, and perform? |
+| 3 | `ease_of_business` | Productivity, Operational, Access, Relationship, Strategic | 21 | Is it easy to buy, deploy, and work with? |
+| 4 | `individual` | Career, Personal | 7 | Does it help *me* as a buyer/user? |
+| 5 | `inspirational` | Purpose | 3 | Does it inspire confidence in the future? |
 
-### Tier 1: Table Stakes (4)
+**Count proof:** 4 + 5 + 21 + 7 + 3 = **40**.
 
-| # | Element | Slug |
-|---|---------|------|
-| 1 | Meeting Specifications | `meeting_specifications` |
-| 2 | Acceptable Price | `acceptable_price` |
-| 3 | Regulatory Compliance | `regulatory_compliance` |
-| 4 | Ethical Standards | `ethical_standards` |
+### Tier 1: Table Stakes (4) — flat, no subcategories
 
-### Tier 2: Functional Value (9)
+`meeting_specifications` · `acceptable_price` · `regulatory_compliance` · `ethical_standards`
 
-| # | Element | Slug |
-|---|---------|------|
-| 1 | Improved Top Line | `improved_top_line` |
-| 2 | Cost Reduction | `cost_reduction` |
-| 3 | Product Quality | `product_quality` |
-| 4 | Scalability | `scalability` |
-| 5 | Innovation | `innovation` |
-| 6 | Risk Reduction | `risk_reduction` |
-| 7 | Reach | `reach` |
-| 8 | Flexibility | `flexibility` |
-| 9 | Component Quality | `component_quality` |
+### Tier 2: Functional Value (5)
 
-### Tier 3: Ease of Doing Business (18)
+| Subcategory | Elements |
+|-------------|----------|
+| **Economic** | `improved_top_line`, `cost_reduction` |
+| **Performance** | `product_quality`, `scalability`, `innovation` |
 
-| # | Element | Slug | Sub-area |
-|---|---------|------|----------|
-| 1 | Time Savings | `time_savings` | Productivity |
-| 2 | Reduced Effort | `reduced_effort` | Productivity |
-| 3 | Decreased Hassles | `decreased_hassles` | Productivity |
-| 4 | Information | `information` | Information |
-| 5 | Transparency | `transparency` | Information |
-| 6 | Organization | `organization` | Operational |
-| 7 | Simplification | `simplification` | Operational |
-| 8 | Connection | `connection` | Operational |
-| 9 | Integration | `integration` | Operational |
-| 10 | Access | `access` | Access |
-| 11 | Availability | `availability` | Access |
-| 12 | Variety | `variety` | Access |
-| 13 | Configurability | `configurability` | Access |
-| 14 | Responsiveness | `responsiveness` | Relationship |
-| 15 | Expertise | `expertise` | Relationship |
-| 16 | Commitment | `commitment` | Relationship |
-| 17 | Stability | `stability` | Relationship |
-| 18 | Cultural Fit | `cultural_fit` | Relationship |
+### Tier 3: Ease of Doing Business (21)
+
+| Subcategory | Elements |
+|-------------|----------|
+| **Productivity** | `time_savings`, `reduced_effort`, `decreased_hassles`, `information`, `transparency` |
+| **Operational** | `organization`, `simplification`, `connection`, `integration` |
+| **Access** | `availability`, `variety`, `configurability` |
+| **Relationship** | `responsiveness`, `expertise`, `commitment`, `stability`, `cultural_fit` |
+| **Strategic** | `risk_reduction`, `reach`, `flexibility`, `component_quality` |
 
 ### Tier 4: Individual Value (7)
 
-| # | Element | Slug | Sub-area |
-|---|---------|------|----------|
-| 1 | Network Expansion | `network_expansion` | Career |
-| 2 | Marketability | `marketability` | Career |
-| 3 | Reputational Assurance | `reputational_assurance` | Career |
-| 4 | Design & Aesthetics | `design_aesthetics_b2b` | Personal |
-| 5 | Growth & Development | `growth_development` | Personal |
-| 6 | Reduced Anxiety | `reduced_anxiety_b2b` | Personal |
-| 7 | Fun and Perks | `fun_perks` | Personal |
+| Subcategory | Elements |
+|-------------|----------|
+| **Career** | `network_expansion`, `marketability`, `reputational_assurance` |
+| **Personal** | `design_aesthetics_b2b`, `growth_development`, `reduced_anxiety_b2b`, `fun_perks` |
 
-### Tier 5: Inspirational Value (2)
+### Tier 5: Inspirational Value (3)
 
-| # | Element | Slug |
-|---|---------|------|
-| 1 | Vision | `vision` |
-| 2 | Hope | `hope_b2b` |
+| Subcategory | Elements |
+|-------------|----------|
+| **Purpose** | `vision`, `hope_b2b`, `social_responsibility` |
 
 ---
 
@@ -188,15 +160,42 @@ The **production chunked path** organizes 40 elements into **five tiers** (categ
 | 0.4 – 0.59 | **Needs Work** | Below expectations, requires improvement |
 | 0.0 – 0.39 | **Poor** | Weak or non-existent, critical gap |
 
-### Calculation method (from flat-scoring doc)
+### Calculation method (three-level hierarchy)
+
+| Level | Field | Formula |
+|-------|-------|---------|
+| Element | `score` | 0.0–1.0 from evidence (AI scores these) |
+| Subcategory | `subcategoryScore` | Average of element scores in Bain subcategory |
+| Category | `categoryScore` | Table Stakes: avg of 4 elements; other tiers: avg of subcategory scores |
+| Overall | `overallScore` | Average of all **40** element scores |
 
 ```
-OVERALL SCORE = Sum of all 40 element scores ÷ 40
+SUBCATEGORY SCORE = sum(element scores in subcategory) ÷ element count
 
-TIER SCORE    = Sum of elements in tier ÷ Number of elements in tier
+TABLE STAKES TIER = sum(4 element scores) ÷ 4
+
+OTHER TIER SCORE  = sum(subcategory scores) ÷ subcategory count
+
+OVERALL SCORE     = sum(all 40 element scores) ÷ 40
 ```
 
-**No weights.** Every element counts equally.
+Runtime applies rollups in `rollupB2BCategoryBreakdown()` after AI returns per-element scores. Full worked example: [`B2B-Elements-Value-Flat-Scoring.md`](../frameworks/B2B-Elements-Value-Flat-Scoring.md#calculation-method).
+
+**No arbitrary weights.** Elements are equal within subcategories; subcategories are equal within tiers; all 40 elements are equal in the overall score.
+
+### Diagnostic drill-down (all tiers)
+
+Weak at any level → evaluate the **elements that define the level below** (see [`B2B-BAIN-PYRAMID-TAXONOMY.md`](../frameworks/B2B-BAIN-PYRAMID-TAXONOMY.md#diagnostic-drill-down-all-tiers)):
+
+| Tier | Subcategories | Drill-down |
+|------|---------------|------------|
+| Table Stakes | *(none)* | 4 elements directly |
+| Functional | Economic, Performance | Weakest subcategory → its 2 or 3 elements |
+| Ease of Doing Business | Productivity, Operational, Access, Relationship, Strategic | Weakest of 5 → its elements |
+| Individual | Career, Personal | Weakest of 2 → its 3 or 4 elements |
+| Inspirational | Purpose only | Purpose = entire tier → `vision`, `hope_b2b`, `social_responsibility` |
+
+Code helpers: `getB2BCategoryDiagnosticGuide()`, `resolveB2BDrillDownTarget()` in `b2b-taxonomy.ts`.
 
 ### Derived insights (from flat scoring spec)
 
@@ -323,7 +322,7 @@ The B2B route does **not** set `categoriesPerBlock`. Because the framework has *
 ```
 Block 1: Table Stakes (4 elements)
 Block 2: Functional Value (9 elements)
-Block 3: Ease of Doing Business (18 elements)  ← largest block
+Block 3: Ease of Doing Business (21 elements)  ← largest block
 Block 4: Individual Value (7 elements)
 Block 5: Inspirational Value (2 elements)
 ```
@@ -470,21 +469,37 @@ POST /api/analyze/elements-value-b2b-standalone
 }
 ```
 
-### Tier shape
+### Tier shape (with subcategories)
 
 ```json
 {
-  "functional": {
-    "categoryName": "Functional Value",
-    "categoryScore": 0.612,
-    "elementCount": 9,
-    "elements": {
-      "cost_reduction": { "score": 0.75, "evidence": "...", "recommendation": "..." },
-      "improved_top_line": { "score": 0.55, "evidence": "...", "recommendation": "..." }
+  "individual": {
+    "categoryName": "Individual Value",
+    "categoryScore": 0.48,
+    "elementCount": 7,
+    "subcategories": {
+      "career": {
+        "subcategoryName": "Career",
+        "subcategoryScore": 0.52,
+        "elementCount": 3,
+        "elements": {
+          "network_expansion": { "score": 0.6, "evidence": "...", "recommendation": "..." }
+        }
+      },
+      "personal": {
+        "subcategoryName": "Personal",
+        "subcategoryScore": 0.44,
+        "elementCount": 4,
+        "elements": {
+          "design_aesthetics_b2b": { "score": 0.4, "evidence": "...", "recommendation": "..." }
+        }
+      }
     }
   }
 }
 ```
+
+**Table Stakes** is the only tier without `subcategories` — elements sit directly on the tier object. See [`B2B-BAIN-PYRAMID-TAXONOMY.md`](../frameworks/B2B-BAIN-PYRAMID-TAXONOMY.md#scoring-rollup-rules).
 
 ---
 
@@ -587,21 +602,28 @@ When debugging scoring discrepancies, confirm which path produced the report.
 
 ---
 
-## 14. Code Inventory Bugs (not scoring changes)
+## 14. Taxonomy maintenance (resolved June 2026)
 
-**Scoring is not negotiable** — it comes only from [`B2B-Elements-Value-Flat-Scoring.md`](../frameworks/B2B-Elements-Value-Flat-Scoring.md). This section documents **slug-list bugs** in code that may not match the flat-scoring doc’s tier tables. Those are implementation defects to fix, not alternate scoring methods.
+**Scoring is not negotiable** — it comes only from [`B2B-Elements-Value-Flat-Scoring.md`](../frameworks/B2B-Elements-Value-Flat-Scoring.md). **Structure is not negotiable** — it comes only from [`B2B-BAIN-PYRAMID-TAXONOMY.md`](../frameworks/B2B-BAIN-PYRAMID-TAXONOMY.md).
 
-### Route duplicate chunk list
+The following drift bugs were fixed and are documented in the taxonomy doc’s [historical drift register](../frameworks/B2B-BAIN-PYRAMID-TAXONOMY.md#historical-drift-register-resolved):
 
-`buildB2BOptions()` duplicates chunk lists inline instead of importing `B2B_CHUNK_CONFIG`. The route currently adds extra inspirational slugs (`purpose`, `social_responsibility`) that are not in the flat-scoring tier tables.
+- `purpose` treated as an element (41+ elements) — **Purpose is a subcategory**
+- Inline `buildB2BOptions()` chunk list — now imports `B2B_CHUNK_CONFIG`
+- `access` as element slug — **Access is a subcategory** (availability, variety, configurability)
+- Flexibility / component quality under Functional — moved to **Ease → Strategic** per Bain
+- Missing `social_responsibility` — added under **Inspirational → Purpose**
 
-### What to align to
+### When changing B2B elements
 
-When fixing inventory bugs, align `B2B_CHUNK_CONFIG`, `buildB2BOptions()`, and `B2B_ELEMENTS` to the **tier and element tables in the flat-scoring doc** — not to the archived Bain encyclopedia’s 1–10 scoring sections.
+1. Edit `src/lib/framework/b2b-taxonomy.ts` first
+2. Sync `chunk-definitions.ts`, `element-definitions.ts`, `backend/b2b_taxonomy.py`
+3. Run `npm run test -- src/test/framework/b2b-taxonomy.test.ts src/test/framework/element-completeness.test.ts`
+4. Rebuild catalog: `cd backend && pipenv run python scripts/build_framework_catalog.py`
 
 ### Archived doc role
 
-[`B2B_ELEMENTS_OF_VALUE_COMPLETE.md`](../archived/B2B_ELEMENTS_OF_VALUE_COMPLETE.md) is for **definitions, synonyms, and Bain examples only**. Its 1–10 scoring tables are not used in production.
+[`B2B_ELEMENTS_OF_VALUE_COMPLETE.md`](../archived/B2B_ELEMENTS_OF_VALUE_COMPLETE.md) is for **definitions, synonyms, and Bain examples only**. Its tier element counts and 1–10 scoring tables are not used in production.
 
 ---
 
@@ -627,7 +649,7 @@ See [`docs/LOCAL_RUNBOOK.md`](../LOCAL_RUNBOOK.md).
 | Factor | Impact |
 |--------|--------|
 | 6 sequential AI calls | ~6× single-call latency |
-| Ease of Doing Business block | 18 elements in one prompt — slowest block |
+| Ease of Doing Business block | 21 elements in one prompt — slowest block |
 | 1,500-char content cap per block | May miss deep-page ROI/compliance proof |
 | `categoriesPerBlock: auto → 1` | Triggered because 40 > 34 element threshold |
 
@@ -635,7 +657,7 @@ See [`docs/LOCAL_RUNBOOK.md`](../LOCAL_RUNBOOK.md).
 
 ### API timeout
 
-Route `maxDuration = 300` seconds. The 18-element Ease of Doing Business block is the most likely timeout risk on slow local models.
+Route `maxDuration = 300` seconds. The 21-element Ease of Doing Business block is the most likely timeout risk on slow local models.
 
 ---
 
@@ -644,9 +666,9 @@ Route `maxDuration = 300` seconds. The 18-element Ease of Doing Business block i
 | Symptom | Likely cause | What to check |
 |---------|--------------|---------------|
 | `completeness_check: fail` | Block AI error or JSON parse failure | `analysis.errors`, logs for `B2B Elements of Value-block-N` |
-| 42 elements in response vs 40 expected | Route drift in `buildB2BOptions()` | Inspirational tier includes `purpose`, `social_responsibility` |
+| 41–42 elements in response vs 40 expected | Taxonomy drift — `purpose` as element slug | See [`B2B-BAIN-PYRAMID-TAXONOMY.md`](../frameworks/B2B-BAIN-PYRAMID-TAXONOMY.md); Purpose is subcategory only |
 | All scores `0` with "Analysis failed" | Ollama unreachable | `OLLAMA_BASE_URL`, `ollama serve` |
-| Block 3 consistently slow/fails | 18-element Ease of Doing Business prompt | Reduce `OLLAMA_NUM_PREDICT` or split block (set `categoriesPerBlock: 1` explicitly) |
+| Block 3 consistently slow/fails | 21-element Ease of Doing Business prompt | Reduce `OLLAMA_NUM_PREDICT` or split block (set `categoriesPerBlock: 1` explicitly) |
 | Thin evidence for ROI elements | 1,500-char truncation | Analyze pricing/case-study page; provide richer `existingContent` |
 | Scores differ from Bain workshop output | Expected — this analyzes **website copy**, not buyer interviews | Re-read [Section 5](#5-how-we-apply-b2b-elements-to-website-content) |
 | Unified report is raw JSON | Ollama returned JSON instead of markdown | Use `chunkedReport` as fallback |
@@ -665,6 +687,7 @@ Route `maxDuration = 300` seconds. The 18-element Ease of Doing Business block i
 | Test | Location | What it validates |
 |------|----------|-------------------|
 | Element completeness | `src/test/framework/element-completeness.test.ts` | 40 elements, 5 tiers, no duplicates |
+| Bain taxonomy rollups | `src/test/framework/b2b-taxonomy.test.ts` | Subcategory placement, Table Stakes flat, Strategic elements |
 | Primary page picker | `src/test/framework/pick-primary-page.test.ts` | Single-page analysis default |
 | Content collection config | `src/test/framework/content-collection-config.test.ts` | Homepage-first collection defaults |
 | B2B data flow | `tests/b2b-data-flow-test.ts` | Legacy/enhanced data flow |
@@ -778,8 +801,8 @@ Runtime elements from `B2B_CHUNK_CONFIG` (40 total). **Archived doc** line numbe
 
 | Element | Archived doc (line) | Notes |
 |---------|---------------------|-------|
-| Purpose | [L11](../archived/B2B_ELEMENTS_OF_VALUE_COMPLETE.md#L11) | In Bain pyramid; in route `buildB2BOptions()` drift only |
-| Social Responsibility | [L86](../archived/B2B_ELEMENTS_OF_VALUE_COMPLETE.md#L86) | In Bain pyramid; in route `buildB2BOptions()` drift only |
+| Purpose | — | **Subcategory** under Inspirational (not a scored element slug) |
+| Social Responsibility | [L86](../archived/B2B_ELEMENTS_OF_VALUE_COMPLETE.md#L86) | Element slug `social_responsibility` under Purpose |
 
 ### Additional archived reference sections
 
@@ -799,7 +822,8 @@ Runtime elements from `B2B_CHUNK_CONFIG` (40 total). **Archived doc** line numbe
 |---------|------|-------------------|
 | HTTP entry | `src/app/api/analyze/elements-value-b2b-standalone/route.ts` | `POST`, `buildB2BOptions()` |
 | Chunk manifest (canonical) | `src/lib/framework/chunk-definitions.ts` | `B2B_CHUNK_CONFIG` |
-| Chunk manifest (route copy) | `src/app/api/analyze/elements-value-b2b-standalone/route.ts` | `buildB2BOptions().chunks` — **drifts** from canonical (see §14) |
+| Chunk manifest | `src/lib/framework/chunk-definitions.ts` | `B2B_CHUNK_CONFIG` — imported by route via `buildB2BOptions()` |
+| Taxonomy SSOT | `src/lib/framework/b2b-taxonomy.ts` | Bain pyramid, subcategories, display names, rollup |
 | Analysis engine | `src/lib/chunked-framework-analysis.ts` | `analyzeFrameworkInChunks()` |
 | Keyword hint builder | `src/lib/framework/element-keyword-hints.ts` | `formatKeywordHintsSection()` |
 | Block prompt builder | `src/lib/chunked-framework-analysis.ts` | `buildBlockPrompt()` |
@@ -818,7 +842,7 @@ Runtime elements from `B2B_CHUNK_CONFIG` (40 total). **Archived doc** line numbe
 |------------|----------------------|
 | 1 | `B2B Elements of Value-block-1` (Table Stakes) |
 | 2 | `B2B Elements of Value-block-2` (Functional Value) |
-| 3 | `B2B Elements of Value-block-3` (Ease of Doing Business — 18 elements) |
+| 3 | `B2B Elements of Value-block-3` (Ease of Doing Business — 21 elements) |
 | 4 | `B2B Elements of Value-block-4` (Individual Value) |
 | 5 | `B2B Elements of Value-block-5` (Inspirational Value) |
 | 6 | `B2B Elements of Value-unified-report` |
@@ -836,19 +860,42 @@ Runtime elements from `B2B_CHUNK_CONFIG` (40 total). **Archived doc** line numbe
 
 ---
 
+## 21. Frontend & Backend Impact Note
+
+The Bain taxonomy changes **API shape, prompts, definitions, Flask output, and some UI**. Runtime merge + Flask enrich are done. **Standalone** B2B page display is done; comparison/report views and persistence are not.
+
+**Full impact register:** [`docs/frameworks/B2B-FE-BE-IMPACT-NOTE.md`](../frameworks/B2B-FE-BE-IMPACT-NOTE.md)
+
+| Area | Status |
+|------|--------|
+| API `categories` with nested `subcategories` | ✅ Chunked + Flask |
+| AI prompts (`B2B_SCORING_PROMPT_INSTRUCTIONS`) | ✅ Production route |
+| `B2B_ELEMENTS` definitions + catalog | ✅ Aligned to Bain |
+| `B2BElementsPage` strength-first hierarchical display | ✅ `ElementsValueResultsPanel` |
+| `AssessmentResultsView` B2B tab | ❌ Legacy flat fields / "coming soon" |
+| `structured-storage.service.ts` subcategories | ❌ Does not flatten nested elements for Prisma |
+| Legacy `gemini-prompts.ts` / enhanced services | ⚠️ Drift from 40-element taxonomy |
+
+When building remaining UI: reuse `ElementsValueResultsPanel` + `elements-value-display.ts`; do not duplicate parsing.
+
+---
+
 ## Quick Reference Card
 
 ```
 Framework:     B2B Elements of Value (Bain & Company)
-Elements:        40 across 5 tiers
-Scoring:         0.0–1.0 flat (no weights)
+Elements:        40 across 5 tiers (4+5+21+7+3)
+Scoring:         0.0–1.0 flat; element → subcategory → category rollups
 AI calls:        6 (5 tier blocks + 1 unified report)
 Endpoint:        POST /api/analyze/elements-value-b2b-standalone
-UI:              /dashboard/elements-value-b2b
-Source of truth: docs/frameworks/B2B-Elements-Value-Flat-Scoring.md
+UI:              /dashboard/elements-value-b2b → ElementsValueResultsPanel (comparison views pending)
+Structure SSOT:  docs/frameworks/B2B-BAIN-PYRAMID-TAXONOMY.md
+Scoring SSOT:    docs/frameworks/B2B-Elements-Value-Flat-Scoring.md
+FE/BE impact:    docs/frameworks/B2B-FE-BE-IMPACT-NOTE.md
+Code taxonomy:   src/lib/framework/b2b-taxonomy.ts
 Canonical chunks: src/lib/framework/chunk-definitions.ts → B2B_CHUNK_CONFIG
-Completeness:    src/test/framework/element-completeness.test.ts (expect 40)
-Largest block:   Ease of Doing Business (18 elements)
+Completeness:    src/test/framework/b2b-taxonomy.test.ts + element-completeness.test.ts
+Largest block:   Ease of Doing Business (21 elements)
 ```
 
 ---

@@ -1,5 +1,7 @@
 # Answers to User Questions
 
+> **Historical note (June 2026):** B2B tier counts were updated to Bain alignment **4+5+21+7+3**. See [`docs/frameworks/B2B-BAIN-PYRAMID-TAXONOMY.md`](frameworks/B2B-BAIN-PYRAMID-TAXONOMY.md). For doc authority order see [`docs/guides/README.md`](guides/README.md#documentation-authority-prevent-conflicts).
+
 ## Question 1: How to Select Existing Content First, Then Choose Frameworks
 
 ### Current Flow (After Fixes):
@@ -114,8 +116,8 @@ Content Stored
 - **Action**: Audit framework JSON file
 
 #### ✅ **B2B Elements of Value**
-- **README Says**: 40 elements (4 Table Stakes, 7 Functional, 19 Ease of Business, 7 Individual, 3 Inspirational)
-- **Implementation**: Need to verify exact count matches
+- **Canonical (Bain)**: 40 elements (4 Table Stakes, 5 Functional, 21 Ease of Business, 7 Individual, 3 Inspirational)
+- **Implementation**: Verified via `b2b-taxonomy.test.ts` + `element-completeness.test.ts`
 - **Scoring**: Flat fractional 0.0-1.0 ✅
 - **Action**: Audit framework JSON file
 

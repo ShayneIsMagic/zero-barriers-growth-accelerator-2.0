@@ -9,6 +9,8 @@ import {
   buildPuppeteerEvidencePackage,
   formatEvidenceForPrompt,
 } from '@/lib/framework-evidence-protocol';
+import { B2C_SCORING_PROMPT_INSTRUCTIONS } from '@/lib/framework/b2c-taxonomy';
+import { B2C_CHUNK_CONFIG } from '@/lib/framework/chunk-definitions';
 import { buildAnalysisTraceability } from '@/lib/server/analysis-traceability';
 import {
   buildPersistenceOnComplete,
@@ -250,46 +252,14 @@ function buildB2COptions(
 ) {
   const protocolSummary = formatEvidenceForPrompt(evidencePackage);
   return {
-    frameworkName: 'B2C Elements of Value',
+    frameworkName: B2C_CHUNK_CONFIG.frameworkName,
     url,
     contentTitle: existing.title || '',
     contentMeta: existing.metaDescription || existing.seo?.metaDescription || '',
     contentKeywords: (existing.extractedKeywords || existing.seo?.extractedKeywords || []).slice(0, 10).join(', '),
     contentText: `${protocolSummary}\n\n${existing.cleanText || ''}`,
-    chunks: [
-      {
-        categoryName: 'Functional',
-        categoryKey: 'functional',
-        elements: [
-          'saves_time', 'simplifies', 'makes_money', 'reduces_effort',
-          'reduces_cost', 'reduces_risk', 'organizes', 'integrates',
-          'connects', 'quality', 'variety', 'informs',
-          'avoids_hassles', 'sensory_appeal',
-        ],
-      },
-      {
-        categoryName: 'Emotional',
-        categoryKey: 'emotional',
-        elements: [
-          'reduces_anxiety', 'rewards_me', 'nostalgia', 'design_aesthetics',
-          'badge_value', 'wellness', 'therapeutic', 'fun_entertainment',
-          'attractiveness', 'provides_access',
-        ],
-      },
-      {
-        categoryName: 'Life-Changing',
-        categoryKey: 'life_changing',
-        elements: [
-          'provides_hope', 'self_actualization', 'motivation',
-          'heirloom', 'affiliation_belonging',
-        ],
-      },
-      {
-        categoryName: 'Social Impact',
-        categoryKey: 'social_impact',
-        elements: ['self_transcendence'],
-      },
-    ],
+    chunks: B2C_CHUNK_CONFIG.chunks,
+    scoringInstructions: B2C_SCORING_PROMPT_INSTRUCTIONS,
   };
 }
 

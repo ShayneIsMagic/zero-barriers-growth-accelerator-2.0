@@ -3,6 +3,8 @@
  * Authority: docs/frameworks/Brand-Archetypes-Flat-Scoring.md
  */
 
+import { deriveArchetypePersonality } from '@/lib/framework/brand-personality';
+
 export interface ArchetypeElementDetail {
   score: number;
   evidence: string;
@@ -29,6 +31,10 @@ export interface ArchetypeRankingSummary {
 
 export interface ArchetypeRankingResult {
   overallScore: number;
+  /** Top 3 by score — primary strategic read */
+  topThree: RankedArchetype[];
+  /** Archetypes with weak/absent signals (score < 0.4) — what the brand is not */
+  notArchetypes: RankedArchetype[];
   primary: RankedArchetype[];
   secondary: RankedArchetype[];
   dominantCluster: RankedArchetype[];
@@ -52,6 +58,8 @@ const ARCHETYPE_DISPLAY_NAMES: Record<string, string> = {
 
 const CO_PRIMARY_TOLERANCE = 0.05;
 const SECONDARY_MIN_SCORE = 0.6;
+const TOP_ARCHETYPE_COUNT = 3;
+const WEAK_ARCHETYPE_MAX = 0.4;
 
 export function getArchetypeStrengthLabel(
   score: number
@@ -137,9 +145,15 @@ export function rankArchetypesFromAnalysis(
   );
 
   const dominantCluster = allRanked.filter((item) => item.score >= 0.8);
+  const topThree = allRanked.slice(0, TOP_ARCHETYPE_COUNT);
+  const notArchetypes = allRanked
+    .filter((item) => item.score < WEAK_ARCHETYPE_MAX)
+    .sort((a, b) => a.score - b.score);
 
   return {
     overallScore,
+    topThree,
+    notArchetypes,
     primary,
     secondary,
     dominantCluster,
@@ -170,6 +184,8 @@ export function enrichAnalysisWithArchetypeRanking(
 
   return {
     ...analysis,
+    top_three_archetypes: ranking.topThree.map(toArchetypeRankingSummary),
+    not_archetypes: ranking.notArchetypes.map(toArchetypeRankingSummary),
     primary_archetype:
       ranking.primary.length === 1
         ? toArchetypeRankingSummary(ranking.primary[0])
@@ -180,5 +196,6 @@ export function enrichAnalysisWithArchetypeRanking(
       overallScore: ranking.overallScore,
       allRanked: ranking.allRanked.map(toArchetypeRankingSummary),
     },
+    personality_profile: deriveArchetypePersonality(ranking),
   };
 }

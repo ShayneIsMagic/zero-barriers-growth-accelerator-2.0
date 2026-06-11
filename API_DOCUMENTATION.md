@@ -1,7 +1,26 @@
 # API Documentation
 
-Source of truth for all HTTP endpoints in Zero Barriers Growth Accelerator 2.0.  
+Source of truth for **Next.js** HTTP endpoints in Zero Barriers Growth Accelerator 2.0.  
 Base URL: `http://localhost:3000` (dev) or your Vercel deployment URL (prod).
+
+**Python evaluation backend** (Flask, separate dev server): see [`backend/API_DOCUMENTATION.md`](backend/API_DOCUMENTATION.md). Base URL: `http://localhost:5001`.
+
+### Documentation authority (avoid conflicts)
+
+| Topic | Authoritative doc | Code SSOT |
+|-------|-------------------|-----------|
+| Next.js API contracts | **This file** | `src/app/api/**/route.ts` |
+| Flask evaluate API | `backend/API_DOCUMENTATION.md` | `backend/src/` |
+| B2B structure (40 slugs, subcategories) | `docs/frameworks/B2B-BAIN-PYRAMID-TAXONOMY.md` | `src/lib/framework/b2b-taxonomy.ts` |
+| B2C structure (30 slugs, flat categories) | `docs/frameworks/B2C-CATEGORY-TAXONOMY.md` | `src/lib/framework/b2c-taxonomy.ts` |
+| Scoring bands & formulas (all frameworks) | `docs/frameworks/*-Flat-Scoring.md` | Injected into chunked prompts |
+| Pipeline, enrich fields, UI read order | `docs/guides/*_ASSESSMENT_GUIDE.md` | See guide § API / § Implementation |
+| B2B/B2C FE display & persistence gaps | `docs/frameworks/B2B-FE-BE-IMPACT-NOTE.md` | — |
+| Agent workflow | `AGENTS-app.md` | — |
+
+**Do not use for production structure:** `docs/archived/*`, `docs/frameworks/ACCURATE-PROMPTS.md` (legacy prompt snapshots), `docs/FLOW_AUDIT_AND_FIXES.md` (pre-Bain audit). Archived docs are **definitions/synonyms only**.
+
+**Next.js vs Flask:** Chunked standalone routes enrich Brand Archetypes and CliftonStrengths with `top_three_archetypes`, `not_archetypes`, `personality_profile`, `top_five_strengths`, and `domain_rankings`. Flask currently returns `primary_archetype` / `secondary_archetypes` for archetypes and category rollups for B2B/B2C — see backend API doc for parity notes.
 
 ## Conventions
 
@@ -302,7 +321,9 @@ These are the production-ready framework endpoints. All accept:
 
 **Auth:** Bearer when API auth enforced (all standalone routes).
 
-**Brand Archetypes scoring:** See `docs/frameworks/Brand-Archetypes-Flat-Scoring.md`. Each of 12 archetypes scored `0.0–1.0`; `overallScore = sum of 12 scores ÷ 12`. Chunked into 4 motivational groups (3 archetypes per block). **Primary/secondary** are derived by ranking flat scores (not weighted).
+**B2B / B2C Elements response shape:** B2B `analysis.categories` uses Bain subcategories (`subcategoryScore` + nested `elements`) on all tiers except Table Stakes. B2C uses flat `categories.{key}.elements` only. Scoring rollups: B2B element → subcategory → category; B2C element → category. Standalone UI: `ElementsValueResultsPanel` (strength-first). See `docs/frameworks/B2B-FE-BE-IMPACT-NOTE.md`, `B2B-BAIN-PYRAMID-TAXONOMY.md`, `B2C-CATEGORY-TAXONOMY.md`.
+
+**Brand Archetypes scoring:** See `docs/frameworks/Brand-Archetypes-Flat-Scoring.md`. Each of 12 archetypes scored `0.0–1.0`; `overallScore = sum of 12 scores ÷ 12`. Chunked into 4 motivational groups (3 archetypes per block). **Strategic read:** top 3 by score + weak/absent (`not_archetypes`). **Site personality** derived at enrich time.
 
 **`analysis` object (Brand Archetypes, key fields):**
 
@@ -311,16 +332,53 @@ These are the production-ready framework endpoints. All accept:
 | `overallScore` | number | Mean of 12 archetype scores (`0.0–1.0`) |
 | `totalElements` | number | `12` when complete |
 | `categories` | object | Keys: `ego`, `order`, `freedom`, `social` — each has `elements.{slug}.score` |
-| `topStrengths` | array | Archetypes with score ≥ `0.7` (up to 5) |
-| `criticalGaps` | array | Archetypes with score < `0.4` (up to 5) |
-| `primary_archetype` | object \| array | Highest score; array when co-primary (within `0.05`) |
+| `top_three_archetypes` | array | **Ranks #1–#3** by score (primary UI read) |
+| `not_archetypes` | array | Archetypes with score < `0.4` — what the brand is **not** |
+| `personality_profile` | object | Site personality synthesis (headline, tensions, coherence) |
+| `topStrengths` | array | Archetypes with score ≥ `0.7` (up to 5) from merge step |
+| `criticalGaps` | array | Archetypes with score < `0.4` (up to 5) from merge step |
+| `primary_archetype` | object \| array | Highest score; array when co-primary (within `0.05`) — legacy/co-primary |
 | `secondary_archetypes` | array | Next strongest with score ≥ `0.6`, excluding primary |
 | `dominant_cluster` | array | All archetypes with score ≥ `0.8` |
 | `verification.completeness_check` | string | `pass` \| `fail` |
 | `unifiedReport` | string | Markdown synthesis |
 | `chunkedReport` | string | Deterministic markdown from merged JSON |
 
-**Primary/secondary rules:** Sort all 12 `categories.*.elements.*.score` descending → `primary_archetype` = rank #1 (or ties within `0.05`) → `secondary_archetypes` = remaining with score ≥ `0.6`. Implemented in `src/lib/framework/archetype-ranking.ts`.
+**`personality_profile` shape (Brand Archetypes):**
+
+| Field | Type | Description |
+|---|---|---|
+| `framework` | string | `"brand-archetypes"` |
+| `headline` | string | e.g. `"The Sage–The Hero brand voice"` |
+| `summary` | string | Narrative interpretation |
+| `signalType` | string | `coherent_single` \| `coherent_blend` \| `multi_dominant` \| `conflicting_signals` \| `undefined_identity` \| `generic_messaging` |
+| `dominantLabels` | string[] | Top 3 archetype display names |
+| `supportingLabels` | string[] | Weak/absent archetype names (up to 3) |
+| `tensions` | array | Opposing archetype pairs both ≥ `0.6` |
+| `coherenceScore` | number | `0.0–1.0` — higher = more consistent voice |
+
+**Ranking rules:** `top_three_archetypes` = sort all 12 scores descending, take ranks 1–3. `not_archetypes` = all with score < `0.4`. `personality_profile` from `src/lib/framework/brand-personality.ts` via `enrichAnalysisWithArchetypeRanking()` in `src/lib/framework/archetype-ranking.ts`. UI: `BrandArchetypesPage` + `BrandPersonalityPanel`.
+
+**CliftonStrengths scoring:** See `docs/frameworks/CliftonStrengths-Flat-Scoring.md`. 34 themes across 4 domains; `overallScore = sum of 34 scores ÷ 34`. **Strategic read:** domain rankings (themes ranked within each domain) → top 5 across all 34 → full listing.
+
+**`analysis` object (CliftonStrengths, key fields):**
+
+| Field | Type | Description |
+|---|---|---|
+| `overallScore` | number | Mean of 34 theme scores (`0.0–1.0`) |
+| `totalElements` | number | `34` when complete |
+| `categories` | object | Keys: `strategic_thinking`, `executing`, `influencing`, `relationship_building` |
+| `top_five_strengths` | array | **Top 5 themes** across all 34 by score |
+| `domain_rankings` | array | Each domain: `score`, `themes[]` ranked within domain |
+| `signature_themes` | array | Themes with score ≥ `0.8` (or co-signature ties) |
+| `supporting_themes` | array | Themes `0.6–0.79` excluding signatures |
+| `dominant_domain` | object | Highest domain average |
+| `theme_ranking.allRanked` | array | All 34 themes ranked |
+| `personality_profile` | object | Content personality (same shape as archetypes; `framework: "clifton-strengths"`) |
+| `topStrengths` / `criticalGaps` | array | From merge step (≥ `0.7` / < `0.4`, up to 5 each) |
+| `verification.completeness_check` | string | `pass` \| `fail` |
+
+**Clifton enrichment:** `enrichAnalysisWithCliftonRanking()` in `src/lib/framework/clifton-theme-ranking.ts` (called from `clifton-strengths-standalone/route.ts`). UI: `CliftonThemeResultsPanel` + `BrandPersonalityPanel`.
 
 **Common responses:**
 
@@ -523,3 +581,4 @@ Frontend API calls must use `apiCall` (`src/lib/api-call.ts`) or `useAPICall` / 
 | 2026-06-08 | Initial contract document; dev-only route gating; shared `api-route.ts` helpers |
 | 2026-06-08 | Auth table corrected; system/status + brand-archetypes documented; client storage keys; IDOR fix on GET /api/analysis |
 | 2026-06-10 | Database section: Prisma migrations, persistence model, `analysisId` on standalone responses |
+| 2026-06-10 | B2B/B2C Bain taxonomy + strength-first standalone UI; archetype `top_three` / `not_archetypes` / `personality_profile`; Clifton `top_five_strengths` / `domain_rankings`; documentation authority section; guides/backend API parity notes |

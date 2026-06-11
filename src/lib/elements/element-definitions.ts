@@ -600,45 +600,6 @@ export const B2B_ELEMENTS = {
             },
           ],
         },
-        {
-          name: 'Strategic',
-          elements: [
-            {
-              name: 'risk_reduction',
-              keywords: [
-                'risk-free',
-                'safe',
-                'secure',
-                'protected',
-                'guaranteed',
-                'reliable',
-              ],
-              description: 'Protects customer against loss/risk',
-            },
-            {
-              name: 'reach',
-              keywords: [
-                'reach',
-                'scale',
-                'global',
-                'worldwide',
-                'extensive',
-                'broad',
-              ],
-              description: 'Allows customer to operate in more locations',
-            },
-            {
-              name: 'flexibility',
-              keywords: ['flexible', 'adaptable', 'customizable', 'versatile'],
-              description: 'Moves beyond standard to allow customization',
-            },
-            {
-              name: 'component_quality',
-              keywords: ['quality', 'reliable', 'durable', 'premium'],
-              description: "Improves perceived quality of customer's products",
-            },
-          ],
-        },
       ],
     },
     ease_of_business: {
@@ -683,11 +644,6 @@ export const B2B_ELEMENTS = {
               ],
               description: 'Helps customer avoid unnecessary hassles',
             },
-          ],
-        },
-        {
-          name: 'Information',
-          elements: [
             {
               name: 'information',
               keywords: [
@@ -767,17 +723,6 @@ export const B2B_ELEMENTS = {
         {
           name: 'Access',
           elements: [
-            {
-              name: 'access',
-              keywords: [
-                'available',
-                'accessible',
-                '24/7',
-                'always on',
-                'reliable',
-              ],
-              description: 'Provides access to resources/services/capabilities',
-            },
             {
               name: 'availability',
               keywords: [
@@ -874,6 +819,45 @@ export const B2B_ELEMENTS = {
                 'partnership',
               ],
               description: "Fits well with customer's culture and people",
+            },
+          ],
+        },
+        {
+          name: 'Strategic',
+          elements: [
+            {
+              name: 'risk_reduction',
+              keywords: [
+                'risk-free',
+                'safe',
+                'secure',
+                'protected',
+                'guaranteed',
+                'reliable',
+              ],
+              description: 'Protects customer against loss/risk',
+            },
+            {
+              name: 'reach',
+              keywords: [
+                'reach',
+                'scale',
+                'global',
+                'worldwide',
+                'extensive',
+                'broad',
+              ],
+              description: 'Allows customer to operate in more locations',
+            },
+            {
+              name: 'flexibility',
+              keywords: ['flexible', 'adaptable', 'customizable', 'versatile'],
+              description: 'Moves beyond standard to allow customization',
+            },
+            {
+              name: 'component_quality',
+              keywords: ['quality', 'reliable', 'durable', 'premium'],
+              description: "Improves perceived quality of customer's products",
             },
           ],
         },
@@ -978,7 +962,7 @@ export const B2B_ELEMENTS = {
       description: 'Elements that inspire and motivate',
       subcategories: [
         {
-          name: 'Vision & Purpose',
+          name: 'Purpose',
           elements: [
             {
               name: 'vision',
@@ -1003,6 +987,19 @@ export const B2B_ELEMENTS = {
                 'trust',
               ],
               description: 'Gives buyers hope for future of their organization',
+            },
+            {
+              name: 'social_responsibility',
+              keywords: [
+                'responsible',
+                'sustainable',
+                'ethical',
+                'impact',
+                'contribution',
+                'csr',
+                'social responsibility',
+              ],
+              description: 'Helps customer be more socially responsible',
             },
           ],
         },

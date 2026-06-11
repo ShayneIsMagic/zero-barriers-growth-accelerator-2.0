@@ -50,6 +50,12 @@ describe('archetype-ranking', () => {
   it('ranks sage as primary and hero as secondary', () => {
     const ranking = rankArchetypesFromAnalysis(sampleAnalysis);
     expect(ranking).not.toBeNull();
+    expect(ranking?.topThree).toHaveLength(3);
+    expect(ranking?.topThree[0]?.slug).toBe('sage');
+    expect(ranking?.topThree[1]?.slug).toBe('hero');
+    expect(ranking?.notArchetypes.some((item) => item.slug === 'jester')).toBe(
+      true
+    );
     expect(ranking?.primary[0]?.slug).toBe('sage');
     expect(ranking?.secondary.some((item) => item.slug === 'hero')).toBe(true);
     expect(ranking?.dominantCluster.some((item) => item.slug === 'sage')).toBe(
@@ -67,5 +73,11 @@ describe('archetype-ranking', () => {
         (item) => item.slug === 'hero'
       )
     ).toBe(true);
+    expect(enriched.top_three_archetypes).toHaveLength(3);
+    expect(enriched.not_archetypes).toBeDefined();
+    expect(enriched.personality_profile).toBeDefined();
+    expect(
+      (enriched.personality_profile as { headline: string }).headline
+    ).toContain('Sage');
   });
 });

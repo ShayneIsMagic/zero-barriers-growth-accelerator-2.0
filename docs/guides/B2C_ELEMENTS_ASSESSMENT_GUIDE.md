@@ -8,16 +8,16 @@
 
 ## Scoring authority (read this first)
 
-**Production scoring is flat fractional only (0.0–1.0).** The sole authority for how to score, the rating bands, the calculation tables, and the tier/element structure is:
-
-**[`docs/frameworks/B2C-Elements-Value-Flat-Scoring.md`](../frameworks/B2C-Elements-Value-Flat-Scoring.md)**
-
-That file is injected into every AI block prompt (first 12,000 characters). Nothing in this guide overrides it.
+**Production scoring is flat fractional only (0.0–1.0).** Structure and scoring split across two framework docs:
 
 | Document | Role |
 |----------|------|
-| `B2C-Elements-Value-Flat-Scoring.md` | **Scoring + structure** — use this for all score interpretation |
-| `B2C_ELEMENTS_OF_VALUE_COMPLETE.md` | **Definitions + Bain examples only** — its 1–10 tables are **not** used by the runtime assessment |
+| [`B2C-CATEGORY-TAXONOMY.md`](../frameworks/B2C-CATEGORY-TAXONOMY.md) | **Structure authority** — 30 slugs, 4 flat categories, rollups |
+| [`B2C-Elements-Value-Flat-Scoring.md`](../frameworks/B2C-Elements-Value-Flat-Scoring.md) | **Scoring authority** — bands, formulas; injected into AI prompts |
+| `B2C_ELEMENTS_OF_VALUE_COMPLETE.md` | **Definitions + Bain examples only** — not used for runtime scoring math |
+| [`B2B-FE-BE-IMPACT-NOTE.md`](../frameworks/B2B-FE-BE-IMPACT-NOTE.md) | **Standalone UI** — `B2CElementsPage` + `ElementsValueResultsPanel` |
+
+Nothing in this guide overrides the taxonomy or flat-scoring docs.
 
 No scoring logic was changed to produce these guides. If any other doc disagrees with the flat-scoring doc, **trust the flat-scoring doc**.
 
@@ -430,7 +430,7 @@ POST /api/analyze/elements-value-b2c-standalone
 | `url` | string | Analyzed URL |
 | `overallScore` | number | 0.0–1.0 mean of all 30 elements |
 | `totalElements` | number | Should be 30 |
-| `categories` | object | Keyed by `categoryKey` |
+| `categories` | object | Flat `{ categoryKey: { categoryScore, elements } }` — no subcategories |
 | `topStrengths` | array | Up to 5 elements with score ≥ 0.7 |
 | `criticalGaps` | array | Up to 5 elements with score < 0.4 |
 | `verification` | object | Completeness metadata |
@@ -438,6 +438,8 @@ POST /api/analyze/elements-value-b2c-standalone
 | `unifiedReport` | string | AI-synthesized executive report |
 | `analysisMethod` | string | `"chunked-blocked"` |
 | `blockCount` | number | Number of AI block calls |
+
+**Standalone UI read order:** `topStrengths` → categories ranked by `categoryScore` → element recommendations (ascending score). Implemented in `ElementsValueResultsPanel` + `elements-value-display.ts`. Markdown export: `generateElementsValueMarkdown('b2c', ...)`.
 
 ### Per-element shape
 

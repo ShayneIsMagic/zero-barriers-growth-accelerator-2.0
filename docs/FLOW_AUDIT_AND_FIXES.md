@@ -1,5 +1,7 @@
 # Flow Audit and Fixes - Framework Analysis System
 
+> **Superseded for taxonomy counts (June 2026):** B2B structure is **4+5+21+7+3** per [`B2B-BAIN-PYRAMID-TAXONOMY.md`](frameworks/B2B-BAIN-PYRAMID-TAXONOMY.md). B2C/Clifton counts below remain valid. For current authority hierarchy see [`docs/guides/README.md`](guides/README.md#documentation-authority-prevent-conflicts).
+
 ## 🔍 Audit Results
 
 ### Question 1: How to Select Existing Content First, Then Choose Frameworks
@@ -31,7 +33,7 @@
 
 **README Defines**:
 - B2C: 30 elements (14 Functional, 10 Emotional, 5 Life-Changing, 1 Social Impact)
-- B2B: 40 elements (4 Table Stakes, 7 Functional, 19 Ease of Business, 7 Individual, 3 Inspirational)
+- B2B: 40 elements (4 Table Stakes, 5 Functional, 21 Ease of Business, 7 Individual, 3 Inspirational) — see Bain taxonomy doc
 - Golden Circle: 4 components (WHY, HOW, WHAT, WHO) with 6 dimensions each
 - CliftonStrengths: 34 themes across 4 domains
 

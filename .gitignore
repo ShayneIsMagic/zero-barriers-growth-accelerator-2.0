@@ -49,6 +49,13 @@ yarn-error.log*
 logs
 *.log
 
+# Python backend
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.pyc
+backend/.env
+
 # Cache
 .cache/
 *.tsbuildinfo
@@ -80,6 +87,7 @@ lint-results.txt
 .env.local.backup*
 
 # Temporary development files (should not be committed)
+b2b-run.json
 *-test*.sql
 *test-*.sql
 *_TEST_*.sql

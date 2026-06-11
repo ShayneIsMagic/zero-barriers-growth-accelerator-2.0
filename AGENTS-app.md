@@ -13,26 +13,38 @@ Read **Shared Rules** first, then **API Integration**, then the section for the 
 
 ## This Repository — Zero Barriers Growth Accelerator 2.0
 
-**This project is a Next.js 15 monorepo**, not a `/frontend` + `/backend` split. One dev server serves UI and API routes.
+**This project is a hybrid monorepo**: Next.js 15 (UI + collection APIs) plus a Python Flask evaluation service in `/backend`.
 
 | Template section | Apply? | This repo equivalent |
 |---|---|---|
 | Shared Rules | Yes | All shared rules apply |
-| API Integration | Yes (adapted) | `API_DOCUMENTATION.md` at repo root; `postman/zero-barriers-api.postman_collection.json` |
+| API Integration | Yes | Next.js: root `API_DOCUMENTATION.md`; Flask: `backend/API_DOCUMENTATION.md` |
 | Frontend (React / SCSS) | Partial | Next.js App Router + TypeScript + **Tailwind** (skip SCSS/CSS-variables sections) |
-| Backend (Flask) | **Skip** | Next.js API routes in `src/app/api/` + Prisma ORM |
+| Backend (Flask) | **Yes** | `/backend` — Flask, SQLAlchemy, Marshmallow, Alembic, Pipenv |
 | Skills & References | If present | `skills/public/` not in this repo — skip unless user adds it |
 
 ### Running locally (this repo)
 
+**Terminal 1 — Next.js (collection + UI):**
+
 ```bash
-# VS Code: one integrated terminal at repo root
 # 1. Check port 3000 — kill stale process if needed
-# 2. Optional: ollama serve (local AI)
 npm run dev
 ```
 
-Open `http://localhost:3000`. Auth can be disabled locally with `DISABLE_AUTH=true` in `.env.local`.
+**Terminal 2 — Flask evaluation backend:**
+
+```bash
+cd backend
+pipenv shell
+# 1. Check port 5001 — kill stale process if needed
+cp .env.example .env   # first time only; set DATABASE_URL
+alembic upgrade head
+python app.py demo-data
+python app.py
+```
+
+Open `http://localhost:3000` (frontend). Evaluation API: `http://localhost:5001`. Auth can be disabled locally with `DISABLE_AUTH=true` in `.env.local`.
 
 ### Path mapping (template → this repo)
 
@@ -43,10 +55,13 @@ Open `http://localhost:3000`. Auth can be disabled locally with `DISABLE_AUTH=tr
 | `src/services/authServices.js` | `src/services/auth-services.ts` |
 | `src/util/toastNotifications.jsx` | `sonner` (`toast.success` / `toast.error`) |
 | `environmentConfig.js` | `.env.local` + `NEXT_PUBLIC_*` env vars |
-| `BaseController` / `BaseRoute` | `src/lib/server/api-route.ts` (`apiErrorResponse`, `requireAuth`, `parseRequestJson`) |
-| Flask `create_app.py` | Next.js App Router (`src/app/api/**/route.ts`) |
-| Alembic migrations | `prisma/migrations/` + `npx prisma db push` / `prisma migrate` |
-| Marshmallow serialization | TypeScript interfaces + Zod where used |
+| `BaseController` / `BaseRoute` (Flask) | `backend/src/controllers/base_controller.py`, `backend/src/routes/base_routes.py` |
+| Next.js API helpers | `src/lib/server/api-route.ts` (`apiErrorResponse`, `requireAuth`, `parseRequestJson`) |
+| Flask `create_app.py` | `backend/create_app.py` |
+| Alembic migrations (evaluation DB) | `backend/alembic/versions/` |
+| Prisma migrations (app DB) | `prisma/migrations/` + `npx prisma db push` / `prisma migrate` |
+| Marshmallow serialization (Flask) | `backend/src/schemas/` |
+| TypeScript API types (Next.js) | TypeScript interfaces + Zod where used |
 | Page components `*Page.jsx` in `src/components/pages/` | `src/app/**/page.tsx` (App Router) + `src/components/analysis/*Page.tsx` |
 | UI primitives | `src/components/ui/` (Shadcn/Radix) |
 
@@ -118,7 +133,7 @@ These apply to all agents, regardless of stack.
 - When in doubt: fewer docs, more focused content.
 - Required exceptions: `API_DOCUMENTATION.md` and the Postman collection in `postman/` — update both when endpoints change.
 - **Assessment guides exception:** `docs/guides/` holds per-framework implementation guides (index: `docs/guides/README.md`). **Scoring authority** remains `docs/frameworks/*-Flat-Scoring.md` — guides document pipeline, API contract, and references; they do not override flat-scoring bands.
-- **Framework reference exception:** `docs/frameworks/*-Flat-Scoring.md` (injected into AI prompts) and archived `docs/archived/*_COMPLETE.md` / `docs/JAMBOJON_ARCHETYPES_ENHANCED.md` (definitions only).
+- **Framework reference exception:** See [`docs/guides/README.md`](docs/guides/README.md#documentation-authority-prevent-conflicts) for the full hierarchy. Key files: `*‑Flat-Scoring.md` (scoring only), `B2B-BAIN-PYRAMID-TAXONOMY.md` / `B2C-CATEGORY-TAXONOMY.md` (structure), `B2B-FE-BE-IMPACT-NOTE.md` (FE gaps), `docs/guides/*_ASSESSMENT_GUIDE.md` (pipeline + enrich fields). **Not SSOT:** `docs/archived/*`, `ACCURATE-PROMPTS.md`, `FLOW_AUDIT_AND_FIXES.md`. **Runtime:** `b2b-taxonomy.ts`, `b2c-taxonomy.ts`, `archetype-ranking.ts`, `clifton-theme-ranking.ts`, `brand-personality.ts`, `elements-value-display.ts`.
 - Update the README title, description, and **Running Locally** section with the exact VS Code / terminal commands to start frontend and backend once they are known. Do not copy AGENTS rules into the README.
 
 ### Git
