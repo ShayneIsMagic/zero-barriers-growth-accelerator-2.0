@@ -6,6 +6,7 @@ import { consumeChunkedAnalysisStream } from '@/lib/framework/consume-chunked-st
 import {
   buildCanonicalFrameworkPayload,
   CanonicalFrameworkPayload,
+  normalizeRawEvidence,
 } from '@/types/canonical-framework-payload';
 import { saveSnapshot } from '@/lib/snapshot-storage';
 import { analyzeFrameworkWithAI } from '@/lib/framework-analysis-entrypoint';
@@ -62,10 +63,11 @@ export function useChunkedAnalysis(endpoint: string) {
         const url = typeof body.url === 'string' ? body.url : '';
         const proposedContent =
           typeof body.proposedContent === 'string' ? body.proposedContent : '';
-        const rawEvidence =
+        const rawEvidence = normalizeRawEvidence(
           typeof body.existingContent === 'object' && body.existingContent !== null
             ? (body.existingContent as Record<string, unknown>)
-            : {};
+            : {}
+        );
         const collectorType =
           typeof body.collectorType === 'string'
             ? body.collectorType

@@ -33,6 +33,10 @@ import { apiCall, apiCallStream } from '@/lib/api-call';
 import { consumeChunkedAnalysisStream } from '@/lib/framework/consume-chunked-stream';
 import { getChunkedAssessmentConfig } from '@/lib/framework/framework-assessment-config';
 import {
+  isFlaskEvaluationEnabled,
+  runFlaskFrameworkEvaluation,
+} from '@/lib/services/flask-evaluation.service';
+import {
   buildExistingContentForChunkedAnalysis,
   pickPrimaryPageUrl,
   type PuppeteerPageRecord,
@@ -61,6 +65,7 @@ import {
   ChevronRight,
   ArrowRight,
   RefreshCw,
+  FlaskConical,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -106,9 +111,11 @@ interface AssessmentProgress {
   status: 'pending' | 'running' | 'completed' | 'error';
   progress: number;
   currentCategory?: string;
-  result?: any;
+  result?: Record<string, unknown>;
   error?: string;
 }
+
+type RunnerAnalysisMode = 'ai-chunked' | 'flask-deterministic';
 
 interface FrameworkAnalysisRunnerProps {
   url: string;
@@ -194,6 +201,8 @@ export function FrameworkAnalysisRunner({
     Record<string, AssessmentProgress>
   >({});
   const [isRunning, setIsRunning] = useState(false);
+  const [analysisMode, setAnalysisMode] = useState<RunnerAnalysisMode>('ai-chunked');
+  const flaskEvaluationEnabled = isFlaskEvaluationEnabled();
   const [reports, setReports] = useState<any[]>([]);
   const [siteGoals, setSiteGoals] = useState<string[]>(['']);
   const [selectedArchetype, setSelectedArchetype] = useState<string>('');
@@ -610,8 +619,45 @@ export function FrameworkAnalysisRunner({
 
           const chunkedConfig = getChunkedAssessmentConfig(assessment.assessmentType);
           let report: Record<string, unknown>;
+          const useFlaskDeterministic =
+            analysisMode === 'flask-deterministic' &&
+            flaskEvaluationEnabled &&
+            chunkedConfig !== null;
 
-          if (chunkedConfig) {
+          if (useFlaskDeterministic && chunkedConfig) {
+            setAssessmentProgress((prev) => ({
+              ...prev,
+              [assessmentId]: {
+                ...prev[assessmentId],
+                progress: 40,
+                currentCategory: 'Deterministic evaluation (Flask)',
+              },
+            }));
+
+            const existingContent = buildExistingContentForChunkedAnalysis(
+              page,
+              pageUrl
+            );
+
+            const flaskResponse = await runFlaskFrameworkEvaluation({
+              frameworkKey: chunkedConfig.frameworkName,
+              pageUrl,
+              existingContent: existingContent as Record<string, unknown>,
+            });
+
+            report = {
+              pageUrl,
+              pageLabel: page.pageLabel || 'Page',
+              assessmentId,
+              assessmentName: assessment.name,
+              assessmentType: assessment.assessmentType,
+              analysis: flaskResponse,
+              frameworkUsed: chunkedConfig.frameworkName,
+              validation: flaskResponse.verification ?? null,
+              analysisMethod: 'flask-deterministic',
+              timestamp: new Date().toISOString(),
+            };
+          } else if (chunkedConfig) {
             setAssessmentProgress((prev) => ({
               ...prev,
               [assessmentId]: {
@@ -1433,7 +1479,36 @@ export function FrameworkAnalysisRunner({
       </Card>
 
       {/* Run Button */}
-      <div className="flex justify-end">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        {flaskEvaluationEnabled ? (
+          <div className="space-y-1">
+            <Label htmlFor="runner-analysis-mode">Analysis engine</Label>
+            <Select
+              value={analysisMode}
+              onValueChange={(value: RunnerAnalysisMode) => setAnalysisMode(value)}
+              disabled={isRunning}
+            >
+              <SelectTrigger id="runner-analysis-mode" className="w-full sm:w-[280px]">
+                <SelectValue placeholder="Select analysis engine" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ai-chunked">AI (chunked Ollama/Gemini)</SelectItem>
+                <SelectItem value="flask-deterministic">
+                  Deterministic (Flask — no AI)
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            {analysisMode === 'flask-deterministic' ? (
+              <p className="text-xs text-muted-foreground">
+                Pattern matching on port 5001. SEO/Google Tools still use enhanced AI.
+              </p>
+            ) : null}
+          </div>
+        ) : (
+          <p className="text-xs text-muted-foreground">
+            Set NEXT_PUBLIC_ENABLE_FLASK_EVALUATION=true for deterministic Flask runs.
+          </p>
+        )}
         <Button
           onClick={runAssessments}
           disabled={
@@ -1451,7 +1526,11 @@ export function FrameworkAnalysisRunner({
             </>
           ) : (
             <>
-              <Target className="mr-2 h-4 w-4" />
+              {analysisMode === 'flask-deterministic' && flaskEvaluationEnabled ? (
+                <FlaskConical className="mr-2 h-4 w-4" />
+              ) : (
+                <Target className="mr-2 h-4 w-4" />
+              )}
               Run Selected Assessments
             </>
           )}

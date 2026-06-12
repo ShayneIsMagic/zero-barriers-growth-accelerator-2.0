@@ -19,8 +19,11 @@ import {
   type GoldenCircleDimensionDetail,
   type GoldenCircleLayerView,
 } from '@/lib/framework/golden-circle-display';
+import { VocabularyDefinitionHint } from '@/components/analysis/VocabularyDefinitionHint';
 import { Target, TrendingUp } from 'lucide-react';
 import { useMemo } from 'react';
+
+const VOCABULARY_FRAMEWORK_KEY = 'golden-circle' as const;
 
 interface GoldenCircleResultsPanelProps {
   analysis: Record<string, unknown> | null | undefined;
@@ -108,6 +111,10 @@ export function GoldenCircleResultsPanel({
               >
                 <div className="mb-1 flex flex-wrap items-center gap-2">
                   <span className="font-medium">{item.displayName}</span>
+                  <VocabularyDefinitionHint
+                    frameworkKey={VOCABULARY_FRAMEWORK_KEY}
+                    elementKey={item.elementKey}
+                  />
                   <Badge variant={getFractionalScoreBadgeVariant(item.score)}>
                     {formatFractionalScoreDecimal(item.score)}
                   </Badge>
@@ -162,6 +169,11 @@ function LayerAccordionItem({ layer }: { layer: GoldenCircleLayerView }) {
       <AccordionTrigger className="hover:no-underline">
         <div className="flex flex-1 items-center justify-between gap-3 pr-2 text-left">
           <span className="font-medium">{layer.layerName}</span>
+          <VocabularyDefinitionHint
+            frameworkKey={VOCABULARY_FRAMEWORK_KEY}
+            elementKey={layer.layerKey}
+            categoryKey={layer.layerKey}
+          />
           <span
             className={`text-sm ${getFractionalScoreTextClass(layer.layerScore)}`}
           >
@@ -185,6 +197,10 @@ function DimensionRow({ item }: { item: GoldenCircleDimensionDetail }) {
     <div className="rounded-md border p-3">
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <span className="text-sm font-medium">{item.displayName}</span>
+        <VocabularyDefinitionHint
+          frameworkKey={VOCABULARY_FRAMEWORK_KEY}
+          elementKey={item.elementKey}
+        />
         <Badge variant={getFractionalScoreBadgeVariant(item.score)}>
           {formatFractionalScoreDecimal(item.score)}
         </Badge>

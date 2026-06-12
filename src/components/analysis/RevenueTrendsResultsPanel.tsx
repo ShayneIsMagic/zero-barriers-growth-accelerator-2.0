@@ -19,8 +19,11 @@ import {
   type RevenueCategoryView,
   type RevenueSignalDetail,
 } from '@/lib/framework/revenue-trends-display';
+import { VocabularyDefinitionHint } from '@/components/analysis/VocabularyDefinitionHint';
 import { TrendingUp } from 'lucide-react';
 import { useMemo } from 'react';
+
+const VOCABULARY_FRAMEWORK_KEY = 'revenue-trends' as const;
 
 interface RevenueTrendsResultsPanelProps {
   analysis: Record<string, unknown> | null | undefined;
@@ -108,6 +111,10 @@ export function RevenueTrendsResultsPanel({
               >
                 <div className="mb-1 flex flex-wrap items-center gap-2">
                   <span className="font-medium">{item.displayName}</span>
+                  <VocabularyDefinitionHint
+                    frameworkKey={VOCABULARY_FRAMEWORK_KEY}
+                    elementKey={item.slug}
+                  />
                   <Badge variant={getFractionalScoreBadgeVariant(item.score)}>
                     {formatFractionalScoreDecimal(item.score)}
                   </Badge>
@@ -162,6 +169,11 @@ function CategoryAccordionItem({ category }: { category: RevenueCategoryView }) 
       <AccordionTrigger className="hover:no-underline">
         <div className="flex flex-1 items-center justify-between gap-3 pr-2 text-left">
           <span className="font-medium">{category.categoryName}</span>
+          <VocabularyDefinitionHint
+            frameworkKey={VOCABULARY_FRAMEWORK_KEY}
+            elementKey={category.categoryKey}
+            categoryKey={category.categoryKey}
+          />
           <span
             className={`text-sm ${getFractionalScoreTextClass(category.categoryScore)}`}
           >
@@ -185,6 +197,10 @@ function SignalRow({ item }: { item: RevenueSignalDetail }) {
     <div className="rounded-md border p-3">
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <span className="text-sm font-medium">{item.displayName}</span>
+        <VocabularyDefinitionHint
+          frameworkKey={VOCABULARY_FRAMEWORK_KEY}
+          elementKey={item.slug}
+        />
         <Badge variant={getFractionalScoreBadgeVariant(item.score)}>
           {formatFractionalScoreDecimal(item.score)}
         </Badge>

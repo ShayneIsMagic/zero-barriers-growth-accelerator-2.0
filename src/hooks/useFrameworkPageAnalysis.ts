@@ -8,11 +8,10 @@ import {
   resolveReportStorageKey,
 } from '@/lib/framework/save-framework-report';
 import {
-  evaluateWithFlask,
   FLASK_FRAMEWORK_KEYS,
+  runFlaskFrameworkEvaluation,
 } from '@/lib/services/flask-evaluation.service';
 import type { CollectedContentPayload } from '@/types/content-collection';
-import { buildCanonicalFrameworkPayload } from '@/types/canonical-framework-payload';
 
 interface RunFrameworkAnalysisParams {
   url: string;
@@ -110,19 +109,14 @@ export function useFrameworkPageAnalysis(
           throw new Error('Collected content is required for Flask evaluation');
         }
 
-        const evidence =
-          typeof existingContent === 'object' && existingContent !== null
-            ? (existingContent as Record<string, unknown>)
-            : {};
-
-        const flaskResponse = await evaluateWithFlask({
+        const flaskResponse = await runFlaskFrameworkEvaluation({
           frameworkKey,
-          payload: buildCanonicalFrameworkPayload({
-            url: trimmedUrl,
-            collectorType: 'content-collect-api',
-            rawEvidence: evidence,
-            proposedContent: params.proposedContent?.trim() || undefined,
-          }),
+          pageUrl: trimmedUrl,
+          existingContent:
+            typeof existingContent === 'object' && existingContent !== null
+              ? (existingContent as Record<string, unknown>)
+              : {},
+          proposedContent: params.proposedContent?.trim() || undefined,
         });
 
         setFlaskResult({

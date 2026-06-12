@@ -27,11 +27,13 @@ Base URL: `http://localhost:3000` (dev) or your Vercel deployment URL (prod).
 | Variable | Default | Purpose |
 |----------|---------|---------|
 | `NEXT_PUBLIC_EVALUATION_API_URL` | `http://localhost:5001` | Flask base URL for `POST /api/evaluate` |
-| `NEXT_PUBLIC_ENABLE_FLASK_EVALUATION` | unset (`false`) | When `true`, standalone pages show **Deterministic (Flask)** button |
+| `NEXT_PUBLIC_ENABLE_FLASK_EVALUATION` | unset (`false`) | When `true`, standalone pages show **Deterministic (Flask)** button and Content Comparison → Framework Analysis runner offers **Deterministic (Flask — no AI)** engine |
 
-Client: `src/lib/services/flask-evaluation.service.ts`. Hook: `useFrameworkPageAnalysis().runDeterministicAnalysis`.
+Client: `src/lib/services/flask-evaluation.service.ts`. Hook: `useFrameworkPageAnalysis().runDeterministicAnalysis`. Content Comparison runner: `FrameworkAnalysisRunner` (analysis engine select when Flask enabled).
 
-**Smoke tests:** `npm run smoke:flask` (all 6 frameworks, no AI) · `npm run smoke:frameworks:quick` (Next.js route contracts) · `npm run smoke:frameworks` (full AI run, requires Ollama/Gemini + dev server).
+**Smoke tests:** `npm run smoke:flask` · `npm run smoke:frameworks:quick` · `npm run smoke:frameworks` (full AI).
+
+**Flask catalog rebuild (after synonym enrichment):** `npm run build:catalog` then `cd backend && pipenv run python app.py demo-data`.
 
 ## Conventions
 
@@ -578,7 +580,8 @@ Documented per AGENTS-app state-management rules. All keys are browser-local unl
 | `simple-analyses` | `localStorage` | Step-by-step progress | `useSimpleProgress` clear |
 | `vercel_usage_tracking` | `localStorage` | Usage monitor counters | `usage_last_reset` monthly |
 | `ZeroBarriers` / `puppeteer_data` | LocalForage | Scraped content by URL | `UnifiedLocalForageStorage.clearAll()` |
-| `ZeroBarriers` / reports | LocalForage | Analysis reports by URL | Per-URL delete in ReportsViewer |
+| `ZeroBarriers` / `reports` | LocalForage | Full report payloads (JSON/markdown) | `getReport(id)` |
+| `ZeroBarriers` / `reports_index` | LocalForage | Report metadata index (`url`, `domain`, `assessmentType`, `timestamp`, `frameworkKind`) | `getAllReportSummaries()` — list without loading payloads; `rebuildReportsIndex()` repairs drift |
 | Framework snapshots | LocalForage | Canonical framework payloads | `snapshot-storage` per snapshotId |
 
 Frontend API calls must use `apiCall` (`src/lib/api-call.ts`) or `useAPICall` / `useTriggeredAPICall` hooks so Bearer auth is attached automatically.

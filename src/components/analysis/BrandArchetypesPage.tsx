@@ -18,8 +18,10 @@ import {
   AssessmentWorkflowSteps,
   resolveAssessmentWorkflowStep,
 } from '@/components/analysis/AssessmentWorkflowSteps';
+import { FrameworkAnalyzeActions } from '@/components/analysis/FrameworkAnalyzeActions';
 import { useFrameworkPageAnalysis } from '@/hooks/useFrameworkPageAnalysis';
-import { CheckCircle2, Copy, Download, Loader2, Sparkles } from 'lucide-react';
+import { buildFrameworkPageRunParams } from '@/lib/framework/framework-page-run-params';
+import { CheckCircle2, Copy, Download, Sparkles } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
 import { BrandPersonalityPanel } from '@/components/analysis/BrandPersonalityPanel';
@@ -48,6 +50,9 @@ export function BrandArchetypesPage() {
     result,
     error: streamError,
     runAnalysis: runFrameworkAnalysis,
+    runDeterministicAnalysis,
+    isFlaskRunning,
+    analysisMethod,
   } = useFrameworkPageAnalysis('/api/analyze/brand-archetypes-standalone');
 
   const isBusy = isAnalyzing || isCollecting;
@@ -95,31 +100,35 @@ export function BrandArchetypesPage() {
     return ranking ? deriveArchetypePersonality(ranking) : null;
   }, [analysisPayload]);
 
-  const runAnalysis = async () => {
-    if (!url.trim()) return;
-    setLocalError(null);
-
-    let existingContent = null;
-    let skipCollection = false;
-    if (scrapedContent.trim()) {
-      try {
-        existingContent = JSON.parse(scrapedContent.trim());
-        skipCollection = true;
-      } catch {
+  const pageRunInput = {
+    url,
+    proposedContent,
+    scrapedContent,
+    setLocalError: (message: string | null) => {
+      if (message) {
         setLocalError(
-          'Scraped content JSON is invalid. Paste valid JSON from Content-Comparison.'
+          message === 'Invalid JSON in scraped content field'
+            ? 'Scraped content JSON is invalid. Paste valid JSON from Content-Comparison.'
+            : message
         );
-        return;
+      } else {
+        setLocalError(null);
       }
-    }
+    },
+  };
 
-    await runFrameworkAnalysis({
-      url: url.trim(),
-      proposedContent: proposedContent.trim(),
-      existingContent,
-      skipCollection,
-      analysisType: 'full',
-    });
+  const runAnalysis = async () => {
+    setLocalError(null);
+    const params = buildFrameworkPageRunParams(pageRunInput);
+    if (!params) return;
+    await runFrameworkAnalysis(params);
+  };
+
+  const runDeterministic = async () => {
+    setLocalError(null);
+    const params = buildFrameworkPageRunParams(pageRunInput);
+    if (!params) return;
+    await runDeterministicAnalysis(params);
   };
 
   const copyToClipboard = (text: string) => {
@@ -211,23 +220,17 @@ export function BrandArchetypesPage() {
             </p>
           </div>
 
-          <Button
-            onClick={runAnalysis}
-            disabled={isBusy || !url.trim()}
-            className='w-full'
-          >
-            {isBusy ? (
-              <>
-                <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                Running Brand Archetypes Analysis...
-              </>
-            ) : (
-              <>
-                <Sparkles className='mr-2 h-4 w-4' />
-                Analyze Brand Archetypes
-              </>
-            )}
-          </Button>
+          <FrameworkAnalyzeActions
+            endpoint="/api/analyze/brand-archetypes-standalone"
+            isBusy={isBusy}
+            isFlaskRunning={isFlaskRunning}
+            hasUrl={Boolean(url.trim())}
+            onRunAnalysis={runAnalysis}
+            onRunDeterministic={runDeterministic}
+            analysisMethod={analysisMethod}
+            hasProposedContent={Boolean(proposedContent.trim())}
+            analyzeIcon={<Sparkles className="mr-2 h-4 w-4" />}
+          />
         </CardContent>
       </Card>
 

@@ -174,6 +174,32 @@ Oldest → newest (from `git log main..shayne-agents-v6`):
 
 ---
 
+## 8. Refactor branch (`refactor`) — 2026-06-08
+
+Pre-merge checkpoint for FE refactor phases B–E, vocab Phase 3, reports index (Phase D), and Flask runner integration.
+
+| Role | Branch | Commit (pre-WIP) | Notes |
+|------|--------|-------------------|-------|
+| **Production (`origin/main`)** | `main` | `7bc9d62` | Last known remote main at doc time |
+| **Refactor checkpoint (pushed)** | `refactor` | `2ae7049` | Structured UX + Flask path on standalone pages |
+| **Refactor WIP (this commit)** | `refactor` | *(after commit)* | Reports index, runner Flask toggle, `normalizeRawEvidence` fix |
+
+### Rollback (refactor branch only)
+
+```bash
+git checkout refactor
+git reset --hard 2ae7049   # last pushed checkpoint
+```
+
+### Pre-merge checklist (refactor → main)
+
+- [x] `npm run lint:check` · `npm run type-check` · `npm test` (102 tests)
+- [x] `npm run smoke:flask` · `npm run smoke:frameworks:quick`
+- [ ] Authenticated ReportsViewer manual smoke (Phase D lazy load)
+- [ ] Merge via PR; update §6 post-merge log
+
+---
+
 ## 7. Related docs
 
 - Agent workflow: [`AGENTS-app.md`](../AGENTS-app.md)

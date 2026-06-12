@@ -26,7 +26,11 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { UnifiedLocalForageStorage, StoredReport } from '@/lib/services/unified-localforage-storage.service';
+import {
+  UnifiedLocalForageStorage,
+  StoredReport,
+  StoredReportSummary,
+} from '@/lib/services/unified-localforage-storage.service';
 import { CompanyReportCompileDialog } from '@/components/shared/CompanyReportCompileDialog';
 import { ReportStructuredPreview } from '@/components/shared/ReportStructuredPreview';
 import { buildUrlReportLabel } from '@/lib/framework/framework-results-adapter';
@@ -55,7 +59,7 @@ export function ReportsViewer({
 }: ReportsViewerProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [reports, setReports] = useState<StoredReport[]>([]);
+  const [reports, setReports] = useState<StoredReportSummary[]>([]);
   const [selectedReport, setSelectedReport] = useState<StoredReport | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
@@ -72,8 +76,8 @@ export function ReportsViewer({
   const loadReports = async () => {
     setLoading(true);
     try {
-      const allReports = await UnifiedLocalForageStorage.getAllReports();
-      setReports(allReports);
+      const summaries = await UnifiedLocalForageStorage.getAllReportSummaries();
+      setReports(summaries);
     } catch (_error) {
       // Failed to load reports - silently handle
     } finally {
@@ -117,7 +121,7 @@ export function ReportsViewer({
     }
     acc[key].push(report);
     return acc;
-  }, {} as Record<string, StoredReport[]>);
+  }, {} as Record<string, StoredReportSummary[]>);
 
   const _assessmentTypes = [
     'all',
@@ -129,11 +133,17 @@ export function ReportsViewer({
     'jambojon-archetypes',
   ];
 
-  const handleViewReport = (report: any) => {
-    setSelectedReport(report);
+  const loadFullReport = async (
+    summary: StoredReportSummary
+  ): Promise<StoredReport | null> =>
+    UnifiedLocalForageStorage.getReport(summary.id);
+
+  const handleViewReport = async (summary: StoredReportSummary) => {
+    const full = await loadFullReport(summary);
+    setSelectedReport(full);
   };
 
-  const handleDownloadReport = (report: any) => {
+  const downloadReportContent = (report: StoredReport): void => {
     const content =
       typeof report.content === 'string'
         ? report.content
@@ -144,22 +154,21 @@ export function ReportsViewer({
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    
-    // Create better filename: domain-assessment-date-version.format
+
     const domain = report.domain || 'report';
     const assessment = (report.assessmentType || 'report').replace(/-/g, '_');
     const date = new Date(report.timestamp).toISOString().split('T')[0];
     const version = report.version && report.version > 1 ? `_v${report.version}` : '';
     const extension = report.format === 'markdown' ? 'md' : 'json';
     a.download = `${domain}-${assessment}-${date}${version}.${extension}`;
-    
+
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
-  const handleCopyReport = async (report: any) => {
+  const copyReportContent = async (report: StoredReport): Promise<void> => {
     const content =
       typeof report.content === 'string'
         ? report.content
@@ -168,11 +177,32 @@ export function ReportsViewer({
     toast.success('Report copied to clipboard!');
   };
 
-  const handleSelectReport = (report: StoredReport) => {
-    if (allowSelection && onReportSelected) {
-      onReportSelected(report);
-      setOpen(false);
+  const handleDownloadReport = async (summary: StoredReportSummary) => {
+    const report = await loadFullReport(summary);
+    if (!report) {
+      return;
     }
+    downloadReportContent(report);
+  };
+
+  const handleCopyReport = async (summary: StoredReportSummary) => {
+    const report = await loadFullReport(summary);
+    if (!report) {
+      return;
+    }
+    await copyReportContent(report);
+  };
+
+  const handleSelectReport = async (summary: StoredReportSummary) => {
+    if (!allowSelection || !onReportSelected) {
+      return;
+    }
+    const report = await loadFullReport(summary);
+    if (!report) {
+      return;
+    }
+    onReportSelected(report);
+    setOpen(false);
   };
 
   const handleUploadReport = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -193,9 +223,15 @@ export function ReportsViewer({
     }
   };
 
-  const handleCompileCompany = (companyKey: string, domainReports: StoredReport[]) => {
+  const handleCompileCompany = async (
+    companyKey: string,
+    domainReports: StoredReportSummary[]
+  ) => {
+    const fullReports = await UnifiedLocalForageStorage.loadReportsByIds(
+      domainReports.map((report) => report.id)
+    );
     setCompileCompanyKey(companyKey);
-    setCompileReports(domainReports);
+    setCompileReports(fullReports);
   };
 
   const formatDate = (dateString: string) => {
@@ -492,14 +528,14 @@ export function ReportsViewer({
             <div className="flex justify-end gap-2 pt-4 border-t">
               <Button
                 variant="outline"
-                onClick={() => handleDownloadReport(selectedReport)}
+                onClick={() => downloadReportContent(selectedReport)}
               >
                 <Download className="mr-2 h-4 w-4" />
                 Download
               </Button>
               <Button
                 variant="outline"
-                onClick={() => handleCopyReport(selectedReport)}
+                onClick={() => void copyReportContent(selectedReport)}
               >
                 <Copy className="mr-2 h-4 w-4" />
                 Copy

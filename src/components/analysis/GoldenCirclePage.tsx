@@ -30,8 +30,10 @@ import {
   resolveAssessmentWorkflowStep,
 } from '@/components/analysis/AssessmentWorkflowSteps';
 import { Progress } from '@/components/ui/progress';
+import { FrameworkAnalyzeActions } from '@/components/analysis/FrameworkAnalyzeActions';
 import { useFrameworkPageAnalysis } from '@/hooks/useFrameworkPageAnalysis';
 import { generateGoldenCircleMarkdown as buildGoldenCircleMarkdown } from '@/lib/framework/golden-circle-display';
+import { buildFrameworkPageRunParams } from '@/lib/framework/framework-page-run-params';
 import {
   createProposedContent as postProposedContent,
   createVersionComparison as postVersionComparison,
@@ -53,6 +55,9 @@ export function GoldenCirclePage() {
     result,
     error: streamError,
     runAnalysis: runFrameworkAnalysis,
+    runDeterministicAnalysis,
+    isFlaskRunning,
+    analysisMethod,
   } = useFrameworkPageAnalysis('/api/analyze/golden-circle-standalone');
 
   const isBusy = isAnalyzing || isCollecting;
@@ -68,28 +73,23 @@ export function GoldenCirclePage() {
   const [isSavingSnapshot, setIsSavingSnapshot] = useState(false);
   const [isCreatingProposed, setIsCreatingProposed] = useState(false);
 
+  const pageRunInput = {
+    url,
+    proposedContent,
+    scrapedContent,
+    setLocalError,
+  };
+
   const runAnalysis = async () => {
-    if (!url.trim()) return;
+    const params = buildFrameworkPageRunParams(pageRunInput);
+    if (!params) return;
+    await runFrameworkAnalysis(params);
+  };
 
-    let existingContent = null;
-    let skipCollection = false;
-    if (scrapedContent.trim()) {
-      try {
-        existingContent = JSON.parse(scrapedContent.trim());
-        skipCollection = true;
-      } catch {
-        setLocalError('Invalid JSON in scraped content field');
-        return;
-      }
-    }
-
-    await runFrameworkAnalysis({
-      url: url.trim(),
-      proposedContent: proposedContent.trim(),
-      existingContent,
-      skipCollection,
-      analysisType: 'full',
-    });
+  const runDeterministic = async () => {
+    const params = buildFrameworkPageRunParams(pageRunInput);
+    if (!params) return;
+    await runDeterministicAnalysis(params);
   };
 
   const copyToClipboard = (text: string) => {
@@ -365,27 +365,17 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
             </Alert>
           )}
 
-          {/* Analyze Button */}
-          <Button
-            onClick={runAnalysis}
-            disabled={isBusy || !url.trim()}
-            className="w-full"
-            size="lg"
-          >
-            {isBusy ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Analyzing...
-              </>
-            ) : (
-              <>
-                <Target className="mr-2 h-4 w-4" />
-                {proposedContent
-                  ? 'Compare Existing vs. Proposed'
-                  : 'Analyze Existing Content'}
-              </>
-            )}
-          </Button>
+          <FrameworkAnalyzeActions
+            endpoint="/api/analyze/golden-circle-standalone"
+            isBusy={isBusy}
+            isFlaskRunning={isFlaskRunning}
+            hasUrl={Boolean(url.trim())}
+            onRunAnalysis={runAnalysis}
+            onRunDeterministic={runDeterministic}
+            analysisMethod={analysisMethod}
+            hasProposedContent={Boolean(proposedContent.trim())}
+            analyzeIcon={<Target className="mr-2 h-4 w-4" />}
+          />
 
           {/* Chunk Progress Bar */}
           {(isAnalyzing || isCollecting) && (
@@ -577,102 +567,6 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                   </Button>
                 )}
 
-                {/* Why/How/What Analysis */}
-                {result.why && result.how && result.what && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Golden Circle Framework Analysis</CardTitle>
-                      <CardDescription>
-                        Simon Sinek&apos;s Why/How/What framework breakdown
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-6">
-                        {/* WHY */}
-                        <div className="rounded-lg border bg-orange-50 p-4 dark:bg-orange-950">
-                          <h4 className="mb-2 text-lg font-semibold text-orange-900 dark:text-orange-100">
-                            WHY - Your Purpose
-                          </h4>
-                          <div className="text-sm text-orange-800 dark:text-orange-200">
-                            {result.why.evidence ||
-                              result.why.description ||
-                              'No clear WHY identified'}
-                          </div>
-                          {result.why.recommendations && (
-                            <div className="mt-2 text-xs text-orange-700 dark:text-orange-300">
-                              <strong>Recommendations:</strong>{' '}
-                              {result.why.recommendations}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* HOW */}
-                        <div className="rounded-lg border bg-blue-50 p-4 dark:bg-blue-950">
-                          <h4 className="mb-2 text-lg font-semibold text-blue-900 dark:text-blue-100">
-                            HOW - Your Process
-                          </h4>
-                          <div className="text-sm text-blue-800 dark:text-blue-200">
-                            {result.how.evidence ||
-                              result.how.description ||
-                              'No clear HOW identified'}
-                          </div>
-                          {result.how.recommendations && (
-                            <div className="mt-2 text-xs text-blue-700 dark:text-blue-300">
-                              <strong>Recommendations:</strong>{' '}
-                              {result.how.recommendations}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* WHAT */}
-                        <div className="rounded-lg border bg-green-50 p-4 dark:bg-green-950">
-                          <h4 className="mb-2 text-lg font-semibold text-green-900 dark:text-green-100">
-                            WHAT - Your Product/Service
-                          </h4>
-                          <div className="text-sm text-green-800 dark:text-green-200">
-                            {result.what.evidence ||
-                              result.what.description ||
-                              'No clear WHAT identified'}
-                          </div>
-                          {result.what.recommendations && (
-                            <div className="mt-2 text-xs text-green-700 dark:text-green-300">
-                              <strong>Recommendations:</strong>{' '}
-                              {result.what.recommendations}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Raw Analysis Data */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Analysis Details</CardTitle>
-                    <CardDescription>
-                      Complete analysis results and metadata
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="rounded-lg border bg-muted/50 p-4">
-                        <h4 className="mb-2 font-semibold">Analysis Results</h4>
-                        <pre className="max-h-96 overflow-auto whitespace-pre-wrap text-xs">
-                          {JSON.stringify(result, null, 2)}
-                        </pre>
-                      </div>
-                      <Button
-                        onClick={() =>
-                          copyToClipboard(JSON.stringify(result, null, 2))
-                        }
-                      >
-                        <Copy className="mr-2 h-4 w-4" />
-                        Copy Full Analysis
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
               </CardContent>
             </Card>
           </TabsContent>

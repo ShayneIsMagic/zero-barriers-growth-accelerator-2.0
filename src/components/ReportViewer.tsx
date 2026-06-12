@@ -343,7 +343,22 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
         </TabsContent>
 
         <TabsContent value="golden-circle">
-          {report.goldenCircle ? (
+          {report.goldenCircle &&
+          hasStructuredFrameworkAnalysis(report.goldenCircle) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Golden Circle Analysis</CardTitle>
+                <CardDescription>Structured Golden Circle results</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FrameworkStructuredResults
+                  kind="golden-circle"
+                  data={report.goldenCircle}
+                  defaultExpanded
+                />
+              </CardContent>
+            </Card>
+          ) : report.goldenCircle ? (
             <Card>
               <CardHeader>
                 <CardTitle>Golden Circle Analysis</CardTitle>
@@ -469,18 +484,52 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
                 </div>
               </CardContent>
             </Card>
-          ) : (
+          ) : null}
+
+          {report.elementsOfValueB2B &&
+          hasStructuredFrameworkAnalysis(report.elementsOfValueB2B) ? (
+            <Card className="mt-4">
+              <CardHeader>
+                <CardTitle>B2B Elements of Value</CardTitle>
+                <CardDescription>B2B structured results</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FrameworkStructuredResults
+                  kind="b2b-elements"
+                  data={report.elementsOfValueB2B}
+                  defaultExpanded
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {!report.elementsOfValueB2C && !report.elementsOfValueB2B ? (
             <Alert>
               <XCircle className="h-4 w-4" />
               <AlertDescription>
                 Elements of Value analysis not available for this report.
               </AlertDescription>
             </Alert>
-          )}
+          ) : null}
         </TabsContent>
 
         <TabsContent value="clifton">
-          {report.cliftonStrengths ? (
+          {report.cliftonStrengths &&
+          hasStructuredFrameworkAnalysis(report.cliftonStrengths) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>CliftonStrengths Analysis</CardTitle>
+                <CardDescription>Structured theme results</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FrameworkStructuredResults
+                  kind="clifton-strengths"
+                  data={report.cliftonStrengths}
+                  defaultExpanded
+                />
+              </CardContent>
+            </Card>
+          ) : report.cliftonStrengths ? (
             <Card>
               <CardHeader>
                 <CardTitle>CliftonStrengths Analysis</CardTitle>

@@ -246,16 +246,17 @@ def parse_brand_archived_synonyms(path: Path = JAMBOJON_ENHANCED) -> dict[str, l
     return result
 
 
-def merge_keyword_lists(primary: list[str], archived: list[str]) -> list[str]:
+def merge_keyword_lists(*sources: list[str]) -> list[str]:
     merged: list[str] = []
     seen: set[str] = set()
-    for keyword in [*primary, *archived]:
-        cleaned = keyword.strip()
-        if not cleaned:
-            continue
-        key = cleaned.lower()
-        if key in seen:
-            continue
-        seen.add(key)
-        merged.append(cleaned)
+    for source in sources:
+        for keyword in source:
+            cleaned = keyword.strip()
+            if not cleaned:
+                continue
+            key = cleaned.lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            merged.append(cleaned)
     return merged

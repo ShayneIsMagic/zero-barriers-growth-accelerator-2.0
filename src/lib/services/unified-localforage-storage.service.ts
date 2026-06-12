@@ -11,6 +11,15 @@ import {
   extractAnalysisPayload,
   extractUrlFromPayload,
 } from '@/lib/framework/framework-results-adapter';
+import {
+  groupSummariesByCompany,
+  REPORTS_INDEX_META_KEY,
+  REPORTS_INDEX_VERSION,
+  sortReportsByTimestampDesc,
+  toStoredReportSummary,
+  type ReportsIndexMeta,
+  type StoredReportSummary,
+} from '@/lib/framework/reports-index';
 
 // Store configurations
 const puppeteerStore = localforage.createInstance({
@@ -23,6 +32,12 @@ const reportsStore = localforage.createInstance({
   name: 'ZeroBarriers',
   storeName: 'reports',
   description: 'Analysis reports in Markdown and JSON format',
+});
+
+const reportsIndexStore = localforage.createInstance({
+  name: 'ZeroBarriers',
+  storeName: 'reports_index',
+  description: 'Indexed metadata for reports (url, domain, assessmentType, timestamp)',
 });
 
 const importedFilesStore = localforage.createInstance({
@@ -42,6 +57,8 @@ export interface StoredPuppeteerData {
     analytics: any;
   };
 }
+
+export type { StoredReportSummary } from '@/lib/framework/reports-index';
 
 export interface StoredReport {
   id: string;
@@ -411,11 +428,89 @@ export class UnifiedLocalForageStorage {
     url: string,
     assessmentType?: string
   ): Promise<number> {
-    const existingReports = await this.getAllReports();
-    const matchingReports = existingReports.filter(
+    const summaries = await this.getAllReportSummaries();
+    const matchingReports = summaries.filter(
       (r) => r.url === url && r.assessmentType === assessmentType
     );
     return matchingReports.length + 1;
+  }
+
+  private static async syncReportIndex(report: StoredReport): Promise<void> {
+    await reportsIndexStore.setItem(report.id, toStoredReportSummary(report));
+  }
+
+  private static async removeReportIndex(reportId: string): Promise<void> {
+    await reportsIndexStore.removeItem(reportId);
+  }
+
+  /**
+   * Rebuild the reports_index store from full report payloads (one-time / repair).
+   */
+  static async rebuildReportsIndex(): Promise<number> {
+    const keys = await reportsStore.keys();
+    let count = 0;
+
+    for (const key of keys) {
+      const report = await reportsStore.getItem<StoredReport>(key);
+      if (!report) {
+        continue;
+      }
+      await reportsIndexStore.setItem(report.id, toStoredReportSummary(report));
+      count += 1;
+    }
+
+    const meta: ReportsIndexMeta = {
+      version: REPORTS_INDEX_VERSION,
+      lastRebuiltAt: new Date().toISOString(),
+      entryCount: count,
+    };
+    await reportsIndexStore.setItem(REPORTS_INDEX_META_KEY, meta);
+    return count;
+  }
+
+  private static async ensureReportsIndex(): Promise<void> {
+    const meta = await reportsIndexStore.getItem<ReportsIndexMeta>(
+      REPORTS_INDEX_META_KEY
+    );
+    const reportKeys = await reportsStore.keys();
+    if (!meta || meta.entryCount !== reportKeys.length) {
+      await this.rebuildReportsIndex();
+    }
+  }
+
+  /**
+   * List report metadata without loading full JSON/markdown payloads.
+   */
+  static async getAllReportSummaries(): Promise<StoredReportSummary[]> {
+    await this.ensureReportsIndex();
+    const keys = await reportsIndexStore.keys();
+    const summaries: StoredReportSummary[] = [];
+
+    for (const key of keys) {
+      if (key === REPORTS_INDEX_META_KEY) {
+        continue;
+      }
+      const summary = await reportsIndexStore.getItem<StoredReportSummary>(key);
+      if (summary) {
+        summaries.push(summary);
+      }
+    }
+
+    return sortReportsByTimestampDesc(summaries);
+  }
+
+  /**
+   * Load full report payloads for specific IDs (compile, preview, download).
+   */
+  static async loadReportsByIds(reportIds: string[]): Promise<StoredReport[]> {
+    const reports: StoredReport[] = [];
+    for (const reportId of reportIds) {
+      const report = await this.getReport(reportId);
+      if (report) {
+        reports.push(report);
+      }
+    }
+    return sortReportsByTimestampDesc(reports);
   }
 
   /**
@@ -454,6 +549,17 @@ export class UnifiedLocalForageStorage {
     };
 
     await reportsStore.setItem(reportId, report);
+    await this.syncReportIndex(report);
+    const meta = await reportsIndexStore.getItem<ReportsIndexMeta>(
+      REPORTS_INDEX_META_KEY
+    );
+    if (meta) {
+      await reportsIndexStore.setItem(REPORTS_INDEX_META_KEY, {
+        ...meta,
+        entryCount: meta.entryCount + 1,
+        lastRebuiltAt: new Date().toISOString(),
+      });
+    }
     return reportId;
   }
 
@@ -488,20 +594,8 @@ export class UnifiedLocalForageStorage {
    * Get all reports
    */
   static async getAllReports(): Promise<StoredReport[]> {
-    const keys = await reportsStore.keys();
-    const reports: StoredReport[] = [];
-
-    for (const key of keys) {
-      const report = await reportsStore.getItem<StoredReport>(key);
-      if (report) {
-        reports.push(report);
-      }
-    }
-
-    return reports.sort(
-      (a, b) =>
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-    );
+    const summaries = await this.getAllReportSummaries();
+    return this.loadReportsByIds(summaries.map((summary) => summary.id));
   }
 
   // ============================================
@@ -576,22 +670,24 @@ export class UnifiedLocalForageStorage {
   /**
    * Group all reports by company domain for compile-by-company flows.
    */
-  static async getReportsGroupedByCompany(): Promise<Record<string, StoredReport[]>> {
-    const all = await this.getAllReports();
-    const groups: Record<string, StoredReport[]> = {};
-    for (const report of all) {
-      const key = report.domain ?? this.extractDomain(report.url);
-      if (!groups[key]) {
-        groups[key] = [];
-      }
-      groups[key].push(report);
-    }
-    for (const key of Object.keys(groups)) {
-      groups[key].sort(
-        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  static async getReportsGroupedByCompany(): Promise<
+    Record<string, StoredReportSummary[]>
+  > {
+    const summaries = await this.getAllReportSummaries();
+    return groupSummariesByCompany(summaries);
+  }
+
+  static async getFullReportsGroupedByCompany(): Promise<
+    Record<string, StoredReport[]>
+  > {
+    const grouped = await this.getReportsGroupedByCompany();
+    const full: Record<string, StoredReport[]> = {};
+    for (const [companyKey, summaries] of Object.entries(grouped)) {
+      full[companyKey] = await this.loadReportsByIds(
+        summaries.map((summary) => summary.id)
       );
     }
-    return groups;
+    return full;
   }
 
   /**

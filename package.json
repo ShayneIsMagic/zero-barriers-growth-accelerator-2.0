@@ -58,7 +58,8 @@
     "setup:users": "node scripts/setup-production-users.js",
     "smoke:frameworks": "node scripts/smoke-analyze-all-frameworks.mjs",
     "smoke:frameworks:quick": "node scripts/smoke-analyze-all-frameworks.mjs --quick",
-    "smoke:flask": "cd backend && pipenv run python scripts/smoke_evaluate_all.py"
+    "smoke:flask": "cd backend && pipenv run python scripts/smoke_evaluate_all.py",
+    "build:catalog": "cd backend && pipenv run python scripts/build_framework_catalog.py"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.63.0",

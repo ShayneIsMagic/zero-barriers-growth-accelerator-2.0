@@ -41,8 +41,10 @@ import {
   saveContentSnapshot,
 } from '@/services/content-api';
 import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
+import { FrameworkAnalyzeActions } from '@/components/analysis/FrameworkAnalyzeActions';
 import { ElementsValueResultsPanel } from '@/components/analysis/ElementsValueResultsPanel';
 import { generateElementsValueMarkdown } from '@/lib/framework/elements-value-display';
+import { buildFrameworkPageRunParams } from '@/lib/framework/framework-page-run-params';
 import { loadSnapshot } from '@/lib/snapshot-storage';
 import { CanonicalFrameworkPayload } from '@/types/canonical-framework-payload';
 
@@ -60,6 +62,9 @@ export function B2CElementsPage() {
     result,
     error: streamError,
     runAnalysis: runFrameworkAnalysis,
+    runDeterministicAnalysis,
+    isFlaskRunning,
+    analysisMethod,
   } = useFrameworkPageAnalysis('/api/analyze/elements-value-b2c-standalone');
 
   const isBusy = isAnalyzing || isCollecting;
@@ -95,28 +100,23 @@ export function B2CElementsPage() {
     void syncStoredSnapshot();
   }, [result]);
 
+  const pageRunInput = {
+    url,
+    proposedContent,
+    scrapedContent,
+    setLocalError,
+  };
+
   const runAnalysis = async () => {
-    if (!url.trim()) return;
+    const params = buildFrameworkPageRunParams(pageRunInput);
+    if (!params) return;
+    await runFrameworkAnalysis(params);
+  };
 
-    let existingContent = null;
-    let skipCollection = false;
-    if (scrapedContent.trim()) {
-      try {
-        existingContent = JSON.parse(scrapedContent.trim());
-        skipCollection = true;
-      } catch {
-        setLocalError('Invalid JSON in scraped content field');
-        return;
-      }
-    }
-
-    await runFrameworkAnalysis({
-      url: url.trim(),
-      proposedContent: proposedContent.trim(),
-      existingContent,
-      skipCollection,
-      analysisType: 'full',
-    });
+  const runDeterministic = async () => {
+    const params = buildFrameworkPageRunParams(pageRunInput);
+    if (!params) return;
+    await runDeterministicAnalysis(params);
   };
 
   const copyToClipboard = (text: string) => {
@@ -388,27 +388,17 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
             </Alert>
           )}
 
-          {/* Analyze Button */}
-          <Button
-            onClick={runAnalysis}
-            disabled={isBusy || !url.trim()}
-            className="w-full"
-            size="lg"
-          >
-            {isBusy ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Analyzing...
-              </>
-            ) : (
-              <>
-                <Users className="mr-2 h-4 w-4" />
-                {proposedContent
-                  ? 'Compare Existing vs. Proposed'
-                  : 'Analyze Existing Content'}
-              </>
-            )}
-          </Button>
+          <FrameworkAnalyzeActions
+            endpoint="/api/analyze/elements-value-b2c-standalone"
+            isBusy={isBusy}
+            isFlaskRunning={isFlaskRunning}
+            hasUrl={Boolean(url.trim())}
+            onRunAnalysis={runAnalysis}
+            onRunDeterministic={runDeterministic}
+            analysisMethod={analysisMethod}
+            hasProposedContent={Boolean(proposedContent.trim())}
+            analyzeIcon={<Users className="mr-2 h-4 w-4" />}
+          />
 
           {/* Chunk Progress Bar */}
           {(isAnalyzing || isCollecting) && (

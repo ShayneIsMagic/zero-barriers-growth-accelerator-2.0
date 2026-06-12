@@ -23,7 +23,10 @@ import {
   rankCliftonThemesFromAnalysis,
   type RankedCliftonTheme,
 } from '@/lib/framework/clifton-theme-ranking';
+import { VocabularyDefinitionHint } from '@/components/analysis/VocabularyDefinitionHint';
 import { useMemo } from 'react';
+
+const VOCABULARY_FRAMEWORK_KEY = 'clifton-strengths' as const;
 
 interface CliftonThemeResultsPanelProps {
   analysis: Record<string, unknown> | null | undefined;
@@ -98,6 +101,11 @@ export function CliftonThemeResultsPanel({
               <AccordionTrigger className="hover:no-underline">
                 <div className="flex flex-1 items-center justify-between gap-3 pr-2 text-left">
                   <span className="font-medium">{domain.domainLabel}</span>
+                  <VocabularyDefinitionHint
+                    frameworkKey={VOCABULARY_FRAMEWORK_KEY}
+                    elementKey={domain.domainKey}
+                    categoryKey={domain.domainKey}
+                  />
                   <div className="flex items-center gap-2">
                     <span
                       className={`text-sm ${getFractionalScoreTextClass(domain.domainScore)}`}
@@ -165,6 +173,10 @@ function ThemeCard({ theme, rank }: ThemeCardProps) {
       <div className="mb-1 flex flex-wrap items-center gap-2">
         <span className="text-xs font-medium text-muted-foreground">#{rank}</span>
         <span className="font-medium">{theme.displayName}</span>
+        <VocabularyDefinitionHint
+          frameworkKey={VOCABULARY_FRAMEWORK_KEY}
+          elementKey={theme.slug}
+        />
         <Badge variant={getFractionalScoreBadgeVariant(theme.score)}>
           {formatFractionalScoreDecimal(theme.score)}
         </Badge>
@@ -189,8 +201,12 @@ function ThemeRow({ theme, rank }: ThemeRowProps) {
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs text-muted-foreground">#{rank}</span>
-          <span className="font-medium">{theme.displayName}</span>
-          <Badge variant="secondary">{theme.strengthLabel}</Badge>
+        <span className="font-medium">{theme.displayName}</span>
+        <VocabularyDefinitionHint
+          frameworkKey={VOCABULARY_FRAMEWORK_KEY}
+          elementKey={theme.slug}
+        />
+        <Badge variant="secondary">{theme.strengthLabel}</Badge>
         </div>
         {theme.evidence ? (
           <p className="mt-1 text-xs text-muted-foreground">{theme.evidence}</p>

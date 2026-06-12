@@ -76,15 +76,15 @@ Persistent browser state uses **Local Forage** (IndexedDB) for collected Puppete
 | Phase | When | What |
 |-------|------|------|
 | **A — Assessment UX parity** | **Done (Jun 2026)** | `GoldenCircleResultsPanel`, `RevenueTrendsResultsPanel`, `AssessmentWorkflowSteps`; wired in `FrameworkResultsPanel` + all standalone pages + runner; Revenue uses `useFrameworkPageAnalysis` with streaming + LocalForage auto-save |
-| **B — Definitions in UI** | **In progress (Jun 2026)** | `VocabularyDefinitionHint` on B2B/B2C element + category rows in `ElementsValueResultsPanel`; extend to Clifton/GC/Revenue panels |
-| **C — Legacy view cleanup** | **In progress (Jun 2026)** | `FrameworkStructuredResults` wired in `AssessmentResultsView`, `ContentComparisonEnhancedPage` (all framework tabs), `ReportViewer` B2C when structured payload present; legacy percent/JSON fallback retained |
-| **D — IndexedDB indexed catalog** | When report lists feel slow **or** before full-text search / compile-at-scale | Add indexed metadata store (`url`, `domain`, `assessmentType`, `timestamp`); split index vs payload; optional Dexie — **ask before new package**. Today `getAllReports()` full-scans all keys |
-| **E — Flask FE integration** | **In progress (Jun 2026)** | `flask-evaluation.service.ts`, `runDeterministicAnalysis` in `useFrameworkPageAnalysis`, `DeterministicEvaluationButton` on B2B page; set `NEXT_PUBLIC_ENABLE_FLASK_EVALUATION=true` + `NEXT_PUBLIC_EVALUATION_API_URL` |
+| **B — Definitions in UI** | **Done (Jun 2026)** | `VocabularyDefinitionHint` on all framework results panels (B2B/B2C, Clifton, Golden Circle, Revenue, Brand) |
+| **C — Legacy view cleanup** | **Done (Jun 2026)** | `FrameworkStructuredResults` in legacy views + `ReportViewer` (B2C/B2B/GC/Clifton when structured); Golden Circle page legacy WHY/HOW/WHAT + raw JSON dump removed |
+| **D — IndexedDB indexed catalog** | **Done (Jun 2026)** | `reports_index` LocalForage store + `getAllReportSummaries()` / `loadReportsByIds()`; ReportsViewer lists metadata only, loads payloads on preview/compile; `rebuildReportsIndex()` auto-runs when counts drift |
+| **E — Flask FE integration** | **Done (Jun 2026)** | `FrameworkAnalyzeActions` + `runDeterministicAnalysis` on all 6 standalone pages; **Content Comparison → Framework Analysis** runner supports AI vs Flask toggle; set `NEXT_PUBLIC_ENABLE_FLASK_EVALUATION=true` + `NEXT_PUBLIC_EVALUATION_API_URL` |
 | **F — Prisma structured persistence** | If/when server becomes system of record again | Model B2B subcategories in `FrameworkCategory`; align with LocalForage adapter |
 
 **Phase A is the immediate FE refactor priority** — it closes the largest gap: Golden Circle and Revenue still use markdown/JSON fallback in `FrameworkResultsPanel` while B2B/B2C/Clifton/Brand have structured panels.
 
-**Vocabulary pipeline (parallel track):** Phase 1 definitions SSOT done (`framework-vocabulary.json`). Phase 2 synonym enricher (`backend/scripts/enrich_framework_synonyms.py` → `framework-synonym-enrichment.json` + review CSV; `--source datamuse` optional) → Phase 3 wire keywords into Flask catalog + UI.
+**Vocabulary pipeline (parallel track):** Phase 1 definitions SSOT done (`framework-vocabulary.json`). Phase 2 synonym enricher (`enrich_framework_synonyms.py` → review CSV). **Phase 3 done:** `build_framework_catalog.py` merges `framework-synonym-enrichment.json` into `framework_catalog.json` — run `npm run build:catalog` then `cd backend && pipenv run python app.py demo-data`.
 
 **Smoke tests:** `npm run smoke:flask` · `npm run smoke:frameworks:quick` · `npm run smoke:frameworks` (full AI).
 

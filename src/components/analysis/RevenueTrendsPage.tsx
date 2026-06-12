@@ -20,8 +20,10 @@ import {
 } from '@/components/analysis/AssessmentWorkflowSteps';
 import { RevenueTrendsResultsPanel } from '@/components/analysis/RevenueTrendsResultsPanel';
 import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
+import { FrameworkAnalyzeActions } from '@/components/analysis/FrameworkAnalyzeActions';
 import { useFrameworkPageAnalysis } from '@/hooks/useFrameworkPageAnalysis';
 import { generateRevenueTrendsMarkdown as buildRevenueTrendsMarkdown } from '@/lib/framework/revenue-trends-display';
+import { buildFrameworkPageRunParams } from '@/lib/framework/framework-page-run-params';
 import { CheckCircle2, Copy, Download, Loader2, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 
@@ -40,6 +42,9 @@ export function RevenueTrendsPage() {
     result,
     error: streamError,
     runAnalysis: runFrameworkAnalysis,
+    runDeterministicAnalysis,
+    isFlaskRunning,
+    analysisMethod,
   } = useFrameworkPageAnalysis('/api/analyze/revenue-trends');
 
   const isBusy = isAnalyzing || isCollecting;
@@ -47,35 +52,41 @@ export function RevenueTrendsPage() {
   const analysisPayload =
     result?.analysis || result?.comparison || result?.data;
 
-  const runAnalysis = async () => {
-    if (!url.trim()) {
-      setLocalError('Please enter a URL');
-      return;
-    }
-
-    setLocalError(null);
-
-    let existingContent = null;
-    let skipCollection = false;
-    if (scrapedContent.trim()) {
-      try {
-        existingContent = JSON.parse(scrapedContent.trim());
-        skipCollection = true;
-      } catch {
+  const pageRunInput = {
+    url,
+    proposedContent,
+    scrapedContent,
+    setLocalError: (message: string | null) => {
+      if (message === 'Invalid JSON in scraped content field') {
         setLocalError(
           'Scraped content JSON is invalid. Paste valid JSON from Content-Comparison.'
         );
         return;
       }
-    }
+      setLocalError(message);
+    },
+  };
 
-    await runFrameworkAnalysis({
-      url: url.trim(),
-      proposedContent: proposedContent.trim(),
-      existingContent,
-      skipCollection,
-      analysisType: 'full',
-    });
+  const runAnalysis = async () => {
+    if (!url.trim()) {
+      setLocalError('Please enter a URL');
+      return;
+    }
+    setLocalError(null);
+    const params = buildFrameworkPageRunParams(pageRunInput);
+    if (!params) return;
+    await runFrameworkAnalysis(params);
+  };
+
+  const runDeterministic = async () => {
+    if (!url.trim()) {
+      setLocalError('Please enter a URL');
+      return;
+    }
+    setLocalError(null);
+    const params = buildFrameworkPageRunParams(pageRunInput);
+    if (!params) return;
+    await runDeterministicAnalysis(params);
   };
 
   const copyToClipboard = (text: string) => {
@@ -254,27 +265,17 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
             </Alert>
           )}
 
-          {/* Analyze Button */}
-          <Button
-            onClick={runAnalysis}
-            disabled={isBusy || !url.trim()}
-            className="w-full"
-            size="lg"
-          >
-            {isBusy ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Analyzing...
-              </>
-            ) : (
-              <>
-                <TrendingUp className="mr-2 h-4 w-4" />
-                {proposedContent
-                  ? 'Compare Existing vs. Proposed'
-                  : 'Find Revenue Opportunities'}
-              </>
-            )}
-          </Button>
+          <FrameworkAnalyzeActions
+            endpoint="/api/analyze/revenue-trends"
+            isBusy={isBusy}
+            isFlaskRunning={isFlaskRunning}
+            hasUrl={Boolean(url.trim())}
+            onRunAnalysis={runAnalysis}
+            onRunDeterministic={runDeterministic}
+            analysisMethod={analysisMethod}
+            hasProposedContent={Boolean(proposedContent.trim())}
+            analyzeIcon={<TrendingUp className="mr-2 h-4 w-4" />}
+          />
 
           {(isAnalyzing || isCollecting) && (
             <div className="space-y-2">

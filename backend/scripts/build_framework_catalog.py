@@ -25,6 +25,12 @@ ARCHETYPE_FILE = (
     REPO_ROOT / 'src/lib/ai-engines/framework-knowledge/jambojon-archetypes-framework.json'
 )
 OUTPUT = Path(__file__).resolve().parents[1] / 'src/lib/demo_data/framework_catalog.json'
+ENRICHMENT_PATH = REPO_ROOT / 'src/lib/framework/framework-synonym-enrichment.json'
+
+# Vocabulary / enrichment keys that differ from Flask catalog keys
+FRAMEWORK_KEY_ALIASES = {
+    'clifton-strengths': 'clifton',
+}
 
 ARCHETYPE_SLUGS = {
     'The Sage': 'sage',
@@ -154,6 +160,26 @@ def _load_archetype_elements() -> dict[str, dict]:
     return elements
 
 
+def load_synonym_enrichment_index() -> dict[tuple[str, str], list[str]]:
+    """Load reviewed synonym enrichment (Phase 3) keyed by (frameworkKey, elementKey)."""
+    if not ENRICHMENT_PATH.exists():
+        return {}
+
+    payload = json.loads(ENRICHMENT_PATH.read_text(encoding='utf-8'))
+    index: dict[tuple[str, str], list[str]] = {}
+    for entry in payload.get('entries', []):
+        framework_key = FRAMEWORK_KEY_ALIASES.get(
+            entry.get('frameworkKey', ''),
+            entry.get('frameworkKey', ''),
+        )
+        element_key = entry.get('elementKey', '')
+        synonyms = entry.get('synonyms') or []
+        if not framework_key or not element_key or not synonyms:
+            continue
+        index[(framework_key, element_key)] = synonyms
+    return index
+
+
 def build_catalog() -> dict:
     chunk_content = CHUNK_FILE.read_text(encoding='utf-8')
     element_content = ELEMENT_FILE.read_text(encoding='utf-8')
@@ -173,6 +199,7 @@ def build_catalog() -> dict:
         'clifton': parse_clifton_archived_synonyms(),
         'brand-archetypes': parse_brand_archived_synonyms(),
     }
+    enrichment_synonyms = load_synonym_enrichment_index()
 
     keyword_lookup = {
         'b2c-elements': b2c_defs,
@@ -191,6 +218,7 @@ def build_catalog() -> dict:
                 config,
                 keyword_lookup,
                 archived_synonyms.get(framework_key, {}),
+                enrichment_synonyms,
             )
         )
 
@@ -212,8 +240,9 @@ def build_catalog() -> dict:
                 'chunks': revenue_chunks,
             },
             keyword_lookup,
-            archived_synonyms={},
-            use_composite_keys=False,
+            {},
+            enrichment_synonyms,
+            False,
         )
     )
 
@@ -225,6 +254,7 @@ def _build_framework_entry(
     config: dict,
     keyword_lookup: dict[str, dict[str, dict]],
     archived_synonyms: dict[str, list[str]] | None = None,
+    enrichment_synonyms: dict[tuple[str, str], list[str]] | None = None,
     use_composite_keys: bool | None = None,
 ) -> dict:
     if use_composite_keys is None:
@@ -232,6 +262,7 @@ def _build_framework_entry(
 
     lookup = keyword_lookup.get(framework_key, {})
     archived_lookup = archived_synonyms or {}
+    enrichment_lookup = enrichment_synonyms or {}
     elements = []
     sort_order = 0
     for chunk in config['chunks']:
@@ -240,6 +271,7 @@ def _build_framework_entry(
             meta = lookup.get(element_key, lookup.get(slug, {}))
             primary_keywords = meta.get('keywords', [])
             archived_keywords = archived_lookup.get(slug, [])
+            enrichment_keywords = enrichment_lookup.get((framework_key, element_key), [])
             definition = meta.get('description', '')
             elements.append(
                 {
@@ -249,7 +281,11 @@ def _build_framework_entry(
                     'elementKey': element_key,
                     'displayName': meta.get('displayName', slug.replace('_', ' ').title()),
                     'definition': definition,
-                    'keywords': merge_keyword_lists(primary_keywords, archived_keywords),
+                    'keywords': merge_keyword_lists(
+                        primary_keywords,
+                        archived_keywords,
+                        enrichment_keywords,
+                    ),
                     'sortOrder': sort_order,
                 }
             )
@@ -272,7 +308,10 @@ def main() -> None:
         fw['frameworkKey']: sum(len(el.get('keywords', [])) for el in fw['elements'])
         for fw in catalog['frameworks']
     }
+    enrichment_path = ENRICHMENT_PATH if ENRICHMENT_PATH.exists() else None
     print(f'Wrote {OUTPUT} ({len(catalog["frameworks"])} frameworks, {total} elements)')
+    if enrichment_path:
+        print(f'  Synonym enrichment: {enrichment_path.name}')
     for key, count in archived_counts.items():
         print(f'  {key}: {count} merged keywords')
 

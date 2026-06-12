@@ -4,6 +4,10 @@
  */
 
 import type { CanonicalFrameworkPayload } from '@/types/canonical-framework-payload';
+import {
+  buildCanonicalFrameworkPayload,
+  normalizeRawEvidence,
+} from '@/types/canonical-framework-payload';
 
 export interface FlaskEvaluateRequest {
   frameworkKey: string;
@@ -21,6 +25,7 @@ export interface FlaskEvaluateResponse {
   topStrengths?: unknown[];
   criticalGaps?: unknown[];
   analysisMethod?: string;
+  verification?: Record<string, unknown>;
   error?: string;
   details?: string;
 }
@@ -58,6 +63,27 @@ export async function evaluateWithFlask(
     throw new Error(data.error || data.details || `Flask evaluate failed (${response.status})`);
   }
   return data;
+}
+
+export interface RunFlaskFrameworkEvaluationParams {
+  frameworkKey: string;
+  pageUrl: string;
+  existingContent: Record<string, unknown>;
+  proposedContent?: string;
+}
+
+export async function runFlaskFrameworkEvaluation(
+  params: RunFlaskFrameworkEvaluationParams
+): Promise<FlaskEvaluateResponse> {
+  return evaluateWithFlask({
+    frameworkKey: params.frameworkKey,
+    payload: buildCanonicalFrameworkPayload({
+      url: params.pageUrl,
+      collectorType: 'content-collect-api',
+      rawEvidence: normalizeRawEvidence(params.existingContent),
+      proposedContent: params.proposedContent,
+    }),
+  });
 }
 
 export async function checkFlaskHealth(): Promise<boolean> {

@@ -11,7 +11,10 @@ import {
   type ArchetypeRankingSummary,
   type RankedArchetype,
 } from '@/lib/framework/archetype-ranking';
+import { VocabularyDefinitionHint } from '@/components/analysis/VocabularyDefinitionHint';
 import { useMemo } from 'react';
+
+const VOCABULARY_FRAMEWORK_KEY = 'brand-archetypes' as const;
 
 interface BrandArchetypeResultsPanelProps {
   analysis: Record<string, unknown> | null | undefined;
@@ -25,6 +28,7 @@ interface ArchetypeSummaryCardProps {
 
 function ArchetypeSummaryCard({ item, variant, rank }: ArchetypeSummaryCardProps) {
   const name = 'displayName' in item ? item.displayName : item.name;
+  const slug = item.slug;
   const strength = 'strengthLabel' in item ? item.strengthLabel : item.strength;
   const group = item.group;
   const evidence = item.evidence;
@@ -41,6 +45,10 @@ function ArchetypeSummaryCard({ item, variant, rank }: ArchetypeSummaryCardProps
           <span className="text-xs font-medium text-muted-foreground">#{rank}</span>
         ) : null}
         <span className="font-medium">{name}</span>
+        <VocabularyDefinitionHint
+          frameworkKey={VOCABULARY_FRAMEWORK_KEY}
+          elementKey={slug}
+        />
         <Badge variant={variant === 'not' ? 'outline' : 'default'}>
           {item.score.toFixed(2)}
         </Badge>
