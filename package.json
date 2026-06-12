@@ -55,7 +55,10 @@
     "test:trends": "node scripts/test-google-trends.js",
     "test:google-analysis": "node scripts/test-comprehensive-google-analysis.js",
     "test:routes": "node scripts/test-all-routes.js",
-    "setup:users": "node scripts/setup-production-users.js"
+    "setup:users": "node scripts/setup-production-users.js",
+    "smoke:frameworks": "node scripts/smoke-analyze-all-frameworks.mjs",
+    "smoke:frameworks:quick": "node scripts/smoke-analyze-all-frameworks.mjs --quick",
+    "smoke:flask": "cd backend && pipenv run python scripts/smoke_evaluate_all.py"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.63.0",

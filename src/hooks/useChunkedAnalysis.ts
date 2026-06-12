@@ -36,6 +36,7 @@ const FRAMEWORK_NAME_BY_ENDPOINT: Record<string, string> = {
   '/api/analyze/clifton-strengths-standalone': 'clifton',
   '/api/analyze/golden-circle-standalone': 'golden-circle',
   '/api/analyze/brand-archetypes-standalone': 'brand-archetypes',
+  '/api/analyze/revenue-trends': 'revenue-trends',
 };
 
 /**

@@ -22,6 +22,17 @@ Base URL: `http://localhost:3000` (dev) or your Vercel deployment URL (prod).
 
 **Next.js vs Flask:** Chunked standalone routes enrich Brand Archetypes and CliftonStrengths with `top_three_archetypes`, `not_archetypes`, `personality_profile`, `top_five_strengths`, and `domain_rankings`. Flask currently returns `primary_archetype` / `secondary_archetypes` for archetypes and category rollups for B2B/B2C — see backend API doc for parity notes.
 
+### Flask ↔ frontend integration (optional)
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `NEXT_PUBLIC_EVALUATION_API_URL` | `http://localhost:5001` | Flask base URL for `POST /api/evaluate` |
+| `NEXT_PUBLIC_ENABLE_FLASK_EVALUATION` | unset (`false`) | When `true`, standalone pages show **Deterministic (Flask)** button |
+
+Client: `src/lib/services/flask-evaluation.service.ts`. Hook: `useFrameworkPageAnalysis().runDeterministicAnalysis`.
+
+**Smoke tests:** `npm run smoke:flask` (all 6 frameworks, no AI) · `npm run smoke:frameworks:quick` (Next.js route contracts) · `npm run smoke:frameworks` (full AI run, requires Ollama/Gemini + dev server).
+
 ## Conventions
 
 ### Authentication

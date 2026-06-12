@@ -5,6 +5,12 @@
  */
 
 import localforage from 'localforage';
+import {
+  buildUrlReportLabel,
+  detectFrameworkKind,
+  extractAnalysisPayload,
+  extractUrlFromPayload,
+} from '@/lib/framework/framework-results-adapter';
 
 // Store configurations
 const puppeteerStore = localforage.createInstance({
@@ -427,7 +433,10 @@ export class UnifiedLocalForageStorage {
     const formattedDate = this.formatDateForDisplay(timestamp);
     const version = await this.getNextVersion(url, assessmentType);
     const assessmentDisplayName = this.getAssessmentDisplayName(assessmentType);
-    const displayName = `${domain} - ${assessmentDisplayName} - ${formattedDate.split(',')[0]}${version > 1 ? ` (v${version})` : ''}`;
+    const urlLabel = buildUrlReportLabel(url);
+    const datePart = formattedDate.split(',')[0];
+    const versionSuffix = version > 1 ? ` · v${version}` : '';
+    const displayName = `${urlLabel} — ${assessmentDisplayName} — ${datePart}${versionSuffix}`;
 
     const report: StoredReport = {
       id: reportId,
@@ -498,6 +507,92 @@ export class UnifiedLocalForageStorage {
   // ============================================
   // FILE IMPORT/UPLOAD
   // ============================================
+
+  /**
+   * Import a JSON or Markdown analysis file into the reports library.
+   * URL and assessment type are inferred from file content when possible.
+   */
+  static async importReportFromFile(file: File): Promise<string> {
+    const content = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const text = event.target?.result;
+        if (typeof text !== 'string') {
+          reject(new Error('Failed to read file'));
+          return;
+        }
+        resolve(text);
+      };
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.readAsText(file);
+    });
+
+    const isJson =
+      file.type === 'application/json' || file.name.toLowerCase().endsWith('.json');
+    let parsed: unknown = content;
+
+    if (isJson) {
+      parsed = JSON.parse(content);
+    }
+
+    const url =
+      extractUrlFromPayload(parsed, 'https://imported.local/report') ??
+      'https://imported.local/report';
+
+    let assessmentType = 'imported-report';
+    if (isJson && typeof parsed === 'object' && parsed !== null) {
+      const record = parsed as Record<string, unknown>;
+      if (typeof record.assessmentType === 'string') {
+        assessmentType = record.assessmentType;
+      } else {
+        const analysis = extractAnalysisPayload(parsed);
+        const kind = detectFrameworkKind(undefined, analysis);
+        if (kind === 'b2b-elements') {
+          assessmentType = 'elements-value-b2b-standalone';
+        } else if (kind === 'b2c-elements') {
+          assessmentType = 'elements-value-b2c-standalone';
+        } else if (kind === 'clifton-strengths') {
+          assessmentType = 'clifton-strengths-standalone';
+        } else if (kind === 'brand-archetypes') {
+          assessmentType = 'brand-archetypes-standalone';
+        } else if (kind === 'golden-circle') {
+          assessmentType = 'golden-circle-standalone';
+        }
+      }
+    } else if (file.name.toLowerCase().includes('b2b')) {
+      assessmentType = 'elements-value-b2b-standalone';
+    } else if (file.name.toLowerCase().includes('b2c')) {
+      assessmentType = 'elements-value-b2c-standalone';
+    }
+
+    return this.storeReport(
+      url,
+      isJson ? parsed : content,
+      isJson ? 'json' : 'markdown',
+      assessmentType
+    );
+  }
+
+  /**
+   * Group all reports by company domain for compile-by-company flows.
+   */
+  static async getReportsGroupedByCompany(): Promise<Record<string, StoredReport[]>> {
+    const all = await this.getAllReports();
+    const groups: Record<string, StoredReport[]> = {};
+    for (const report of all) {
+      const key = report.domain ?? this.extractDomain(report.url);
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+      groups[key].push(report);
+    }
+    for (const key of Object.keys(groups)) {
+      groups[key].sort(
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      );
+    }
+    return groups;
+  }
 
   /**
    * Import/upload a Markdown or JSON file

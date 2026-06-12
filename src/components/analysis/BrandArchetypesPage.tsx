@@ -14,6 +14,10 @@ import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
 import { MarkdownFallbackViewer } from '@/components/analysis/MarkdownFallbackViewer';
+import {
+  AssessmentWorkflowSteps,
+  resolveAssessmentWorkflowStep,
+} from '@/components/analysis/AssessmentWorkflowSteps';
 import { useFrameworkPageAnalysis } from '@/hooks/useFrameworkPageAnalysis';
 import { CheckCircle2, Copy, Download, Loader2, Sparkles } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -150,6 +154,13 @@ export function BrandArchetypesPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className='space-y-4'>
+          <AssessmentWorkflowSteps
+            currentStep={resolveAssessmentWorkflowStep({
+              hasResult: Boolean(result),
+              isAnalyzing,
+              isCollecting,
+            })}
+          />
           <div>
             <label htmlFor='brand-archetypes-url' className='mb-2 block text-sm font-medium'>
               Website URL

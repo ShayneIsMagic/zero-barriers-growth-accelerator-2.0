@@ -70,6 +70,9 @@ prisma/*.db-journal
 reports/*.json
 !reports/.gitkeep
 
+# Ephemeral Flask evaluate HTTP dumps (repro via npm run smoke:flask / Postman)
+audit-reports/evaluate-run-*.json
+
 # Lighthouse reports (may contain sensitive info)
 lighthouse-report.*
 lint-results.txt

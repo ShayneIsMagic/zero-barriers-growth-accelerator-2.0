@@ -24,8 +24,14 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { MarkdownFallbackViewer } from '@/components/analysis/MarkdownFallbackViewer';
+import { GoldenCircleResultsPanel } from '@/components/analysis/GoldenCircleResultsPanel';
+import {
+  AssessmentWorkflowSteps,
+  resolveAssessmentWorkflowStep,
+} from '@/components/analysis/AssessmentWorkflowSteps';
 import { Progress } from '@/components/ui/progress';
 import { useFrameworkPageAnalysis } from '@/hooks/useFrameworkPageAnalysis';
+import { generateGoldenCircleMarkdown as buildGoldenCircleMarkdown } from '@/lib/framework/golden-circle-display';
 import {
   createProposedContent as postProposedContent,
   createVersionComparison as postVersionComparison,
@@ -102,7 +108,7 @@ export function GoldenCirclePage() {
   const downloadMarkdown = () => {
     if (!result) return;
 
-    const markdown = generateGoldenCircleMarkdown(result);
+    const markdown = buildGoldenCircleMarkdown(result as Record<string, unknown>);
     const blob = new Blob([markdown], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -221,6 +227,13 @@ export function GoldenCirclePage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <AssessmentWorkflowSteps
+            currentStep={resolveAssessmentWorkflowStep({
+              hasResult: Boolean(result),
+              isAnalyzing,
+              isCollecting,
+            })}
+          />
           {/* URL Input */}
           <div>
             <label
@@ -526,32 +539,42 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
 
                 {/* AI Analysis Results */}
                 {result.analysis && !result.analysis._isFallback && (
-                  <div className="mt-6 space-y-4">
-                    <h3 className="text-xl font-semibold">
-                      AI Analysis Results
-                    </h3>
+                  <GoldenCircleResultsPanel
+                    analysis={
+                      (result.analysis ?? result.comparison) as Record<
+                        string,
+                        unknown
+                      >
+                    }
+                  />
+                )}
 
-                    {/* Show analysis data */}
-                    <div className="rounded-lg border bg-blue-50 p-4 dark:bg-blue-950">
-                      <h4 className="mb-2 font-semibold">
-                        Golden Circle Analysis
-                      </h4>
-                      <div className="whitespace-pre-wrap text-sm">
-                        {JSON.stringify(result.analysis, null, 2)}
-                      </div>
-                    </div>
+                {result.comparison &&
+                  !result.comparison._isFallback &&
+                  !result.analysis && (
+                    <GoldenCircleResultsPanel
+                      analysis={result.comparison as Record<string, unknown>}
+                    />
+                  )}
 
-                    <Button
-                      onClick={() =>
-                        copyToClipboard(
-                          JSON.stringify(result.analysis, null, 2)
+                {(result.analysis || result.comparison) &&
+                  !(result.analysis?._isFallback || result.comparison?._isFallback) && (
+                  <Button
+                    onClick={() =>
+                      copyToClipboard(
+                        JSON.stringify(
+                          result.analysis ?? result.comparison,
+                          null,
+                          2
                         )
-                      }
-                    >
-                      <Copy className="mr-2 h-4 w-4" />
-                      Copy Analysis
-                    </Button>
-                  </div>
+                      )
+                    }
+                    variant="outline"
+                    size="sm"
+                  >
+                    <Copy className="mr-2 h-4 w-4" />
+                    Copy JSON
+                  </Button>
                 )}
 
                 {/* Why/How/What Analysis */}
@@ -744,45 +767,4 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
       )}
     </div>
   );
-}
-
-function generateGoldenCircleMarkdown(result: any): string {
-  return `# Golden Circle Analysis
-
-**URL:** ${result.url || 'N/A'}
-**Date:** ${new Date().toLocaleString()}
-**Analysis Type:** Golden Circle
-
----
-
-## Existing Content
-
-**Title:** ${result.existing?.title || 'N/A'}
-**Meta Description:** ${result.existing?.metaDescription || 'N/A'}
-**Word Count:** ${result.existing?.wordCount || 'N/A'}
-**Keywords:** ${result.existing?.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
-
-${
-  result.proposed
-    ? `
-## Proposed Content
-
-**Title:** ${result.proposed.title}
-**Meta Description:** ${result.proposed.metaDescription}
-**Word Count:** ${result.proposed.wordCount}
-**Keywords:** ${result.proposed.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
-
----
-
-## Golden Circle Analysis Results
-
-${JSON.stringify(result.data, null, 2)}
-`
-    : ''
-}
-
----
-
-Generated by Zero Barriers Growth Accelerator
-`;
 }

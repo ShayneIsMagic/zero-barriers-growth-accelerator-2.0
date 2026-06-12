@@ -15,6 +15,20 @@ import {
 } from '@/components/ui/select';
 import { MultiPageSelector } from '@/components/shared/MultiPageSelector';
 import { PageComparisonView } from './PageComparisonView';
+import { FrameworkResultsPanel } from '@/components/analysis/FrameworkResultsPanel';
+import { AssessmentWorkflowSteps } from '@/components/analysis/AssessmentWorkflowSteps';
+import {
+  detectFrameworkKind,
+  extractAnalysisPayload,
+  type FrameworkResultKind,
+} from '@/lib/framework/framework-results-adapter';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { apiCall, apiCallStream } from '@/lib/api-call';
 import { consumeChunkedAnalysisStream } from '@/lib/framework/consume-chunked-stream';
 import { getChunkedAssessmentConfig } from '@/lib/framework/framework-assessment-config';
@@ -187,6 +201,8 @@ export function FrameworkAnalysisRunner({
   const [allCollectedContent, setAllCollectedContent] = useState<Array<{ siteUrl: string; pages: Page[]; timestamp: string; pageCount: number }>>([]);
   const [showAllContent, setShowAllContent] = useState(false);
   const [currentSiteUrl, setCurrentSiteUrl] = useState<string>(url || '');
+  const [viewReport, setViewReport] = useState<Record<string, unknown> | null>(null);
+  const [viewReportKind, setViewReportKind] = useState<FrameworkResultKind>('unknown');
   const [loadedSiteData, setLoadedSiteData] =
     useState<StoredPuppeteerData | null>(null);
 
@@ -783,8 +799,14 @@ export function FrameworkAnalysisRunner({
     }
   };
 
-  const copyReport = (report: any) => {
+  const copyReport = (report: Record<string, unknown>) => {
     navigator.clipboard.writeText(JSON.stringify(report, null, 2));
+  };
+
+  const openReportView = (report: Record<string, unknown>, assessmentType?: string) => {
+    const analysis = extractAnalysisPayload(report);
+    setViewReportKind(detectFrameworkKind(assessmentType, analysis));
+    setViewReport(report);
   };
 
   const downloadReport = (report: any) => {
@@ -1009,6 +1031,17 @@ export function FrameworkAnalysisRunner({
 
   return (
     <div className="space-y-6">
+      <AssessmentWorkflowSteps
+        currentStep={
+          reports.length > 0
+            ? 'report'
+            : isRunning
+              ? 'analyze'
+              : selectedPages.length > 0
+                ? 'persist'
+                : 'collect'
+        }
+      />
       {/* Content Selection Section - Prominently Displayed */}
       <Card className="border-2 border-primary/20">
         <CardHeader>
@@ -1352,9 +1385,12 @@ export function FrameworkAnalysisRunner({
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => {
-                                  // View report action - could open modal
-                                }}
+                                onClick={() =>
+                                  openReportView(
+                                    progress.result as Record<string, unknown>,
+                                    assessment.assessmentType
+                                  )
+                                }
                               >
                                 <Eye className="h-3 w-3 mr-1" />
                                 View
@@ -1461,6 +1497,19 @@ export function FrameworkAnalysisRunner({
                       <Button
                         variant="outline"
                         size="sm"
+                        onClick={() =>
+                          openReportView(
+                            report as Record<string, unknown>,
+                            report.assessmentType as string | undefined
+                          )
+                        }
+                      >
+                        <Eye className="h-3 w-3 mr-1" />
+                        View
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => downloadReport(report)}
                       >
                         <Download className="h-3 w-3 mr-1" />
@@ -1482,6 +1531,31 @@ export function FrameworkAnalysisRunner({
           </Card>
         </>
       )}
+
+      <Dialog open={viewReport !== null} onOpenChange={() => setViewReport(null)}>
+        <DialogContent className="flex max-h-[90vh] max-w-4xl flex-col overflow-hidden">
+          <DialogHeader>
+            <DialogTitle>Assessment results</DialogTitle>
+            <DialogDescription>
+              Structured view with categories, subcategories, and drill-down where available.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto">
+            {viewReport ? (
+              <FrameworkResultsPanel
+                kind={viewReportKind}
+                analysis={extractAnalysisPayload(viewReport)}
+                readableMarkdown={
+                  typeof viewReport.readableMarkdown === 'string'
+                    ? viewReport.readableMarkdown
+                    : undefined
+                }
+                defaultExpanded
+              />
+            ) : null}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

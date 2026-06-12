@@ -24,6 +24,10 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { MarkdownFallbackViewer } from '@/components/analysis/MarkdownFallbackViewer';
+import {
+  AssessmentWorkflowSteps,
+  resolveAssessmentWorkflowStep,
+} from '@/components/analysis/AssessmentWorkflowSteps';
 import { Progress } from '@/components/ui/progress';
 import { useFrameworkPageAnalysis } from '@/hooks/useFrameworkPageAnalysis';
 import {
@@ -222,6 +226,13 @@ export function CliftonStrengthsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <AssessmentWorkflowSteps
+            currentStep={resolveAssessmentWorkflowStep({
+              hasResult: Boolean(result),
+              isAnalyzing,
+              isCollecting,
+            })}
+          />
           {/* URL Input */}
           <div>
             <label

@@ -1,4 +1,4 @@
-# AGENTS Guidelines — App (Frontend + Backend)
+ # AGENTS Guidelines — App (Frontend + Backend)
 
 This template may be a **monorepo** (`/frontend` and `/backend` in one repository) or **separate frontend and backend repositories**. In both cases, frontend and backend are separate builds with separate dev servers.
 
@@ -68,6 +68,25 @@ Open `http://localhost:3000` (frontend). Evaluation API: `http://localhost:5001`
 ### Client storage (documented exception)
 
 Persistent browser state uses **Local Forage** (IndexedDB) for collected Puppeteer data and reports. Keys and behavior are documented in `API_DOCUMENTATION.md` under Client Storage. Do not add new `localStorage` keys without documenting them there first.
+
+### FE refactor backlog (ordered — act when user approves each phase)
+
+**Do not skip ahead.** Plan first; wait for approval before starting each phase.
+
+| Phase | When | What |
+|-------|------|------|
+| **A — Assessment UX parity** | **Done (Jun 2026)** | `GoldenCircleResultsPanel`, `RevenueTrendsResultsPanel`, `AssessmentWorkflowSteps`; wired in `FrameworkResultsPanel` + all standalone pages + runner; Revenue uses `useFrameworkPageAnalysis` with streaming + LocalForage auto-save |
+| **B — Definitions in UI** | **In progress (Jun 2026)** | `VocabularyDefinitionHint` on B2B/B2C element + category rows in `ElementsValueResultsPanel`; extend to Clifton/GC/Revenue panels |
+| **C — Legacy view cleanup** | **In progress (Jun 2026)** | `FrameworkStructuredResults` wired in `AssessmentResultsView`, `ContentComparisonEnhancedPage` (all framework tabs), `ReportViewer` B2C when structured payload present; legacy percent/JSON fallback retained |
+| **D — IndexedDB indexed catalog** | When report lists feel slow **or** before full-text search / compile-at-scale | Add indexed metadata store (`url`, `domain`, `assessmentType`, `timestamp`); split index vs payload; optional Dexie — **ask before new package**. Today `getAllReports()` full-scans all keys |
+| **E — Flask FE integration** | **In progress (Jun 2026)** | `flask-evaluation.service.ts`, `runDeterministicAnalysis` in `useFrameworkPageAnalysis`, `DeterministicEvaluationButton` on B2B page; set `NEXT_PUBLIC_ENABLE_FLASK_EVALUATION=true` + `NEXT_PUBLIC_EVALUATION_API_URL` |
+| **F — Prisma structured persistence** | If/when server becomes system of record again | Model B2B subcategories in `FrameworkCategory`; align with LocalForage adapter |
+
+**Phase A is the immediate FE refactor priority** — it closes the largest gap: Golden Circle and Revenue still use markdown/JSON fallback in `FrameworkResultsPanel` while B2B/B2C/Clifton/Brand have structured panels.
+
+**Vocabulary pipeline (parallel track):** Phase 1 definitions SSOT done (`framework-vocabulary.json`). Phase 2 synonym enricher (`backend/scripts/enrich_framework_synonyms.py` → `framework-synonym-enrichment.json` + review CSV; `--source datamuse` optional) → Phase 3 wire keywords into Flask catalog + UI.
+
+**Smoke tests:** `npm run smoke:flask` · `npm run smoke:frameworks:quick` · `npm run smoke:frameworks` (full AI).
 
 ### Chunked framework analysis
 

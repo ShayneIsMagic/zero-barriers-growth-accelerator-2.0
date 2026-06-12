@@ -11,65 +11,71 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { Copy, Download, Loader2, TrendingUp } from 'lucide-react';
-import { useState } from 'react';
+import {
+  AssessmentWorkflowSteps,
+  resolveAssessmentWorkflowStep,
+} from '@/components/analysis/AssessmentWorkflowSteps';
+import { RevenueTrendsResultsPanel } from '@/components/analysis/RevenueTrendsResultsPanel';
 import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
-import { apiCall } from '@/lib/api-call';
+import { useFrameworkPageAnalysis } from '@/hooks/useFrameworkPageAnalysis';
+import { generateRevenueTrendsMarkdown as buildRevenueTrendsMarkdown } from '@/lib/framework/revenue-trends-display';
+import { CheckCircle2, Copy, Download, Loader2, TrendingUp } from 'lucide-react';
+import { useState } from 'react';
 
 export function RevenueTrendsPage() {
   const [url, setUrl] = useState('');
   const [proposedContent, setProposedContent] = useState('');
   const [scrapedContent, setScrapedContent] = useState('');
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [result, setResult] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
-  const analysisPayload = result?.analysis || result?.comparison || result?.data;
+  const [localError, setLocalError] = useState<string | null>(null);
+
+  const {
+    isAnalyzing,
+    isCollecting,
+    percent,
+    currentCategory,
+    completedCategories,
+    result,
+    error: streamError,
+    runAnalysis: runFrameworkAnalysis,
+  } = useFrameworkPageAnalysis('/api/analyze/revenue-trends');
+
+  const isBusy = isAnalyzing || isCollecting;
+  const error = streamError || localError;
+  const analysisPayload =
+    result?.analysis || result?.comparison || result?.data;
 
   const runAnalysis = async () => {
     if (!url.trim()) {
-      setError('Please enter a URL');
+      setLocalError('Please enter a URL');
       return;
     }
 
-    setIsAnalyzing(true);
-    setError(null);
-    setResult(null);
+    setLocalError(null);
 
-    try {
-      let existingContent = null;
-      if (scrapedContent.trim()) {
-        try {
-          existingContent = JSON.parse(scrapedContent.trim());
-        } catch {
-          setError('Scraped content JSON is invalid. Paste valid JSON from Content-Comparison.');
-          setIsAnalyzing(false);
-          return;
-        }
+    let existingContent = null;
+    let skipCollection = false;
+    if (scrapedContent.trim()) {
+      try {
+        existingContent = JSON.parse(scrapedContent.trim());
+        skipCollection = true;
+      } catch {
+        setLocalError(
+          'Scraped content JSON is invalid. Paste valid JSON from Content-Comparison.'
+        );
+        return;
       }
-
-      const { data } = await apiCall<{ success: boolean; error?: string }>('/api/analyze/revenue-trends', {
-        method: 'POST',
-        body: {
-          url: url.trim(),
-          proposedContent: proposedContent.trim(),
-          existingContent,
-          analysisType: 'full',
-        },
-        showErrorToast: false,
-      });
-
-      if (data?.success) {
-        setResult(data);
-      } else {
-        setError(data.error || 'Revenue trends analysis failed');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to analyze');
-    } finally {
-      setIsAnalyzing(false);
     }
+
+    await runFrameworkAnalysis({
+      url: url.trim(),
+      proposedContent: proposedContent.trim(),
+      existingContent,
+      skipCollection,
+      analysisType: 'full',
+    });
   };
 
   const copyToClipboard = (text: string) => {
@@ -79,7 +85,7 @@ export function RevenueTrendsPage() {
   const downloadMarkdown = () => {
     if (!result) return;
 
-    const markdown = generateRevenueTrendsMarkdown(result);
+    const markdown = buildRevenueTrendsMarkdown(result as Record<string, unknown>);
     const blob = new Blob([markdown], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -105,6 +111,13 @@ export function RevenueTrendsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <AssessmentWorkflowSteps
+            currentStep={resolveAssessmentWorkflowStep({
+              hasResult: Boolean(result),
+              isAnalyzing,
+              isCollecting,
+            })}
+          />
           {/* URL Input */}
           <div>
             <label
@@ -120,7 +133,7 @@ export function RevenueTrendsPage() {
               placeholder="https://example.com"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              disabled={isAnalyzing}
+              disabled={isBusy}
               aria-label="Enter website URL to analyze"
               aria-describedby="url-help"
               autoComplete="url"
@@ -161,7 +174,7 @@ Example:
 [Your content here...]"
               value={proposedContent}
               onChange={(e) => setProposedContent(e.target.value)}
-              disabled={isAnalyzing}
+              disabled={isBusy}
               className="min-h-[200px] font-mono text-sm"
               aria-label="Enter proposed new content for revenue analysis"
               aria-describedby="content-help"
@@ -188,7 +201,7 @@ Example:
 Example: {"title":"...","metaDescription":"...","wordCount":...}'
               value={scrapedContent}
               onChange={(e) => setScrapedContent(e.target.value)}
-              disabled={isAnalyzing}
+              disabled={isBusy}
               className="min-h-[100px] font-mono text-xs"
             />
             <p className="mt-2 text-xs text-muted-foreground">
@@ -244,11 +257,11 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
           {/* Analyze Button */}
           <Button
             onClick={runAnalysis}
-            disabled={isAnalyzing || !url.trim()}
+            disabled={isBusy || !url.trim()}
             className="w-full"
             size="lg"
           >
-            {isAnalyzing ? (
+            {isBusy ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Analyzing...
@@ -262,6 +275,34 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
               </>
             )}
           </Button>
+
+          {(isAnalyzing || isCollecting) && (
+            <div className="space-y-2">
+              <Progress value={percent} className="h-3" />
+              <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  {currentCategory
+                    ? `Evaluating ${currentCategory}...`
+                    : 'Starting analysis...'}
+                </span>
+                <span>{percent}%</span>
+              </div>
+              {completedCategories.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {completedCategories.map((cat) => (
+                    <span
+                      key={cat}
+                      className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700"
+                    >
+                      <CheckCircle2 className="h-3 w-3" />
+                      {cat}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -318,116 +359,72 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
-                {analysisPayload && (
-                  <div className="prose dark:prose-invert max-w-none">
-                    {/* Side-by-side comparison if proposed content exists */}
-                    {result.proposed && (
-                      <div className="mb-6 grid gap-4 md:grid-cols-2">
-                        {/* Existing Column */}
-                        <div className="rounded-lg border p-4">
-                          <h3 className="mb-3 flex items-center justify-between text-lg font-semibold">
-                            Existing Content Analysis
-                            <Badge variant="outline">Current</Badge>
-                          </h3>
-                          <div className="space-y-3 text-sm">
-                            <div>
-                              <strong>Title:</strong> {result.existing.title}
-                            </div>
-                            <div>
-                              <strong>Meta Description:</strong>{' '}
-                              {result.existing.metaDescription}
-                            </div>
-                            <div>
-                              <strong>Word Count:</strong>{' '}
-                              {result.existing.wordCount}
-                            </div>
-                            <div>
-                              <strong>Top Keywords:</strong>
-                              <div className="mt-1 flex flex-wrap gap-1">
-                                {result.existing.extractedKeywords
-                                  ?.slice(0, 10)
-                                  .map((kw: string, i: number) => (
-                                    <Badge
-                                      key={i}
-                                      variant="secondary"
-                                      className="text-xs"
-                                    >
-                                      {kw}
-                                    </Badge>
-                                  ))}
+                    {analysisPayload && (
+                      <>
+                        {result.proposed && (
+                          <div className="mb-6 grid gap-4 md:grid-cols-2">
+                            <div className="rounded-lg border p-4">
+                              <h3 className="mb-3 flex items-center justify-between text-lg font-semibold">
+                                Existing Content Analysis
+                                <Badge variant="outline">Current</Badge>
+                              </h3>
+                              <div className="space-y-3 text-sm">
+                                <div>
+                                  <strong>Title:</strong> {result.existing.title}
+                                </div>
+                                <div>
+                                  <strong>Meta Description:</strong>{' '}
+                                  {result.existing.metaDescription}
+                                </div>
+                                <div>
+                                  <strong>Word Count:</strong>{' '}
+                                  {result.existing.wordCount}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </div>
 
-                        {/* Proposed Column */}
-                        <div className="rounded-lg border border-green-500 bg-green-50 p-4 dark:bg-green-950">
-                          <h3 className="mb-3 flex items-center justify-between text-lg font-semibold text-green-900 dark:text-green-100">
-                            Proposed Content Analysis
-                            <Badge variant="default" className="bg-green-600">
-                              New
-                            </Badge>
-                          </h3>
-                          <div className="space-y-3 text-sm text-green-900 dark:text-green-100">
-                            <div>
-                              <strong>Title:</strong> {result.proposed.title}
-                            </div>
-                            <div>
-                              <strong>Meta Description:</strong>{' '}
-                              {result.proposed.metaDescription}
-                            </div>
-                            <div>
-                              <strong>Word Count:</strong>{' '}
-                              {result.proposed.wordCount}
-                            </div>
-                            <div>
-                              <strong>Top Keywords:</strong>
-                              <div className="mt-1 flex flex-wrap gap-1">
-                                {result.proposed.extractedKeywords
-                                  ?.slice(0, 10)
-                                  .map((kw: string, i: number) => (
-                                    <Badge
-                                      key={i}
-                                      variant="outline"
-                                      className="text-xs"
-                                    >
-                                      {kw}
-                                    </Badge>
-                                  ))}
+                            <div className="rounded-lg border border-green-500 bg-green-50 p-4 dark:bg-green-950">
+                              <h3 className="mb-3 flex items-center justify-between text-lg font-semibold text-green-900 dark:text-green-100">
+                                Proposed Content Analysis
+                                <Badge variant="default" className="bg-green-600">
+                                  New
+                                </Badge>
+                              </h3>
+                              <div className="space-y-3 text-sm text-green-900 dark:text-green-100">
+                                <div>
+                                  <strong>Title:</strong> {result.proposed.title}
+                                </div>
+                                <div>
+                                  <strong>Meta Description:</strong>{' '}
+                                  {result.proposed.metaDescription}
+                                </div>
+                                <div>
+                                  <strong>Word Count:</strong>{' '}
+                                  {result.proposed.wordCount}
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
+                        )}
+
+                        <RevenueTrendsResultsPanel
+                          analysis={analysisPayload as Record<string, unknown>}
+                        />
+
+                        <Button
+                          onClick={() =>
+                            copyToClipboard(
+                              JSON.stringify(analysisPayload, null, 2)
+                            )
+                          }
+                          variant="outline"
+                          size="sm"
+                        >
+                          <Copy className="mr-2 h-4 w-4" />
+                          Copy JSON
+                        </Button>
+                      </>
                     )}
-
-                    {/* Analysis Results */}
-                    <div className="space-y-4">
-                      <h3 className="text-xl font-semibold">
-                        Revenue Trends Analysis Results
-                      </h3>
-
-                      {/* Show analysis data */}
-                      <div className="rounded-lg border bg-green-50 p-4 dark:bg-green-950">
-                        <h4 className="mb-2 font-semibold">
-                          Assessment Results
-                        </h4>
-                        <div className="whitespace-pre-wrap text-sm">
-                          {JSON.stringify(analysisPayload, null, 2)}
-                        </div>
-                      </div>
-
-                      <Button
-                        onClick={() =>
-                          copyToClipboard(JSON.stringify(analysisPayload, null, 2))
-                        }
-                      >
-                        <Copy className="mr-2 h-4 w-4" />
-                        Copy Analysis
-                      </Button>
-                    </div>
-                  </div>
-                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -522,45 +519,4 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
       )}
     </div>
   );
-}
-
-function generateRevenueTrendsMarkdown(result: any): string {
-  return `# Revenue Trends Analysis
-
-**URL:** ${result.url || 'N/A'}
-**Date:** ${new Date().toLocaleString()}
-**Analysis Type:** Revenue-Focused Market Analysis
-
----
-
-## Existing Content
-
-**Title:** ${result.existing?.title || 'N/A'}
-**Meta Description:** ${result.existing?.metaDescription || 'N/A'}
-**Word Count:** ${result.existing?.wordCount || 'N/A'}
-**Keywords:** ${result.existing?.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
-
-${
-  result.proposed
-    ? `
-## Proposed Content
-
-**Title:** ${result.proposed.title}
-**Meta Description:** ${result.proposed.metaDescription}
-**Word Count:** ${result.proposed.wordCount}
-**Keywords:** ${result.proposed.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
-
----
-
-## Revenue Trends Analysis Results
-
-${JSON.stringify(result.analysis || result.comparison || result.data, null, 2)}
-`
-    : ''
-}
-
----
-
-Generated by Zero Barriers Growth Accelerator
-`;
 }

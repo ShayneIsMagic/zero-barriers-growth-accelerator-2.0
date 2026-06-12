@@ -21,6 +21,8 @@ import {
   parseElementsValueAnalysis,
 } from '@/lib/framework/elements-value-display';
 import type { B2BPyramidDiagnostics } from '@/lib/framework/b2b-taxonomy';
+import { VocabularyDefinitionHint } from '@/components/analysis/VocabularyDefinitionHint';
+import type { FrameworkResultKind } from '@/lib/framework/framework-results-adapter';
 import { TrendingUp, Target } from 'lucide-react';
 
 interface ElementsValueResultsPanelProps {
@@ -51,6 +53,8 @@ export function ElementsValueResultsPanel({
     framework === 'b2b'
       ? 'B2B Elements of Value'
       : 'B2C Elements of Value';
+  const vocabularyFrameworkKey: FrameworkResultKind =
+    framework === 'b2b' ? 'b2b-elements' : 'b2c-elements';
 
   const improvementItems = [...view.allElementsRanked]
     .filter((item) => item.recommendation && item.recommendation !== 'No recommendation')
@@ -143,6 +147,7 @@ export function ElementsValueResultsPanel({
             <CategoryAccordionItem
               key={category.categoryKey}
               category={category}
+              vocabularyFrameworkKey={vocabularyFrameworkKey}
             />
           ))}
         </Accordion>
@@ -213,15 +218,24 @@ function StrengthCard({ strength }: StrengthCardProps) {
 
 interface CategoryAccordionItemProps {
   category: ElementsValueCategoryView;
+  vocabularyFrameworkKey: FrameworkResultKind;
 }
 
-function CategoryAccordionItem({ category }: CategoryAccordionItemProps) {
+function CategoryAccordionItem({
+  category,
+  vocabularyFrameworkKey,
+}: CategoryAccordionItemProps) {
   return (
     <AccordionItem value={category.categoryKey}>
       <AccordionTrigger className="hover:no-underline">
         <div className="flex flex-1 items-center justify-between gap-3 pr-2 text-left">
           <div className="space-y-1">
             <span className="font-medium">{category.categoryName}</span>
+            <VocabularyDefinitionHint
+              frameworkKey={vocabularyFrameworkKey}
+              elementKey={category.categoryKey}
+              categoryKey={category.categoryKey}
+            />
             {category.weakestSubcategoryName ? (
               <p className="text-xs font-normal text-muted-foreground">
                 Weakest: {category.weakestSubcategoryName} (
@@ -262,11 +276,17 @@ function CategoryAccordionItem({ category }: CategoryAccordionItemProps) {
                   </Badge>
                 </div>
               </div>
-              <ElementList elements={subcategory.elements} />
+              <ElementList
+                elements={subcategory.elements}
+                vocabularyFrameworkKey={vocabularyFrameworkKey}
+              />
             </div>
           ))
         ) : (
-          <ElementList elements={category.elements ?? []} />
+          <ElementList
+            elements={category.elements ?? []}
+            vocabularyFrameworkKey={vocabularyFrameworkKey}
+          />
         )}
       </AccordionContent>
     </AccordionItem>
@@ -331,9 +351,10 @@ function PyramidDrillDownSection({ diagnostics }: PyramidDrillDownSectionProps) 
 
 interface ElementListProps {
   elements: ElementsValueElementDetail[];
+  vocabularyFrameworkKey: FrameworkResultKind;
 }
 
-function ElementList({ elements }: ElementListProps) {
+function ElementList({ elements, vocabularyFrameworkKey }: ElementListProps) {
   return (
     <div className="space-y-2">
       {elements.map((element) => (
@@ -343,6 +364,10 @@ function ElementList({ elements }: ElementListProps) {
         >
           <div className="mb-1 flex flex-wrap items-center gap-2">
             <span className="font-medium">{element.displayName}</span>
+            <VocabularyDefinitionHint
+              frameworkKey={vocabularyFrameworkKey}
+              elementKey={element.slug}
+            />
             <Badge variant={getFractionalScoreBadgeVariant(element.score)}>
               {formatFractionalScoreDecimal(element.score)}
             </Badge>

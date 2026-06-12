@@ -26,6 +26,12 @@ import {
   XCircle,
 } from 'lucide-react';
 import { LighthouseAnalysisResults } from './LighthouseAnalysisResults';
+import { FrameworkResultsPanel } from '@/components/analysis/FrameworkResultsPanel';
+import { extractAnalysisPayload } from '@/lib/framework/framework-results-adapter';
+import {
+  formatFractionalScore,
+  normalizeFractionalScore,
+} from '@/lib/framework/elements-value-display';
 
 interface WebsiteAnalysisResultsProps {
   result: WebsiteAnalysisResult;
@@ -386,66 +392,23 @@ export function WebsiteAnalysisResults({
                 B2B Elements of Value Analysis
               </CardTitle>
               <CardDescription>
-                Overall Score:{' '}
-                {result.b2bElements?.overallScore?.toFixed(1) || 'N/A'}/10
+                {result.b2bElements?.overallScore !== undefined
+                  ? `Overall: ${formatFractionalScore(
+                      normalizeFractionalScore(result.b2bElements.overallScore)
+                    )}`
+                  : 'Overall score unavailable'}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {result.b2bElements ? (
-                Object.entries(result.b2bElements)
-                  .filter(([key]) => key !== 'overallScore')
-                  .map(([category, data]: [string, any]) => (
-                    <div key={category} className="rounded-lg border p-4">
-                      <div className="mb-3 flex items-center justify-between">
-                        <h4 className="font-medium capitalize">
-                          {category.replace(/([A-Z])/g, ' $1')}
-                        </h4>
-                        <Badge className={getScoreColor(data.score)}>
-                          {data.score}/10
-                        </Badge>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        {data.elements &&
-                          Object.entries(data.elements).map(
-                            ([element, value]: [string, any]) => (
-                              <div
-                                key={element}
-                                className="flex items-center gap-2"
-                              >
-                                {value ? (
-                                  <CheckCircle className="h-4 w-4 text-green-500" />
-                                ) : (
-                                  <XCircle className="h-4 w-4 text-red-500" />
-                                )}
-                                <span className="capitalize">
-                                  {element.replace(/([A-Z])/g, ' $1')}
-                                </span>
-                              </div>
-                            )
-                          )}
-                      </div>
-                      {data.recommendations.length > 0 && (
-                        <div className="mt-3">
-                          <h5 className="mb-1 text-sm font-medium text-blue-600">
-                            Recommendations:
-                          </h5>
-                          <ul className="space-y-1 text-sm">
-                            {data.recommendations.map(
-                              (rec: string, index: number) => (
-                                <li
-                                  key={index}
-                                  className="flex items-start gap-2"
-                                >
-                                  <Lightbulb className="mt-0.5 h-3 w-3 flex-shrink-0 text-blue-500" />
-                                  {rec}
-                                </li>
-                              )
-                            )}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  ))
+                <FrameworkResultsPanel
+                  kind="b2b-elements"
+                  analysis={
+                    extractAnalysisPayload(result.b2bElements) ??
+                    (result.b2bElements as unknown as Record<string, unknown>)
+                  }
+                  defaultExpanded
+                />
               ) : (
                 <div className="py-8 text-center text-gray-500">
                   <AlertCircle className="mx-auto mb-2 h-8 w-8 text-gray-300" />

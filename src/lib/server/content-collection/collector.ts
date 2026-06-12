@@ -6,7 +6,6 @@
 
 import { PuppeteerComprehensiveCollector } from '@/lib/puppeteer-comprehensive-collector';
 import type {
-  CollectedContentPayload,
   ContentCollectionMode,
   ContentCollectionOptions,
   ContentCollectionResult,

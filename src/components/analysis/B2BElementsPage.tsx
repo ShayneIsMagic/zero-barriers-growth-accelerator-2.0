@@ -28,6 +28,10 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { MarkdownFallbackViewer } from '@/components/analysis/MarkdownFallbackViewer';
+import {
+  AssessmentWorkflowSteps,
+  resolveAssessmentWorkflowStep,
+} from '@/components/analysis/AssessmentWorkflowSteps';
 import { Progress } from '@/components/ui/progress';
 import { useFrameworkPageAnalysis } from '@/hooks/useFrameworkPageAnalysis';
 import {
@@ -36,6 +40,7 @@ import {
   saveContentSnapshot,
 } from '@/services/content-api';
 import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
+import { DeterministicEvaluationButton } from '@/components/analysis/DeterministicEvaluationButton';
 import { ElementsValueResultsPanel } from '@/components/analysis/ElementsValueResultsPanel';
 import { generateElementsValueMarkdown } from '@/lib/framework/elements-value-display';
 
@@ -53,6 +58,9 @@ export function B2BElementsPage() {
     result,
     error: streamError,
     runAnalysis: runFrameworkAnalysis,
+    runDeterministicAnalysis,
+    isFlaskRunning,
+    analysisMethod,
   } = useFrameworkPageAnalysis('/api/analyze/elements-value-b2b-standalone');
 
   const isBusy = isAnalyzing || isCollecting;
@@ -84,6 +92,30 @@ export function B2BElementsPage() {
     }
 
     await runFrameworkAnalysis({
+      url: url.trim(),
+      proposedContent: proposedContent.trim(),
+      existingContent,
+      skipCollection,
+      analysisType: 'full',
+    });
+  };
+
+  const runDeterministic = async () => {
+    if (!url.trim()) return;
+
+    let existingContent = null;
+    let skipCollection = false;
+    if (scrapedContent.trim()) {
+      try {
+        existingContent = JSON.parse(scrapedContent.trim());
+        skipCollection = true;
+      } catch {
+        setLocalError('Invalid JSON in scraped content field');
+        return;
+      }
+    }
+
+    await runDeterministicAnalysis({
       url: url.trim(),
       proposedContent: proposedContent.trim(),
       existingContent,
@@ -227,6 +259,13 @@ export function B2BElementsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <AssessmentWorkflowSteps
+            currentStep={resolveAssessmentWorkflowStep({
+              hasResult: Boolean(result),
+              isAnalyzing,
+              isCollecting,
+            })}
+          />
           {/* URL Input */}
           <div>
             <label
@@ -356,26 +395,39 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
           )}
 
           {/* Analyze Button */}
-          <Button
-            onClick={runAnalysis}
-            disabled={isBusy || !url.trim()}
-            className="w-full"
-            size="lg"
-          >
-            {isBusy ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Analyzing...
-              </>
-            ) : (
-              <>
-                <BarChart3 className="mr-2 h-4 w-4" />
-                {proposedContent
-                  ? 'Compare Existing vs. Proposed'
-                  : 'Analyze Existing Content'}
-              </>
-            )}
-          </Button>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button
+              onClick={runAnalysis}
+              disabled={isBusy || !url.trim()}
+              className="w-full sm:flex-1"
+              size="lg"
+            >
+              {isBusy ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Analyzing...
+                </>
+              ) : (
+                <>
+                  <BarChart3 className="mr-2 h-4 w-4" />
+                  {proposedContent
+                    ? 'Compare Existing vs. Proposed'
+                    : 'Analyze Existing Content'}
+                </>
+              )}
+            </Button>
+            <DeterministicEvaluationButton
+              endpoint="/api/analyze/elements-value-b2b-standalone"
+              disabled={!url.trim()}
+              isRunning={isFlaskRunning}
+              onRun={runDeterministic}
+            />
+          </div>
+          {analysisMethod === 'flask-deterministic' ? (
+            <p className="text-xs text-muted-foreground">
+              Showing deterministic Flask evaluation (pattern matching, no AI).
+            </p>
+          ) : null}
 
           {/* Chunk Progress Bar */}
           {(isAnalyzing || isCollecting) && (

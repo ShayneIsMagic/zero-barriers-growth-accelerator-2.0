@@ -82,18 +82,26 @@ src/
 
 ## Framework Analysis System
 
-### B2C Elements of Value (30 elements)
-- **Functional**: saves_time, simplifies, reduces_cost, reduces_risk, organizes, integrates, connects, fun_entertainment
-- **Emotional**: reduces_anxiety, rewards_me, nostalgia, design_aesthetics, wellness, therapeutic_value, attractiveness, provides_access, variety
-- **Life-Changing**: self_actualization, motivation, heirloom, affiliation_belonging, provides_hopes, self_expression, provides_memories, badge_me
-- **Social Impact**: belonging, environmental_consciousness, social_impact, community, purpose
+### B2C Elements of Value (30 elements — flat categories, no subcategories; SSOT: docs/frameworks/B2C-CATEGORY-TAXONOMY.md, code: src/lib/framework/b2c-taxonomy.ts)
+Scoring: element score → categoryScore (avg elements in category) → overallScore (avg all 30 elements). Weak category → evaluate defining elements directly.
+- **Functional (14)**: saves_time, simplifies, makes_money, reduces_effort, reduces_cost, reduces_risk, organizes, integrates, connects, quality, variety, informs, avoids_hassles, sensory_appeal
+- **Emotional (10)**: reduces_anxiety, rewards_me, nostalgia, design_aesthetics, badge_value, wellness, therapeutic, fun_entertainment, attractiveness, provides_access
+- **Life-Changing (5)**: provides_hope, self_actualization, motivation, heirloom, affiliation
+- **Social Impact (1)**: self_transcendence
 
-### B2B Elements of Value (40 elements)
-- **Table Stakes**: meeting_specifications, acceptable_price, regulatory_compliance, ethical_standards
-- **Functional**: improved_top_line, cost_reduction, product_quality, scalability, innovation, risk_reduction, reach, flexibility, component_quality
-- **Ease of Doing Business**: time_savings, reduced_effort, decreased_hassles, information, transparency, organization, simplification, connection, integration, access, availability, variety, configurability, responsiveness, expertise, commitment, stability, cultural_fit
-- **Individual**: network_expansion, marketability, reputational_assurance, design_aesthetics_b2b, growth_development, reduced_anxiety_b2b, fun_perks
-- **Inspirational**: vision, hope_b2b, social_responsibility
+### B2B Elements of Value (40 elements — Bain pyramid SSOT: docs/frameworks/B2B-BAIN-PYRAMID-TAXONOMY.md, code: src/lib/framework/b2b-taxonomy.ts)
+Scoring: element score (AI) → subcategoryScore (avg elements) → categoryScore (Table Stakes: avg elements; else avg subcategories) → overallScore (avg all 40 elements)
+- **Table Stakes** (flat, no subcategories): meeting_specifications, acceptable_price, regulatory_compliance, ethical_standards
+- **Functional/Economic**: improved_top_line, cost_reduction
+- **Functional/Performance**: product_quality, scalability, innovation
+- **Ease/Productivity**: time_savings, reduced_effort, decreased_hassles, information, transparency
+- **Ease/Operational**: organization, simplification, connection, integration
+- **Ease/Access**: availability, variety, configurability
+- **Ease/Relationship**: responsiveness, expertise, commitment, stability, cultural_fit
+- **Ease/Strategic**: risk_reduction, reach, flexibility, component_quality
+- **Individual/Career**: network_expansion, marketability, reputational_assurance
+- **Individual/Personal**: design_aesthetics_b2b, growth_development, reduced_anxiety_b2b, fun_perks
+- **Inspirational/Purpose**: vision, hope_b2b, social_responsibility (Purpose is subcategory, NOT an element slug)
 
 ### CliftonStrengths (34 themes across 4 domains)
 - **Executing**: achiever, arranger, belief, consistency, deliberative, discipline, focus, responsibility, restorative

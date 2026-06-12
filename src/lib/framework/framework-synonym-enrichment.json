@@ -1,0 +1,3577 @@
+{
+  "generatedAt": "2026-06-12T13:53:22Z",
+  "source": "manual-only",
+  "elementCount": 156,
+  "entries": [
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "saves_time",
+      "displayName": "Saves time",
+      "synonyms": [
+        "Time-saving",
+        "Efficiency",
+        "Fast",
+        "Quick",
+        "Speedy",
+        "Rapid",
+        "Instant",
+        "Time efficiency",
+        "Swift",
+        "Expedited"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "simplifies",
+      "displayName": "Simplifies",
+      "synonyms": [
+        "Easy",
+        "Simple",
+        "Straightforward",
+        "Uncomplicated",
+        "User-friendly",
+        "Streamlined",
+        "Effortless",
+        "Intuitive",
+        "Clear",
+        "No hassle"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "makes_money",
+      "displayName": "Makes money",
+      "synonyms": [
+        "Revenue generation",
+        "Profit",
+        "Income",
+        "Earnings",
+        "ROI",
+        "Financial gain",
+        "Money-making",
+        "Monetization",
+        "Financial success"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 9,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "reduces_effort",
+      "displayName": "Reduces effort",
+      "synonyms": [
+        "Effortless",
+        "Easy",
+        "Convenient",
+        "Low effort",
+        "Hassle-free",
+        "Automated",
+        "Hands-off",
+        "Simple process",
+        "No work required"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 9,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "reduces_cost",
+      "displayName": "Reduces cost",
+      "synonyms": [
+        "Affordable",
+        "Budget-friendly",
+        "Cost savings",
+        "Low-cost",
+        "Economical",
+        "Value pricing",
+        "Discounts",
+        "Cheap",
+        "Inexpensive",
+        "Money-saving"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "reduces_risk",
+      "displayName": "Reduces risk",
+      "synonyms": [
+        "Protection",
+        "Security",
+        "Safety",
+        "Risk mitigation",
+        "Loss prevention",
+        "Safeguards",
+        "Insurance",
+        "Guarantee",
+        "Assurance",
+        "Shield"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "organizes",
+      "displayName": "Organizes",
+      "synonyms": [
+        "Organization",
+        "Structure",
+        "Order",
+        "System",
+        "Arrangement",
+        "Tidy",
+        "Neat",
+        "Systematic",
+        "Structured",
+        "Categorized"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "integrates",
+      "displayName": "Integrates",
+      "synonyms": [
+        "Unification",
+        "Consolidation",
+        "All-in-one",
+        "Seamless",
+        "Connected",
+        "Unified",
+        "Brings together",
+        "Combines",
+        "Holistic",
+        "Centralized"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "connects",
+      "displayName": "Connects",
+      "synonyms": [
+        "Networking",
+        "Community",
+        "Social connection",
+        "Relationships",
+        "Communication",
+        "Interaction",
+        "Engagement",
+        "Social",
+        "Together",
+        "Link"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "quality",
+      "displayName": "Quality",
+      "synonyms": [
+        "Excellence",
+        "Premium",
+        "Superior",
+        "High standards",
+        "Top quality",
+        "Best-in-class",
+        "Outstanding",
+        "Exceptional",
+        "First-rate",
+        "Finest"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "variety",
+      "displayName": "Variety",
+      "synonyms": [
+        "Selection",
+        "Options",
+        "Range",
+        "Choices",
+        "Assortment",
+        "Diversity",
+        "Multiple options",
+        "Wide selection",
+        "Extensive catalog"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 9,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "informs",
+      "displayName": "Informs",
+      "synonyms": [
+        "Education",
+        "Knowledge",
+        "Information",
+        "Data",
+        "Insights",
+        "Learning",
+        "Intelligence",
+        "Guidance",
+        "Advice",
+        "Expert information"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "avoids_hassles",
+      "displayName": "Avoids hassles",
+      "synonyms": [
+        "Hassle-free",
+        "Smooth",
+        "Friction-free",
+        "Easy process",
+        "No problems",
+        "Seamless",
+        "Problem-free",
+        "Convenient",
+        "Stress-free",
+        "Simple"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "sensory_appeal",
+      "displayName": "Sensory appeal",
+      "synonyms": [
+        "Taste",
+        "Aroma",
+        "Texture",
+        "Sound quality",
+        "Tactile",
+        "Multi-sensory",
+        "Delicious",
+        "Pleasing to senses",
+        "Aesthetic experience",
+        "Sensorial"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "reduces_anxiety",
+      "displayName": "Reduces anxiety",
+      "synonyms": [
+        "Peace of mind",
+        "Security",
+        "Worry-free",
+        "Confidence",
+        "Assurance",
+        "Safety",
+        "Protection",
+        "Stress relief",
+        "Comfort",
+        "Reliability"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "rewards_me",
+      "displayName": "Rewards me",
+      "synonyms": [
+        "Loyalty program",
+        "Points",
+        "Perks",
+        "Benefits",
+        "Bonuses",
+        "Exclusive rewards",
+        "VIP treatment",
+        "Member benefits",
+        "Earn rewards",
+        "Cashback"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "nostalgia",
+      "displayName": "Nostalgia",
+      "synonyms": [
+        "Heritage",
+        "Tradition",
+        "Classic",
+        "Vintage",
+        "Retro",
+        "Timeless",
+        "Old-fashioned",
+        "Memories",
+        "The good old days",
+        "Throwback"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "design_aesthetics",
+      "displayName": "Design/aesthetics",
+      "synonyms": [
+        "Beautiful design",
+        "Visual appeal",
+        "Stylish",
+        "Elegant",
+        "Modern design",
+        "Sleek",
+        "Attractive",
+        "Aesthetic quality",
+        "Form and function",
+        "Design excellence"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "badge_value",
+      "displayName": "Badge value",
+      "synonyms": [
+        "Status symbol",
+        "Prestige",
+        "Luxury",
+        "Premium positioning",
+        "Exclusive",
+        "Elite",
+        "High-end",
+        "Aspirational",
+        "Status",
+        "Recognition"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "wellness",
+      "displayName": "Wellness",
+      "synonyms": [
+        "Health",
+        "Well-being",
+        "Fitness",
+        "Healthy lifestyle",
+        "Self-care",
+        "Vitality",
+        "Holistic health",
+        "Mental health",
+        "Physical health",
+        "Balance"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "therapeutic",
+      "displayName": "Therapeutic value",
+      "synonyms": [
+        "Healing",
+        "Soothing",
+        "Relief",
+        "Comfort",
+        "Treatment",
+        "Remedy",
+        "Medicinal",
+        "Restorative",
+        "Curative",
+        "Pain relief"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "fun_entertainment",
+      "displayName": "Fun/entertainment",
+      "synonyms": [
+        "Enjoyment",
+        "Amusement",
+        "Excitement",
+        "Recreation",
+        "Leisure",
+        "Play",
+        "Engaging",
+        "Entertaining",
+        "Delightful",
+        "Pleasure"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "attractiveness",
+      "displayName": "Attractive appearance",
+      "synonyms": [
+        "Beauty",
+        "Confidence boost",
+        "Sex appeal",
+        "Allure",
+        "Glamorous",
+        "Enhancing appearance",
+        "Looking good",
+        "Flattering",
+        "Appealing",
+        "Desirable"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "provides_access",
+      "displayName": "Provides access",
+      "synonyms": [
+        "Availability",
+        "Accessibility",
+        "Convenience",
+        "Entry",
+        "Admission",
+        "Opening doors",
+        "Gateway",
+        "Connection",
+        "Reach",
+        "Opportunity"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "provides_hope",
+      "displayName": "Provides hope",
+      "synonyms": [
+        "Optimism",
+        "Better future",
+        "Promise of improvement",
+        "Aspirational",
+        "Transformation",
+        "Dream fulfillment",
+        "Positive outlook",
+        "Bright future"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "self_actualization",
+      "displayName": "Self-actualization",
+      "synonyms": [
+        "Personal growth",
+        "Achievement",
+        "Self-improvement",
+        "Fulfillment",
+        "Mastery",
+        "Excellence",
+        "Personal best",
+        "Peak performance",
+        "Self-development"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 9,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "motivation",
+      "displayName": "Motivation",
+      "synonyms": [
+        "Inspiration",
+        "Encouragement",
+        "Drive",
+        "Ambition",
+        "Goal achievement",
+        "Push forward",
+        "Get started",
+        "Take action",
+        "Empowerment"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 9,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "heirloom",
+      "displayName": "Heirloom",
+      "synonyms": [
+        "Legacy",
+        "Investment",
+        "Lasting value",
+        "Timeless",
+        "Generational",
+        "Keepsake",
+        "Treasure",
+        "Forever",
+        "Collectible",
+        "Inheritance"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "affiliation",
+      "displayName": "Affiliation/belonging",
+      "synonyms": [
+        "Community",
+        "Membership",
+        "Tribe",
+        "Belonging",
+        "Identity",
+        "Group membership",
+        "Fan base",
+        "Club",
+        "Insider",
+        "Part of something bigger"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2c-elements",
+      "elementKey": "self_transcendence",
+      "displayName": "Self-transcendence",
+      "synonyms": [
+        "Social good",
+        "Giving back",
+        "Philanthropy",
+        "Charity",
+        "Social impact",
+        "Making a difference",
+        "Helping others",
+        "Social responsibility",
+        "Cause-related",
+        "Purpose-driven"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 10,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "meeting_specifications",
+      "displayName": "Meeting specifications",
+      "synonyms": [
+        "Compliance",
+        "Conformance",
+        "Requirements met",
+        "Specifications fulfilled",
+        "Standards adherence",
+        "Meets criteria",
+        "Certified",
+        "Approved"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "acceptable_price",
+      "displayName": "Acceptable price",
+      "synonyms": [
+        "Fair pricing",
+        "Competitive pricing",
+        "Reasonable cost",
+        "Market-rate pricing",
+        "Value for money",
+        "Affordable",
+        "Justifiable cost"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 7,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "regulatory_compliance",
+      "displayName": "Regulatory compliance",
+      "synonyms": [
+        "Legal compliance",
+        "Regulatory adherence",
+        "Industry standards",
+        "Certification",
+        "Accreditation",
+        "Licensed",
+        "Meets regulations",
+        "Compliant"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "ethical_standards",
+      "displayName": "Ethical standards",
+      "synonyms": [
+        "Integrity",
+        "Transparency",
+        "Honesty",
+        "Ethical practices",
+        "Corporate responsibility",
+        "Trustworthiness",
+        "Fair dealings",
+        "Principled"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "improved_top_line",
+      "displayName": "Improved top line",
+      "synonyms": [
+        "Revenue growth",
+        "Sales increase",
+        "Income boost",
+        "Top-line growth",
+        "Revenue enhancement",
+        "Sales performance",
+        "Profit increase"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 7,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "cost_reduction",
+      "displayName": "Cost reduction",
+      "synonyms": [
+        "Cost savings",
+        "Lower costs",
+        "Reduced expenses",
+        "Affordability",
+        "Budget-friendly",
+        "Cost-effective",
+        "Economical",
+        "Value pricing"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "product_quality",
+      "displayName": "Product quality",
+      "synonyms": [
+        "Excellence",
+        "Superior quality",
+        "Premium",
+        "High standards",
+        "Best-in-class",
+        "Top-tier",
+        "Outstanding quality",
+        "Craftsmanship"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "scalability",
+      "displayName": "Scalability",
+      "synonyms": [
+        "Growth capacity",
+        "Expandable",
+        "Elastic",
+        "Grows with you",
+        "Unlimited scale",
+        "Flexible capacity",
+        "Auto-scaling",
+        "Enterprise-ready"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "innovation",
+      "displayName": "Innovation",
+      "synonyms": [
+        "Cutting-edge",
+        "Advanced technology",
+        "Leading-edge",
+        "Pioneering",
+        "Breakthrough",
+        "State-of-the-art",
+        "Revolutionary",
+        "Next-generation"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "time_savings",
+      "displayName": "Time savings",
+      "synonyms": [
+        "Efficiency",
+        "Speed",
+        "Fast results",
+        "Quick turnaround",
+        "Saves hours",
+        "Time efficiency",
+        "Rapid deployment",
+        "Faster processes"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "reduced_effort",
+      "displayName": "Reduced effort",
+      "synonyms": [
+        "Easier",
+        "Effortless",
+        "Simplified workload",
+        "Less work",
+        "Hassle-free",
+        "Low effort",
+        "Turnkey solution",
+        "Done-for-you"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "decreased_hassles",
+      "displayName": "Decreased hassles",
+      "synonyms": [
+        "Smooth experience",
+        "Friction-free",
+        "Problem-free",
+        "Seamless",
+        "No headaches",
+        "Hassle-free",
+        "Smooth sailing",
+        "Easy process"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "information",
+      "displayName": "Information",
+      "synonyms": [
+        "Knowledge",
+        "Insights",
+        "Data",
+        "Intelligence",
+        "Education",
+        "Learning resources",
+        "Analytics",
+        "Reporting",
+        "Transparency"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 9,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "transparency",
+      "displayName": "Transparency",
+      "synonyms": [
+        "Visibility",
+        "Clear view",
+        "Openness",
+        "Full disclosure",
+        "Crystal clear",
+        "Complete visibility",
+        "Real-time insights",
+        "Clear reporting"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "organization",
+      "displayName": "Organization",
+      "synonyms": [
+        "Structure",
+        "Order",
+        "System",
+        "Arrangement",
+        "Organized workflow",
+        "Systematic approach",
+        "Structured processes",
+        "Orderly system"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "simplification",
+      "displayName": "Simplification",
+      "synonyms": [
+        "Simplified",
+        "Easy",
+        "Uncomplicated",
+        "Straightforward",
+        "User-friendly",
+        "Intuitive",
+        "Streamlined",
+        "Demystified"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "connection",
+      "displayName": "Connection",
+      "synonyms": [
+        "Communication",
+        "Integration",
+        "Linking",
+        "Networking",
+        "Collaboration",
+        "Connectivity",
+        "Bridges gaps",
+        "Brings together"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "integration",
+      "displayName": "Integration",
+      "synonyms": [
+        "Unification",
+        "Consolidation",
+        "Bringing together",
+        "Seamless integration",
+        "System integration",
+        "Unified platform",
+        "All-in-one solution"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 7,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "availability",
+      "displayName": "Availability",
+      "synonyms": [
+        "Accessible",
+        "On-demand",
+        "24/7 access",
+        "Always available",
+        "Omnipresent",
+        "Everywhere",
+        "Anytime access",
+        "Wide availability"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "variety",
+      "displayName": "Variety",
+      "synonyms": [
+        "Options",
+        "Selection",
+        "Range",
+        "Choices",
+        "Diversity",
+        "Assortment",
+        "Multiple options",
+        "Wide selection"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "configurability",
+      "displayName": "Configurability",
+      "synonyms": [
+        "Customizable",
+        "Flexible",
+        "Adaptable",
+        "Tailored",
+        "Personalized",
+        "Adjustable",
+        "Custom-fit",
+        "Bespoke options"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "responsiveness",
+      "displayName": "Responsiveness",
+      "synonyms": [
+        "Quick response",
+        "Fast support",
+        "Immediate help",
+        "Prompt service",
+        "Quick turnaround",
+        "Rapid response",
+        "Attentive",
+        "Proactive support"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "expertise",
+      "displayName": "Expertise",
+      "synonyms": [
+        "Knowledge",
+        "Specialization",
+        "Industry experts",
+        "Deep expertise",
+        "Subject matter experts",
+        "Thought leadership",
+        "Proven experience"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 7,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "commitment",
+      "displayName": "Commitment",
+      "synonyms": [
+        "Dedication",
+        "Partnership",
+        "Long-term relationship",
+        "Customer success focus",
+        "Invested in your success",
+        "Goes the extra mile",
+        "Dedicated support"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 7,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "stability",
+      "displayName": "Stability",
+      "synonyms": [
+        "Reliable",
+        "Established",
+        "Long-standing",
+        "Proven track record",
+        "Financial strength",
+        "Enduring",
+        "Dependable",
+        "Solid foundation"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "cultural_fit",
+      "displayName": "Cultural fit",
+      "synonyms": [
+        "Values alignment",
+        "Shared values",
+        "Culture match",
+        "Like-minded",
+        "Compatible",
+        "Values-driven",
+        "Mission-aligned",
+        "Symbiotic relationship"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "risk_reduction",
+      "displayName": "Risk reduction",
+      "synonyms": [
+        "Risk mitigation",
+        "Loss prevention",
+        "Protection",
+        "Security",
+        "Safeguards",
+        "Insurance",
+        "Guaranteed results",
+        "Safety measures"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "reach",
+      "displayName": "Reach",
+      "synonyms": [
+        "Expansion",
+        "Geographic reach",
+        "Market expansion",
+        "Global access",
+        "Extended reach",
+        "Wider market",
+        "Scale",
+        "Growth enablement"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "flexibility",
+      "displayName": "Flexibility",
+      "synonyms": [
+        "Adaptable",
+        "Versatile",
+        "Custom solutions",
+        "Tailored approach",
+        "Agile",
+        "Accommodating",
+        "Adjustable",
+        "Personalized"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "component_quality",
+      "displayName": "Component quality",
+      "synonyms": [
+        "Quality enhancement",
+        "Brand value",
+        "Premium components",
+        "Quality assurance",
+        "Reputation boost",
+        "Value-add",
+        "Quality certification"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 7,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "network_expansion",
+      "displayName": "Network expansion",
+      "synonyms": [
+        "Professional networking",
+        "Connections",
+        "Industry contacts",
+        "Relationship building",
+        "Networking opportunities",
+        "Professional community"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 6,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "marketability",
+      "displayName": "Marketability",
+      "synonyms": [
+        "Career advancement",
+        "Professional credentials",
+        "Skills development",
+        "Certification",
+        "Industry recognition",
+        "Competitive advantage",
+        "Resume building"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 7,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "reputational_assurance",
+      "displayName": "Reputational assurance",
+      "synonyms": [
+        "Safe choice",
+        "Risk-free decision",
+        "Proven track record",
+        "Industry leader",
+        "Trusted brand",
+        "\"Nobody gets fired for choosing...\"",
+        "Credibility protection"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 7,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "design_aesthetics_b2b",
+      "displayName": "Design & aesthetics",
+      "synonyms": [
+        "Visual appeal",
+        "Beautiful design",
+        "Aesthetic quality",
+        "Modern design",
+        "Sleek interface",
+        "User experience design",
+        "Visual design"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 7,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "growth_development",
+      "displayName": "Growth & development",
+      "synonyms": [
+        "Personal development",
+        "Learning opportunities",
+        "Professional growth",
+        "Skills enhancement",
+        "Training programs",
+        "Self-improvement",
+        "Continuous learning"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 7,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "reduced_anxiety_b2b",
+      "displayName": "Reduced anxiety",
+      "synonyms": [
+        "Peace of mind",
+        "Security",
+        "Risk mitigation",
+        "Worry-free",
+        "Confidence",
+        "Assurance",
+        "Stress reduction",
+        "Safety net"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "fun_perks",
+      "displayName": "Fun & perks",
+      "synonyms": [
+        "Enjoyable experience",
+        "Rewards",
+        "Entertainment",
+        "Engaging",
+        "Delightful",
+        "User satisfaction",
+        "Enjoyment",
+        "Perks and benefits"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 8,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "vision",
+      "displayName": "Vision",
+      "synonyms": [
+        "Market foresight",
+        "Future planning",
+        "Trend anticipation",
+        "Market intelligence",
+        "Strategic foresight",
+        "Predictive insights"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 6,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "hope_b2b",
+      "displayName": "Hope",
+      "synonyms": [
+        "Optimism",
+        "Future confidence",
+        "Positive outlook",
+        "Better future",
+        "Transformation promise",
+        "Aspirational messaging"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 6,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "b2b-elements",
+      "elementKey": "social_responsibility",
+      "displayName": "Social responsibility",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "analytical",
+      "displayName": "Analytical",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "context",
+      "displayName": "Context",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "futuristic",
+      "displayName": "Futuristic",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "ideation",
+      "displayName": "Ideation",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "input",
+      "displayName": "Input",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "intellection",
+      "displayName": "Intellection",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "learner",
+      "displayName": "Learner",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "strategic",
+      "displayName": "Strategic",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "achiever",
+      "displayName": "Achiever",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "arranger",
+      "displayName": "Arranger",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "belief",
+      "displayName": "Belief",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "consistency",
+      "displayName": "Consistency",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "deliberative",
+      "displayName": "Deliberative",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "discipline",
+      "displayName": "Discipline",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "focus",
+      "displayName": "Focus",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "responsibility",
+      "displayName": "Responsibility",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "restorative",
+      "displayName": "Restorative",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "activator",
+      "displayName": "Activator",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "command",
+      "displayName": "Command",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "communication",
+      "displayName": "Communication",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "competition",
+      "displayName": "Competition",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "maximizer",
+      "displayName": "Maximizer",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "self_assurance",
+      "displayName": "Self Assurance",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "significance",
+      "displayName": "Significance",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "woo",
+      "displayName": "Woo",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "adaptability",
+      "displayName": "Adaptability",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "connectedness",
+      "displayName": "Connectedness",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "developer",
+      "displayName": "Developer",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "empathy",
+      "displayName": "Empathy",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "harmony",
+      "displayName": "Harmony",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "includer",
+      "displayName": "Includer",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "individualization",
+      "displayName": "Individualization",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "positivity",
+      "displayName": "Positivity",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "clifton",
+      "elementKey": "relator",
+      "displayName": "Relator",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "why:clarity",
+      "displayName": "Clarity",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "why:authenticity",
+      "displayName": "Authenticity",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "why:inspiration",
+      "displayName": "Inspiration",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "why:consistency",
+      "displayName": "Consistency",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "why:differentiation",
+      "displayName": "Differentiation",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "why:emotional_resonance",
+      "displayName": "Emotional Resonance",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "how:uniqueness",
+      "displayName": "Uniqueness",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "how:clarity",
+      "displayName": "Clarity",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "how:consistency",
+      "displayName": "Consistency",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "how:alignment",
+      "displayName": "Alignment",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "how:proof_points",
+      "displayName": "Proof Points",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "how:competitive_moat",
+      "displayName": "Competitive Moat",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "what:clarity",
+      "displayName": "Clarity",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "what:alignment",
+      "displayName": "Alignment",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "what:quality",
+      "displayName": "Quality",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "what:proof",
+      "displayName": "Proof",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "what:evolution",
+      "displayName": "Evolution",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "what:market_fit",
+      "displayName": "Market Fit",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "who:clarity",
+      "displayName": "Clarity",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "who:alignment",
+      "displayName": "Alignment",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "who:specificity",
+      "displayName": "Specificity",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "who:understanding",
+      "displayName": "Understanding",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "who:resonance",
+      "displayName": "Resonance",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "golden-circle",
+      "elementKey": "who:loyalty",
+      "displayName": "Loyalty",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "brand-archetypes",
+      "elementKey": "hero",
+      "displayName": "The Hero",
+      "synonyms": [
+        "bravery",
+        "valor",
+        "heroism",
+        "fearlessness",
+        "boldness",
+        "daring",
+        "audacity",
+        "nerve",
+        "guts",
+        "pluck",
+        "spirit",
+        "heart",
+        "mettle",
+        "fortitude",
+        "resolve",
+        "determination",
+        "willpower",
+        "strength",
+        "resilience",
+        "endurance",
+        "power",
+        "might",
+        "force",
+        "energy",
+        "vigor",
+        "vitality",
+        "stamina",
+        "toughness",
+        "durability",
+        "robustness",
+        "sturdiness",
+        "solidity",
+        "stability",
+        "firmness",
+        "steadfastness",
+        "reliability",
+        "dependability",
+        "trustworthiness",
+        "success",
+        "accomplishment",
+        "victory",
+        "triumph",
+        "win",
+        "conquest",
+        "attainment",
+        "realization",
+        "fulfillment",
+        "completion",
+        "finish",
+        "conclusion",
+        "result",
+        "outcome",
+        "effect",
+        "impact",
+        "influence",
+        "difference",
+        "change",
+        "transformation",
+        "obstacle",
+        "difficulty",
+        "problem",
+        "hurdle",
+        "barrier",
+        "impediment",
+        "obstruction",
+        "block",
+        "setback",
+        "adversity",
+        "hardship",
+        "trial",
+        "test",
+        "ordeal",
+        "struggle",
+        "fight",
+        "battle",
+        "conflict",
+        "confrontation",
+        "opposition",
+        "conquer",
+        "defeat",
+        "beat",
+        "vanquish",
+        "prevail",
+        "succeed",
+        "achieve",
+        "accomplish",
+        "complete",
+        "solve",
+        "fix",
+        "repair",
+        "restore",
+        "heal",
+        "recover",
+        "bounce back",
+        "persistence",
+        "perseverance",
+        "tenacity",
+        "grit",
+        "drive",
+        "motivation",
+        "ambition",
+        "aspiration",
+        "goal",
+        "objective",
+        "target",
+        "aim",
+        "purpose",
+        "intention",
+        "plan",
+        "strategy",
+        "approach",
+        "method"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 120,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "brand-archetypes",
+      "elementKey": "magician",
+      "displayName": "The Magician",
+      "synonyms": [
+        "change",
+        "alteration",
+        "modification",
+        "adjustment",
+        "adaptation",
+        "revision",
+        "amendment",
+        "correction",
+        "improvement",
+        "enhancement",
+        "upgrade",
+        "update",
+        "modernization",
+        "innovation",
+        "development",
+        "progress",
+        "advancement",
+        "evolution",
+        "growth",
+        "expansion",
+        "sight",
+        "seeing",
+        "viewing",
+        "observing",
+        "watching",
+        "looking",
+        "gazing",
+        "staring",
+        "peering",
+        "examining",
+        "inspecting",
+        "scrutinizing",
+        "studying",
+        "analyzing",
+        "evaluating",
+        "assessing",
+        "reviewing",
+        "considering",
+        "contemplating",
+        "reflecting",
+        "creativity",
+        "originality",
+        "novelty",
+        "newness",
+        "freshness",
+        "uniqueness",
+        "distinctiveness",
+        "individuality",
+        "personality",
+        "character",
+        "nature",
+        "essence",
+        "substance",
+        "quality",
+        "value",
+        "worth",
+        "merit",
+        "excellence",
+        "superiority",
+        "greatness",
+        "wonder",
+        "amazement",
+        "astonishment",
+        "surprise",
+        "shock",
+        "awe",
+        "admiration",
+        "respect",
+        "reverence",
+        "veneration",
+        "worship",
+        "adoration",
+        "love",
+        "affection",
+        "fondness",
+        "attachment",
+        "devotion",
+        "dedication",
+        "commitment",
+        "loyalty",
+        "unattainable",
+        "unreachable",
+        "unachievable",
+        "unobtainable",
+        "inaccessible",
+        "unavailable",
+        "unprocurable",
+        "ungettable",
+        "ungraspable",
+        "unseizable",
+        "make",
+        "produce",
+        "generate",
+        "create",
+        "build",
+        "construct",
+        "develop",
+        "design",
+        "form",
+        "shape",
+        "mold",
+        "fashion",
+        "craft",
+        "manufacture",
+        "fabricate",
+        "assemble",
+        "put together",
+        "bring together",
+        "combine",
+        "merge"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 120,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "brand-archetypes",
+      "elementKey": "outlaw",
+      "displayName": "The Outlaw",
+      "synonyms": [
+        "change",
+        "transformation",
+        "upheaval",
+        "disruption",
+        "disturbance",
+        "interruption",
+        "interference",
+        "intervention",
+        "involvement",
+        "participation",
+        "engagement",
+        "interaction",
+        "connection",
+        "relationship",
+        "bond",
+        "link",
+        "tie",
+        "attachment",
+        "affiliation",
+        "association",
+        "resistance",
+        "opposition",
+        "defiance",
+        "challenge",
+        "confrontation",
+        "conflict",
+        "struggle",
+        "fight",
+        "battle",
+        "war",
+        "combat",
+        "contest",
+        "competition",
+        "rivalry",
+        "enmity",
+        "hostility",
+        "animosity",
+        "antagonism",
+        "antipathy",
+        "dislike",
+        "alteration",
+        "modification",
+        "adjustment",
+        "adaptation",
+        "revision",
+        "amendment",
+        "correction",
+        "improvement",
+        "enhancement",
+        "upgrade",
+        "update",
+        "modernization",
+        "innovation",
+        "development",
+        "progress",
+        "advancement",
+        "evolution",
+        "growth",
+        "expansion",
+        "break",
+        "shatter",
+        "destroy",
+        "demolish",
+        "ruin",
+        "wreck",
+        "damage",
+        "harm",
+        "hurt",
+        "injure",
+        "wound",
+        "cut",
+        "split",
+        "divide",
+        "separate",
+        "part"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 126,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "brand-archetypes",
+      "elementKey": "caregiver",
+      "displayName": "The Caregiver",
+      "synonyms": [
+        "empathy",
+        "sympathy",
+        "understanding",
+        "care",
+        "concern",
+        "kindness",
+        "gentleness",
+        "tenderness",
+        "warmth",
+        "love",
+        "affection",
+        "fondness",
+        "attachment",
+        "devotion",
+        "dedication",
+        "commitment",
+        "loyalty",
+        "faithfulness",
+        "reliability",
+        "dependability",
+        "caring",
+        "supportive",
+        "protective",
+        "loving",
+        "affectionate",
+        "tender",
+        "gentle",
+        "kind",
+        "warm",
+        "friendly",
+        "welcoming",
+        "inviting",
+        "open",
+        "accepting",
+        "patient",
+        "tolerant",
+        "forgiving",
+        "generous",
+        "giving",
+        "help",
+        "assistance",
+        "aid",
+        "support",
+        "backing",
+        "encouragement",
+        "reinforcement",
+        "strengthening",
+        "bolstering",
+        "boosting",
+        "enhancing",
+        "improving",
+        "bettering",
+        "uplifting",
+        "elevating",
+        "raising",
+        "lifting",
+        "promoting",
+        "advancing",
+        "facilitating",
+        "service",
+        "attention",
+        "consideration",
+        "regard",
+        "respect",
+        "honor",
+        "reverence",
+        "admiration",
+        "appreciation",
+        "gratitude",
+        "thankfulness",
+        "recognition",
+        "acknowledgment",
+        "validation",
+        "safety",
+        "security",
+        "shelter",
+        "refuge",
+        "sanctuary",
+        "haven",
+        "safe haven",
+        "protection",
+        "defense",
+        "guard",
+        "shield",
+        "cover",
+        "safeguard",
+        "assurance",
+        "guarantee",
+        "promise",
+        "assist",
+        "serve",
+        "nurture",
+        "protect",
+        "defend",
+        "secure",
+        "ensure",
+        "commit",
+        "dedicate",
+        "devote"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 120,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "brand-archetypes",
+      "elementKey": "ruler",
+      "displayName": "The Ruler",
+      "synonyms": [
+        "guidance",
+        "direction",
+        "management",
+        "administration",
+        "supervision",
+        "oversight",
+        "control",
+        "command",
+        "authority",
+        "power",
+        "influence",
+        "impact",
+        "effect",
+        "result",
+        "outcome",
+        "consequence",
+        "significance",
+        "importance",
+        "value",
+        "worth",
+        "quality",
+        "superiority",
+        "greatness",
+        "outstandingness",
+        "remarkableness",
+        "extraordinariness",
+        "exceptionalness",
+        "specialness",
+        "uniqueness",
+        "distinctiveness",
+        "individuality",
+        "personality",
+        "character",
+        "nature",
+        "essence",
+        "substance",
+        "merit",
+        "virtue",
+        "position",
+        "rank",
+        "standing",
+        "station",
+        "level",
+        "grade",
+        "class",
+        "category",
+        "type",
+        "kind",
+        "sort",
+        "variety",
+        "species",
+        "genus",
+        "family",
+        "group",
+        "set",
+        "collection",
+        "assortment",
+        "array",
+        "strength",
+        "might",
+        "force",
+        "energy",
+        "vigor",
+        "vitality",
+        "stamina",
+        "endurance",
+        "resilience",
+        "toughness",
+        "durability",
+        "robustness",
+        "sturdiness",
+        "solidity",
+        "stability",
+        "firmness",
+        "steadfastness",
+        "reliability",
+        "dependability",
+        "trustworthiness"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 120,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "brand-archetypes",
+      "elementKey": "creator",
+      "displayName": "The Creator",
+      "synonyms": [
+        "making",
+        "producing",
+        "generating",
+        "creating",
+        "building",
+        "constructing",
+        "developing",
+        "designing",
+        "forming",
+        "shaping",
+        "molding",
+        "fashioning",
+        "crafting",
+        "manufacturing",
+        "fabricating",
+        "assembling",
+        "putting together",
+        "bringing together",
+        "combining",
+        "merging",
+        "creativity",
+        "originality",
+        "novelty",
+        "newness",
+        "freshness",
+        "uniqueness",
+        "distinctiveness",
+        "individuality",
+        "personality",
+        "character",
+        "nature",
+        "essence",
+        "substance",
+        "quality",
+        "value",
+        "worth",
+        "merit",
+        "excellence",
+        "superiority",
+        "greatness",
+        "skill",
+        "ability",
+        "talent",
+        "capability",
+        "capacity",
+        "competence",
+        "proficiency",
+        "expertise",
+        "mastery",
+        "virtuosity",
+        "artistry",
+        "craftsmanship",
+        "workmanship",
+        "skillfulness",
+        "dexterity",
+        "adroitness",
+        "deftness",
+        "nimbleness",
+        "agility",
+        "flexibility",
+        "communication",
+        "articulation",
+        "utterance",
+        "statement",
+        "declaration",
+        "announcement",
+        "proclamation",
+        "pronouncement",
+        "assertion",
+        "affirmation",
+        "confirmation",
+        "validation",
+        "verification",
+        "authentication",
+        "certification",
+        "accreditation",
+        "approval",
+        "endorsement",
+        "support",
+        "backing",
+        "construct",
+        "create",
+        "make",
+        "produce",
+        "generate",
+        "develop",
+        "design",
+        "form",
+        "shape",
+        "mold",
+        "fashion",
+        "craft",
+        "manufacture",
+        "fabricate",
+        "assemble",
+        "put together",
+        "bring together",
+        "combine",
+        "merge",
+        "unite",
+        "join",
+        "connect",
+        "link",
+        "attach",
+        "fasten",
+        "secure",
+        "fix",
+        "establish",
+        "set up",
+        "install",
+        "significant",
+        "important",
+        "valuable",
+        "worthwhile",
+        "useful",
+        "beneficial",
+        "advantageous",
+        "helpful",
+        "supportive",
+        "constructive",
+        "positive",
+        "good",
+        "excellent",
+        "great",
+        "outstanding",
+        "remarkable",
+        "extraordinary",
+        "exceptional",
+        "special",
+        "unique"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 130,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "brand-archetypes",
+      "elementKey": "innocent",
+      "displayName": "The Innocent",
+      "synonyms": [
+        "hope",
+        "positivity",
+        "confidence",
+        "faith",
+        "trust",
+        "belief",
+        "expectation",
+        "anticipation",
+        "eagerness",
+        "enthusiasm",
+        "excitement",
+        "joy",
+        "happiness",
+        "delight",
+        "pleasure",
+        "satisfaction",
+        "contentment",
+        "fulfillment",
+        "gratification",
+        "reward",
+        "simplicity",
+        "clarity",
+        "straightforwardness",
+        "directness",
+        "plainness",
+        "uncomplicatedness",
+        "ease",
+        "easiness",
+        "facility",
+        "convenience",
+        "comfort",
+        "relaxation",
+        "peace",
+        "tranquility",
+        "calm",
+        "serenity",
+        "quiet",
+        "stillness",
+        "silence",
+        "rest",
+        "purity",
+        "cleanliness",
+        "cleanness",
+        "freshness",
+        "newness",
+        "novelty",
+        "originality",
+        "uniqueness",
+        "distinctiveness",
+        "individuality",
+        "personality",
+        "character",
+        "nature",
+        "essence",
+        "substance",
+        "quality",
+        "value",
+        "worth",
+        "merit",
+        "excellence",
+        "optimism",
+        "reliance",
+        "dependence",
+        "assurance",
+        "certainty",
+        "conviction",
+        "sureness",
+        "security",
+        "safety",
+        "protection",
+        "shelter",
+        "refuge",
+        "sanctuary",
+        "haven",
+        "safe haven",
+        "optimistic",
+        "hopeful",
+        "confident",
+        "positive",
+        "upbeat",
+        "cheerful",
+        "happy",
+        "joyful",
+        "merry",
+        "gay",
+        "bright",
+        "sunny",
+        "radiant",
+        "glowing",
+        "shining",
+        "brilliant",
+        "dazzling",
+        "sparkling",
+        "glittering",
+        "twinkling"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 120,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "brand-archetypes",
+      "elementKey": "explorer",
+      "displayName": "The Explorer",
+      "synonyms": [
+        "liberty",
+        "independence",
+        "autonomy",
+        "self-reliance",
+        "self-determination",
+        "liberation",
+        "emancipation",
+        "release",
+        "escape",
+        "break free",
+        "unbound",
+        "unrestrained",
+        "unlimited",
+        "unrestricted",
+        "open",
+        "flexible",
+        "adaptable",
+        "mobile",
+        "nomadic",
+        "wandering",
+        "journey",
+        "quest",
+        "expedition",
+        "voyage",
+        "trek",
+        "odyssey",
+        "pilgrimage",
+        "exploration",
+        "discovery",
+        "venture",
+        "undertaking",
+        "escapade",
+        "exploit",
+        "feat",
+        "challenge",
+        "risk",
+        "daring",
+        "bold",
+        "courageous",
+        "brave",
+        "explore",
+        "discover",
+        "find",
+        "uncover",
+        "reveal",
+        "unearth",
+        "detect",
+        "identify",
+        "locate",
+        "encounter",
+        "experience",
+        "try",
+        "test",
+        "experiment",
+        "investigate",
+        "research",
+        "search",
+        "seek",
+        "hunt",
+        "pursue",
+        "novel",
+        "fresh",
+        "original",
+        "innovative",
+        "groundbreaking",
+        "pioneering",
+        "cutting-edge",
+        "state-of-the-art",
+        "advanced",
+        "modern",
+        "contemporary",
+        "latest",
+        "newest",
+        "recent",
+        "current",
+        "up-to-date",
+        "updated",
+        "upgraded",
+        "improved",
+        "adventure",
+        "trip",
+        "meeting",
+        "interaction",
+        "engagement",
+        "participation",
+        "involvement",
+        "immersion",
+        "trial",
+        "attempt",
+        "effort",
+        "endeavor",
+        "limits",
+        "restrictions",
+        "constraints",
+        "barriers",
+        "obstacles",
+        "boundaries",
+        "borders",
+        "edges",
+        "frontiers",
+        "horizons",
+        "thresholds",
+        "ceilings",
+        "caps",
+        "maximums",
+        "minimums",
+        "rules",
+        "regulations",
+        "guidelines",
+        "parameters",
+        "standards"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 119,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "brand-archetypes",
+      "elementKey": "sage",
+      "displayName": "The Sage",
+      "synonyms": [
+        "wisdom",
+        "expertise",
+        "mastery",
+        "understanding",
+        "insight",
+        "intelligence",
+        "erudition",
+        "scholarship",
+        "learning",
+        "education",
+        "teaching",
+        "instruction",
+        "guidance",
+        "mentorship",
+        "coaching",
+        "training",
+        "development",
+        "growth",
+        "enlightenment",
+        "illumination",
+        "expert",
+        "specialist",
+        "professional",
+        "scholar",
+        "academic",
+        "researcher",
+        "analyst",
+        "consultant",
+        "advisor",
+        "mentor",
+        "teacher",
+        "professor",
+        "instructor",
+        "guide",
+        "guru",
+        "master",
+        "veteran",
+        "experienced",
+        "seasoned",
+        "qualified",
+        "certified",
+        "accurate",
+        "factual",
+        "verified",
+        "validated",
+        "confirmed",
+        "proven",
+        "reliable",
+        "trustworthy",
+        "credible",
+        "authentic",
+        "genuine",
+        "real",
+        "honest",
+        "transparent",
+        "clear",
+        "precise",
+        "exact",
+        "correct",
+        "right",
+        "true",
+        "research",
+        "study",
+        "investigation",
+        "examination",
+        "exploration",
+        "inquiry",
+        "analysis",
+        "evaluation",
+        "assessment",
+        "review",
+        "critique",
+        "breakdown",
+        "dissection",
+        "deconstruction",
+        "interpretation",
+        "explanation",
+        "clarification",
+        "educate",
+        "instruct",
+        "teach",
+        "train",
+        "coach",
+        "advise",
+        "counsel",
+        "share",
+        "explain",
+        "clarify",
+        "illuminate",
+        "enlighten",
+        "inform",
+        "develop",
+        "cultivate",
+        "nurture",
+        "foster",
+        "learn",
+        "investigate",
+        "explore",
+        "discover",
+        "understand",
+        "comprehend",
+        "grasp",
+        "acquire",
+        "gain",
+        "obtain",
+        "absorb",
+        "digest",
+        "process",
+        "analyze",
+        "evaluate",
+        "assess"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 118,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "brand-archetypes",
+      "elementKey": "regular_guy_girl",
+      "displayName": "The Regular Guy/Girl",
+      "synonyms": [
+        "connection",
+        "inclusion",
+        "acceptance",
+        "membership",
+        "participation",
+        "involvement",
+        "engagement",
+        "integration",
+        "assimilation",
+        "incorporation",
+        "attachment",
+        "affiliation",
+        "association",
+        "relationship",
+        "bond",
+        "link",
+        "tie",
+        "unity",
+        "togetherness",
+        "familiar",
+        "recognizable",
+        "understandable",
+        "comprehensible",
+        "accessible",
+        "approachable",
+        "friendly",
+        "welcoming",
+        "warm",
+        "inviting",
+        "open",
+        "honest",
+        "genuine",
+        "authentic",
+        "real",
+        "true",
+        "sincere",
+        "heartfelt",
+        "natural",
+        "unpretentious",
+        "legitimate",
+        "valid",
+        "credible",
+        "trustworthy",
+        "reliable",
+        "dependable",
+        "consistent",
+        "steady",
+        "stable",
+        "solid",
+        "substantial",
+        "meaningful",
+        "significant",
+        "important",
+        "valuable",
+        "ordinary",
+        "typical",
+        "normal",
+        "standard",
+        "regular",
+        "usual",
+        "everyday",
+        "average",
+        "conventional",
+        "traditional",
+        "mainstream",
+        "popular",
+        "widespread",
+        "prevalent",
+        "common",
+        "shared",
+        "mutual",
+        "collective",
+        "communal",
+        "useful",
+        "functional",
+        "practical",
+        "pragmatic",
+        "realistic",
+        "sensible",
+        "reasonable",
+        "logical",
+        "rational",
+        "sound",
+        "viable",
+        "feasible",
+        "workable",
+        "applicable",
+        "relevant",
+        "pertinent",
+        "appropriate",
+        "suitable",
+        "fitting",
+        "grounded"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 120,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "brand-archetypes",
+      "elementKey": "jester",
+      "displayName": "The Jester",
+      "synonyms": [
+        "happiness",
+        "delight",
+        "pleasure",
+        "enjoyment",
+        "fun",
+        "entertainment",
+        "amusement",
+        "laughter",
+        "mirth",
+        "merriment",
+        "cheer",
+        "cheerfulness",
+        "gaiety",
+        "glee",
+        "elation",
+        "euphoria",
+        "ecstasy",
+        "bliss",
+        "rapture",
+        "exhilaration",
+        "comedy",
+        "funniness",
+        "wit",
+        "humor",
+        "joy",
+        "recreation",
+        "relaxation",
+        "leisure",
+        "pastime",
+        "hobby",
+        "activity",
+        "pursuit",
+        "interest",
+        "passion",
+        "enthusiasm",
+        "excitement",
+        "thrill",
+        "adventure",
+        "experience",
+        "journey",
+        "trip",
+        "amusing",
+        "entertaining",
+        "enjoyable",
+        "pleasant",
+        "agreeable",
+        "delightful",
+        "charming",
+        "attractive",
+        "appealing",
+        "engaging",
+        "interesting",
+        "captivating",
+        "fascinating",
+        "intriguing",
+        "compelling",
+        "absorbing",
+        "engrossing",
+        "enthralling",
+        "mesmerizing",
+        "cheerful",
+        "happy",
+        "joyful",
+        "merry",
+        "gay",
+        "bright",
+        "sunny",
+        "optimistic",
+        "positive",
+        "upbeat",
+        "enthusiastic",
+        "energetic",
+        "lively",
+        "vivacious",
+        "animated",
+        "spirited",
+        "dynamic",
+        "vibrant",
+        "colorful",
+        "vivid"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 125,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "brand-archetypes",
+      "elementKey": "lover",
+      "displayName": "The Lover",
+      "synonyms": [
+        "desire",
+        "longing",
+        "yearning",
+        "craving",
+        "hunger",
+        "thirst",
+        "appetite",
+        "eagerness",
+        "enthusiasm",
+        "excitement",
+        "interest",
+        "curiosity",
+        "fascination",
+        "attraction",
+        "appeal",
+        "charm",
+        "allure",
+        "magnetism",
+        "charisma",
+        "closeness",
+        "nearness",
+        "proximity",
+        "familiarity",
+        "acquaintance",
+        "knowledge",
+        "understanding",
+        "comprehension",
+        "grasp",
+        "mastery",
+        "expertise",
+        "proficiency",
+        "skill",
+        "ability",
+        "talent",
+        "capability",
+        "capacity",
+        "competence",
+        "aptitude",
+        "gift",
+        "relationship",
+        "bond",
+        "link",
+        "tie",
+        "attachment",
+        "affiliation",
+        "association",
+        "connection",
+        "physicality",
+        "corporeality",
+        "materiality",
+        "tangibility",
+        "palpability",
+        "perceptibility",
+        "visibility",
+        "audibility",
+        "touchability",
+        "feelability",
+        "sensuality",
+        "sexuality",
+        "eroticism",
+        "passion",
+        "love",
+        "affection",
+        "fondness",
+        "devotion",
+        "dedication",
+        "commitment",
+        "loyalty",
+        "faithfulness",
+        "reliability",
+        "dependability",
+        "trustworthiness",
+        "trust",
+        "confidence",
+        "faith",
+        "belief",
+        "hope",
+        "optimism",
+        "positivity",
+        "cheerfulness",
+        "happiness",
+        "joy",
+        "delight",
+        "pleasure",
+        "satisfaction",
+        "contentment",
+        "fulfillment",
+        "gratification",
+        "reward"
+      ],
+      "sources": {
+        "existing": 0,
+        "archived": 128,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "revenue-trends",
+      "elementKey": "market_demand",
+      "displayName": "Market Demand",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "revenue-trends",
+      "elementKey": "trending_keywords",
+      "displayName": "Trending Keywords",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "revenue-trends",
+      "elementKey": "seasonal_patterns",
+      "displayName": "Seasonal Patterns",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "revenue-trends",
+      "elementKey": "competitor_gaps",
+      "displayName": "Competitor Gaps",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "revenue-trends",
+      "elementKey": "emerging_opportunities",
+      "displayName": "Emerging Opportunities",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "revenue-trends",
+      "elementKey": "price_sensitivity",
+      "displayName": "Price Sensitivity",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "revenue-trends",
+      "elementKey": "conversion_potential",
+      "displayName": "Conversion Potential",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "revenue-trends",
+      "elementKey": "upsell_opportunities",
+      "displayName": "Upsell Opportunities",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "revenue-trends",
+      "elementKey": "cross_sell_potential",
+      "displayName": "Cross Sell Potential",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "revenue-trends",
+      "elementKey": "customer_segments",
+      "displayName": "Customer Segments",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "revenue-trends",
+      "elementKey": "retention_strategies",
+      "displayName": "Retention Strategies",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "revenue-trends",
+      "elementKey": "expansion_opportunities",
+      "displayName": "Expansion Opportunities",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "revenue-trends",
+      "elementKey": "partnership_potential",
+      "displayName": "Partnership Potential",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "revenue-trends",
+      "elementKey": "content_gaps",
+      "displayName": "Content Gaps",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "revenue-trends",
+      "elementKey": "seo_opportunities",
+      "displayName": "Seo Opportunities",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    },
+    {
+      "frameworkKey": "revenue-trends",
+      "elementKey": "social_media_trends",
+      "displayName": "Social Media Trends",
+      "synonyms": [],
+      "sources": {
+        "existing": 0,
+        "archived": 0,
+        "datamuse": 0
+      }
+    }
+  ]
+}

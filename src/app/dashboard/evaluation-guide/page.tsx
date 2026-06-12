@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
@@ -103,10 +104,13 @@ export default function EvaluationGuidePage() {
           <CardTitle>Canonical Pipeline Diagram</CardTitle>
         </CardHeader>
         <CardContent>
-          <img
+          <Image
             src="/framework-page-analysis-pipeline.svg"
             alt="Framework page analysis pipeline"
-            className="w-full rounded-md border"
+            width={1200}
+            height={640}
+            className="h-auto w-full rounded-md border"
+            unoptimized
           />
         </CardContent>
       </Card>

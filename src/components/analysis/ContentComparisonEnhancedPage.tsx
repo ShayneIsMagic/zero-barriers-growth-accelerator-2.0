@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { apiCall } from '@/lib/api-call';
+import { FrameworkStructuredResults } from '@/components/analysis/FrameworkStructuredResults';
 
 /**
  * Enhanced Content Comparison Page
@@ -614,17 +615,11 @@ New compelling description that highlights our unique value proposition.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="rounded-lg border bg-blue-50 p-4 dark:bg-blue-950">
-                    <pre className="max-h-96 overflow-auto whitespace-pre-wrap text-xs">
-                      {typeof frameworkResults.b2c.comparison === 'string'
-                        ? frameworkResults.b2c.comparison
-                        : JSON.stringify(
-                            frameworkResults.b2c.comparison,
-                            null,
-                            2
-                          )}
-                    </pre>
-                  </div>
+                  <FrameworkStructuredResults
+                    kind="b2c-elements"
+                    data={frameworkResults.b2c}
+                    defaultExpanded
+                  />
                 </CardContent>
               </Card>
             ) : (
@@ -659,17 +654,11 @@ New compelling description that highlights our unique value proposition.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="rounded-lg border bg-green-50 p-4 dark:bg-green-950">
-                    <pre className="max-h-96 overflow-auto whitespace-pre-wrap text-xs">
-                      {typeof frameworkResults.b2b.comparison === 'string'
-                        ? frameworkResults.b2b.comparison
-                        : JSON.stringify(
-                            frameworkResults.b2b.comparison,
-                            null,
-                            2
-                          )}
-                    </pre>
-                  </div>
+                  <FrameworkStructuredResults
+                    kind="b2b-elements"
+                    data={frameworkResults.b2b}
+                    defaultExpanded
+                  />
                 </CardContent>
               </Card>
             ) : (
@@ -695,18 +684,11 @@ New compelling description that highlights our unique value proposition.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="rounded-lg border bg-purple-50 p-4 dark:bg-purple-950">
-                    <pre className="max-h-96 overflow-auto whitespace-pre-wrap text-xs">
-                      {typeof frameworkResults.cliftonStrengths.comparison ===
-                      'string'
-                        ? frameworkResults.cliftonStrengths.comparison
-                        : JSON.stringify(
-                            frameworkResults.cliftonStrengths.comparison,
-                            null,
-                            2
-                          )}
-                    </pre>
-                  </div>
+                  <FrameworkStructuredResults
+                    kind="clifton-strengths"
+                    data={frameworkResults.cliftonStrengths}
+                    defaultExpanded
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -726,18 +708,11 @@ New compelling description that highlights our unique value proposition.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="rounded-lg border bg-orange-50 p-4 dark:bg-orange-950">
-                    <pre className="max-h-96 overflow-auto whitespace-pre-wrap text-xs">
-                      {typeof frameworkResults.goldenCircle.comparison ===
-                      'string'
-                        ? frameworkResults.goldenCircle.comparison
-                        : JSON.stringify(
-                            frameworkResults.goldenCircle.comparison,
-                            null,
-                            2
-                          )}
-                    </pre>
-                  </div>
+                  <FrameworkStructuredResults
+                    kind="golden-circle"
+                    data={frameworkResults.goldenCircle}
+                    defaultExpanded
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -752,15 +727,10 @@ New compelling description that highlights our unique value proposition.
                     <CardTitle>B2C Elements of Value</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <pre className="max-h-60 overflow-auto whitespace-pre-wrap text-xs">
-                      {typeof frameworkResults.b2c.comparison === 'string'
-                        ? frameworkResults.b2c.comparison
-                        : JSON.stringify(
-                            frameworkResults.b2c.comparison,
-                            null,
-                            2
-                          )}
-                    </pre>
+                    <FrameworkStructuredResults
+                      kind="b2c-elements"
+                      data={frameworkResults.b2c}
+                    />
                   </CardContent>
                 </Card>
               )}
@@ -771,15 +741,10 @@ New compelling description that highlights our unique value proposition.
                     <CardTitle>B2B Elements of Value</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <pre className="max-h-60 overflow-auto whitespace-pre-wrap text-xs">
-                      {typeof frameworkResults.b2b.comparison === 'string'
-                        ? frameworkResults.b2b.comparison
-                        : JSON.stringify(
-                            frameworkResults.b2b.comparison,
-                            null,
-                            2
-                          )}
-                    </pre>
+                    <FrameworkStructuredResults
+                      kind="b2b-elements"
+                      data={frameworkResults.b2b}
+                    />
                   </CardContent>
                 </Card>
               )}
@@ -790,16 +755,10 @@ New compelling description that highlights our unique value proposition.
                     <CardTitle>CliftonStrengths</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <pre className="max-h-60 overflow-auto whitespace-pre-wrap text-xs">
-                      {typeof frameworkResults.cliftonStrengths.comparison ===
-                      'string'
-                        ? frameworkResults.cliftonStrengths.comparison
-                        : JSON.stringify(
-                            frameworkResults.cliftonStrengths.comparison,
-                            null,
-                            2
-                          )}
-                    </pre>
+                    <FrameworkStructuredResults
+                      kind="clifton-strengths"
+                      data={frameworkResults.cliftonStrengths}
+                    />
                   </CardContent>
                 </Card>
               )}
@@ -810,16 +769,10 @@ New compelling description that highlights our unique value proposition.
                     <CardTitle>Golden Circle</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <pre className="max-h-60 overflow-auto whitespace-pre-wrap text-xs">
-                      {typeof frameworkResults.goldenCircle.comparison ===
-                      'string'
-                        ? frameworkResults.goldenCircle.comparison
-                        : JSON.stringify(
-                            frameworkResults.goldenCircle.comparison,
-                            null,
-                            2
-                          )}
-                    </pre>
+                    <FrameworkStructuredResults
+                      kind="golden-circle"
+                      data={frameworkResults.goldenCircle}
+                    />
                   </CardContent>
                 </Card>
               )}

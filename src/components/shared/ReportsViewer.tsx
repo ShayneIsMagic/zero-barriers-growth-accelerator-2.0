@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -27,6 +27,9 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { UnifiedLocalForageStorage, StoredReport } from '@/lib/services/unified-localforage-storage.service';
+import { CompanyReportCompileDialog } from '@/components/shared/CompanyReportCompileDialog';
+import { ReportStructuredPreview } from '@/components/shared/ReportStructuredPreview';
+import { buildUrlReportLabel } from '@/lib/framework/framework-results-adapter';
 import { toast } from 'sonner';
 import {
   Database,
@@ -37,6 +40,8 @@ import {
   Copy,
   ExternalLink,
   Loader2,
+  Upload,
+  Layers,
 } from 'lucide-react';
 
 interface ReportsViewerProps {
@@ -54,6 +59,9 @@ export function ReportsViewer({
   const [selectedReport, setSelectedReport] = useState<StoredReport | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
+  const [compileCompanyKey, setCompileCompanyKey] = useState<string | null>(null);
+  const [compileReports, setCompileReports] = useState<StoredReport[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (open) {
@@ -85,7 +93,18 @@ export function ReportsViewer({
       report.formattedDate?.toLowerCase().includes(searchLower);
 
     const matchesFilter =
-      filterType === 'all' || report.assessmentType === filterType;
+      filterType === 'all' ||
+      report.assessmentType === filterType ||
+      (filterType === 'b2b-elements' &&
+        (report.assessmentType?.includes('b2b') ?? false)) ||
+      (filterType === 'b2c-elements' &&
+        (report.assessmentType?.includes('b2c') ?? false)) ||
+      (filterType === 'clifton-strengths' &&
+        (report.assessmentType?.includes('clifton') ?? false)) ||
+      (filterType === 'golden-circle' &&
+        (report.assessmentType?.includes('golden') ?? false)) ||
+      (filterType === 'jambojon-archetypes' &&
+        (report.assessmentType?.includes('archetype') ?? false));
 
     return matchesSearch && matchesFilter;
   });
@@ -149,11 +168,34 @@ export function ReportsViewer({
     toast.success('Report copied to clipboard!');
   };
 
-  const handleSelectReport = (report: any) => {
+  const handleSelectReport = (report: StoredReport) => {
     if (allowSelection && onReportSelected) {
       onReportSelected(report);
       setOpen(false);
     }
+  };
+
+  const handleUploadReport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+    try {
+      await UnifiedLocalForageStorage.importReportFromFile(file);
+      toast.success(`Imported ${file.name}`);
+      await loadReports();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to import report'
+      );
+    } finally {
+      event.target.value = '';
+    }
+  };
+
+  const handleCompileCompany = (companyKey: string, domainReports: StoredReport[]) => {
+    setCompileCompanyKey(companyKey);
+    setCompileReports(domainReports);
   };
 
   const formatDate = (dateString: string) => {
@@ -177,14 +219,32 @@ export function ReportsViewer({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Database className="h-5 w-5" />
-              Puppeteer Collected Reports
+              Saved Reports (LocalForage)
             </DialogTitle>
             <DialogDescription>
-              View, download, and share reports collected from Puppeteer analysis
+              Reports are named by URL and assessment type. Upload JSON exports or compile all runs for a company.
             </DialogDescription>
           </DialogHeader>
 
           <div className="flex-1 overflow-hidden flex flex-col space-y-4">
+            <div className="flex flex-wrap gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".json,.md,.markdown,.txt,application/json,text/markdown"
+                className="hidden"
+                onChange={handleUploadReport}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Upload className="mr-2 h-4 w-4" />
+                Upload report
+              </Button>
+            </div>
             {/* Search and Filter */}
             <div className="flex gap-2">
               <div className="relative flex-1">
@@ -231,16 +291,25 @@ export function ReportsViewer({
                     .map(([domain, domainReports]) => (
                       <Card key={domain}>
                         <CardHeader>
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center justify-between gap-2">
                             <div className="flex-1 min-w-0">
                               <CardTitle className="text-lg flex items-center gap-2">
-                                <ExternalLink className="h-4 w-4" />
+                                <ExternalLink className="h-4 w-4 shrink-0" />
                                 <span className="truncate font-semibold">{domain}</span>
                               </CardTitle>
                               <CardDescription>
-                                {domainReports.length} report{domainReports.length !== 1 ? 's' : ''} • {domainReports[0]?.url}
+                                {domainReports.length} report{domainReports.length !== 1 ? 's' : ''} ·{' '}
+                                {buildUrlReportLabel(domainReports[0]?.url ?? domain)}
                               </CardDescription>
                             </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleCompileCompany(domain, domainReports)}
+                            >
+                              <Layers className="mr-1 h-4 w-4" />
+                              Compile
+                            </Button>
                           </div>
                         </CardHeader>
                         <CardContent>
@@ -387,12 +456,16 @@ export function ReportsViewer({
               </DialogDescription>
             </DialogHeader>
             <div className="flex-1 overflow-y-auto">
-              <Tabs defaultValue="preview" className="w-full">
+              <Tabs defaultValue="structured" className="w-full">
                 <TabsList>
-                  <TabsTrigger value="preview">Preview</TabsTrigger>
+                  <TabsTrigger value="structured">Analysis</TabsTrigger>
+                  <TabsTrigger value="markdown">Markdown</TabsTrigger>
                   <TabsTrigger value="raw">Raw {selectedReport.format}</TabsTrigger>
                 </TabsList>
-                <TabsContent value="preview" className="mt-4">
+                <TabsContent value="structured" className="mt-4">
+                  <ReportStructuredPreview report={selectedReport} />
+                </TabsContent>
+                <TabsContent value="markdown" className="mt-4">
                   <div className="prose max-w-none">
                     {selectedReport.format === 'markdown' ? (
                       <pre className="whitespace-pre-wrap text-sm bg-muted p-4 rounded-lg">
@@ -401,9 +474,9 @@ export function ReportsViewer({
                           : JSON.stringify(selectedReport.content, null, 2)}
                       </pre>
                     ) : (
-                      <pre className="text-sm bg-muted p-4 rounded-lg overflow-x-auto">
-                        {JSON.stringify(selectedReport.content, null, 2)}
-                      </pre>
+                      <p className="text-sm text-muted-foreground">
+                        This report is JSON-only. Use the Analysis tab for structured view.
+                      </p>
                     )}
                   </div>
                 </TabsContent>
@@ -436,6 +509,18 @@ export function ReportsViewer({
           </DialogContent>
         </Dialog>
       )}
+
+      <CompanyReportCompileDialog
+        open={compileCompanyKey !== null}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setCompileCompanyKey(null);
+            setCompileReports([]);
+          }
+        }}
+        companyKey={compileCompanyKey ?? ''}
+        reports={compileReports}
+      />
     </>
   );
 }

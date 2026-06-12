@@ -25,6 +25,8 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { FrameworkStructuredResults } from '@/components/analysis/FrameworkStructuredResults';
+import { hasStructuredFrameworkAnalysis } from '@/lib/framework/resolve-panel-analysis';
 
 interface AssessmentResultsViewProps {
   assessmentType:
@@ -214,20 +216,37 @@ export function AssessmentResultsView({
           </TabsList>
 
           <TabsContent value="overview" className="space-y-4">
-            {renderOverview(
-              data,
-              assessmentType,
-              getScoreColor,
-              getScoreBadgeVariant
+            {hasStructuredFrameworkAnalysis(data) &&
+            assessmentType !== 'content-comparison' ? (
+              <FrameworkStructuredResults
+                assessmentType={assessmentType}
+                data={data}
+              />
+            ) : (
+              renderOverview(
+                data,
+                assessmentType,
+                getScoreColor,
+                getScoreBadgeVariant
+              )
             )}
           </TabsContent>
 
           <TabsContent value="details" className="space-y-4">
-            {renderDetails(
-              data,
-              assessmentType,
-              getScoreColor,
-              getScoreBadgeVariant
+            {hasStructuredFrameworkAnalysis(data) &&
+            assessmentType !== 'content-comparison' ? (
+              <FrameworkStructuredResults
+                assessmentType={assessmentType}
+                data={data}
+                defaultExpanded
+              />
+            ) : (
+              renderDetails(
+                data,
+                assessmentType,
+                getScoreColor,
+                getScoreBadgeVariant
+              )
             )}
           </TabsContent>
 

@@ -24,6 +24,8 @@ import {
   Users,
   XCircle,
 } from 'lucide-react';
+import { FrameworkStructuredResults } from '@/components/analysis/FrameworkStructuredResults';
+import { hasStructuredFrameworkAnalysis } from '@/lib/framework/resolve-panel-analysis';
 import { fetchFullAnalysisReport } from '@/services/analysis-api';
 import { useEffect, useState, useCallback } from 'react';
 
@@ -416,7 +418,22 @@ export default function ReportViewer({ analysisId, url }: ReportViewerProps) {
         </TabsContent>
 
         <TabsContent value="elements">
-          {report.elementsOfValueB2C ? (
+          {report.elementsOfValueB2C &&
+          hasStructuredFrameworkAnalysis(report.elementsOfValueB2C) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Elements of Value Analysis</CardTitle>
+                <CardDescription>B2C structured results</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FrameworkStructuredResults
+                  kind="b2c-elements"
+                  data={report.elementsOfValueB2C}
+                  defaultExpanded
+                />
+              </CardContent>
+            </Card>
+          ) : report.elementsOfValueB2C ? (
             <Card>
               <CardHeader>
                 <CardTitle>Elements of Value Analysis</CardTitle>
