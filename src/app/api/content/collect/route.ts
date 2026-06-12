@@ -1,9 +1,8 @@
 /**
- * Unified content collection API.
- * Same protocol as content-comparison and multi-page-scraping.
+ * Unified content collection API — delegates to the proven compare and multi-page routes.
+ * Prefer calling /api/analyze/compare or /api/scrape-multi-page directly from the client.
  */
 
-import { collectWebsiteContent } from '@/lib/server/content-collection/collector';
 import {
   apiErrorResponse,
   logRouteError,
@@ -17,16 +16,7 @@ export const maxDuration = 120;
 interface CollectRequestBody extends Record<string, unknown> {
   url?: string;
   mode?: ContentCollectionMode;
-  options?: {
-    maxPages?: number;
-    maxDepth?: number;
-    includeSubpages?: boolean;
-    includeBlog?: boolean;
-    includeProducts?: boolean;
-    includeAbout?: boolean;
-    includeContact?: boolean;
-    includeServices?: boolean;
-  };
+  options?: Record<string, unknown>;
 }
 
 function isValidUrl(urlString: string): boolean {
@@ -36,6 +26,22 @@ function isValidUrl(urlString: string): boolean {
   } catch {
     return false;
   }
+}
+
+async function forwardCollectionRequest(
+  request: NextRequest,
+  targetPath: string,
+  body: Record<string, unknown>
+): Promise<{ ok: boolean; status: number; payload: Record<string, unknown> }> {
+  const origin = request.nextUrl.origin;
+  const response = await fetch(`${origin}${targetPath}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  const payload = (await response.json()) as Record<string, unknown>;
+  return { ok: response.ok, status: response.status, payload };
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -58,20 +64,64 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const { result, comprehensiveRaw } = await collectWebsiteContent({
-      url,
-      mode,
-      options,
-    });
+    if (mode === 'multi-page') {
+      const { ok, status, payload } = await forwardCollectionRequest(
+        request,
+        '/api/scrape-multi-page',
+        { url, options: options ?? {} }
+      );
+
+      if (!ok || payload.success !== true || !payload.data) {
+        return apiErrorResponse(
+          status,
+          typeof payload.error === 'string'
+            ? payload.error
+            : 'Multi-page collection failed'
+        );
+      }
+
+      const { transformMultiPageData } = await import(
+        '@/lib/server/content-collection/transform'
+      );
+      const existing = transformMultiPageData(
+        payload.data as Parameters<typeof transformMultiPageData>[0]
+      );
+
+      return NextResponse.json({
+        success: true,
+        mode: 'multi-page',
+        url,
+        existing,
+        comprehensive: payload.data,
+        data: payload.data,
+        collectedAt: new Date().toISOString(),
+        message: 'Content collected successfully',
+      });
+    }
+
+    const { ok, status, payload } = await forwardCollectionRequest(
+      request,
+      '/api/analyze/compare',
+      { url, proposedContent: '' }
+    );
+
+    if (!ok || payload.success === false) {
+      return apiErrorResponse(
+        status,
+        typeof payload.error === 'string'
+          ? payload.error
+          : 'Content collection failed'
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      mode: result.mode,
-      url: result.url,
-      existing: result.existing,
-      comprehensive: comprehensiveRaw ?? result.raw,
-      data: result.raw,
-      collectedAt: result.collectedAt,
+      mode: 'comprehensive',
+      url,
+      existing: payload.existing,
+      comprehensive: payload.comprehensive,
+      data: payload.comprehensive ?? payload.existing,
+      collectedAt: new Date().toISOString(),
       message: 'Content collected successfully',
     });
   } catch (error) {

@@ -13,8 +13,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 120;
 
-const isServerless =
-  process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
+const isServerless = process.env.VERCEL === '1';
 
 // ============================================
 // INTERFACES

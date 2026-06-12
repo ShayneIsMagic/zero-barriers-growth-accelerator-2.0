@@ -1,10 +1,12 @@
-/**
- * Unified content collection hook.
- * Uses the same protocol as content-comparison and multi-page-scraping.
- */
+'use client';
 
 import { useState } from 'react';
 import { apiCall } from '@/lib/api-call';
+import {
+  CONTENT_COMPARE_ENDPOINT,
+  CONTENT_MULTI_PAGE_ENDPOINT,
+} from '@/lib/content-collection/endpoints';
+import { resolveCollectedContentPayload } from '@/lib/content-collection/resolve-collected-content';
 import { UnifiedLocalForageStorage } from '@/lib/services/unified-localforage-storage.service';
 import type {
   CollectedContentPayload,
@@ -70,35 +72,61 @@ export function useContentCollection(): UseContentCollectionReturn {
     try {
       const cached = await UnifiedLocalForageStorage.getPuppeteerData(trimmedUrl);
       if (cached?.data) {
-        const cachedExisting =
-          (cached.data as { existing?: CollectedContentPayload }).existing ||
-          (cached.data as CollectedContentPayload);
-        setCollectedData(cachedExisting);
-        setRawData(cached.data);
-        setMode(collectionMode);
-        setIsFromCache(true);
-        return cachedExisting;
+        const cachedExisting = resolveCollectedContentPayload(
+          cached.data,
+          trimmedUrl
+        );
+        if (cachedExisting) {
+          setCollectedData(cachedExisting);
+          setRawData(cached.data);
+          setMode(collectionMode);
+          setIsFromCache(true);
+          return cachedExisting;
+        }
       }
 
-      const endpoint =
-        collectionMode === 'multi-page'
-          ? '/api/scrape-multi-page'
-          : '/api/content/collect';
+      if (collectionMode === 'multi-page') {
+        const { data: result } = await apiCall<{
+          success: boolean;
+          error?: string;
+          data?: unknown;
+        }>(CONTENT_MULTI_PAGE_ENDPOINT, {
+          method: 'POST',
+          body: { url: trimmedUrl, options },
+          showErrorToast: true,
+        });
 
-      const body =
-        collectionMode === 'multi-page'
-          ? { url: trimmedUrl, options }
-          : { url: trimmedUrl, mode: collectionMode, options };
+        if (!result?.success || !result.data) {
+          throw new Error(result?.error || 'Multi-page collection failed');
+        }
+
+        const existing = resolveCollectedContentPayload(result.data, trimmedUrl);
+        if (!existing) {
+          throw new Error('Multi-page collection succeeded but content is unusable');
+        }
+
+        await UnifiedLocalForageStorage.storePuppeteerData(
+          trimmedUrl,
+          result.data
+        );
+
+        setCollectedData(existing);
+        setRawData(result.data);
+        setMode(collectionMode);
+        return existing;
+      }
 
       const { data: result } = await apiCall<{
         success: boolean;
         error?: string;
         existing?: CollectedContentPayload;
         comprehensive?: unknown;
-        data?: unknown;
-      }>(endpoint, {
+      }>(CONTENT_COMPARE_ENDPOINT, {
         method: 'POST',
-        body,
+        body: {
+          url: trimmedUrl,
+          proposedContent: '',
+        },
         showErrorToast: true,
       });
 
@@ -107,14 +135,14 @@ export function useContentCollection(): UseContentCollectionReturn {
       }
 
       const existing =
-        result.existing ||
-        (result.data as { existing?: CollectedContentPayload })?.existing;
+        result.existing ??
+        resolveCollectedContentPayload(result.comprehensive, trimmedUrl);
 
       if (!existing) {
         throw new Error('Collection succeeded but no content payload returned');
       }
 
-      const storagePayload = result.comprehensive ?? result.data ?? existing;
+      const storagePayload = result.comprehensive ?? existing;
       await UnifiedLocalForageStorage.storePuppeteerData(
         trimmedUrl,
         storagePayload

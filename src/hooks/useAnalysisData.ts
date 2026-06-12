@@ -6,6 +6,7 @@
 import { useState } from 'react';
 import { apiCall } from '@/lib/api-call';
 import { UnifiedLocalForageStorage } from '@/lib/services/unified-localforage-storage.service';
+import { CONTENT_COMPARE_ENDPOINT } from '@/lib/content-collection/endpoints';
 
 interface UseAnalysisDataOptions {
   proposedContent?: string;
@@ -92,28 +93,27 @@ export function useAnalysisData(
         setIsFromCache(false);
       }
 
-      // Step 2: Pre-scrape only for non-compare flows
+      // Step 2: Pre-scrape only for non-compare flows — use compare API (same as Content Comparison)
       if (!puppeteerData && shouldPreScrape) {
-        const { data: scrapeResult } = await apiCall<{
+        const { data: compareResult } = await apiCall<{
           success: boolean;
           error?: string;
           comprehensive?: unknown;
-          data?: unknown;
-        }>('/api/scrape/content', {
+          existing?: unknown;
+        }>(CONTENT_COMPARE_ENDPOINT, {
           method: 'POST',
           body: {
             url: trimmedUrl,
-            maxPages: options.maxPages || 10,
-            maxDepth: options.maxDepth || 2,
+            proposedContent: '',
           },
           showErrorToast: true,
         });
 
-        if (!scrapeResult?.success) {
-          throw new Error(scrapeResult?.error || 'Scraping failed');
+        if (!compareResult?.success) {
+          throw new Error(compareResult?.error || 'Scraping failed');
         }
 
-        puppeteerData = scrapeResult.comprehensive || scrapeResult.data;
+        puppeteerData = compareResult.comprehensive ?? compareResult.existing;
 
         if (puppeteerData) {
           await UnifiedLocalForageStorage.storePuppeteerData(
