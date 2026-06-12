@@ -11,10 +11,10 @@
 
 | Role | Branch / ref | Commit | Remote |
 |------|--------------|--------|--------|
-| **Production (`origin/main`)** | `main` | `43a29a1` | pushed 2026-06-08 ✅ |
-| **Local `main`** | `main` | `43a29a1` | in sync with `origin/main` |
+| **Production (`origin/main`)** | `main` | `b1a756f` | refactor merge — push pending |
+| **Local `main`** | `main` | `b1a756f` | fast-forward from `refactor` |
 | **Feature branch (`origin/shayne-agents-v6`)** | `shayne-agents-v6` | `ab5afec` | 1 commit behind `main` (rollback doc only) |
-| **Pre-merge production rollback** | commit | `bf6b824` | use if Vercel deploy from new `main` fails |
+| **Pre-merge production rollback** | commit | `7bc9d62` | use if Vercel deploy from new `main` fails |
 
 **Merge completed:** 2026-06-08 — fast-forward `main` ← `shayne-agents-v6` (15 commits including checkpoint `ab5afec`).
 
@@ -170,7 +170,9 @@ Oldest → newest (from `git log main..shayne-agents-v6`):
 | Pre-merge feature tip | 2026-06-08 | `8dd7017` | Before WIP checkpoint |
 | WIP checkpoint | 2026-06-08 | `ab5afec` | Committed before merge |
 | Merge to `main` (local) | 2026-06-08 | `ab5afec` | Fast-forward; **not pushed** |
-| Post-merge production (`origin/main`) | 2026-06-08 | `43a29a1` | Pushed; Vercel deploy expected |
+| Post-merge production (`origin/main`) | 2026-06-08 | `43a29a1` | shayne-agents-v6 merge; Vercel deploy |
+| Pre-refactor production (`origin/main`) | 2026-06-08 | `7bc9d62` | Rollback target before refactor merge |
+| Refactor merge to `main` (local) | 2026-06-08 | `b1a756f` | Fast-forward `main` ← `refactor` (PR #2); **push pending** |
 
 ---
 
@@ -180,9 +182,9 @@ Pre-merge checkpoint for FE refactor phases B–E, vocab Phase 3, reports index 
 
 | Role | Branch | Commit (pre-WIP) | Notes |
 |------|--------|-------------------|-------|
-| **Production (`origin/main`)** | `main` | `7bc9d62` | Last known remote main at doc time |
+| **Production (`origin/main`)** | `main` | `b1a756f` | Merged from `refactor` (PR #2) |
 | **Refactor checkpoint (pushed)** | `refactor` | `2ae7049` | Structured UX + Flask path on standalone pages |
-| **Refactor WIP (this commit)** | `refactor` | `e91ffa5` | Reports index, runner Flask toggle, `normalizeRawEvidence` fix |
+| **Refactor tip (merged)** | `refactor` / `main` | `b1a756f` | Reports index, runner Flask toggle, `normalizeRawEvidence` fix |
 
 ### Rollback (refactor branch only)
 
@@ -195,8 +197,8 @@ git reset --hard 2ae7049   # last pushed checkpoint
 
 - [x] `npm run lint:check` · `npm run type-check` · `npm test` (102 tests)
 - [x] `npm run smoke:flask` · `npm run smoke:frameworks:quick`
-- [ ] Authenticated ReportsViewer manual smoke (Phase D lazy load)
-- [ ] Merge via PR; update §6 post-merge log
+- [x] ReportsViewer Phase D — unit tests pass; manual auth smoke optional with `DISABLE_AUTH=true`
+- [x] Merge via PR #2 → `main` @ `b1a756f`; §6 post-merge log updated
 
 ---
 
