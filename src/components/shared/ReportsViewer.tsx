@@ -78,8 +78,10 @@ export function ReportsViewer({
     try {
       const summaries = await UnifiedLocalForageStorage.getAllReportSummaries();
       setReports(summaries);
-    } catch (_error) {
-      // Failed to load reports - silently handle
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to load saved reports'
+      );
     } finally {
       setLoading(false);
     }
@@ -87,8 +89,9 @@ export function ReportsViewer({
 
   const filteredReports = reports.filter((report) => {
     const searchLower = searchTerm.toLowerCase();
+    const reportUrl = report.url ?? '';
     const matchesSearch =
-      report.url.toLowerCase().includes(searchLower) ||
+      reportUrl.toLowerCase().includes(searchLower) ||
       report.domain?.toLowerCase().includes(searchLower) ||
       report.displayName?.toLowerCase().includes(searchLower) ||
       report.assessmentType?.toLowerCase().includes(searchLower) ||
@@ -140,6 +143,10 @@ export function ReportsViewer({
 
   const handleViewReport = async (summary: StoredReportSummary) => {
     const full = await loadFullReport(summary);
+    if (!full) {
+      toast.error('Report content could not be loaded. Try refreshing the list.');
+      return;
+    }
     setSelectedReport(full);
   };
 

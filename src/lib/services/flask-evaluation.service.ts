@@ -1,6 +1,6 @@
 /**
- * Client for Flask deterministic evaluation API (port 5001).
- * See backend/API_DOCUMENTATION.md — POST /api/evaluate
+ * Client for deterministic Flask evaluation via Next.js proxy (/api/evaluate).
+ * See backend/API_DOCUMENTATION.md — upstream POST /api/evaluate on port 5001.
  */
 
 import type { CanonicalFrameworkPayload } from '@/types/canonical-framework-payload';
@@ -30,25 +30,15 @@ export interface FlaskEvaluateResponse {
   details?: string;
 }
 
-function getFlaskBaseUrl(): string {
-  const fromEnv =
-    typeof process.env.NEXT_PUBLIC_EVALUATION_API_URL === 'string'
-      ? process.env.NEXT_PUBLIC_EVALUATION_API_URL.trim()
-      : '';
-  return fromEnv || 'http://localhost:5001';
-}
-
+/** @deprecated Use runtime availability from useFlaskEvaluationAvailability instead. */
 export function isFlaskEvaluationEnabled(): boolean {
-  return process.env.NEXT_PUBLIC_ENABLE_FLASK_EVALUATION === 'true';
+  return process.env.NEXT_PUBLIC_ENABLE_FLASK_EVALUATION !== 'false';
 }
 
 export async function evaluateWithFlask(
   request: FlaskEvaluateRequest
 ): Promise<FlaskEvaluateResponse> {
-  const baseUrl = getFlaskBaseUrl();
-  const url = `${baseUrl.replace(/\/$/, '')}/api/evaluate`;
-
-  const response = await fetch(url, {
+  const response = await fetch('/api/evaluate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -60,7 +50,11 @@ export async function evaluateWithFlask(
 
   const data = (await response.json()) as FlaskEvaluateResponse;
   if (!response.ok || !data.success) {
-    throw new Error(data.error || data.details || `Flask evaluate failed (${response.status})`);
+    throw new Error(
+      data.error ||
+        data.details ||
+        `Deterministic evaluation failed (${response.status})`
+    );
   }
   return data;
 }
@@ -84,23 +78,6 @@ export async function runFlaskFrameworkEvaluation(
       proposedContent: params.proposedContent,
     }),
   });
-}
-
-export async function checkFlaskHealth(): Promise<boolean> {
-  try {
-    const baseUrl = getFlaskBaseUrl();
-    const response = await fetch(`${baseUrl.replace(/\/$/, '')}/api/health`, {
-      method: 'GET',
-      signal: AbortSignal.timeout(8000),
-    });
-    if (!response.ok) {
-      return false;
-    }
-    const data = (await response.json()) as { success?: boolean; status?: string };
-    return data.success === true || data.status === 'healthy';
-  } catch {
-    return false;
-  }
 }
 
 export const FLASK_FRAMEWORK_KEYS: Record<string, string> = {

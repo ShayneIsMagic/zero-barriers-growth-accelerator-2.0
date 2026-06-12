@@ -11,6 +11,7 @@ export type FrameworkResultKind =
   | 'brand-archetypes'
   | 'golden-circle'
   | 'revenue-trends'
+  | 'content-comparison'
   | 'unknown';
 
 export interface NormalizedFrameworkResult {
@@ -40,7 +41,17 @@ const ASSESSMENT_TYPE_TO_KIND: Record<string, FrameworkResultKind> = {
   'brand-archetypes-standalone-chunked': 'brand-archetypes',
   'revenue-trends': 'revenue-trends',
   'revenue-trends-readable': 'revenue-trends',
+  compare: 'content-comparison',
+  'content-comparison': 'content-comparison',
 };
+
+export interface ContentComparisonReportPayload {
+  existing?: Record<string, unknown>;
+  proposed?: Record<string, unknown> | null;
+  comparison?: unknown;
+  success?: boolean;
+  message?: string;
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -95,6 +106,52 @@ export function extractAnalysisPayload(raw: unknown): Record<string, unknown> | 
     if (nested) {
       return nested;
     }
+  }
+
+  return null;
+}
+
+/** Live API / LocalForage run payloads use `analysis`; legacy paths used `comparison`. */
+export function resolveFrameworkRunAnalysis(
+  result: Record<string, unknown> | null | undefined
+): Record<string, unknown> | null {
+  if (!result) {
+    return null;
+  }
+  return extractAnalysisPayload(result);
+}
+
+export function resolveFrameworkRunExisting(
+  result: Record<string, unknown> | null | undefined
+): Record<string, unknown> | null {
+  if (!result) {
+    return null;
+  }
+  if (isRecord(result.existing)) {
+    return result.existing;
+  }
+  if (isRecord(result.existingData)) {
+    return result.existingData;
+  }
+  return null;
+}
+
+export function extractContentComparisonPayload(
+  raw: unknown
+): ContentComparisonReportPayload | null {
+  const parsed = parseJsonContent(raw);
+  if (!isRecord(parsed)) {
+    return null;
+  }
+
+  if (isRecord(parsed.existing) || parsed.comparison !== undefined) {
+    return {
+      existing: isRecord(parsed.existing) ? parsed.existing : undefined,
+      proposed: isRecord(parsed.proposed) ? parsed.proposed : null,
+      comparison: parsed.comparison,
+      success: typeof parsed.success === 'boolean' ? parsed.success : undefined,
+      message: typeof parsed.message === 'string' ? parsed.message : undefined,
+    };
   }
 
   return null;

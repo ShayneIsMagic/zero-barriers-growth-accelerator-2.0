@@ -33,9 +33,10 @@ import { apiCall, apiCallStream } from '@/lib/api-call';
 import { consumeChunkedAnalysisStream } from '@/lib/framework/consume-chunked-stream';
 import { getChunkedAssessmentConfig } from '@/lib/framework/framework-assessment-config';
 import {
-  isFlaskEvaluationEnabled,
   runFlaskFrameworkEvaluation,
 } from '@/lib/services/flask-evaluation.service';
+import { useFlaskEvaluationAvailability } from '@/hooks/useFlaskEvaluationAvailability';
+import { useFrameworkAnalysisEngine, type FrameworkAnalysisEngine } from '@/hooks/useFrameworkAnalysisEngine';
 import {
   buildExistingContentForChunkedAnalysis,
   pickPrimaryPageUrl,
@@ -114,8 +115,6 @@ interface AssessmentProgress {
   result?: Record<string, unknown>;
   error?: string;
 }
-
-type RunnerAnalysisMode = 'ai-chunked' | 'flask-deterministic';
 
 interface FrameworkAnalysisRunnerProps {
   url: string;
@@ -201,8 +200,20 @@ export function FrameworkAnalysisRunner({
     Record<string, AssessmentProgress>
   >({});
   const [isRunning, setIsRunning] = useState(false);
-  const [analysisMode, setAnalysisMode] = useState<RunnerAnalysisMode>('ai-chunked');
-  const flaskEvaluationEnabled = isFlaskEvaluationEnabled();
+  const {
+    available: flaskAvailable,
+    loading: flaskLoading,
+    message: flaskStatusMessage,
+    preferDeterministic,
+    defaultEngine,
+  } = useFlaskEvaluationAvailability();
+  const { engine: analysisMode, setEngine: setAnalysisMode } =
+    useFrameworkAnalysisEngine({
+      preferDeterministic,
+      serverDefaultEngine: defaultEngine,
+      flaskLoading,
+    });
+
   const [reports, setReports] = useState<any[]>([]);
   const [siteGoals, setSiteGoals] = useState<string[]>(['']);
   const [selectedArchetype, setSelectedArchetype] = useState<string>('');
@@ -621,7 +632,7 @@ export function FrameworkAnalysisRunner({
           let report: Record<string, unknown>;
           const useFlaskDeterministic =
             analysisMode === 'flask-deterministic' &&
-            flaskEvaluationEnabled &&
+            flaskAvailable &&
             chunkedConfig !== null;
 
           if (useFlaskDeterministic && chunkedConfig) {
@@ -807,7 +818,7 @@ export function FrameworkAnalysisRunner({
 
           await UnifiedLocalForageStorage.storeReport(
             pageUrl,
-            JSON.stringify(report, null, 2),
+            report,
             'json',
             chunkedConfig?.reportStorageKey ?? assessment.assessmentType
           );
@@ -1480,35 +1491,40 @@ export function FrameworkAnalysisRunner({
 
       {/* Run Button */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        {flaskEvaluationEnabled ? (
-          <div className="space-y-1">
+        <div className="space-y-1">
             <Label htmlFor="runner-analysis-mode">Analysis engine</Label>
             <Select
               value={analysisMode}
-              onValueChange={(value: RunnerAnalysisMode) => setAnalysisMode(value)}
-              disabled={isRunning}
+              onValueChange={(value: FrameworkAnalysisEngine) =>
+                setAnalysisMode(value)
+              }
+              disabled={isRunning || flaskLoading}
             >
               <SelectTrigger id="runner-analysis-mode" className="w-full sm:w-[280px]">
                 <SelectValue placeholder="Select analysis engine" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="ai-chunked">AI (chunked Ollama/Gemini)</SelectItem>
-                <SelectItem value="flask-deterministic">
+                <SelectItem
+                  value="flask-deterministic"
+                  disabled={!flaskAvailable && !flaskLoading}
+                >
                   Deterministic (Flask — no AI)
                 </SelectItem>
               </SelectContent>
             </Select>
             {analysisMode === 'flask-deterministic' ? (
               <p className="text-xs text-muted-foreground">
-                Pattern matching on port 5001. SEO/Google Tools still use enhanced AI.
+                {flaskAvailable
+                  ? 'Pattern matching via Flask — no LLM calls.'
+                  : flaskStatusMessage}
               </p>
-            ) : null}
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Chunked AI scoring. Requires Ollama or Gemini on the server.
+              </p>
+            )}
           </div>
-        ) : (
-          <p className="text-xs text-muted-foreground">
-            Set NEXT_PUBLIC_ENABLE_FLASK_EVALUATION=true for deterministic Flask runs.
-          </p>
-        )}
         <Button
           onClick={runAssessments}
           disabled={
@@ -1526,7 +1542,7 @@ export function FrameworkAnalysisRunner({
             </>
           ) : (
             <>
-              {analysisMode === 'flask-deterministic' && flaskEvaluationEnabled ? (
+              {analysisMode === 'flask-deterministic' && flaskAvailable ? (
                 <FlaskConical className="mr-2 h-4 w-4" />
               ) : (
                 <Target className="mr-2 h-4 w-4" />

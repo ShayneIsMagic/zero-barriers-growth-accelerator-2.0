@@ -26,7 +26,11 @@ import {
   Target,
   TrendingUp,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import {
+  resolveFrameworkRunAnalysis,
+  resolveFrameworkRunExisting,
+} from '@/lib/framework/framework-results-adapter';
 import { MarkdownFallbackViewer } from '@/components/analysis/MarkdownFallbackViewer';
 import {
   AssessmentWorkflowSteps,
@@ -69,6 +73,22 @@ export function B2BElementsPage() {
   const [localError, setLocalError] = useState<string | null>(null);
   const error = streamError || localError;
 
+  const analysisPayload = useMemo(
+    () =>
+      result
+        ? resolveFrameworkRunAnalysis(result as Record<string, unknown>)
+        : null,
+    [result]
+  );
+
+  const existingContent = useMemo(
+    () =>
+      result
+        ? resolveFrameworkRunExisting(result as Record<string, unknown>)
+        : null,
+    [result]
+  );
+
   // Version control state
   const [snapshotId, setSnapshotId] = useState<string | null>(null);
   const [proposedContentId, setProposedContentId] = useState<string | null>(
@@ -101,18 +121,17 @@ export function B2BElementsPage() {
   };
 
   const copyAnalysis = () => {
-    if (!result) return;
-    const analysisText =
-      typeof result.comparison === 'string'
-        ? result.comparison
-        : JSON.stringify(result.comparison, null, 2);
-    copyToClipboard(analysisText);
+    if (!analysisPayload) {
+      copyToClipboard('No analysis data available yet.');
+      return;
+    }
+    copyToClipboard(JSON.stringify(analysisPayload, null, 2));
   };
 
   const downloadMarkdown = () => {
     if (!result) return;
 
-    const markdown = generateB2BMarkdown(result);
+    const markdown = generateB2BMarkdown(result as Record<string, unknown>);
     const blob = new Blob([markdown], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -126,7 +145,7 @@ export function B2BElementsPage() {
 
   // Version control functions
   const saveSnapshot = async () => {
-    if (!url.trim() || !result?.existingData) {
+    if (!url.trim() || !existingContent) {
       setLocalError('Please run analysis first to save snapshot');
       return;
     }
@@ -137,12 +156,12 @@ export function B2BElementsPage() {
     try {
       const data = await saveContentSnapshot({
         url: url.trim(),
-        title: result.existingData.title || 'Untitled',
-        content: result.existingData.cleanText || '',
+        title: (existingContent.title as string) || 'Untitled',
+        content: (existingContent.cleanText as string) || '',
         metadata: {
-          wordCount: result.existingData.wordCount,
-          keywords: result.existingData.extractedKeywords,
-          headings: result.existingData.headings,
+          wordCount: existingContent.wordCount as number | undefined,
+          keywords: existingContent.extractedKeywords as string[] | undefined,
+          headings: existingContent.headings as unknown,
         },
       });
 
@@ -613,28 +632,32 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                 {/* Overview Tab */}
                 <TabsContent value="overview" className="space-y-4">
                   {/* Fallback: Show Markdown prompt when AI is unavailable */}
-                  {result.comparison?._isFallback && result.comparison?.fallbackMarkdown && (
+                  {analysisPayload?._isFallback && analysisPayload?.fallbackMarkdown && (
                     <MarkdownFallbackViewer
-                      markdownContent={result.comparison.fallbackMarkdown}
+                      markdownContent={analysisPayload.fallbackMarkdown as string}
                       frameworkName="B2B Elements of Value"
-                      errorMessage={result.comparison.error || 'AI analysis unavailable'}
+                      errorMessage={
+                        (typeof analysisPayload.error === 'string'
+                          ? analysisPayload.error
+                          : null) || 'AI analysis unavailable'
+                      }
                     />
                   )}
 
-                  {result.comparison && !result.comparison._isFallback && (
+                  {analysisPayload && !analysisPayload._isFallback && (
                     <ElementsValueResultsPanel
                       framework="b2b"
-                      analysis={result.comparison}
+                      analysis={analysisPayload}
                     />
                   )}
                 </TabsContent>
 
                 {/* Detailed Analysis Tab */}
                 <TabsContent value="detailed" className="space-y-4">
-                  {result.comparison && !result.comparison._isFallback && (
+                  {analysisPayload && !analysisPayload._isFallback && (
                     <ElementsValueResultsPanel
                       framework="b2b"
-                      analysis={result.comparison}
+                      analysis={analysisPayload}
                       defaultExpanded
                     />
                   )}
@@ -654,10 +677,10 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      {result.comparison && !result.comparison._isFallback ? (
+                      {analysisPayload && !analysisPayload._isFallback ? (
                         <ElementsValueResultsPanel
                           framework="b2b"
-                          analysis={result.comparison}
+                          analysis={analysisPayload}
                           variant="recommendations"
                         />
                       ) : (
@@ -709,27 +732,16 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
   );
 }
 
-function generateB2BMarkdown(result: {
-  existing?: {
-    url?: string;
-    title?: string;
-    metaDescription?: string;
-    wordCount?: number;
-    extractedKeywords?: string[];
-  };
-  proposed?: {
-    title?: string;
-    metaDescription?: string;
-    wordCount?: number;
-    extractedKeywords?: string[];
-  };
-  comparison?: Record<string, unknown>;
-}): string {
+function generateB2BMarkdown(result: Record<string, unknown>): string {
+  const analysisPayload = resolveFrameworkRunAnalysis(result);
+  const existing = resolveFrameworkRunExisting(result);
+  const proposed = isRecord(result.proposed) ? result.proposed : undefined;
+
   const analysisMarkdown =
-    result.comparison && typeof result.comparison === 'object'
-      ? generateElementsValueMarkdown('b2b', result.comparison, {
-          url: result.existing?.url,
-          title: result.existing?.title,
+    analysisPayload && !analysisPayload._isFallback
+      ? generateElementsValueMarkdown('b2b', analysisPayload, {
+          url: typeof existing?.url === 'string' ? existing.url : undefined,
+          title: typeof existing?.title === 'string' ? existing.title : undefined,
         })
       : 'No structured analysis available.';
 
@@ -739,25 +751,32 @@ function generateB2BMarkdown(result: {
 
 ## Existing Content
 
-**Title:** ${result.existing?.title || 'N/A'}
-**Meta Description:** ${result.existing?.metaDescription || 'N/A'}
-**Word Count:** ${result.existing?.wordCount || 0}
-**Keywords:** ${result.existing?.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
+**Title:** ${typeof existing?.title === 'string' ? existing.title : 'N/A'}
+**Meta Description:** ${typeof existing?.metaDescription === 'string' ? existing.metaDescription : 'N/A'}
+**Word Count:** ${typeof existing?.wordCount === 'number' ? existing.wordCount : 0}
+**Keywords:** ${
+    Array.isArray(existing?.extractedKeywords)
+      ? existing.extractedKeywords.slice(0, 10).join(', ')
+      : 'None'
+  }
 
-${
-  result.proposed
-    ? `## Proposed Content
+## Proposed Content
 
-**Title:** ${result.proposed.title || 'N/A'}
-**Meta Description:** ${result.proposed.metaDescription || 'N/A'}
-**Word Count:** ${result.proposed.wordCount || 0}
-**Keywords:** ${result.proposed.extractedKeywords?.slice(0, 10).join(', ') || 'None'}
-`
-    : ''
-}
+**Title:** ${typeof proposed?.title === 'string' ? proposed.title : 'N/A'}
+**Meta Description:** ${typeof proposed?.metaDescription === 'string' ? proposed.metaDescription : 'N/A'}
+**Word Count:** ${typeof proposed?.wordCount === 'number' ? proposed.wordCount : 0}
+**Keywords:** ${
+    Array.isArray(proposed?.extractedKeywords)
+      ? proposed.extractedKeywords.slice(0, 10).join(', ')
+      : 'None'
+  }
 
 ---
 
 Generated by Zero Barriers Growth Accelerator
 `;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
