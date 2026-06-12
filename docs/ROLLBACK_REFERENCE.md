@@ -182,7 +182,7 @@ Pre-merge checkpoint for FE refactor phases B–E, vocab Phase 3, reports index 
 |------|--------|-------------------|-------|
 | **Production (`origin/main`)** | `main` | `7bc9d62` | Last known remote main at doc time |
 | **Refactor checkpoint (pushed)** | `refactor` | `2ae7049` | Structured UX + Flask path on standalone pages |
-| **Refactor WIP (this commit)** | `refactor` | *(after commit)* | Reports index, runner Flask toggle, `normalizeRawEvidence` fix |
+| **Refactor WIP (this commit)** | `refactor` | `e91ffa5` | Reports index, runner Flask toggle, `normalizeRawEvidence` fix |
 
 ### Rollback (refactor branch only)
 
