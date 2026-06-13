@@ -1,5 +1,11 @@
 import 'server-only';
 
+import { isRemoteEvaluationApiConfigured } from '@/lib/server/flask-config';
+import {
+  isGeminiConfigured,
+  isServerlessDeployment,
+} from '@/lib/scoring/scoring-env';
+
 export type ServerAnalysisEngine = 'ai-chunked' | 'flask-deterministic';
 
 export function parseAnalysisEngineParam(
@@ -32,17 +38,56 @@ export function parseAnalysisEngineParam(
   return null;
 }
 
-/** Default engine for dashboard pages when no ?engine= query param is present. */
-export function getDefaultAnalysisEngine(): ServerAnalysisEngine {
+interface ResolveEffectiveEngineInput {
+  flaskHealthy: boolean;
+  ollamaHealthy: boolean;
+  geminiConfigured: boolean;
+}
+
+/** Configured preference from env — may point at an unreachable backend. */
+export function getConfiguredDefaultAnalysisEngine(): ServerAnalysisEngine {
   const explicit = parseAnalysisEngineParam(process.env.DEFAULT_ANALYSIS_ENGINE);
   if (explicit) {
     return explicit;
   }
 
-  // Live Vercel deployments default to deterministic Flask (no Ollama on serverless).
-  if (process.env.VERCEL === '1' || process.env.NODE_ENV === 'production') {
+  if (isRemoteEvaluationApiConfigured()) {
     return 'flask-deterministic';
   }
 
   return 'ai-chunked';
+}
+
+/** Engine the UI should select when no ?engine= override is present. */
+export function getEffectiveDefaultAnalysisEngine(
+  input: ResolveEffectiveEngineInput
+): ServerAnalysisEngine {
+  const configured = getConfiguredDefaultAnalysisEngine();
+  const geminiConfigured =
+    input.geminiConfigured || isGeminiConfigured();
+
+  if (configured === 'flask-deterministic' && input.flaskHealthy) {
+    return 'flask-deterministic';
+  }
+
+  // Local dev: prefer Flask when the backend is running on :5001
+  if (!isServerlessDeployment() && input.flaskHealthy) {
+    return 'flask-deterministic';
+  }
+
+  // Production: prefer Gemini AI when configured (Ollama is not on Vercel)
+  if (isServerlessDeployment() && geminiConfigured) {
+    return 'ai-chunked';
+  }
+
+  if (input.flaskHealthy && !input.ollamaHealthy && !geminiConfigured) {
+    return 'flask-deterministic';
+  }
+
+  return 'ai-chunked';
+}
+
+/** @deprecated Use getConfiguredDefaultAnalysisEngine or getEffectiveDefaultAnalysisEngine. */
+export function getDefaultAnalysisEngine(): ServerAnalysisEngine {
+  return getConfiguredDefaultAnalysisEngine();
 }

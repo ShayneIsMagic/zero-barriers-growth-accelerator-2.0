@@ -1,5 +1,6 @@
 'use client';
 
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import {
@@ -49,28 +50,51 @@ export function FrameworkAnalyzeActions({
     message: flaskMessage,
     preferDeterministic,
     defaultEngine,
+    aiAvailable,
+    scoringAvailable,
+    environment,
+    setupHint,
+    aiPrimaryProvider,
   } = useFlaskEvaluationAvailability();
 
   const { engine: analysisEngine, setEngine: setAnalysisEngine } =
     useFrameworkAnalysisEngine({
       preferDeterministic,
       serverDefaultEngine: defaultEngine,
+      flaskAvailable,
       flaskLoading,
     });
 
   const isDeterministic = analysisEngine === 'flask-deterministic';
   const isRunning = isBusy || isFlaskRunning;
+  const noEvaluationBackend =
+    !flaskLoading && !scoringAvailable;
+
+  const aiEngineLabel =
+    environment === 'production' || aiPrimaryProvider === 'gemini'
+      ? 'AI analysis (Gemini chunked)'
+      : 'AI analysis (Ollama / Gemini chunked)';
 
   const handleRun = (): void => {
     if (isDeterministic) {
       if (!flaskAvailable) {
         toast.error(
           flaskMessage ||
-            'Deterministic evaluation API is not reachable. Set EVALUATION_API_URL on Vercel.'
+            (environment === 'production'
+              ? 'Deterministic evaluation API is not reachable. Set EVALUATION_API_URL on Vercel.'
+              : 'Flask is not running. Start: cd backend && pipenv run python app.py')
         );
         return;
       }
       onRunDeterministic();
+      return;
+    }
+    if (!aiAvailable) {
+      toast.error(
+        environment === 'production'
+          ? 'AI scoring requires GEMINI_API_KEY on Vercel.'
+          : 'AI scoring requires GEMINI_API_KEY or a running Ollama instance.'
+      );
       return;
     }
     onRunAnalysis();
@@ -78,6 +102,17 @@ export function FrameworkAnalyzeActions({
 
   return (
     <div className="space-y-3">
+      {noEvaluationBackend ? (
+        <Alert variant="destructive">
+          <AlertDescription>
+            {setupHint ||
+              (environment === 'production'
+                ? 'Production scoring needs GEMINI_API_KEY on Vercel or EVALUATION_API_URL pointing to hosted Flask.'
+                : 'Local scoring needs Flask on :5001, or GEMINI_API_KEY, or Ollama running.')}
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
       {flaskSupported ? (
         <div className="space-y-1">
           <Label htmlFor="framework-analysis-engine">Analysis engine</Label>
@@ -92,8 +127,8 @@ export function FrameworkAnalyzeActions({
               <SelectValue placeholder="Choose analysis engine" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ai-chunked">
-                AI analysis (Ollama chunked)
+              <SelectItem value="ai-chunked" disabled={!aiAvailable && !flaskLoading}>
+                {aiEngineLabel}
               </SelectItem>
               <SelectItem
                 value="flask-deterministic"
@@ -111,7 +146,11 @@ export function FrameworkAnalyzeActions({
             </p>
           ) : (
             <p className="text-xs text-muted-foreground">
-              Chunked AI scoring. Requires Ollama or Gemini on the server.
+              {aiAvailable
+                ? environment === 'production'
+                  ? 'Chunked AI scoring via Gemini on Vercel.'
+                  : 'Chunked AI scoring via Ollama, with Gemini fallback when configured.'
+                : 'AI scoring unavailable — configure Gemini or start Ollama.'}
             </p>
           )}
         </div>
@@ -119,7 +158,7 @@ export function FrameworkAnalyzeActions({
 
       <Button
         onClick={handleRun}
-        disabled={isRunning || !hasUrl}
+        disabled={isRunning || !hasUrl || noEvaluationBackend}
         className="w-full"
         size="lg"
       >

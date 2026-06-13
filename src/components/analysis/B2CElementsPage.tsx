@@ -15,7 +15,6 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   BarChart3,
   Brain,
-  CheckCircle2,
   Copy,
   Download,
   FileText,
@@ -37,18 +36,16 @@ import {
   AssessmentWorkflowSteps,
   resolveAssessmentWorkflowStep,
 } from '@/components/analysis/AssessmentWorkflowSteps';
-import { Progress } from '@/components/ui/progress';
-import { useFrameworkPageAnalysis } from '@/hooks/useFrameworkPageAnalysis';
+import { useFrameworkCollectEvaluateWorkflow } from '@/hooks/useFrameworkCollectEvaluateWorkflow';
 import {
   createProposedContent as postProposedContent,
   createVersionComparison as postVersionComparison,
   saveContentSnapshot,
 } from '@/services/content-api';
 import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
-import { FrameworkAnalyzeActions } from '@/components/analysis/FrameworkAnalyzeActions';
+import { FrameworkCollectEvaluatePanel } from '@/components/analysis/FrameworkCollectEvaluatePanel';
 import { ElementsValueResultsPanel } from '@/components/analysis/ElementsValueResultsPanel';
 import { generateElementsValueMarkdown } from '@/lib/framework/elements-value-display';
-import { buildFrameworkPageRunParams } from '@/lib/framework/framework-page-run-params';
 import { loadSnapshot } from '@/lib/snapshot-storage';
 import { CanonicalFrameworkPayload } from '@/types/canonical-framework-payload';
 
@@ -56,24 +53,37 @@ export function B2CElementsPage() {
   const [url, setUrl] = useState('');
   const [proposedContent, setProposedContent] = useState('');
   const [scrapedContent, setScrapedContent] = useState('');
+  const [localError, setLocalError] = useState<string | null>(null);
 
   const {
     isAnalyzing,
     isCollecting,
+    isEvaluating,
+    isFlaskRunning,
+    isFromCache,
+    collectedData,
+    rawCollectionData,
+    collectionMode,
     percent,
     currentCategory,
     completedCategories,
     result,
     error: streamError,
-    runAnalysis: runFrameworkAnalysis,
-    runDeterministicAnalysis,
-    isFlaskRunning,
     analysisMethod,
-  } = useFrameworkPageAnalysis('/api/analyze/elements-value-b2c-standalone');
+    handleCollect,
+    handleRefreshCollection,
+    runEvaluationAi,
+    runEvaluationFlask,
+    hasCollectedContent,
+  } = useFrameworkCollectEvaluateWorkflow({
+    endpoint: '/api/analyze/elements-value-b2c-standalone',
+    url,
+    proposedContent,
+    scrapedContent,
+    setLocalError,
+  });
 
   const isBusy = isAnalyzing || isCollecting;
-
-  const [localError, setLocalError] = useState<string | null>(null);
   const error = streamError || localError;
 
   const analysisPayload = useMemo(
@@ -88,8 +98,8 @@ export function B2CElementsPage() {
     () =>
       result
         ? resolveFrameworkRunExisting(result as Record<string, unknown>)
-        : null,
-    [result]
+        : collectedData,
+    [result, collectedData]
   );
 
   // Version control state
@@ -120,23 +130,12 @@ export function B2CElementsPage() {
     void syncStoredSnapshot();
   }, [result]);
 
-  const pageRunInput = {
-    url,
-    proposedContent,
-    scrapedContent,
-    setLocalError,
-  };
-
   const runAnalysis = async () => {
-    const params = buildFrameworkPageRunParams(pageRunInput);
-    if (!params) return;
-    await runFrameworkAnalysis(params);
+    await runEvaluationAi();
   };
 
   const runDeterministic = async () => {
-    const params = buildFrameworkPageRunParams(pageRunInput);
-    if (!params) return;
-    await runDeterministicAnalysis(params);
+    await runEvaluationFlask();
   };
 
   const copyToClipboard = (text: string) => {
@@ -276,8 +275,10 @@ export function B2CElementsPage() {
           <AssessmentWorkflowSteps
             currentStep={resolveAssessmentWorkflowStep({
               hasResult: Boolean(result),
-              isAnalyzing,
+              isAnalyzing: isEvaluating,
               isCollecting,
+              hasCollectedContent,
+              isFlaskRunning,
             })}
           />
           {/* URL Input */}
@@ -407,44 +408,34 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
             </Alert>
           )}
 
-          <FrameworkAnalyzeActions
+          <FrameworkCollectEvaluatePanel
             endpoint="/api/analyze/elements-value-b2c-standalone"
-            isBusy={isBusy}
+            url={url}
+            proposedContent={proposedContent}
+            scrapedContent={scrapedContent}
+            setLocalError={setLocalError}
+            analyzeIcon={<Users className="mr-2 h-4 w-4" />}
+            analysisMethod={analysisMethod}
+            collectedData={collectedData}
+            rawCollectionData={rawCollectionData}
+            collectionMode={collectionMode}
+            isFromCache={isFromCache}
+            isCollecting={isCollecting}
+            isEvaluating={isEvaluating}
             isFlaskRunning={isFlaskRunning}
+            isBusy={isBusy}
             hasUrl={Boolean(url.trim())}
+            percent={percent}
+            currentCategory={currentCategory}
+            completedCategories={completedCategories}
+            onCollect={handleCollect}
+            onRefreshCollection={handleRefreshCollection}
             onRunAnalysis={runAnalysis}
             onRunDeterministic={runDeterministic}
-            analysisMethod={analysisMethod}
-            hasProposedContent={Boolean(proposedContent.trim())}
-            analyzeIcon={<Users className="mr-2 h-4 w-4" />}
           />
 
-          {/* Chunk Progress Bar */}
-          {(isAnalyzing || isCollecting) && (
-            <div className="space-y-2">
-              <Progress value={percent} className="h-3" />
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Loader2 className="h-3 w-3 animate-spin" />
-                  {currentCategory ? `Evaluating ${currentCategory}...` : 'Starting analysis...'}
-                </span>
-                <span>{percent}%</span>
-              </div>
-              {completedCategories.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {completedCategories.map((cat) => (
-                    <span key={cat} className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
-                      <CheckCircle2 className="h-3 w-3" />
-                      {cat}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Version Control Buttons */}
-          {result && (
+          {/* Version Control Buttons — show once content or results exist */}
+          {(result || hasCollectedContent) && (
             <div className="flex gap-2 border-t pt-4">
               <Button
                 onClick={saveSnapshot}

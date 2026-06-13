@@ -11,16 +11,14 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
 import { MarkdownFallbackViewer } from '@/components/analysis/MarkdownFallbackViewer';
 import {
   AssessmentWorkflowSteps,
   resolveAssessmentWorkflowStep,
 } from '@/components/analysis/AssessmentWorkflowSteps';
-import { FrameworkAnalyzeActions } from '@/components/analysis/FrameworkAnalyzeActions';
-import { useFrameworkPageAnalysis } from '@/hooks/useFrameworkPageAnalysis';
-import { buildFrameworkPageRunParams } from '@/lib/framework/framework-page-run-params';
+import { FrameworkCollectEvaluatePanel } from '@/components/analysis/FrameworkCollectEvaluatePanel';
+import { useFrameworkCollectEvaluateWorkflow } from '@/hooks/useFrameworkCollectEvaluateWorkflow';
 import { CheckCircle2, Copy, Download, Sparkles } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
@@ -44,16 +42,38 @@ export function BrandArchetypesPage() {
   const {
     isAnalyzing,
     isCollecting,
+    isEvaluating,
+    isFlaskRunning,
+    isFromCache,
+    collectedData,
+    rawCollectionData,
+    collectionMode,
     percent,
     currentCategory,
     completedCategories,
     result,
     error: streamError,
-    runAnalysis: runFrameworkAnalysis,
-    runDeterministicAnalysis,
-    isFlaskRunning,
     analysisMethod,
-  } = useFrameworkPageAnalysis('/api/analyze/brand-archetypes-standalone');
+    handleCollect,
+    handleRefreshCollection,
+    runEvaluationAi,
+    runEvaluationFlask,
+    hasCollectedContent,
+  } = useFrameworkCollectEvaluateWorkflow({
+    endpoint: '/api/analyze/brand-archetypes-standalone',
+    url,
+    proposedContent,
+    scrapedContent,
+    setLocalError: (message) => {
+      if (message === 'Invalid JSON in scraped content field') {
+        setLocalError(
+          'Scraped content JSON is invalid. Paste valid JSON from Content-Comparison.'
+        );
+        return;
+      }
+      setLocalError(message);
+    },
+  });
 
   const isBusy = isAnalyzing || isCollecting;
 
@@ -100,35 +120,14 @@ export function BrandArchetypesPage() {
     return ranking ? deriveArchetypePersonality(ranking) : null;
   }, [analysisPayload]);
 
-  const pageRunInput = {
-    url,
-    proposedContent,
-    scrapedContent,
-    setLocalError: (message: string | null) => {
-      if (message) {
-        setLocalError(
-          message === 'Invalid JSON in scraped content field'
-            ? 'Scraped content JSON is invalid. Paste valid JSON from Content-Comparison.'
-            : message
-        );
-      } else {
-        setLocalError(null);
-      }
-    },
-  };
-
   const runAnalysis = async () => {
     setLocalError(null);
-    const params = buildFrameworkPageRunParams(pageRunInput);
-    if (!params) return;
-    await runFrameworkAnalysis(params);
+    await runEvaluationAi();
   };
 
   const runDeterministic = async () => {
     setLocalError(null);
-    const params = buildFrameworkPageRunParams(pageRunInput);
-    if (!params) return;
-    await runDeterministicAnalysis(params);
+    await runEvaluationFlask();
   };
 
   const copyToClipboard = (text: string) => {
@@ -166,8 +165,10 @@ export function BrandArchetypesPage() {
           <AssessmentWorkflowSteps
             currentStep={resolveAssessmentWorkflowStep({
               hasResult: Boolean(result),
-              isAnalyzing,
+              isAnalyzing: isEvaluating,
               isCollecting,
+              hasCollectedContent,
+              isFlaskRunning,
             })}
           />
           <div>
@@ -220,16 +221,30 @@ export function BrandArchetypesPage() {
             </p>
           </div>
 
-          <FrameworkAnalyzeActions
-            endpoint="/api/analyze/brand-archetypes-standalone"
-            isBusy={isBusy}
+          <FrameworkCollectEvaluatePanel
+            endpoint='/api/analyze/brand-archetypes-standalone'
+            url={url}
+            proposedContent={proposedContent}
+            scrapedContent={scrapedContent}
+            setLocalError={setLocalError}
+            analyzeIcon={<Sparkles className='mr-2 h-4 w-4' />}
+            analysisMethod={analysisMethod}
+            collectedData={collectedData}
+            rawCollectionData={rawCollectionData}
+            collectionMode={collectionMode}
+            isFromCache={isFromCache}
+            isCollecting={isCollecting}
+            isEvaluating={isEvaluating}
             isFlaskRunning={isFlaskRunning}
+            isBusy={isBusy}
             hasUrl={Boolean(url.trim())}
+            percent={percent}
+            currentCategory={currentCategory}
+            completedCategories={completedCategories}
+            onCollect={handleCollect}
+            onRefreshCollection={handleRefreshCollection}
             onRunAnalysis={runAnalysis}
             onRunDeterministic={runDeterministic}
-            analysisMethod={analysisMethod}
-            hasProposedContent={Boolean(proposedContent.trim())}
-            analyzeIcon={<Sparkles className="mr-2 h-4 w-4" />}
           />
         </CardContent>
       </Card>
@@ -257,26 +272,6 @@ export function BrandArchetypesPage() {
           hasReadableReport: Boolean(result?.readableMarkdown),
         }}
       />
-
-      {(isAnalyzing || isCollecting) && (
-        <Card>
-          <CardHeader>
-            <CardTitle className='text-base'>Analysis Progress</CardTitle>
-          </CardHeader>
-          <CardContent className='space-y-3'>
-            <Progress value={percent} className='h-2' />
-            <div className='flex items-center justify-between text-xs text-muted-foreground'>
-              <span>{percent}% complete</span>
-              <span>{currentCategory || 'Preparing analysis...'}</span>
-            </div>
-            {completedCategories.length > 0 && (
-              <div className='text-xs text-muted-foreground'>
-                Completed: {completedCategories.join(', ')}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
 
       {error && (
         <Alert variant='destructive'>

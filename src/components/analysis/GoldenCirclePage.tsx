@@ -13,7 +13,6 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  CheckCircle2,
   Copy,
   Download,
   History,
@@ -29,40 +28,51 @@ import {
   AssessmentWorkflowSteps,
   resolveAssessmentWorkflowStep,
 } from '@/components/analysis/AssessmentWorkflowSteps';
-import { Progress } from '@/components/ui/progress';
-import { FrameworkAnalyzeActions } from '@/components/analysis/FrameworkAnalyzeActions';
-import { useFrameworkPageAnalysis } from '@/hooks/useFrameworkPageAnalysis';
-import { generateGoldenCircleMarkdown as buildGoldenCircleMarkdown } from '@/lib/framework/golden-circle-display';
-import { buildFrameworkPageRunParams } from '@/lib/framework/framework-page-run-params';
+import { useFrameworkCollectEvaluateWorkflow } from '@/hooks/useFrameworkCollectEvaluateWorkflow';
 import {
   createProposedContent as postProposedContent,
   createVersionComparison as postVersionComparison,
   saveContentSnapshot,
 } from '@/services/content-api';
 import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
+import { FrameworkCollectEvaluatePanel } from '@/components/analysis/FrameworkCollectEvaluatePanel';
+import { generateGoldenCircleMarkdown as buildGoldenCircleMarkdown } from '@/lib/framework/golden-circle-display';
 
 export function GoldenCirclePage() {
   const [url, setUrl] = useState('');
   const [proposedContent, setProposedContent] = useState('');
   const [scrapedContent, setScrapedContent] = useState('');
+  const [localError, setLocalError] = useState<string | null>(null);
 
   const {
     isAnalyzing,
     isCollecting,
+    isEvaluating,
+    isFlaskRunning,
+    isFromCache,
+    collectedData,
+    rawCollectionData,
+    collectionMode,
     percent,
     currentCategory,
     completedCategories,
     result,
     error: streamError,
-    runAnalysis: runFrameworkAnalysis,
-    runDeterministicAnalysis,
-    isFlaskRunning,
     analysisMethod,
-  } = useFrameworkPageAnalysis('/api/analyze/golden-circle-standalone');
+    handleCollect,
+    handleRefreshCollection,
+    runEvaluationAi,
+    runEvaluationFlask,
+    hasCollectedContent,
+  } = useFrameworkCollectEvaluateWorkflow({
+    endpoint: '/api/analyze/golden-circle-standalone',
+    url,
+    proposedContent,
+    scrapedContent,
+    setLocalError,
+  });
 
   const isBusy = isAnalyzing || isCollecting;
-
-  const [localError, setLocalError] = useState<string | null>(null);
   const error = streamError || localError;
 
   // Version control state
@@ -73,23 +83,12 @@ export function GoldenCirclePage() {
   const [isSavingSnapshot, setIsSavingSnapshot] = useState(false);
   const [isCreatingProposed, setIsCreatingProposed] = useState(false);
 
-  const pageRunInput = {
-    url,
-    proposedContent,
-    scrapedContent,
-    setLocalError,
-  };
-
   const runAnalysis = async () => {
-    const params = buildFrameworkPageRunParams(pageRunInput);
-    if (!params) return;
-    await runFrameworkAnalysis(params);
+    await runEvaluationAi();
   };
 
   const runDeterministic = async () => {
-    const params = buildFrameworkPageRunParams(pageRunInput);
-    if (!params) return;
-    await runDeterministicAnalysis(params);
+    await runEvaluationFlask();
   };
 
   const copyToClipboard = (text: string) => {
@@ -122,8 +121,8 @@ export function GoldenCirclePage() {
 
   // Version control functions
   const saveSnapshot = async () => {
-    if (!url.trim() || !result?.existingData) {
-      setLocalError('Please run analysis first to save snapshot');
+    if (!url.trim() || !(result?.existingData || collectedData)) {
+      setLocalError('Please collect content first to save snapshot');
       return;
     }
 
@@ -131,14 +130,15 @@ export function GoldenCirclePage() {
     setLocalError(null);
 
     try {
+      const existing = result?.existingData ?? collectedData;
       const data = await saveContentSnapshot({
         url: url.trim(),
-        title: result.existingData.title || 'Untitled',
-        content: result.existingData.cleanText || '',
+        title: existing?.title || 'Untitled',
+        content: existing?.cleanText || '',
         metadata: {
-          wordCount: result.existingData.wordCount,
-          keywords: result.existingData.extractedKeywords,
-          headings: result.existingData.headings,
+          wordCount: existing?.wordCount,
+          keywords: existing?.extractedKeywords,
+          headings: existing?.headings,
         },
       });
 
@@ -230,8 +230,10 @@ export function GoldenCirclePage() {
           <AssessmentWorkflowSteps
             currentStep={resolveAssessmentWorkflowStep({
               hasResult: Boolean(result),
-              isAnalyzing,
+              isAnalyzing: isEvaluating,
               isCollecting,
+              hasCollectedContent,
+              isFlaskRunning,
             })}
           />
           {/* URL Input */}
@@ -365,44 +367,33 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
             </Alert>
           )}
 
-          <FrameworkAnalyzeActions
+          <FrameworkCollectEvaluatePanel
             endpoint="/api/analyze/golden-circle-standalone"
-            isBusy={isBusy}
+            url={url}
+            proposedContent={proposedContent}
+            scrapedContent={scrapedContent}
+            setLocalError={setLocalError}
+            analyzeIcon={<Target className="mr-2 h-4 w-4" />}
+            analysisMethod={analysisMethod}
+            collectedData={collectedData}
+            rawCollectionData={rawCollectionData}
+            collectionMode={collectionMode}
+            isFromCache={isFromCache}
+            isCollecting={isCollecting}
+            isEvaluating={isEvaluating}
             isFlaskRunning={isFlaskRunning}
+            isBusy={isBusy}
             hasUrl={Boolean(url.trim())}
+            percent={percent}
+            currentCategory={currentCategory}
+            completedCategories={completedCategories}
+            onCollect={handleCollect}
+            onRefreshCollection={handleRefreshCollection}
             onRunAnalysis={runAnalysis}
             onRunDeterministic={runDeterministic}
-            analysisMethod={analysisMethod}
-            hasProposedContent={Boolean(proposedContent.trim())}
-            analyzeIcon={<Target className="mr-2 h-4 w-4" />}
           />
 
-          {/* Chunk Progress Bar */}
-          {(isAnalyzing || isCollecting) && (
-            <div className="space-y-2">
-              <Progress value={percent} className="h-3" />
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Loader2 className="h-3 w-3 animate-spin" />
-                  {currentCategory ? `Evaluating ${currentCategory}...` : 'Starting analysis...'}
-                </span>
-                <span>{percent}%</span>
-              </div>
-              {completedCategories.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {completedCategories.map((cat) => (
-                    <span key={cat} className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
-                      <CheckCircle2 className="h-3 w-3" />
-                      {cat}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Version Control Buttons */}
-          {result && (
+          {(result || hasCollectedContent) && (
             <div className="flex gap-2 border-t pt-4">
               <Button
                 onClick={saveSnapshot}

@@ -48,11 +48,12 @@ function readEngineFromUrl(): FrameworkAnalysisEngine | null {
 interface UseFrameworkAnalysisEngineOptions {
   preferDeterministic?: boolean;
   serverDefaultEngine?: FrameworkAnalysisEngine;
+  flaskAvailable?: boolean;
   flaskLoading?: boolean;
 }
 
 /**
- * Resolves analysis engine from URL (?engine=flask), server default, or AI fallback.
+ * Resolves analysis engine from URL (?engine=flask), server effective default, or AI fallback.
  *
  * Live site examples:
  *   /dashboard/elements-value-b2c?engine=flask
@@ -80,20 +81,36 @@ export function useFrameworkAnalysisEngine(
     }
 
     if (engineFromUrl) {
-      setEngine(engineFromUrl);
+      const requested = engineFromUrl;
+      if (
+        requested === 'flask-deterministic' &&
+        options.flaskAvailable === false
+      ) {
+        setEngine('ai-chunked');
+        return;
+      }
+      setEngine(requested);
       return;
     }
 
     if (options.serverDefaultEngine) {
+      if (
+        options.serverDefaultEngine === 'flask-deterministic' &&
+        options.flaskAvailable === false
+      ) {
+        setEngine('ai-chunked');
+        return;
+      }
       setEngine(options.serverDefaultEngine);
       return;
     }
 
-    if (options.preferDeterministic) {
+    if (options.preferDeterministic && options.flaskAvailable !== false) {
       setEngine('flask-deterministic');
     }
   }, [
     engineFromUrl,
+    options.flaskAvailable,
     options.flaskLoading,
     options.preferDeterministic,
     options.serverDefaultEngine,

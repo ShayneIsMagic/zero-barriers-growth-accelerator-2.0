@@ -41,12 +41,17 @@ export function resolveAssessmentWorkflowStep(options: {
   hasResult: boolean;
   isAnalyzing: boolean;
   isCollecting: boolean;
+  hasCollectedContent?: boolean;
+  isFlaskRunning?: boolean;
 }): AssessmentWorkflowStepId {
   if (options.hasResult) {
     return 'report';
   }
-  if (options.isAnalyzing) {
+  if (options.isAnalyzing || options.isFlaskRunning) {
     return 'analyze';
+  }
+  if (options.hasCollectedContent) {
+    return 'persist';
   }
   if (options.isCollecting) {
     return 'collect';

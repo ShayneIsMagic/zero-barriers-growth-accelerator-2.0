@@ -6,23 +6,35 @@ import { B2CElementsPage } from '@/components/analysis/B2CElementsPage';
 import { B2BElementsPage } from '@/components/analysis/B2BElementsPage';
 import { CliftonStrengthsPage } from '@/components/analysis/CliftonStrengthsPage';
 
-const mockRunAnalysis = vi.fn();
+const mockRunEvaluationAi = vi.fn();
 
-vi.mock('@/hooks/useFrameworkPageAnalysis', () => ({
-  useFrameworkPageAnalysis: () => ({
-    isAnalyzing: false,
-    isCollecting: false,
-    isFromCache: false,
-    percent: 0,
-    currentCategory: '',
-    completedCategories: [],
-    result: null,
-    error: null,
-    canonicalPayload: null,
-    collectedData: null,
-    runAnalysis: mockRunAnalysis,
-    clearCollected: vi.fn(),
-  }),
+const mockCollectEvaluateReturn = {
+  isAnalyzing: false,
+  isEvaluating: false,
+  isCollecting: false,
+  isFlaskRunning: false,
+  isFromCache: false,
+  collectedData: null,
+  rawCollectionData: null,
+  collectionMode: null,
+  percent: 0,
+  currentCategory: '',
+  completedCategories: [],
+  result: null,
+  error: null,
+  analysisMethod: 'ai-chunked',
+  canonicalPayload: null,
+  handleCollect: vi.fn(),
+  handleRefreshCollection: vi.fn(),
+  runEvaluationAi: mockRunEvaluationAi,
+  runEvaluationFlask: vi.fn(),
+  hasCollectedContent: false,
+  clearCollected: vi.fn(),
+  clearFlaskResult: vi.fn(),
+};
+
+vi.mock('@/hooks/useFrameworkCollectEvaluateWorkflow', () => ({
+  useFrameworkCollectEvaluateWorkflow: () => mockCollectEvaluateReturn,
 }));
 
 interface FrameworkPageCase {
@@ -61,11 +73,11 @@ const FRAMEWORK_PAGES: FrameworkPageCase[] = [
 
 describe('Framework analysis page views', () => {
   beforeEach(() => {
-    mockRunAnalysis.mockClear();
+    mockRunEvaluationAi.mockClear();
   });
 
   it.each(FRAMEWORK_PAGES)(
-    '$name renders URL input, analyze action, and workflow traceability panel',
+    '$name renders URL input, collect/evaluate actions, and workflow traceability panel',
     ({ Component, heading, workflowHeading }) => {
       renderWithProviders(<Component />);
 
@@ -74,7 +86,7 @@ describe('Framework analysis page views', () => {
         screen.getByLabelText(/enter website url/i)
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('button', { name: /Analyze Existing Content/i })
+        screen.getByRole('button', { name: /Collect content/i })
       ).toBeInTheDocument();
       expect(screen.getByText(workflowHeading)).toBeInTheDocument();
     }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useChunkedAnalysis } from '@/hooks/useChunkedAnalysis';
 import { useContentCollection } from '@/hooks/useContentCollection';
 import {
@@ -11,7 +11,10 @@ import {
   FLASK_FRAMEWORK_KEYS,
   runFlaskFrameworkEvaluation,
 } from '@/lib/services/flask-evaluation.service';
-import type { CollectedContentPayload } from '@/types/content-collection';
+import type {
+  CollectedContentPayload,
+  ContentCollectionOptions,
+} from '@/types/content-collection';
 
 interface RunFrameworkAnalysisParams {
   url: string;
@@ -25,27 +28,100 @@ interface UseFrameworkPageAnalysisOptions {
   /** When true (default), save JSON + markdown variants to LocalForage after success. */
   persistToLocalForage?: boolean;
   reportStorageKey?: string;
+  /** Prefer multi-page scraping (same path as /dashboard/multi-page-scraping). */
+  preferMultiPageCollection?: boolean;
 }
+
+const DEFAULT_MULTI_PAGE_OPTIONS: ContentCollectionOptions = {
+  mode: 'multi-page',
+  maxPages: 10,
+  maxDepth: 2,
+  includeSubpages: true,
+  includeBlog: true,
+  includeProducts: true,
+  includeAbout: true,
+  includeContact: true,
+  includeServices: true,
+};
 
 /**
  * Combines unified content collection with chunked per-category analysis.
- * Preserves progress UI, traceability, and thorough element-by-element review.
+ * Supports explicit Collect → Evaluate workflow with LocalForage cache reuse.
  */
 export function useFrameworkPageAnalysis(
   endpoint: string,
   options: UseFrameworkPageAnalysisOptions = {}
 ) {
-  const { persistToLocalForage = true, reportStorageKey } = options;
+  const {
+    persistToLocalForage = true,
+    reportStorageKey,
+    preferMultiPageCollection = true,
+  } = options;
   const chunked = useChunkedAnalysis(endpoint);
   const collection = useContentCollection();
   const lastPersistedResultRef = useRef<string | null>(null);
   const wasAnalyzingRef = useRef(false);
   const lastRunUrlRef = useRef<string | null>(null);
+  const lastPreloadedUrlRef = useRef<string | null>(null);
   const [flaskResult, setFlaskResult] = useState<Record<string, unknown> | null>(
     null
   );
   const [isFlaskRunning, setIsFlaskRunning] = useState(false);
   const [flaskError, setFlaskError] = useState<string | null>(null);
+
+  const collectionOptions = preferMultiPageCollection
+    ? DEFAULT_MULTI_PAGE_OPTIONS
+    : { mode: 'comprehensive' as const };
+
+  const resolveExistingContent = useCallback(
+    async (
+      params: RunFrameworkAnalysisParams
+    ): Promise<CollectedContentPayload | Record<string, unknown> | null> => {
+      if (params.existingContent) {
+        return params.existingContent;
+      }
+
+      if (params.skipCollection) {
+        return collection.collectedData;
+      }
+
+      const trimmedUrl = params.url.trim();
+      const collected = await collection.collectContent(
+        trimmedUrl,
+        collectionOptions
+      );
+      return collected;
+    },
+    [collection, collectionOptions]
+  );
+
+  const collectOnly = useCallback(
+    async (
+      url: string,
+      collectOptions?: ContentCollectionOptions
+    ): Promise<CollectedContentPayload | null> => {
+      const trimmedUrl = url.trim();
+      if (!trimmedUrl) {
+        return null;
+      }
+      return collection.collectContent(trimmedUrl, {
+        ...collectionOptions,
+        ...collectOptions,
+      });
+    },
+    [collection, collectionOptions]
+  );
+
+  const preloadCachedContent = useCallback(
+    async (url: string): Promise<CollectedContentPayload | null> => {
+      const trimmedUrl = url.trim();
+      if (!trimmedUrl) {
+        return null;
+      }
+      return collection.preloadFromCache(trimmedUrl);
+    },
+    [collection]
+  );
 
   const runAnalysis = useCallback(
     async (params: RunFrameworkAnalysisParams): Promise<void> => {
@@ -56,16 +132,9 @@ export function useFrameworkPageAnalysis(
 
       lastRunUrlRef.current = trimmedUrl;
 
-      let existingContent = params.existingContent ?? null;
-
-      if (!existingContent && !params.skipCollection) {
-        const collected = await collection.collectContent(trimmedUrl, {
-          mode: 'comprehensive',
-        });
-        if (!collected) {
-          return;
-        }
-        existingContent = collected;
+      const existingContent = await resolveExistingContent(params);
+      if (!existingContent) {
+        return;
       }
 
       await chunked.runAnalysis({
@@ -77,7 +146,7 @@ export function useFrameworkPageAnalysis(
         stream: true,
       });
     },
-    [chunked, collection]
+    [chunked, resolveExistingContent]
   );
 
   const runDeterministicAnalysis = useCallback(
@@ -93,20 +162,12 @@ export function useFrameworkPageAnalysis(
       lastRunUrlRef.current = trimmedUrl;
 
       try {
-        let existingContent = params.existingContent ?? null;
-
-        if (!existingContent && !params.skipCollection) {
-          const collected = await collection.collectContent(trimmedUrl, {
-            mode: 'comprehensive',
-          });
-          if (!collected) {
-            return;
-          }
-          existingContent = collected;
-        }
+        const existingContent = await resolveExistingContent(params);
 
         if (!existingContent) {
-          throw new Error('Collected content is required for Flask evaluation');
+          throw new Error(
+            'Collect content first (Step 1) or paste scraped JSON before running evaluation'
+          );
         }
 
         const flaskResponse = await runFlaskFrameworkEvaluation({
@@ -134,7 +195,7 @@ export function useFrameworkPageAnalysis(
         setIsFlaskRunning(false);
       }
     },
-    [collection, endpoint]
+    [endpoint, resolveExistingContent]
   );
 
   useEffect(() => {
@@ -179,17 +240,58 @@ export function useFrameworkPageAnalysis(
     reportStorageKey,
   ]);
 
+  useEffect(() => {
+    if (!persistToLocalForage || !flaskResult || isFlaskRunning) {
+      return;
+    }
+
+    const url =
+      lastRunUrlRef.current ??
+      (typeof flaskResult.url === 'string' ? flaskResult.url : null);
+
+    if (!url) {
+      return;
+    }
+
+    const storageKey = resolveReportStorageKey(endpoint, reportStorageKey);
+    const analysis = flaskResult.analysis as Record<string, unknown> | undefined;
+    const persistKey = `flask:${url}:${storageKey}:${analysis?.overallScore ?? 'na'}`;
+
+    if (lastPersistedResultRef.current === persistKey) {
+      return;
+    }
+
+    lastPersistedResultRef.current = persistKey;
+
+    void persistFrameworkRunToLocalForage(url, storageKey, flaskResult).catch(
+      () => {
+        lastPersistedResultRef.current = null;
+      }
+    );
+  }, [
+    endpoint,
+    flaskResult,
+    isFlaskRunning,
+    persistToLocalForage,
+    reportStorageKey,
+  ]);
+
   const activeResult = flaskResult ?? chunked.result;
   const analysisMethod =
     flaskResult !== null ? 'flask-deterministic' : 'ai-chunked';
 
+  const isEvaluating =
+    chunked.isAnalyzing || isFlaskRunning;
+
   return {
-    isAnalyzing:
-      chunked.isAnalyzing || collection.isCollecting || isFlaskRunning,
+    isAnalyzing: isEvaluating || collection.isCollecting,
+    isEvaluating,
     isCollecting: collection.isCollecting,
     isFlaskRunning,
     isFromCache: collection.isFromCache,
     collectedData: collection.collectedData,
+    rawCollectionData: collection.rawData,
+    collectionMode: collection.mode,
     percent: flaskResult ? 100 : chunked.percent,
     currentCategory: chunked.currentCategory,
     completedCategories: chunked.completedCategories,
@@ -199,10 +301,36 @@ export function useFrameworkPageAnalysis(
     canonicalPayload: chunked.canonicalPayload,
     runAnalysis,
     runDeterministicAnalysis,
+    collectOnly,
+    preloadCachedContent,
     clearCollected: collection.clearCollected,
     clearFlaskResult: () => {
       setFlaskResult(null);
       setFlaskError(null);
     },
   };
+}
+
+/** Auto-load cached multi-page LocalForage data when the URL field changes. */
+export function usePreloadCachedContentOnUrl(
+  url: string,
+  preloadCachedContent: (url: string) => Promise<CollectedContentPayload | null>
+): void {
+  const preloadRef = useRef(preloadCachedContent);
+  preloadRef.current = preloadCachedContent;
+
+  useEffect(() => {
+    const trimmed = url.trim();
+    if (!trimmed || typeof window === 'undefined') {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      void preloadRef.current(trimmed);
+    }, 400);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [url]);
 }

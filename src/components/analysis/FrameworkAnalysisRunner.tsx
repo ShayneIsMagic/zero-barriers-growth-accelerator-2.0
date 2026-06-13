@@ -206,13 +206,18 @@ export function FrameworkAnalysisRunner({
     message: flaskStatusMessage,
     preferDeterministic,
     defaultEngine,
+    aiAvailable,
+    scoringAvailable,
   } = useFlaskEvaluationAvailability();
   const { engine: analysisMode, setEngine: setAnalysisMode } =
     useFrameworkAnalysisEngine({
       preferDeterministic,
       serverDefaultEngine: defaultEngine,
+      flaskAvailable,
       flaskLoading,
     });
+  const noEvaluationBackend =
+    !flaskLoading && !scoringAvailable;
 
   const [reports, setReports] = useState<any[]>([]);
   const [siteGoals, setSiteGoals] = useState<string[]>(['']);
@@ -1530,7 +1535,8 @@ export function FrameworkAnalysisRunner({
           disabled={
             isRunning ||
             selectedPages.length === 0 ||
-            selectedAssessments.length === 0
+            selectedAssessments.length === 0 ||
+            noEvaluationBackend
           }
           size="lg"
           className="min-w-[200px]"

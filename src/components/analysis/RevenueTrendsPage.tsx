@@ -11,7 +11,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -20,11 +19,10 @@ import {
 } from '@/components/analysis/AssessmentWorkflowSteps';
 import { RevenueTrendsResultsPanel } from '@/components/analysis/RevenueTrendsResultsPanel';
 import { WorkflowTraceabilityPanel } from '@/components/analysis/WorkflowTraceabilityPanel';
-import { FrameworkAnalyzeActions } from '@/components/analysis/FrameworkAnalyzeActions';
-import { useFrameworkPageAnalysis } from '@/hooks/useFrameworkPageAnalysis';
+import { FrameworkCollectEvaluatePanel } from '@/components/analysis/FrameworkCollectEvaluatePanel';
+import { useFrameworkCollectEvaluateWorkflow } from '@/hooks/useFrameworkCollectEvaluateWorkflow';
 import { generateRevenueTrendsMarkdown as buildRevenueTrendsMarkdown } from '@/lib/framework/revenue-trends-display';
-import { buildFrameworkPageRunParams } from '@/lib/framework/framework-page-run-params';
-import { CheckCircle2, Copy, Download, Loader2, TrendingUp } from 'lucide-react';
+import { Copy, Download, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 
 export function RevenueTrendsPage() {
@@ -36,27 +34,29 @@ export function RevenueTrendsPage() {
   const {
     isAnalyzing,
     isCollecting,
+    isEvaluating,
+    isFlaskRunning,
+    isFromCache,
+    collectedData,
+    rawCollectionData,
+    collectionMode,
     percent,
     currentCategory,
     completedCategories,
     result,
     error: streamError,
-    runAnalysis: runFrameworkAnalysis,
-    runDeterministicAnalysis,
-    isFlaskRunning,
     analysisMethod,
-  } = useFrameworkPageAnalysis('/api/analyze/revenue-trends');
-
-  const isBusy = isAnalyzing || isCollecting;
-  const error = streamError || localError;
-  const analysisPayload =
-    result?.analysis || result?.comparison || result?.data;
-
-  const pageRunInput = {
+    handleCollect,
+    handleRefreshCollection,
+    runEvaluationAi,
+    runEvaluationFlask,
+    hasCollectedContent,
+  } = useFrameworkCollectEvaluateWorkflow({
+    endpoint: '/api/analyze/revenue-trends',
     url,
     proposedContent,
     scrapedContent,
-    setLocalError: (message: string | null) => {
+    setLocalError: (message) => {
       if (message === 'Invalid JSON in scraped content field') {
         setLocalError(
           'Scraped content JSON is invalid. Paste valid JSON from Content-Comparison.'
@@ -65,7 +65,12 @@ export function RevenueTrendsPage() {
       }
       setLocalError(message);
     },
-  };
+  });
+
+  const isBusy = isAnalyzing || isCollecting;
+  const error = streamError || localError;
+  const analysisPayload =
+    result?.analysis || result?.comparison || result?.data;
 
   const runAnalysis = async () => {
     if (!url.trim()) {
@@ -73,9 +78,7 @@ export function RevenueTrendsPage() {
       return;
     }
     setLocalError(null);
-    const params = buildFrameworkPageRunParams(pageRunInput);
-    if (!params) return;
-    await runFrameworkAnalysis(params);
+    await runEvaluationAi();
   };
 
   const runDeterministic = async () => {
@@ -84,9 +87,7 @@ export function RevenueTrendsPage() {
       return;
     }
     setLocalError(null);
-    const params = buildFrameworkPageRunParams(pageRunInput);
-    if (!params) return;
-    await runDeterministicAnalysis(params);
+    await runEvaluationFlask();
   };
 
   const copyToClipboard = (text: string) => {
@@ -125,8 +126,10 @@ export function RevenueTrendsPage() {
           <AssessmentWorkflowSteps
             currentStep={resolveAssessmentWorkflowStep({
               hasResult: Boolean(result),
-              isAnalyzing,
+              isAnalyzing: isEvaluating,
               isCollecting,
+              hasCollectedContent,
+              isFlaskRunning,
             })}
           />
           {/* URL Input */}
@@ -265,45 +268,31 @@ Example: {"title":"...","metaDescription":"...","wordCount":...}'
             </Alert>
           )}
 
-          <FrameworkAnalyzeActions
+          <FrameworkCollectEvaluatePanel
             endpoint="/api/analyze/revenue-trends"
-            isBusy={isBusy}
+            url={url}
+            proposedContent={proposedContent}
+            scrapedContent={scrapedContent}
+            setLocalError={setLocalError}
+            analyzeIcon={<TrendingUp className="mr-2 h-4 w-4" />}
+            analysisMethod={analysisMethod}
+            collectedData={collectedData}
+            rawCollectionData={rawCollectionData}
+            collectionMode={collectionMode}
+            isFromCache={isFromCache}
+            isCollecting={isCollecting}
+            isEvaluating={isEvaluating}
             isFlaskRunning={isFlaskRunning}
+            isBusy={isBusy}
             hasUrl={Boolean(url.trim())}
+            percent={percent}
+            currentCategory={currentCategory}
+            completedCategories={completedCategories}
+            onCollect={handleCollect}
+            onRefreshCollection={handleRefreshCollection}
             onRunAnalysis={runAnalysis}
             onRunDeterministic={runDeterministic}
-            analysisMethod={analysisMethod}
-            hasProposedContent={Boolean(proposedContent.trim())}
-            analyzeIcon={<TrendingUp className="mr-2 h-4 w-4" />}
           />
-
-          {(isAnalyzing || isCollecting) && (
-            <div className="space-y-2">
-              <Progress value={percent} className="h-3" />
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Loader2 className="h-3 w-3 animate-spin" />
-                  {currentCategory
-                    ? `Evaluating ${currentCategory}...`
-                    : 'Starting analysis...'}
-                </span>
-                <span>{percent}%</span>
-              </div>
-              {completedCategories.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {completedCategories.map((cat) => (
-                    <span
-                      key={cat}
-                      className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700"
-                    >
-                      <CheckCircle2 className="h-3 w-3" />
-                      {cat}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
         </CardContent>
       </Card>
 

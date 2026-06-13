@@ -4,6 +4,7 @@ export interface FrameworkPageRunInput {
   url: string;
   proposedContent?: string;
   scrapedContent?: string;
+  collectedContent?: CollectedContentPayload | null;
   setLocalError?: (message: string | null) => void;
 }
 
@@ -27,7 +28,10 @@ export function buildFrameworkPageRunParams(
     null;
   let skipCollection = false;
 
-  if (input.scrapedContent?.trim()) {
+  if (input.collectedContent) {
+    existingContent = input.collectedContent;
+    skipCollection = true;
+  } else if (input.scrapedContent?.trim()) {
     try {
       existingContent = JSON.parse(input.scrapedContent.trim()) as Record<
         string,

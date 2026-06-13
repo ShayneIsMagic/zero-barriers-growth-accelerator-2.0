@@ -7,6 +7,7 @@
 import { runLighthouseAnalysis } from '@/lib/lighthouse-service';
 import { WebsiteAnalysisResult } from '@/types/analysis';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { isGeminiConfigured, isServerlessDeployment } from '@/lib/scoring/scoring-env';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
@@ -130,9 +131,8 @@ function _extractKeywordsFromContent(content: string): string[] {
 
 /**
  * Centralized AI analysis:
- * - Default: Ollama only
- * - Optional (AI_ALLOW_FALLBACKS=true): Ollama → Claude → Gemini
- * Every AI call in the codebase should use this function.
+ * - Production (Vercel): Gemini when configured
+ * - Local: Ollama primary → Gemini when configured → Claude if AI_ALLOW_FALLBACKS
  */
 export async function analyzeWithAI(
   prompt: string,
@@ -147,9 +147,27 @@ export async function analyzeWithAI(
     ensureOllamaReadyForAssessment,
   } = await import('@/lib/ollama-analysis');
 
+  const isServerless = isServerlessDeployment();
+  const geminiConfigured = isGeminiConfigured();
+
   let lastError = '';
 
-  // PRIMARY: Ollama (local or remote via OLLAMA_BASE_URL)
+  // Production: Gemini is the primary provider (Ollama is not on Vercel).
+  if (isServerless && geminiConfigured) {
+    try {
+      console.log(`🔄 [${analysisType}] Using Gemini on serverless deployment...`);
+      return await callGeminiDirect(prompt, analysisType);
+    } catch (geminiError) {
+      lastError =
+        geminiError instanceof Error ? geminiError.message : 'Gemini failed';
+      console.log(`⚠️ [${analysisType}] Gemini failed: ${lastError}`);
+      if (!AI_ALLOW_FALLBACKS) {
+        throw new Error(sanitizeError(`Gemini analysis failed: ${lastError}`));
+      }
+    }
+  }
+
+  // LOCAL + REMOTE: Ollama when reachable
   const ollamaAvailable = await ensureOllamaReadyForAssessment();
   if (ollamaAvailable) {
     try {
@@ -159,7 +177,7 @@ export async function analyzeWithAI(
       lastError =
         ollamaError instanceof Error ? ollamaError.message : 'Ollama failed';
       console.log(`⚠️ [${analysisType}] Ollama failed: ${lastError}`);
-      if (!AI_ALLOW_FALLBACKS) {
+      if (!geminiConfigured && !AI_ALLOW_FALLBACKS) {
         throw new Error(
           sanitizeError(`Ollama analysis failed: ${lastError}`)
         );
@@ -169,18 +187,29 @@ export async function analyzeWithAI(
     const noOllamaMsg =
       'Ollama is not reachable. Start Ollama and ensure OLLAMA_BASE_URL points to a reachable Ollama server.';
     console.log(`⚠️ [${analysisType}] ${noOllamaMsg}`);
-    if (!AI_ALLOW_FALLBACKS) {
-      throw new Error(noOllamaMsg);
+  }
+
+  // Gemini fallback — local and production when Ollama unavailable or failed
+  if (geminiConfigured) {
+    try {
+      console.log(`🔄 [${analysisType}] Trying Gemini...`);
+      return await callGeminiDirect(prompt, analysisType);
+    } catch (geminiError) {
+      lastError =
+        geminiError instanceof Error ? geminiError.message : 'Gemini failed';
+      console.log(`⚠️ [${analysisType}] Gemini failed: ${lastError}`);
     }
   }
 
   if (!AI_ALLOW_FALLBACKS) {
     throw new Error(
-      sanitizeError(`AI analysis failed with Ollama and fallbacks are disabled. Last error: ${lastError}`)
+      sanitizeError(
+        `AI analysis failed. Last error: ${lastError || 'No AI providers available'}`
+      )
     );
   }
 
-  // FALLBACK 1: Claude
+  // FALLBACK: Claude (optional)
   if (isClaudeConfigured()) {
     try {
       console.log(`🤖 [${analysisType}] Trying Claude (fallback 1)...`);
@@ -189,18 +218,6 @@ export async function analyzeWithAI(
       lastError =
         claudeError instanceof Error ? claudeError.message : 'Claude failed';
       console.log(`⚠️ [${analysisType}] Claude failed: ${lastError}`);
-    }
-  }
-
-  // FALLBACK 2: Gemini
-  if (GEMINI_API_KEY && GEMINI_API_KEY !== 'your-gemini-api-key') {
-    try {
-      console.log(`🔄 [${analysisType}] Trying Gemini (fallback 2)...`);
-      return await callGeminiDirect(prompt, analysisType);
-    } catch (geminiError) {
-      lastError =
-        geminiError instanceof Error ? geminiError.message : 'Gemini failed';
-      console.log(`⚠️ [${analysisType}] Gemini also failed: ${lastError}`);
     }
   }
 

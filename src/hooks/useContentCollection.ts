@@ -25,6 +25,7 @@ interface UseContentCollectionReturn {
     url: string,
     options?: ContentCollectionOptions
   ) => Promise<CollectedContentPayload | null>;
+  preloadFromCache: (url: string) => Promise<CollectedContentPayload | null>;
   clearCollected: (url?: string) => Promise<void>;
 }
 
@@ -178,6 +179,39 @@ export function useContentCollection(): UseContentCollectionReturn {
     setMode(null);
   };
 
+  const preloadFromCache = async (
+    url: string
+  ): Promise<CollectedContentPayload | null> => {
+    const trimmedUrl = url.trim();
+    if (!trimmedUrl || !isValidUrl(trimmedUrl)) {
+      return null;
+    }
+
+    try {
+      const cached = await UnifiedLocalForageStorage.getPuppeteerData(trimmedUrl);
+      if (!cached?.data) {
+        return null;
+      }
+
+      const cachedExisting = resolveCollectedContentPayload(
+        cached.data,
+        trimmedUrl
+      );
+      if (!cachedExisting) {
+        return null;
+      }
+
+      setCollectedData(cachedExisting);
+      setRawData(cached.data);
+      setMode('multi-page');
+      setIsFromCache(true);
+      setError(null);
+      return cachedExisting;
+    } catch {
+      return null;
+    }
+  };
+
   return {
     collectedData,
     rawData,
@@ -186,6 +220,7 @@ export function useContentCollection(): UseContentCollectionReturn {
     isFromCache,
     mode,
     collectContent,
+    preloadFromCache,
     clearCollected,
   };
 }
